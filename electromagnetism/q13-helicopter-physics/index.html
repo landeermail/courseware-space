@@ -8,7 +8,8 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
 body{font-family:'Noto Sans SC',sans-serif}
-#canvas-box{width:100%;height:520px;position:relative;border-radius:12px;overflow:hidden}
+#canvas-box{width:100%;height:55vh;min-height:300px;max-height:520px;position:relative;border-radius:12px;overflow:hidden;touch-action:none}
+@media(max-width:768px){#canvas-box{height:45vh;min-height:250px}.btn{padding:6px 10px;font-size:12px}.overlay{max-width:200px;padding:8px}}
 #glcanvas{width:100%;height:100%;display:block}
 .btn{transition:all .2s;cursor:pointer}
 .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
@@ -436,6 +437,11 @@ camera.aspect = box.clientWidth / box.clientHeight;
 camera.updateProjectionMatrix();
 renderer.setSize(box.clientWidth, box.clientHeight);
 });
+
+// Touch support for iPad
+if ('ontouchstart' in window) {
+    canvas.style.touchAction = 'none';
+}
 
 setMode('static');
 </script>

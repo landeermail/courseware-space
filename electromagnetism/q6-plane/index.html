@@ -16,7 +16,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
         body { font-family: 'Noto Sans SC', sans-serif; overflow-x: hidden; }
-        .canvas-container { width: 100%; height: 550px; position: relative; border-radius: 12px; overflow: hidden; }
+        .canvas-container { width: 100%; height: 55vh; min-height: 300px; max-height: 550px; position: relative; border-radius: 12px; overflow: hidden; touch-action: none; }
+        @media(max-width:768px){.canvas-container{height:45vh;min-height:250px}.control-btn{padding:8px 12px;font-size:12px}.info-panel{max-width:200px;padding:8px}}
         #canvas { width: 100%; height: 100%; display: block; }
         .control-btn {
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -987,6 +988,12 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
 });
+
+// Touch support for iPad
+if ('ontouchstart' in window) {
+    controls.touchAction = 'none';
+    canvas.style.touchAction = 'none';
+}
 
 // Default: show right hand rule
 setDirection('rightHand');
