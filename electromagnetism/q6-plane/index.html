@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地磁场与飞机机翼电势差 — 3D 交互讲解</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; overflow-x: hidden; }
+        .canvas-container { width: 100%; height: 550px; position: relative; border-radius: 12px; overflow: hidden; }
+        #canvas { width: 100%; height: 100%; display: block; }
+        .control-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .control-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0);
+            transition: background 0.2s;
+        }
+        .control-btn:hover::after { background: rgba(255,255,255,0.1); }
+        .control-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .control-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+        }
+        .info-panel {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .info-panel:hover {
+            background: rgba(255,255,255,0.97);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        .potential-bar {
+            height: 6px;
+            border-radius: 3px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .potential-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .result-badge {
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+        .highlight-text {
+            background: linear-gradient(120deg, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0.15) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 88%;
+            padding: 0 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">📐 物理互动：地磁场与飞机机翼电势差</h1>
+        <p class="text-gray-600">第6题（多选）—— 3D可视化讲解 · 正确答案是 <strong class="text-blue-600">BD</strong></p>
+    </div>
+
+    <!-- 3D Canvas -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="canvas"></canvas>
+            <!-- Overlay Info -->
+            <div class="absolute top-4 left-4 info-panel rounded-xl p-4 shadow-lg max-w-xs">
+                <div class="text-sm font-bold mb-2 text-gray-800" id="directionLabel">方向：请选择</div>
+                <div class="text-xs text-gray-500 mb-3 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                    B 竖直分量：向上 ↑
+                </div>
+                
+                <!-- Potential visualization bars -->
+                <div class="mb-3">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            φ₁（左翼）
+                        </span>
+                        <span id="phi1Value" class="font-medium">—</span>
+                    </div>
+                    <div class="potential-bar bg-gray-200" id="phi1Bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            φ₂（右翼）
+                        </span>
+                        <span id="phi2Value" class="font-medium">—</span>
+                    </div>
+                    <div class="potential-bar bg-gray-200" id="phi2Bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="mt-3 pt-3 border-t border-gray-100 result-badge" id="resultBadge">
+                    <div class="text-xs font-bold" id="resultText"></div>
+                </div>
+            </div>
+            
+            <!-- Right bottom legend -->
+            <div class="absolute bottom-4 right-4 info-panel rounded-lg p-3 shadow-md text-xs space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded flex items-center justify-center bg-purple-100">
+                        <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    </span>
+                    <span>地磁场 B（向上）</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded flex items-center justify-center bg-green-100">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    </span>
+                    <span>飞行方向 V</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded flex items-center justify-center bg-yellow-100">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    </span>
+                    <span>高电势方向</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button class="control-btn px-5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-dir="w2e">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🛫</span> A. 西 → 东
+                    </span>
+                </button>
+                <button class="control-btn px-5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-dir="e2w">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🛫</span> B. 东 → 西
+                    </span>
+                </button>
+                <button class="control-btn px-5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-dir="n2s">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🛫</span> C. 北 → 南
+                    </span>
+                </button>
+                <button class="control-btn px-5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-dir="n2s2">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🛫</span> D. 北 → 南
+                    </span>
+                </button>
+                <button class="control-btn px-5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-dir="rightHand">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🖐️</span> 右手定则演示
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanation Cards -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- 原理分析 -->
+        <div class="bg-white rounded-xl shadow p-6 card-hover">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">1</span>
+                核心原理
+            </h2>
+            <div class="space-y-3 text-sm text-gray-700 leading-relaxed">
+                <p><strong class="text-gray-900">切割磁感线产生电动势：</strong>飞机机翼可看作导体，在磁场中运动切割磁感线时，会产生感应电动势。</p>
+                <p><strong class="text-gray-900">南半球的磁场：</strong>地磁场竖直分量 <span class="highlight-text">向上</span>（B↑）。</p>
+                <p><strong class="text-gray-900">机翼方向：</strong>飞行员前方为机头，<strong class="text-red-600">左翼 = φ₁</strong>，<strong class="text-blue-600">右翼 = φ₂</strong>。</p>
+            </div>
+        </div>
+
+        <!-- 右手定则 -->
+        <div class="bg-white rounded-xl shadow p-6 card-hover">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-sm font-bold">2</span>
+                右手定则判定
+            </h2>
+            <div class="space-y-3 text-sm text-gray-700 leading-relaxed">
+                <p><strong class="text-gray-900">伸开右手，让磁感线穿入手心：</strong></p>
+                <p>• <span class="text-green-600 font-medium">拇指</span> → 导体运动方向（飞机飞行方向）</p>
+                <p>• <span class="text-yellow-600 font-medium">四指</span> → 感应电流方向（即电势升高方向）</p>
+                <p class="text-green-700 font-medium bg-green-50 p-2 rounded-lg mt-2">💡 四指指向哪端，哪端就是高电势端！</p>
+            </div>
+        </div>
+
+        <!-- 逐项分析 -->
+        <div class="bg-white rounded-xl shadow p-6 md:col-span-2">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold">3</span>
+                逐项分析（关键结果）
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div class="p-4 rounded-xl border border-red-200 bg-red-50/50 card-hover">
+                    <div class="font-bold text-red-700 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs">A</span>
+                        西 → 东
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">B↑，飞机向西→东飞，切割磁感线，用右手定则：四指从右向左，所以 <strong class="text-blue-600">φ₂ > φ₁</strong>（右翼高）。选项说φ₁高，<strong class="text-red-600">错误</strong>。</p>
+                </div>
+                <div class="p-4 rounded-xl border border-green-200 bg-green-50/50 card-hover">
+                    <div class="font-bold text-green-700 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">B</span>
+                        东 → 西
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">B↑，飞机向东→西飞，用右手定则：四指从右向左，<strong class="text-blue-600">φ₂ > φ₁</strong>。选项说φ₂比φ₁高，<strong class="text-green-600">正确</strong>！</p>
+                </div>
+                <div class="p-4 rounded-xl border border-red-200 bg-red-50/50 card-hover">
+                    <div class="font-bold text-red-700 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs">C</span>
+                        北 → 南
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">B↑，飞机向北→南飞，用右手定则：四指从右向左，<strong class="text-blue-600">φ₂ > φ₁</strong>。选项说φ₁高，<strong class="text-red-600">错误</strong>。</p>
+                </div>
+                <div class="p-4 rounded-xl border border-green-200 bg-green-50/50 card-hover">
+                    <div class="font-bold text-green-700 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">D</span>
+                        北 → 南
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">B↑，飞机向北→南飞，用右手定则：四指从右向左，<strong class="text-blue-600">φ₂ > φ₁</strong>。选项说φ₂比φ₁高，<strong class="text-green-600">正确</strong>！</p>
+                </div>
+            </div>
+            <div class="mt-5 p-4 rounded-xl bg-blue-50 border border-blue-200 text-sm">
+                <strong class="text-blue-700">🎯 关键结论：</strong>在南半球（B 竖直向上），飞机无论往哪个方向飞，<strong class="text-blue-600">右翼电势总是高于左翼</strong>（φ₂ > φ₁）。这是因为 B 始终向上，机翼的"切割"方向与飞行方向垂直，但竖直分量 B 的指向决定了四指始终从右指向左。
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center text-xs text-gray-400 mt-8 pb-4">
+        拖拽 3D 场景可旋转视角，滚轮缩放 · 使用 Three.js 构建
+    </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ============================================================
+// 3D Scene Setup
+// ============================================================
+const container = document.getElementById('canvasContainer');
+const canvas = document.getElementById('canvas');
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f4f8);
+scene.fog = new THREE.Fog(0xf0f4f8, 30, 80);
+
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(12, 18, 20);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.target.set(0, 2, 0);
+controls.maxPolarAngle = Math.PI / 2.2;
+controls.minDistance = 10;
+controls.maxDistance = 50;
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight.position.set(15, 25, 15);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 1024;
+dirLight.shadow.mapSize.height = 1024;
+scene.add(dirLight);
+
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+scene.add(hemiLight);
+
+// Ground plane with subtle texture-like appearance
+const groundGeo = new THREE.PlaneGeometry(100, 100);
+const groundMat = new THREE.MeshStandardMaterial({ 
+    color: 0xe8eef5, 
+    side: THREE.DoubleSide,
+    roughness: 0.8,
+    metalness: 0.1
+});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.1;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Grid with custom colors
+const gridHelper = new THREE.GridHelper(100, 50, 0xc0ccd8, 0xd8e0e8);
+gridHelper.position.y = 0.01;
+scene.add(gridHelper);
+
+// ============================================================
+// Compass rose on ground
+// ============================================================
+function createCompass() {
+    const group = new THREE.Group();
+    
+    // North - green
+    const nArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, 0), 10, 0x22c55e, 1.5, 0.8
+    );
+    group.add(nArrow);
+    
+    // South - gray
+    const sArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 0), 10, 0x94a3b8, 1.5, 0.8
+    );
+    group.add(sArrow);
+    
+    // East - amber
+    const eArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 10, 0xf59e0b, 1.5, 0.8
+    );
+    group.add(eArrow);
+    
+    // West - amber
+    const wArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(-1, 0, 0), new THREE.Vector3(0, 0, 0), 10, 0xf59e0b, 1.5, 0.8
+    );
+    group.add(wArrow);
+    
+    group.position.y = 0.05;
+    scene.add(group);
+    return group;
+}
+createCompass();
+
+// ============================================================
+// B-field visualization with glow effect
+// ============================================================
+const bFieldGroup = new THREE.Group();
+function createBField() {
+    // Main central B arrow (larger, more prominent)
+    const mainArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0.5, 0), 8, 0x8b5cf6, 1.5, 0.8
+    );
+    bFieldGroup.add(mainArrow);
+    
+    // Surrounding smaller arrows
+    const positions = [
+        [-12, 0, -12], [-12, 0, 0], [-12, 0, 12],
+        [0, 0, -12], [0, 0, 12],
+        [12, 0, -12], [12, 0, 0], [12, 0, 12]
+    ];
+    positions.forEach(pos => {
+        const arrow = new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0), new THREE.Vector3(pos[0], 0.5, pos[2]), 6, 0xa78bfa, 1, 0.5
+        );
+        bFieldGroup.add(arrow);
+    });
+    scene.add(bFieldGroup);
+}
+createBField();
+
+// ============================================================
+// Text label helper
+// ============================================================
+function makeTextSprite(text, color = '#333', fontSize = 32, bgColor = null) {
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    c.width = 512;
+    c.height = 128;
+    
+    if (bgColor) {
+        ctx.fillStyle = bgColor;
+        ctx.roundRect(0, 0, 512, 128, 16);
+        ctx.fill();
+    }
+    
+    ctx.font = `bold ${fontSize}px 'Noto Sans SC', sans-serif`;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 256, 64);
+    
+    const texture = new THREE.CanvasTexture(c);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(6, 1.5, 1);
+    return sprite;
+}
+
+// Direction labels
+const labelN = makeTextSprite('北 N', '#22c55e', 36, 'rgba(34,197,94,0.1)');
+labelN.position.set(0, 1.5, -12);
+scene.add(labelN);
+
+const labelS = makeTextSprite('南 S', '#64748b', 36, 'rgba(100,116,139,0.1)');
+labelS.position.set(0, 1.5, 12);
+scene.add(labelS);
+
+const labelE = makeTextSprite('东 E', '#f59e0b', 36, 'rgba(245,158,11,0.1)');
+labelE.position.set(12, 1.5, 0);
+scene.add(labelE);
+
+const labelW = makeTextSprite('西 W', '#f59e0b', 36, 'rgba(245,158,11,0.1)');
+labelW.position.set(-12, 1.5, 0);
+scene.add(labelW);
+
+const labelB = makeTextSprite('B↑ 竖直向上', '#8b5cf6', 32, 'rgba(139,92,246,0.15)');
+labelB.position.set(0, 10, 0);
+scene.add(labelB);
+
+// ============================================================
+// Enhanced Airplane Model
+// ============================================================
+const planeGroup = new THREE.Group();
+
+// Fuselage - more detailed with tapering
+const fuselageMat = new THREE.MeshStandardMaterial({ 
+    color: 0x374151, 
+    roughness: 0.3, 
+    metalness: 0.6 
+});
+
+// Main body (front half)
+const bodyFrontGeo = new THREE.CylinderGeometry(0.4, 0.6, 3, 20);
+const bodyFront = new THREE.Mesh(bodyFrontGeo, fuselageMat);
+bodyFront.rotation.x = Math.PI / 2;
+bodyFront.position.z = -1.5;
+bodyFront.castShadow = true;
+planeGroup.add(bodyFront);
+
+// Body back
+const bodyBackGeo = new THREE.CylinderGeometry(0.6, 0.3, 3, 20);
+const bodyBack = new THREE.Mesh(bodyBackGeo, fuselageMat);
+bodyBack.rotation.x = Math.PI / 2;
+bodyBack.position.z = 1.5;
+bodyBack.castShadow = true;
+planeGroup.add(bodyBack);
+
+// Cockpit
+const cockpitGeo = new THREE.SphereGeometry(0.5, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+const cockpitMat = new THREE.MeshStandardMaterial({ 
+    color: 0x60a5fa, 
+    roughness: 0.1, 
+    metalness: 0.8,
+    transparent: true,
+    opacity: 0.8
+});
+const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
+cockpit.position.z = -2.5;
+cockpit.position.y = 0.3;
+planeGroup.add(cockpit);
+
+// Wings - swept shape
+const wingShape = new THREE.Shape();
+wingShape.moveTo(0, 0);
+wingShape.lineTo(6, 0.3);
+wingShape.lineTo(6, -0.8);
+wingShape.lineTo(0, -0.3);
+wingShape.lineTo(0, 0);
+
+const wingGeo = new THREE.ExtrudeGeometry(wingShape, { depth: 0.15, bevelEnabled: false });
+const wingMat = new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.4, metalness: 0.5 });
+
+const rightWing = new THREE.Mesh(wingGeo, wingMat);
+rightWing.rotation.x = Math.PI / 2;
+rightWing.position.set(0, 0, -0.5);
+rightWing.castShadow = true;
+planeGroup.add(rightWing);
+
+const leftWing = rightWing.clone();
+leftWing.scale.x = -1;
+planeGroup.add(leftWing);
+
+// Wing tip lights (red left, green right - aviation standard, but we use red/blue for potential)
+const leftTipGeo = new THREE.SphereGeometry(0.2, 16, 16);
+const leftTipMat = new THREE.MeshStandardMaterial({ 
+    color: 0xef4444, 
+    emissive: 0xef4444, 
+    emissiveIntensity: 0.5 
+});
+const leftTip = new THREE.Mesh(leftTipGeo, leftTipMat);
+leftTip.position.set(-6, 0.1, 0);
+planeGroup.add(leftTip);
+
+const rightTipGeo = new THREE.SphereGeometry(0.2, 16, 16);
+const rightTipMat = new THREE.MeshStandardMaterial({ 
+    color: 0x3b82f6, 
+    emissive: 0x3b82f6, 
+    emissiveIntensity: 0.5 
+});
+const rightTip = new THREE.Mesh(rightTipGeo, rightTipMat);
+rightTip.position.set(6, 0.1, 0);
+planeGroup.add(rightTip);
+
+// Tail fin
+const tailFinGeo = new THREE.BoxGeometry(0.1, 1.5, 1.2);
+const tailFin = new THREE.Mesh(tailFinGeo, wingMat);
+tailFin.position.set(0, 1, 2.5);
+tailFin.castShadow = true;
+planeGroup.add(tailFin);
+
+// Horizontal stabilizer
+const stabGeo = new THREE.BoxGeometry(2.5, 0.1, 0.8);
+const stab = new THREE.Mesh(stabGeo, wingMat);
+stab.position.set(0, 0.3, 3);
+planeGroup.add(stab);
+
+// Engines
+const engineGeo = new THREE.CylinderGeometry(0.35, 0.35, 1, 16);
+const engineMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.5, metalness: 0.7 });
+
+const leftEngine = new THREE.Mesh(engineGeo, engineMat);
+leftEngine.rotation.x = Math.PI / 2;
+leftEngine.position.set(-2.5, -0.3, -1);
+planeGroup.add(leftEngine);
+
+const rightEngine = leftEngine.clone();
+rightEngine.position.set(2.5, -0.3, -1);
+planeGroup.add(rightEngine);
+
+// Propeller nose
+const noseGeo = new THREE.ConeGeometry(0.2, 0.8, 16);
+const noseMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.7 });
+const nose = new THREE.Mesh(noseGeo, noseMat);
+nose.rotation.x = -Math.PI / 2;
+nose.position.z = -3.2;
+planeGroup.add(nose);
+
+// Flight direction arrow (glowing green)
+const flightArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 1.5, -1), 4, 0x10b981, 0.8, 0.4
+);
+planeGroup.add(flightArrow);
+
+// Wing labels
+const leftLabel = makeTextSprite('φ₁ 左翼', '#ef4444', 24);
+leftLabel.position.set(-6.5, 1, 0);
+planeGroup.add(leftLabel);
+
+const rightLabel = makeTextSprite('φ₂ 右翼', '#3b82f6', 24);
+rightLabel.position.set(6.5, 1, 0);
+planeGroup.add(rightLabel);
+
+planeGroup.position.set(0, 4, 0);
+scene.add(planeGroup);
+
+// ============================================================
+// Particle system for electric flow visualization
+// ============================================================
+let particleSystem = null;
+let particlePositions = null;
+let particleVelocities = null;
+
+function createParticleFlow(direction) {
+    // Remove existing particles
+    if (particleSystem) {
+        scene.remove(particleSystem);
+        particleSystem.geometry.dispose();
+        particleSystem.material.dispose();
+    }
+    
+    const particleCount = 60;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = [];
+    
+    for (let i = 0; i < particleCount; i++) {
+        // Particles flow along the wing
+        const t = Math.random();
+        const side = Math.random() > 0.5 ? 1 : -1;
+        const x = side * (2 + Math.random() * 4);
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = 4 + Math.random() * 0.5;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+        
+        velocities.push({
+            x: (direction === 'right' ? 0.02 : -0.02) * (Math.random() * 0.5 + 0.5),
+            y: 0,
+            z: 0,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    
+    const material = new THREE.PointsMaterial({
+        color: direction === 'right' ? 0x3b82f6 : 0xef4444,
+        size: 0.15,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    
+    particleSystem = new THREE.Points(geometry, material);
+    particlePositions = positions;
+    particleVelocities = velocities;
+    scene.add(particleSystem);
+}
+
+function updateParticles() {
+    if (!particleSystem || !particlePositions) return;
+    
+    const time = Date.now() * 0.001;
+    for (let i = 0; i < particleVelocities.length; i++) {
+        const v = particleVelocities[i];
+        particlePositions[i * 3] += v.x;
+        particlePositions[i * 3 + 1] += Math.sin(time * 2 + v.phase) * 0.002;
+        
+        // Reset if out of bounds
+        if (particlePositions[i * 3] > 6 || particlePositions[i * 3] < -6) {
+            particlePositions[i * 3] = particlePositions[i * 3] > 0 ? -5 : 5;
+        }
+    }
+    
+    particleSystem.geometry.attributes.position.needsUpdate = true;
+}
+
+function clearParticles() {
+    if (particleSystem) {
+        scene.remove(particleSystem);
+        particleSystem.geometry.dispose();
+        particleSystem.material.dispose();
+        particleSystem = null;
+        particlePositions = null;
+        particleVelocities = null;
+    }
+}
+
+// ============================================================
+// Right Hand Rule Visualization (enhanced)
+// ============================================================
+const handGroup = new THREE.Group();
+
+// Palm with better material
+const palmGeo = new THREE.BoxGeometry(1.5, 0.25, 2);
+const palmMat = new THREE.MeshStandardMaterial({ 
+    color: 0xfca5a5, 
+    roughness: 0.5,
+    metalness: 0.1
+});
+const palm = new THREE.Mesh(palmGeo, palmMat);
+handGroup.add(palm);
+
+// Fingers (4) with better geometry
+for (let i = 0; i < 4; i++) {
+    const fingerGeo = new THREE.CylinderGeometry(0.15, 0.12, 1.5, 10);
+    const finger = new THREE.Mesh(fingerGeo, palmMat);
+    finger.position.set(-0.6 + i * 0.4, 0, -1.2);
+    finger.rotation.x = Math.PI / 2;
+    handGroup.add(finger);
+    
+    // Finger tip glow
+    const tipGeo = new THREE.SphereGeometry(0.12, 8, 8);
+    const tipMat = new THREE.MeshStandardMaterial({ 
+        color: 0xf59e0b, 
+        emissive: 0xf59e0b, 
+        emissiveIntensity: 0.3 
+    });
+    const tip = new THREE.Mesh(tipGeo, tipMat);
+    tip.position.set(-0.6 + i * 0.4, 0, -2.1);
+    handGroup.add(tip);
+}
+
+// Thumb
+const thumbGeo = new THREE.CylinderGeometry(0.18, 0.15, 1.2, 10);
+const thumb = new THREE.Mesh(thumbGeo, palmMat);
+thumb.position.set(1, 0, 0.3);
+thumb.rotation.z = Math.PI / 2.5;
+handGroup.add(thumb);
+
+// Thumb direction arrow
+const thumbArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(1, 0, 0), new THREE.Vector3(1.5, 0, 0), 2, 0x10b981, 0.6, 0.3
+);
+handGroup.add(thumbArrow);
+const thumbText = makeTextSprite('V (速度方向)', '#10b981', 20, 'rgba(16,185,129,0.1)');
+thumbText.position.set(3.5, 0.8, 0);
+handGroup.add(thumbText);
+
+// Finger direction arrows
+const fingerArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -2.5), 2, 0xf59e0b, 0.6, 0.3
+);
+handGroup.add(fingerArrow);
+const fingerText = makeTextSprite('I / 高电势方向', '#f59e0b', 20, 'rgba(245,158,11,0.1)');
+fingerText.position.set(0, 0.8, -4.5);
+handGroup.add(fingerText);
+
+// B field through palm
+const bArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0.3, 0), 2, 0x8b5cf6, 0.6, 0.3
+);
+handGroup.add(bArrow);
+const bText = makeTextSprite('B 穿入手心', '#8b5cf6', 20, 'rgba(139,92,246,0.1)');
+bText.position.set(0, 2.8, 0);
+handGroup.add(bText);
+
+// Rotate hand to show palm to camera
+handGroup.rotation.y = -Math.PI / 4;
+handGroup.rotation.x = -Math.PI / 6;
+handGroup.position.set(0, 10, 0);
+handGroup.visible = false;
+scene.add(handGroup);
+
+// ============================================================
+// Electric potential arrows and glow effects
+// ============================================================
+const potentialGroup = new THREE.Group();
+scene.add(potentialGroup);
+
+const glowGroup = new THREE.Group();
+scene.add(glowGroup);
+
+function clearPotential() {
+    while (potentialGroup.children.length > 0) {
+        potentialGroup.remove(potentialGroup.children[0]);
+    }
+    while (glowGroup.children.length > 0) {
+        glowGroup.remove(glowGroup.children[0]);
+    }
+}
+
+function showPotential(leftHigh, rightHigh) {
+    clearPotential();
+    
+    if (leftHigh) {
+        // Arrow pointing up from left wing
+        const arrow = new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0), new THREE.Vector3(-6, 0.5, 0), 2.5, 0xef4444, 0.6, 0.4
+        );
+        potentialGroup.add(arrow);
+        
+        // Plus label
+        const plus = makeTextSprite('+ 高电势', '#ef4444', 22, 'rgba(239,68,68,0.15)');
+        plus.position.set(-6, 3.5, 0);
+        potentialGroup.add(plus);
+        
+        // Glow sphere
+        const glowGeo = new THREE.SphereGeometry(0.8, 16, 16);
+        const glowMat = new THREE.MeshBasicMaterial({ 
+            color: 0xef4444, 
+            transparent: true, 
+            opacity: 0.2 
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        glow.position.set(-6, 0.5, 0);
+        glowGroup.add(glow);
+    } else {
+        // Minus label
+        const minus = makeTextSprite('- 低电势', '#9ca3af', 18, 'rgba(156,163,175,0.1)');
+        minus.position.set(-6, 2, 0);
+        potentialGroup.add(minus);
+    }
+    
+    if (rightHigh) {
+        // Arrow pointing up from right wing
+        const arrow = new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0), new THREE.Vector3(6, 0.5, 0), 2.5, 0x3b82f6, 0.6, 0.4
+        );
+        potentialGroup.add(arrow);
+        
+        // Plus label
+        const plus = makeTextSprite('+ 高电势', '#3b82f6', 22, 'rgba(59,130,246,0.15)');
+        plus.position.set(6, 3.5, 0);
+        potentialGroup.add(plus);
+        
+        // Glow sphere
+        const glowGeo = new THREE.SphereGeometry(0.8, 16, 16);
+        const glowMat = new THREE.MeshBasicMaterial({ 
+            color: 0x3b82f6, 
+            transparent: true, 
+            opacity: 0.2 
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        glow.position.set(6, 0.5, 0);
+        glowGroup.add(glow);
+        
+        // Particle flow from left to right
+        createParticleFlow('right');
+    } else {
+        // Minus label
+        const minus = makeTextSprite('- 低电势', '#9ca3af', 18, 'rgba(156,163,175,0.1)');
+        minus.position.set(6, 2, 0);
+        potentialGroup.add(minus);
+        
+        if (leftHigh) {
+            createParticleFlow('left');
+        }
+    }
+}
+
+// ============================================================
+// Animation Loop
+// ============================================================
+let time = 0;
+function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Gentle bobbing of plane
+    planeGroup.position.y = 4 + Math.sin(time * 1.5) * 0.3;
+    
+    // Rotate wing tip lights
+    leftTip.material.emissiveIntensity = 0.5 + Math.sin(time * 3) * 0.3;
+    rightTip.material.emissiveIntensity = 0.5 + Math.sin(time * 3 + Math.PI) * 0.3;
+    
+    // Update particles
+    updateParticles();
+    
+    // Animate glow
+    glowGroup.children.forEach((glow, i) => {
+        glow.scale.setScalar(1 + Math.sin(time * 2 + i) * 0.2);
+    });
+    
+    controls.update();
+    renderer.render(scene, camera);
+}
+animate();
+
+// ============================================================
+// Interaction Logic
+// ============================================================
+const directionLabel = document.getElementById('directionLabel');
+const phi1Value = document.getElementById('phi1Value');
+const phi2Value = document.getElementById('phi2Value');
+const phi1Bar = document.getElementById('phi1Bar');
+const phi2Bar = document.getElementById('phi2Bar');
+const resultText = document.getElementById('resultText');
+const resultBadge = document.getElementById('resultBadge');
+const buttons = document.querySelectorAll('.control-btn');
+
+function setDirection(dir) {
+    buttons.forEach(b => b.classList.remove('active'));
+    
+    handGroup.visible = false;
+    planeGroup.visible = true;
+    bFieldGroup.visible = true;
+    clearParticles();
+    
+    let rotation = 0;
+    let desc = '';
+    let leftHigh = false;
+    let rightHigh = false;
+    let result = '';
+    let correct = false;
+    let phi1Text = '低电势';
+    let phi2Text = '低电势';
+    let phi1Width = 20;
+    let phi2Width = 20;
+    
+    switch(dir) {
+        case 'w2e': // A. West to East
+            rotation = Math.PI / 2;
+            desc = 'A. 飞机从西往东飞';
+            leftHigh = false;
+            rightHigh = true;
+            phi1Text = '低电势';
+            phi2Text = '高电势 +';
+            phi1Width = 25;
+            phi2Width = 85;
+            result = 'φ₂ > φ₁（右翼高电势），选项A说φ₁高 → ❌ 错误';
+            correct = false;
+            break;
+        case 'e2w': // B. East to West
+            rotation = -Math.PI / 2;
+            desc = 'B. 飞机从东往西飞';
+            leftHigh = false;
+            rightHigh = true;
+            phi1Text = '低电势';
+            phi2Text = '高电势 +';
+            phi1Width = 25;
+            phi2Width = 85;
+            result = 'φ₂ > φ₁（右翼高电势），选项B说φ₂高 → ✅ 正确';
+            correct = true;
+            break;
+        case 'n2s': // C. North to South
+            rotation = Math.PI;
+            desc = 'C. 飞机从北往南飞';
+            leftHigh = false;
+            rightHigh = true;
+            phi1Text = '低电势';
+            phi2Text = '高电势 +';
+            phi1Width = 25;
+            phi2Width = 85;
+            result = 'φ₂ > φ₁（右翼高电势），选项C说φ₁高 → ❌ 错误';
+            correct = false;
+            break;
+        case 'n2s2': // D. North to South
+            rotation = Math.PI;
+            desc = 'D. 飞机从北往南飞';
+            leftHigh = false;
+            rightHigh = true;
+            phi1Text = '低电势';
+            phi2Text = '高电势 +';
+            phi1Width = 25;
+            phi2Width = 85;
+            result = 'φ₂ > φ₁（右翼高电势），选项D说φ₂高 → ✅ 正确';
+            correct = true;
+            break;
+        case 'rightHand':
+            planeGroup.visible = false;
+            bFieldGroup.visible = false;
+            handGroup.visible = true;
+            desc = '🖐️ 右手定则演示';
+            directionLabel.textContent = desc;
+            phi1Value.textContent = '四指指向 →';
+            phi2Value.textContent = '四指从右 ←';
+            phi1Bar.style.width = '50%';
+            phi1Bar.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+            phi2Bar.style.width = '50%';
+            phi2Bar.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
+            resultText.textContent = '拇指=V(运动方向)，四指=I(高电势方向)，B穿入手心';
+            resultText.className = 'text-xs font-bold text-purple-600';
+            resultBadge.className = 'mt-3 pt-3 border-t border-gray-100 result-badge';
+            return;
+    }
+    
+    // Smooth rotation
+    planeGroup.rotation.y = rotation;
+    showPotential(leftHigh, rightHigh);
+    
+    directionLabel.textContent = desc;
+    phi1Value.textContent = phi1Text;
+    phi2Value.textContent = phi2Text;
+    phi1Bar.style.width = phi1Width + '%';
+    phi1Bar.style.background = leftHigh 
+        ? 'linear-gradient(90deg, #ef4444, #f87171)' 
+        : 'linear-gradient(90deg, #9ca3af, #d1d5db)';
+    phi2Bar.style.width = phi2Width + '%';
+    phi2Bar.style.background = rightHigh 
+        ? 'linear-gradient(90deg, #3b82f6, #60a5fa)' 
+        : 'linear-gradient(90deg, #9ca3af, #d1d5db)';
+    
+    resultText.textContent = result;
+    resultText.className = correct ? 'text-xs font-bold text-green-600' : 'text-xs font-bold text-red-600';
+    resultBadge.className = 'mt-3 pt-3 border-t border-gray-100 result-badge';
+    
+    document.querySelector(`[data-dir="${dir}"]`).classList.add('active');
+}
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        setDirection(btn.dataset.dir);
+    });
+});
+
+// Resize handler
+window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+// Default: show right hand rule
+setDirection('rightHand');
+</script>
+</body>
+</html>

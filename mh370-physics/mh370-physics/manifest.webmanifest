@@ -1,0 +1,19 @@
+{
+  "name": "机翼电势差三维课件",
+  "short_name": "机翼电势差",
+  "description": "用三维模型演示地磁场、速度方向和洛伦兹力，解释机翼电势差为什么选择 B、D。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#f5f8f7",
+  "theme_color": "#f0faf7",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

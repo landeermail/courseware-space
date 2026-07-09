@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理3D交互课件库</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#fff;padding:20px}
+.container{max-width:900px;margin:0 auto}
+header{text-align:center;padding:40px 0 30px}
+header h1{font-size:36px;font-weight:700;margin-bottom:8px;background:linear-gradient(90deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:#a0a0b0;font-size:15px}
+.category{margin-bottom:32px}
+.category-title{font-size:18px;font-weight:600;color:#667eea;margin-bottom:16px;padding-left:12px;border-left:3px solid #667eea}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.lesson{display:flex;flex-direction:column;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;transition:all .3s;text-decoration:none;color:#fff}
+.lesson:hover{background:rgba(255,255,255,0.1);border-color:rgba(102,126,234,0.4);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.3)}
+.lesson-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.lesson-emoji{font-size:32px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border-radius:12px}
+.lesson-title{font-size:16px;font-weight:600;color:#fff}
+.lesson-desc{font-size:13px;color:#a0a0b0;line-height:1.6;margin-bottom:16px;flex:1}
+.lesson-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:#667eea}
+.lesson-meta span{background:rgba(102,126,234,0.15);padding:4px 10px;border-radius:20px}
+footer{text-align:center;padding:40px 0 20px;color:#606070;font-size:13px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>📐 物理3D交互课件库</h1>
+<p>电磁感应 · 力学 · 热学 — Three.js 构建 · 拖拽旋转 · 滚轮缩放</p>
+</header>
+
+<main id="courseware-list"></main>
+
+<footer>
+<p>物理3D交互课件库 · 持续更新中</p>
+</footer>
+</div>
+
+<script>
+// 课件数据 — 现在手写，以后可以改为 fetch('courseware.json')
+const coursewareData = {
+  "categories": [
+    {
+      "id": "electromagnetism",
+      "name": "⚡ 电磁感应",
+      "lessons": [
+        {
+          "emoji": "✈️",
+          "title": "第6题：飞机机翼切割地磁场",
+          "desc": "南半球地磁极上空，判断机翼两端电势高低。3D可视化右手定则应用。",
+          "path": "electromagnetism/q6-plane/",
+          "tags": ["右手定则", "感应电动势"],
+          "author": "landeermail"
+        },
+        {
+          "emoji": "🚁",
+          "title": "第13题：旋转螺旋桨切割磁感线",
+          "desc": "直升机叶片切割磁场，计算感应电动势。积分推导 + 3D旋转演示。",
+          "path": "electromagnetism/q13-helicopter-physics/",
+          "tags": ["洛伦兹力", "积分推导"],
+          "author": "landeermail"
+        }
+      ]
+    },
+    {
+      "id": "helicopter-dynamics",
+      "name": "🚁 直升机动力学",
+      "lessons": [
+        {
+          "emoji": "🚁",
+          "title": "第13题：直升机旋翼感应电动势",
+          "desc": "直升机旋翼在南半球地磁场中旋转，分析感应电动势方向与大小。",
+          "path": "helicopter-dynamics/q13-helicopter/",
+          "tags": ["旋翼", "电磁感应"],
+          "author": "landeermail"
+        }
+      ]
+    },
+    {
+      "id": "mh370-physics",
+      "name": "✈️ MH370 物理分析",
+      "lessons": [
+        {
+          "emoji": "🔍",
+          "title": "MH370 物理课件",
+          "desc": "MH370 航班相关的物理问题分析与可视化讲解。",
+          "path": "mh370-physics/mh370-physics/",
+          "tags": ["物理分析"],
+          "author": "landeermail"
+        }
+      ]
+    }
+  ]
+};
+
+function renderCourseware() {
+  const container = document.getElementById('courseware-list');
+  let html = '';
+  
+  coursewareData.categories.forEach(cat => {
+    html += `<div class="category">`;
+    html += `<div class="category-title">${cat.name}</div>`;
+    html += `<div class="lessons">`;
+    
+    cat.lessons.forEach(lesson => {
+      html += `<a href="${lesson.path}" class="lesson">`;
+      html += `<div class="lesson-header">`;
+      html += `<span class="lesson-emoji">${lesson.emoji}</span>`;
+      html += `<span class="lesson-title">${lesson.title}</span>`;
+      html += `</div>`;
+      html += `<div class="lesson-desc">${lesson.desc}</div>`;
+      html += `<div class="lesson-meta">`;
+      lesson.tags.forEach(tag => {
+        html += `<span>${tag}</span>`;
+      });
+      html += `</div>`;
+      html += `</a>`;
+    });
+    
+    html += `</div></div>`;
+  });
+  
+  container.innerHTML = html;
+}
+
+renderCourseware();
+</script>
+</body>
+</html>

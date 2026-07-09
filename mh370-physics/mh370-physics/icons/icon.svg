@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#e1f5ef"/>
+  <circle cx="256" cy="256" r="188" fill="#ffffff" opacity="0.9"/>
+  <path d="M108 270h296" stroke="#00856f" stroke-width="26" stroke-linecap="round"/>
+  <path d="M256 102v308" stroke="#2267a8" stroke-width="22" stroke-linecap="round"/>
+  <path d="M178 326l78-46 78 46-78-178z" fill="#2267a8"/>
+  <path d="M152 390c78-90 162-90 240 0" fill="none" stroke="#d34f2f" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="152" cy="390" r="24" fill="#d34f2f"/>
+  <circle cx="392" cy="390" r="24" fill="#d34f2f"/>
+  <text x="256" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#00856f">BD</text>
+</svg>

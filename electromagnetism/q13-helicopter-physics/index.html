@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第13题：旋转螺旋桨切割磁感线 — 3D 交互讲解</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+body{font-family:'Noto Sans SC',sans-serif}
+#canvas-box{width:100%;height:520px;position:relative;border-radius:12px;overflow:hidden}
+#glcanvas{width:100%;height:100%;display:block}
+.btn{transition:all .2s;cursor:pointer}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.btn.active{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-color:transparent}
+.overlay{position:absolute;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-radius:12px;padding:12px 14px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.05);font-size:13px}
+.bar{height:7px;border-radius:4px;transition:all .5s ease;overflow:hidden;position:relative}
+.bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shimmer 2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.fade{animation:fadeIn .4s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card{transition:all .25s ease}.card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.08)}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div class="max-w-6xl mx-auto px-4 py-6">
+<div class="mb-5">
+<h1 class="text-2xl font-bold text-gray-900 mb-1">🚁 第13题：旋转螺旋桨切割磁感线</h1>
+<p class="text-gray-600 text-sm">3D交互讲解 · 南半球地磁极上空 · 答案：<strong class="text-blue-600">a点电势 &lt; b点电势</strong>，<strong class="text-blue-600">E = πfBL²</strong></p>
+</div>
+
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-5">
+<div id="canvas-box">
+<canvas id="glcanvas"></canvas>
+<div class="overlay" style="top:12px;left:12px;max-width:260px">
+<div class="font-bold mb-2 text-gray-800" id="modeTitle">模式：静态观察</div>
+<div class="text-gray-500 mb-3 flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>B竖直分量：向上 ↑</div>
+<div class="mb-2">
+<div class="flex justify-between text-xs mb-1"><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>a点（近轴）</span><span id="valA" class="font-medium">—</span></div>
+<div class="bar bg-gray-200" id="barA" style="width:0%"></div>
+</div>
+<div class="mb-2">
+<div class="flex justify-between text-xs mb-1"><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span>b点（远轴/叶尖）</span><span id="valB" class="font-medium">—</span></div>
+<div class="bar bg-gray-200" id="barB" style="width:0%"></div>
+</div>
+<div class="mt-2 pt-2 border-t border-gray-100 text-xs font-bold fade" id="resultBox"></div>
+</div>
+<div class="overlay" style="bottom:12px;right:12px">
+<div class="space-y-1.5 text-xs">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-purple-100 flex justify-center items-center"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span></span><span>地磁场B（向上）</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-green-100 flex justify-center items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span></span><span>叶片速度v（切向）</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-yellow-100 flex justify-center items-center"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span></span><span>正电荷受力</span></div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-gray-50 border-t border-gray-200">
+<div class="flex flex-wrap gap-2 justify-center">
+<button class="btn px-4 py-2 rounded-xl border border-gray-300 bg-white text-sm font-medium active" data-mode="static">🔍 静态观察</button>
+<button class="btn px-4 py-2 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-mode="rotate">🔄 螺旋桨旋转</button>
+<button class="btn px-4 py-2 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-mode="charge">⚡ 电荷受力</button>
+<button class="btn px-4 py-2 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-mode="hand">🖐️ 右手定则</button>
+<button class="btn px-4 py-2 rounded-xl border border-gray-300 bg-white text-sm font-medium" data-mode="integral">📐 积分推导</button>
+</div>
+</div>
+</div>
+
+<div class="grid md:grid-cols-2 gap-5">
+<div class="bg-white rounded-xl shadow p-5 card">
+<h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</span>题目条件梳理</h2>
+<div class="space-y-2 text-sm text-gray-700 leading-relaxed">
+<p><strong>位置：</strong>南半球地磁极上空</p>
+<p><strong>磁场：</strong>B竖直<span class="bg-blue-100 text-blue-700 px-1 rounded">向上</span></p>
+<p><strong>螺旋桨：</strong>叶片长L，频率f</p>
+<p><strong>关键：</strong>顺着B方向看 = <strong>从下往上看</strong>，顺时针转动</p>
+<p><strong>端点：</strong>a = 近轴端（中心），b = 远轴端（叶尖）</p>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow p-5 card">
+<h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">2</span>旋转方向判定（核心！）</h2>
+<div class="space-y-2 text-sm text-gray-700 leading-relaxed">
+<p>题目说"顺着B方向看螺旋桨，顺时针转动"。</p>
+<p>• B向上 → <strong>顺着B看 = 从下往上看</strong></p>
+<p>• 从下往上看顺时针</p>
+<p>• 等价于：<strong>从上往下看 = 逆时针</strong>旋转</p>
+<div class="bg-orange-50 border border-orange-200 rounded-lg p-2.5 mt-2 text-orange-800">⚠️ 很多同学错在这里！"顺着B看"不是俯视，而是仰视！</div>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow p-5 card">
+<h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">3</span>洛伦兹力分析</h2>
+<div class="space-y-2 text-sm text-gray-700 leading-relaxed">
+<p>取3点钟位置叶片分析：</p>
+<p>• 从上往下看逆时针 → 3点位置向 <strong>北（12点）</strong>运动</p>
+<p>• 切向速度v向北（-z方向）</p>
+<p>• B向上（+y方向）</p>
+<div class="bg-gray-50 rounded-lg p-2.5 my-2 text-center font-mono text-base"><strong>F</strong> = q(<strong>v</strong> × <strong>B</strong>)<br><span class="text-sm">(-z) × (+y) = <strong class="text-blue-600">+x</strong>（远离轴心）</span></div>
+<p>正电荷受力指向 <strong class="text-blue-600">叶尖b</strong>，b端积累正电荷！</p>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow p-5 card">
+<h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">4</span>感应电动势推导</h2>
+<div class="space-y-2 text-sm text-gray-700 leading-relaxed">
+<p>叶片上各点线速度不同：<strong>v(r) = ωr</strong></p>
+<p>距轴心r处微元dr的电动势：</p>
+<div class="bg-gray-50 rounded-lg p-2.5 my-2 text-center font-mono">dE = B · v · dr = Bωr dr</div>
+<p>从0到L积分：</p>
+<div class="bg-gray-50 rounded-lg p-2.5 my-2 text-center font-mono">E = ∫₀ᴸ Bωr dr = ½BωL²</div>
+<p>代入ω = 2πf：</p>
+<div class="bg-purple-50 border border-purple-200 rounded-lg p-2.5 my-2 text-center font-mono text-lg text-purple-700 font-bold">E = πfBL²</div>
+</div>
+</div>
+</div>
+
+<div class="text-center text-xs text-gray-400 mt-6 pb-3">拖拽旋转视角，滚轮缩放 · Three.js渲染</div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const box = document.getElementById('canvas-box');
+const canvas = document.getElementById('glcanvas');
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f4f8);
+scene.fog = new THREE.Fog(0xf0f4f8, 25, 70);
+
+const camera = new THREE.PerspectiveCamera(45, box.clientWidth / box.clientHeight, 0.1, 1000);
+camera.position.set(12, 18, 16);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setSize(box.clientWidth, box.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.target.set(0, 3, 0);
+controls.maxPolarAngle = Math.PI / 2.1;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+dl.position.set(12, 20, 12); dl.castShadow = true;
+scene.add(dl);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.35));
+
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.MeshStandardMaterial({ color: 0xe8eef5 }));
+ground.rotation.x = -Math.PI / 2; ground.position.y = -0.1; ground.receiveShadow = true;
+scene.add(ground);
+scene.add(new THREE.GridHelper(80, 40, 0xc0ccd8, 0xd8e0e8));
+
+function txt(text, color, sz) {
+  const c = document.createElement('canvas');
+  const x = c.getContext('2d');
+  const W = 2048, H = 512;
+  c.width = W; c.height = H;
+  x.font = 'bold ' + (sz || 128) + 'px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  x.fillStyle = color;
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  x.fillText(text, W / 2, H / 2);
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+  s.scale.set(W / 320, H / 320, 1);
+  return s;
+}
+
+// B-field arrows
+const bG = new THREE.Group();
+[[-8,0,-8],[-8,0,0],[-8,0,8],[0,0,-8],[0,0,8],[8,0,-8],[8,0,0],[8,0,8]].forEach(p => {
+bG.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(p[0],0.5,p[2]), 6, 0x8b5cf6, 1, 0.5));
+});
+scene.add(bG);
+
+const lblB = txt('B↑ 竖直向上', '#8b5cf6', 30); lblB.position.set(0,9,0); scene.add(lblB);
+
+// Helicopter body
+const bodyG = new THREE.Group();
+const bodyMat = new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.3, metalness: 0.6 });
+
+const body1 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 3, 16), bodyMat);
+body1.rotation.x = Math.PI/2; body1.position.y = 2; body1.castShadow = true; bodyG.add(body1);
+
+const cockpit = new THREE.Mesh(
+new THREE.SphereGeometry(0.6, 16, 16, 0, Math.PI*2, 0, Math.PI/2),
+new THREE.MeshStandardMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.7, roughness: 0.1 })
+);
+cockpit.position.set(0, 2.2, -1.2); cockpit.rotation.x = Math.PI; bodyG.add(cockpit);
+
+const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.25, 2.5, 10), bodyMat);
+tail.rotation.x = Math.PI/2; tail.position.set(0, 2.1, 2.5); bodyG.add(tail);
+
+for (let i = 0; i < 2; i++) {
+const b = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.8, 0.12), new THREE.MeshStandardMaterial({color:0x6b7280}));
+b.position.set(0.3, 2.5, 3.8); b.rotation.x = i * Math.PI/2; b.name = 'tailBlade'; bodyG.add(b);
+}
+
+const skidMat = new THREE.MeshStandardMaterial({ color: 0x4b5563 });
+for (let s of [-1, 1]) {
+const skid = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4, 6), skidMat);
+skid.rotation.z = Math.PI/2; skid.position.set(0, 0.3, s * 0.9); bodyG.add(skid);
+for (let x of [-1.2, 1.2]) {
+const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.5, 6), skidMat);
+strut.position.set(x, 1.1, s * 0.9); bodyG.add(strut);
+}
+}
+scene.add(bodyG);
+
+// Main rotor
+const rotorG = new THREE.Group();
+const bladeMat = new THREE.MeshStandardMaterial({ color: 0x9ca3af, roughness: 0.4, metalness: 0.5, side: THREE.DoubleSide });
+const tipMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, emissive: 0x3b82f6, emissiveIntensity: 0.4 });
+const hubMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.4 });
+
+for (let i = 0; i < 4; i++) {
+const bg = new THREE.Group();
+const shape = new THREE.Shape();
+shape.moveTo(0.3, -0.12); shape.lineTo(5, -0.04); shape.lineTo(5, 0.04); shape.lineTo(0.3, 0.12); shape.closePath();
+const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: false }), bladeMat);
+blade.rotation.x = Math.PI/2; blade.castShadow = true; bg.add(blade);
+
+const tip = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 12), tipMat);
+tip.position.set(5, 0, 0); tip.name = 'tip'; bg.add(tip);
+
+const hubM = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 10), hubMat);
+hubM.position.set(0.4, 0, 0); hubM.name = 'hub'; bg.add(hubM);
+
+bg.rotation.y = (i / 4) * Math.PI * 2;
+rotorG.add(bg);
+}
+
+rotorG.add(new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.35, 16), new THREE.MeshStandardMaterial({ color: 0x4b5563 })));
+const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.4, 8), new THREE.MeshStandardMaterial({ color: 0x4b5563 }));
+mast.position.y = -0.85; rotorG.add(mast);
+
+rotorG.position.set(0, 4.3, 0);
+scene.add(rotorG);
+
+const la = txt('a 近轴端', '#ef4444', 24); la.position.set(0, 6, 0); scene.add(la);
+const lb = txt('b 远轴端（叶尖）', '#3b82f6', 24); lb.position.set(6, 5.5, 0); scene.add(lb);
+
+// Charge particles
+let chargePts = null, chargePos = null;
+function mkCharges() {
+if (chargePts) { scene.remove(chargePts); chargePts.geometry.dispose(); chargePts.material.dispose(); }
+const n = 60;
+const geo = new THREE.BufferGeometry();
+const pos = new Float32Array(n * 3);
+for (let i = 0; i < n; i++) {
+const a = Math.random() * Math.PI * 2;
+const r = 0.5 + Math.random() * 4;
+pos[i*3] = r * Math.cos(a); pos[i*3+1] = 4.3; pos[i*3+2] = r * Math.sin(a);
+}
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+chargePts = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xf59e0b, size: 0.18, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending }));
+chargePos = pos; scene.add(chargePts);
+}
+function upCharges() {
+if (!chargePts || !chargePos) return;
+for (let i = 0; i < chargePos.length/3; i++) {
+const ix = i*3;
+const x = chargePos[ix], z = chargePos[ix+2];
+const r = Math.sqrt(x*x + z*z);
+if (r > 4.8) {
+const a = Math.random() * Math.PI * 2;
+chargePos[ix] = 0.5 * Math.cos(a); chargePos[ix+2] = 0.5 * Math.sin(a);
+} else {
+const sp = 0.025 + 0.02 * r / 5;
+chargePos[ix] += (x/r) * sp; chargePos[ix+2] += (z/r) * sp;
+}
+}
+chargePts.geometry.attributes.position.needsUpdate = true;
+}
+function clrCharges() { if (chargePts) { scene.remove(chargePts); chargePts.geometry.dispose(); chargePts.material.dispose(); chargePts = null; chargePos = null; } }
+
+// Right hand rule
+const handG = new THREE.Group();
+const hMat = new THREE.MeshStandardMaterial({ color: 0xfca5a5 });
+handG.add(new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.22, 1.8), hMat));
+for (let i = 0; i < 4; i++) {
+const f = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 1.4, 8), hMat);
+f.position.set(-0.55 + i*0.37, 0, -1.1); f.rotation.x = Math.PI/2; handG.add(f);
+const t = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 8), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xf59e0b, emissiveIntensity: 0.3 }));
+t.position.set(-0.55 + i*0.37, 0, -1.9); handG.add(t);
+}
+const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.14, 1.1, 8), hMat);
+thumb.position.set(0.9, 0, 0.25); thumb.rotation.z = Math.PI/2.5; handG.add(thumb);
+
+handG.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(1.3,0,0), 1.8, 0x10b981, 0.5, 0.25));
+const t1 = txt('v（切向速度）', '#10b981', 18); t1.position.set(3, 0.7, 0); handG.add(t1);
+
+handG.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,-1), new THREE.Vector3(0,0,-2.2), 1.8, 0xf59e0b, 0.5, 0.25));
+const t2 = txt('b端（高电势）', '#f59e0b', 18); t2.position.set(0, 0.7, -4); handG.add(t2);
+
+handG.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0.25,0), 1.8, 0x8b5cf6, 0.5, 0.25));
+const t3 = txt('B穿入手心', '#8b5cf6', 18); t3.position.set(0, 2.5, 0); handG.add(t3);
+
+handG.rotation.y = -Math.PI/4; handG.rotation.x = -Math.PI/6;
+handG.position.set(0, 10, 0); handG.visible = false;
+scene.add(handG);
+
+// Integral visualization
+const intG = new THREE.Group();
+const disk = new THREE.Mesh(
+new THREE.CylinderGeometry(5, 5, 0.08, 32, 1, false, 0, Math.PI/3),
+new THREE.MeshStandardMaterial({ color: 0xbfdbfe, transparent: true, opacity: 0.35, side: THREE.DoubleSide })
+);
+intG.add(disk);
+const rad = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 5, 6), new THREE.MeshStandardMaterial({ color: 0x3b82f6 }));
+rad.rotation.z = Math.PI/2; rad.position.set(2.5, 0, 0); intG.add(rad);
+const drBar = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 6), new THREE.MeshStandardMaterial({ color: 0xf59e0b }));
+drBar.rotation.z = Math.PI/2; drBar.position.set(3.5, 0, 0); intG.add(drBar);
+
+intG.add(txt('r', '#3b82f6', 22)); intG.children[intG.children.length-1].position.set(2, 0.8, 0);
+intG.add(txt('dr', '#f59e0b', 20)); intG.children[intG.children.length-1].position.set(3.5, 0.8, 0);
+intG.add(txt('v=ωr', '#10b981', 18)); intG.children[intG.children.length-1].position.set(4, 0.5, 1);
+
+intG.position.set(0, 4.3, 0); intG.visible = false;
+scene.add(intG);
+
+// Potential glow
+const potG = new THREE.Group();
+scene.add(potG);
+
+function showPot(aHigh, bHigh) {
+while (potG.children.length) potG.remove(potG.children[0]);
+if (aHigh === true) {
+potG.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,4.3,0), 2.5, 0xef4444, 0.5, 0.3));
+const t = txt('+ 高电势 a', '#ef4444', 20); t.position.set(0, 7.3, 0); potG.add(t);
+const g = new THREE.Mesh(new THREE.SphereGeometry(0.7, 14, 14), new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.15 }));
+g.position.set(0, 4.3, 0); g.name = 'glow'; potG.add(g);
+} else if (aHigh === false) {
+const t = txt('- 低电势 a', '#9ca3af', 16); t.position.set(0, 6.3, 0); potG.add(t);
+}
+if (bHigh === true) {
+potG.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(5,4.3,0), 2.5, 0x3b82f6, 0.5, 0.3));
+const t = txt('+ 高电势 b', '#3b82f6', 20); t.position.set(5, 7.3, 0); potG.add(t);
+const g = new THREE.Mesh(new THREE.SphereGeometry(0.7, 14, 14), new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.15 }));
+g.position.set(5, 4.3, 0); g.name = 'glow'; potG.add(g);
+} else if (bHigh === false) {
+const t = txt('- 低电势 b', '#9ca3af', 16); t.position.set(5, 6.3, 0); potG.add(t);
+}
+}
+
+// Animation
+let isRot = false, showChg = false, tm = 0;
+function animate() {
+requestAnimationFrame(animate);
+tm += 0.015;
+if (isRot) rotorG.rotation.y -= 0.07;
+
+rotorG.children.forEach(child => {
+if (child.isGroup) {
+const tip = child.getObjectByName('tip');
+if (tip) tip.material.emissiveIntensity = 0.4 + Math.sin(tm*3)*0.25;
+}
+});
+
+potG.children.forEach(c => { if (c.name === 'glow') c.scale.setScalar(1 + Math.sin(tm*2)*0.15); });
+
+if (showChg) upCharges();
+controls.update();
+renderer.render(scene, camera);
+}
+animate();
+
+// UI
+const modeTitle = document.getElementById('modeTitle');
+const valA = document.getElementById('valA');
+const valB = document.getElementById('valB');
+const barA = document.getElementById('barA');
+const barB = document.getElementById('barB');
+const resultBox = document.getElementById('resultBox');
+const buttons = document.querySelectorAll('.btn');
+
+function setMode(mode) {
+buttons.forEach(b => b.classList.remove('active'));
+isRot = false; showChg = false;
+handG.visible = false; intG.visible = false;
+clrCharges(); showPot(null, null);
+
+let title = '', aText = '—', bText = '—', aW = 20, bW = 20, result = '', aH = null, bH = null;
+
+switch(mode) {
+case 'static':
+title = '静态观察';
+result = '点击下方按钮切换演示模式';
+break;
+case 'rotate':
+title = '螺旋桨旋转中'; isRot = true;
+aText = '低电势'; bText = '高电势 +';
+aW = 25; bW = 90; aH = false; bH = true;
+result = 'a点电势 < b点电势 ✓ 正电荷被甩向叶尖b';
+break;
+case 'charge':
+title = '电荷受力演示'; isRot = true; showChg = true; mkCharges();
+aText = '低电势'; bText = '高电势 +';
+aW = 25; bW = 90; aH = false; bH = true;
+result = '金色粒子=正电荷，受力从a→b';
+break;
+case 'hand':
+title = '右手定则演示'; handG.visible = true;
+aText = '低电势'; bText = '高电势 +';
+aW = 30; bW = 85;
+result = '手心朝上(B↑)，拇指指v，四指从a→b指向高电势';
+break;
+case 'integral':
+title = '积分推导演示'; intG.visible = true;
+aText = 'a端（r=0）'; bText = 'b端（r=L）';
+aW = 20; bW = 90;
+result = 'E = ∫₀ᴸ Bωr dr = ½BωL² = πfBL²';
+break;
+}
+
+modeTitle.textContent = '模式：' + title;
+valA.textContent = aText; valB.textContent = bText;
+barA.style.width = aW + '%';
+barA.style.background = (aH === false) ? 'linear-gradient(90deg,#9ca3af,#d1d5db)' : (aH === true ? 'linear-gradient(90deg,#ef4444,#f87171)' : '#e5e7eb');
+barB.style.width = bW + '%';
+barB.style.background = (bH === true) ? 'linear-gradient(90deg,#3b82f6,#60a5fa)' : (bH === false ? 'linear-gradient(90deg,#9ca3af,#d1d5db)' : '#e5e7eb');
+showPot(aH, bH);
+resultBox.textContent = result;
+resultBox.className = (mode === 'rotate' || mode === 'charge') ? 'mt-2 pt-2 border-t border-gray-100 text-xs font-bold text-green-600 fade' : 'mt-2 pt-2 border-t border-gray-100 text-xs font-bold text-gray-700 fade';
+
+document.querySelector('[data-mode="' + mode + '"]').classList.add('active');
+}
+
+buttons.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+window.addEventListener('resize', () => {
+camera.aspect = box.clientWidth / box.clientHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(box.clientWidth, box.clientHeight);
+});
+
+setMode('static');
+</script>
+</body>
+</html>

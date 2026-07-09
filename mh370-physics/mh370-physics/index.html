@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三维演示：机翼电势差为什么选 BD</title>
+  <meta name="description" content="高中物理三维课件：用地磁场、速度方向和洛伦兹力解释机翼电势差为什么选择 B、D。">
+  <meta name="theme-color" content="#f0faf7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="机翼电势差">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --surface: #ffffff;
+      --ink: #17211f;
+      --muted: #5f706c;
+      --line: #d8e3e0;
+      --accent: #00856f;
+      --accent-soft: #e1f5ef;
+      --blue: #2267a8;
+      --green: #0a8d6d;
+      --red: #d34f2f;
+      --wrong: #c43d35;
+      --right: #11845b;
+      --shadow: 0 10px 30px rgba(25, 42, 38, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(0, 133, 111, 0.16), transparent 34%),
+        linear-gradient(180deg, #f0faf7, var(--bg) 330px);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1540px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 12px 0;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 8px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .intro {
+      padding: 12px 16px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .rule {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .formula {
+      display: grid;
+      place-items: center;
+      min-height: 54px;
+      border-radius: 8px;
+      color: #004d42;
+      background: var(--accent-soft);
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .rule p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    details {
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    details img {
+      display: block;
+      max-width: 100%;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .lesson {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .scene-shell {
+      height: clamp(560px, calc(100vh - 200px), 760px);
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(232, 246, 241, 0.45)),
+        #f9fcfb;
+    }
+
+    .scene-shell::before {
+      content: none;
+    }
+
+    #scene {
+      position: absolute;
+      inset: 0;
+    }
+
+    .model-label-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .model-label {
+      position: absolute;
+      min-width: 56px;
+      max-width: 260px;
+      padding: 5px 10px;
+      border: 1px solid rgba(216, 227, 224, 0.95);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25, 42, 38, 0.06);
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+
+    .scene-hud {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      gap: 8px;
+      max-width: min(430px, calc(100% - 28px));
+      pointer-events: none;
+    }
+
+    .hud-card {
+      padding: 10px 12px;
+      border: 1px solid rgba(216, 227, 224, 0.92);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 22px rgba(25, 42, 38, 0.08);
+    }
+
+    .hud-title {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .hud-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .blue {
+      color: var(--blue);
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .red {
+      color: var(--red);
+    }
+
+    .view-tools {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      right: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .view-tools button,
+    .choice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      transition: 160ms ease;
+    }
+
+    .view-tools button {
+      padding: 7px 10px;
+      font-weight: 800;
+    }
+
+    .view-tools button:hover,
+    .view-tools button:focus-visible,
+    .choice:hover,
+    .choice:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 133, 111, 0.14);
+    }
+
+    .side {
+      max-height: clamp(560px, calc(100vh - 200px), 760px);
+      overflow-y: auto;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .side h2 {
+      margin: 0;
+      font-size: 21px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .side h2::after {
+      content: "答案 B、D";
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #075b3f;
+      background: #dff3e8;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .choice .status-pill {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .choice.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .letter {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #edf3f1;
+      font-weight: 900;
+    }
+
+    .choice.active .letter {
+      color: white;
+      background: var(--accent);
+    }
+
+    .status-pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status-pill.right {
+      color: #075b3f;
+      background: #dff3e8;
+    }
+
+    .status-pill.wrong {
+      color: #8b211c;
+      background: #f8dedb;
+    }
+
+    .explain {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+    }
+
+    .explain h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.18;
+    }
+
+    .mark {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      margin-right: 6px;
+      border-radius: 8px;
+      color: white;
+      vertical-align: 2px;
+    }
+
+    .mark.right {
+      background: var(--right);
+    }
+
+    .mark.wrong {
+      background: var(--wrong);
+    }
+
+    .claim {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    .steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .steps li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .step-no {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: var(--accent);
+      background: #edf3f1;
+      font-weight: 900;
+    }
+
+    .steps p {
+      margin: 0;
+    }
+
+    strong {
+      color: var(--accent);
+    }
+
+    .hot {
+      color: var(--red);
+      font-weight: 900;
+    }
+
+    .summary {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #e3f5eb;
+      color: #075b3f;
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+      background: #fbfdfc;
+      z-index: 3;
+    }
+
+    .fallback.show {
+      display: grid;
+    }
+
+    @media (max-width: 1040px) {
+      .top,
+      .lesson {
+        grid-template-columns: 1fr;
+      }
+
+      .scene-shell {
+        min-height: 620px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      main {
+        width: min(100% - 18px, 1380px);
+      }
+
+      .scene-shell {
+        min-height: 560px;
+      }
+
+      .scene-hud {
+        max-width: calc(100% - 32px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="top">
+      <div class="intro panel">
+        <h1>三维看懂：机翼电势差为什么选 BD</h1>
+        <p class="subtitle">把飞机放进空间里看：绿色箭头是南半球地磁场的竖直分量 <strong>B 向上</strong>，蓝色箭头是速度 <strong>v</strong>，红色箭头是正电荷受到的 <strong>qv × B</strong>。红色高亮的机翼端就是电势高的一侧。</p>
+      </div>
+      <div class="rule panel">
+        <div class="formula">F = qv × B</div>
+        <p>金属机翼中可移动电荷受洛伦兹力偏转。正电荷被推到哪侧，哪侧积累正电荷，电势就更高。</p>
+      </div>
+    </section>
+
+    <details>
+      <summary>题目原图</summary>
+      <img src="original-question.jpg" alt="题目原图截图">
+    </details>
+
+    <section class="lesson">
+      <section class="scene-shell panel">
+        <div id="scene"></div>
+        <div class="fallback" id="fallback">当前浏览器没有成功加载 3D 场景。请使用 Chrome、Edge 或 Safari 打开本课件。</div>
+        <div class="scene-hud">
+          <div class="hud-card">
+            <p class="hud-title" id="hudTitle">A 项：从西往东飞</p>
+            <p class="hud-text" id="hudText">拖拽场景旋转观察：磁场不是纸面上的箭头，而是从地面竖直向上穿过飞机。</p>
+          </div>
+          <div class="hud-card legend">
+            <span class="chip blue"><span class="dot"></span>速度 v</span>
+            <span class="chip green"><span class="dot"></span>地磁场 B 向上</span>
+            <span class="chip red"><span class="dot"></span>qv × B 与高电势机翼</span>
+          </div>
+        </div>
+        <div class="view-tools">
+          <button type="button" data-view="teacher">斜视讲解</button>
+          <button type="button" data-view="top">俯视左右</button>
+          <button type="button" data-view="front">沿机头看</button>
+          <button type="button" data-view="free">自由旋转</button>
+        </div>
+      </section>
+
+      <aside class="side panel">
+        <h2>逐项切换</h2>
+        <div class="choices" id="choices"></div>
+        <article class="explain">
+          <h3 id="resultTitle"></h3>
+          <p class="claim" id="claim"></p>
+          <ul class="steps" id="steps"></ul>
+        </article>
+        <div class="summary">最终答案：B、D。A、C 错在把高电势机翼判断反了。</div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="assets/three.min.js"></script>
+  <script src="assets/OrbitControls.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
+    }
+
+    const optionData = {
+      A: {
+        claim: "若飞机从西往东飞，φ1 比 φ2 高。",
+        flight: "从西往东飞",
+        vLabel: "v 向东",
+        fLabel: "qv×B 向南",
+        leftSide: "北侧",
+        rightSide: "南侧",
+        real: "φ2 比 φ1 高",
+        verdict: false,
+        yaw: 0,
+        v: new THREE.Vector3(1, 0, 0),
+        f: new THREE.Vector3(0, 0, 1),
+        why: "A 说左翼 φ1 高；但正电荷被推到南侧右翼，所以 φ2 才高。"
+      },
+      B: {
+        claim: "若飞机从东往西飞，φ2 比 φ1 高。",
+        flight: "从东往西飞",
+        vLabel: "v 向西",
+        fLabel: "qv×B 向北",
+        leftSide: "南侧",
+        rightSide: "北侧",
+        real: "φ2 比 φ1 高",
+        verdict: true,
+        yaw: Math.PI,
+        v: new THREE.Vector3(-1, 0, 0),
+        f: new THREE.Vector3(0, 0, -1),
+        why: "B 说右翼 φ2 高；正电荷正是被推到北侧右翼，所以 B 正确。"
+      },
+      C: {
+        claim: "若飞机从北往南飞，φ1 比 φ2 高。",
+        flight: "从北往南飞",
+        vLabel: "v 向南",
+        fLabel: "qv×B 向西",
+        leftSide: "东侧",
+        rightSide: "西侧",
+        real: "φ2 比 φ1 高",
+        verdict: false,
+        yaw: -Math.PI / 2,
+        v: new THREE.Vector3(0, 0, 1),
+        f: new THREE.Vector3(-1, 0, 0),
+        why: "C 说左翼 φ1 高；但正电荷被推到西侧右翼，所以 C 错。"
+      },
+      D: {
+        claim: "若飞机从北往南飞，φ2 比 φ1 高。",
+        flight: "从北往南飞",
+        vLabel: "v 向南",
+        fLabel: "qv×B 向西",
+        leftSide: "东侧",
+        rightSide: "西侧",
+        real: "φ2 比 φ1 高",
+        verdict: true,
+        yaw: -Math.PI / 2,
+        v: new THREE.Vector3(0, 0, 1),
+        f: new THREE.Vector3(-1, 0, 0),
+        why: "D 与 C 条件相同；真实结论是右翼 φ2 高，所以 D 正确。"
+      }
+    };
+
+    const colors = {
+      blue: 0x2267a8,
+      green: 0x0a8d6d,
+      red: 0xd34f2f,
+      gray: 0xa8b7b3,
+      dark: 0x17211f
+    };
+
+    const state = {
+      current: "A",
+      pulse: 0,
+      freeRotate: false
+    };
+
+    const sceneHost = document.getElementById("scene");
+    const fallback = document.getElementById("fallback");
+    let scene;
+    let camera;
+    let renderer;
+    let controls;
+    let planeGroup;
+    let vArrow;
+    let fArrow;
+    let highGlow;
+    let leftTip;
+    let rightTip;
+    let leftLabel;
+    let rightLabel;
+    let magneticArrows = [];
+    let labelLayer;
+    let sceneResizeObserver;
+    const domLabels = [];
+    const modelTarget = new THREE.Vector3(0.56, 0.08, 0);
+
+    init3D();
+    buildChoices();
+    updateOption("A");
+    animate();
+
+    function init3D() {
+      if (!window.THREE || !THREE.WebGLRenderer) {
+        fallback.classList.add("show");
+        return;
+      }
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf9fcfb);
+      camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      camera.position.set(6.8, 4.7, 7.6);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.shadowMap.enabled = true;
+      sceneHost.appendChild(renderer.domElement);
+      labelLayer = document.createElement("div");
+      labelLayer.className = "model-label-layer";
+      sceneHost.appendChild(labelLayer);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.target.copy(modelTarget);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.78));
+      const sun = new THREE.DirectionalLight(0xffffff, 0.78);
+      sun.position.set(4, 7, 5);
+      sun.castShadow = true;
+      scene.add(sun);
+
+      addGround();
+      addAxes();
+      addMagneticField();
+      addPlane();
+      addDynamicArrows();
+      resize();
+      sceneResizeObserver = new ResizeObserver(() => resize());
+      sceneResizeObserver.observe(sceneHost);
+      window.addEventListener("resize", resize);
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.addEventListener("click", () => setView(button.dataset.view));
+      });
+    }
+
+    function addGround() {
+      const grid = new THREE.GridHelper(8, 16, 0xc6d8d3, 0xe1ebe8);
+      grid.position.y = -0.75;
+      scene.add(grid);
+
+      const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(8.2, 8.2),
+        new THREE.MeshStandardMaterial({
+          color: 0xf3faf7,
+          roughness: 0.92,
+          transparent: true,
+          opacity: 0.7
+        })
+      );
+      plane.rotation.x = -Math.PI / 2;
+      plane.position.y = -0.77;
+      scene.add(plane);
+    }
+
+    function addAxes() {
+      addArrow(new THREE.Vector3(-3.6, -0.62, 0), new THREE.Vector3(1, 0, 0), 7.2, 0x91a8a2, "东 E", new THREE.Vector3(3.95, -0.5, 0));
+      addArrow(new THREE.Vector3(0, -0.6, -3.6), new THREE.Vector3(0, 0, 1), 7.2, 0x91a8a2, "南 S", new THREE.Vector3(0, -0.5, 3.95));
+      scene.add(makeLabel("西 W", new THREE.Vector3(-3.95, -0.5, 0), "#60706c", 74));
+      scene.add(makeLabel("北 N", new THREE.Vector3(0, -0.5, -3.95), "#60706c", 74));
+      scene.add(makeLabel("上", new THREE.Vector3(0.3, 3.05, 0.25), "#0a8d6d", 62));
+    }
+
+    function addMagneticField() {
+      for (let x = -3; x <= 3; x += 1.5) {
+        for (let z = -3; z <= 3; z += 1.5) {
+          const arrow = addArrow(
+            new THREE.Vector3(x, -0.55, z),
+            new THREE.Vector3(0, 1, 0),
+            2.7,
+            colors.green
+          );
+          arrow.line.material.transparent = true;
+          arrow.cone.material.transparent = true;
+          arrow.line.material.opacity = 0.54;
+          arrow.cone.material.opacity = 0.72;
+          magneticArrows.push(arrow);
+        }
+      }
+      scene.add(makeLabel("南半球地磁场竖直分量 B：向上", new THREE.Vector3(-1.5, 2.45, -2.75), "#0a8d6d", 120));
+    }
+
+    function addPlane() {
+      planeGroup = new THREE.Group();
+      scene.add(planeGroup);
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf8fbff, metalness: 0.2, roughness: 0.42 });
+      const wingMat = new THREE.MeshStandardMaterial({ color: colors.blue, metalness: 0.15, roughness: 0.45 });
+      const tailMat = new THREE.MeshStandardMaterial({ color: 0x184b79, roughness: 0.5 });
+      const redMat = new THREE.MeshStandardMaterial({ color: colors.red, emissive: 0x7a1607, emissiveIntensity: 0.2 });
+      const grayMat = new THREE.MeshStandardMaterial({ color: colors.gray, roughness: 0.55 });
+
+      const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 2.4, 32), bodyMat);
+      fuselage.rotation.z = Math.PI / 2;
+      fuselage.castShadow = true;
+      planeGroup.add(fuselage);
+
+      const nose = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.45, 32), bodyMat);
+      nose.rotation.z = -Math.PI / 2;
+      nose.position.x = 1.42;
+      nose.castShadow = true;
+      planeGroup.add(nose);
+
+      const wing = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.08, 3.2), wingMat);
+      wing.position.x = -0.08;
+      wing.castShadow = true;
+      planeGroup.add(wing);
+
+      const tailWing = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 1.2), tailMat);
+      tailWing.position.x = -1.1;
+      tailWing.castShadow = true;
+      planeGroup.add(tailWing);
+
+      const fin = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.75, 0.08), tailMat);
+      fin.position.set(-1.18, 0.36, 0);
+      fin.castShadow = true;
+      planeGroup.add(fin);
+
+      leftTip = new THREE.Mesh(new THREE.SphereGeometry(0.14, 32, 16), grayMat);
+      leftTip.position.set(-0.08, 0.02, -1.78);
+      planeGroup.add(leftTip);
+
+      rightTip = new THREE.Mesh(new THREE.SphereGeometry(0.18, 32, 16), redMat);
+      rightTip.position.set(-0.08, 0.02, 1.78);
+      planeGroup.add(rightTip);
+
+      highGlow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.34, 32, 16),
+        new THREE.MeshBasicMaterial({ color: colors.red, transparent: true, opacity: 0.2 })
+      );
+      highGlow.position.copy(rightTip.position);
+      planeGroup.add(highGlow);
+
+      leftLabel = makeLabel("φ1 左翼", new THREE.Vector3(-0.18, 0.5, -1.9), "#17211f", 84);
+      rightLabel = makeLabel("φ2 右翼：电势高", new THREE.Vector3(-0.18, 0.5, 1.9), "#d34f2f", 118);
+      planeGroup.add(leftLabel);
+      planeGroup.add(rightLabel);
+    }
+
+    function addDynamicArrows() {
+      vArrow = addArrow(new THREE.Vector3(-1.8, 0.38, 0), new THREE.Vector3(1, 0, 0), 2.2, colors.blue, "v", new THREE.Vector3(0.75, 0.75, 0));
+      fArrow = addArrow(new THREE.Vector3(0, 0.58, 0), new THREE.Vector3(0, 0, 1), 1.65, colors.red, "qv × B", new THREE.Vector3(0, 0.95, 1.9));
+    }
+
+    function addArrow(origin, direction, length, color, labelText, labelPos) {
+      const arrow = new THREE.ArrowHelper(direction.clone().normalize(), origin, length, color, 0.22, 0.12);
+      arrow.line.material.linewidth = 4;
+      scene.add(arrow);
+      if (labelText) {
+        const label = makeLabel(labelText, labelPos, `#${color.toString(16).padStart(6, "0")}`, 92);
+        scene.add(label);
+        arrow.userData.label = label;
+      }
+      return arrow;
+    }
+
+    function updateArrow(arrow, direction, origin, length, labelText, labelOffset) {
+      arrow.position.copy(origin);
+      arrow.setDirection(direction.clone().normalize());
+      arrow.setLength(length, 0.25, 0.14);
+      if (arrow.userData.label) {
+        arrow.userData.label.position.copy(origin.clone().add(direction.clone().normalize().multiplyScalar(length)).add(labelOffset));
+        setLabelText(arrow.userData.label, labelText);
+      }
+    }
+
+    function makeLabel(text, position, color, width) {
+      const anchor = new THREE.Object3D();
+      anchor.position.copy(position);
+      const el = document.createElement("div");
+      el.className = "model-label";
+      el.textContent = text;
+      el.style.color = color;
+      el.style.minWidth = `${Math.max(56, width)}px`;
+      labelLayer.appendChild(el);
+      anchor.userData = { text, color, width, labelEl: el };
+      domLabels.push(anchor);
+      return anchor;
+    }
+
+    function setLabelText(anchor, text) {
+      if (anchor.userData.text === text) return;
+      anchor.userData.text = text;
+      anchor.userData.labelEl.textContent = text;
+    }
+
+    function buildChoices() {
+      const choices = document.getElementById("choices");
+      choices.innerHTML = Object.keys(optionData).map((key) => {
+        const item = optionData[key];
+        return `
+          <button class="choice" type="button" data-option="${key}">
+            <span class="letter">${key}</span>
+            <span>${item.claim}</span>
+            <span class="status-pill ${item.verdict ? "right" : "wrong"}">${item.verdict ? "正确" : "错误"}</span>
+          </button>
+        `;
+      }).join("");
+
+      choices.querySelectorAll("[data-option]").forEach((button) => {
+        button.addEventListener("click", () => updateOption(button.dataset.option));
+      });
+    }
+
+    function updateOption(key) {
+      state.current = key;
+      const item = optionData[key];
+
+      if (planeGroup) {
+        planeGroup.rotation.y = item.yaw;
+        const vOrigin = item.v.clone().multiplyScalar(-1.9).add(new THREE.Vector3(0, 0.42, 0));
+        updateArrow(vArrow, item.v, vOrigin, 2.4, item.vLabel, new THREE.Vector3(0, 0.26, 0));
+        updateArrow(fArrow, item.f, new THREE.Vector3(0, 0.62, 0), 1.8, item.fLabel, new THREE.Vector3(0, 0.28, 0));
+      }
+
+      document.getElementById("hudTitle").textContent = `${key} 项：${item.flight}`;
+      document.getElementById("hudText").textContent = `空间判断：${item.vLabel}，B 竖直向上，所以 ${item.fLabel}。红色机翼端表示电势高。`;
+      document.getElementById("resultTitle").innerHTML =
+        `<span class="mark ${item.verdict ? "right" : "wrong"}">${item.verdict ? "✓" : "×"}</span>${key} 项${item.verdict ? "正确" : "错误"}`;
+      document.getElementById("claim").textContent = item.claim;
+      document.getElementById("steps").innerHTML = [
+        `飞机${item.flight}，所以 <strong>${item.vLabel}</strong>。`,
+        `南半球地磁场竖直分量在模型里用绿色箭头表示：<strong>B 向上</strong>。`,
+        `右手定则得到 <span class="hot">${item.fLabel}</span>，正电荷被推向这个方向。`,
+        `此时 φ1 左翼在<strong>${item.leftSide}</strong>，φ2 右翼在<strong>${item.rightSide}</strong>。`,
+        `真实结论：<span class="hot">${item.real}</span>。${item.why}`
+      ].map((text, index) => `
+        <li><span class="step-no">${index + 1}</span><p>${text}</p></li>
+      `).join("");
+
+      document.querySelectorAll("[data-option]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.option === key);
+      });
+    }
+
+    function setView(view) {
+      if (!camera || !controls) return;
+      state.freeRotate = view === "free";
+      const item = optionData[state.current];
+      const forward = item.v.clone().normalize();
+      const positions = {
+        teacher: new THREE.Vector3(6.8, 4.7, 7.6),
+        top: new THREE.Vector3(0.01, 9.2, 0.01),
+        front: forward.clone().multiplyScalar(-6.4).add(new THREE.Vector3(0, 2.2, 0)),
+        free: camera.position.clone()
+      };
+      camera.position.copy(positions[view] || positions.teacher);
+      controls.target.copy(modelTarget);
+      controls.update();
+    }
+
+    function resize() {
+      if (!renderer || !camera) return;
+      const rect = sceneHost.getBoundingClientRect();
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / Math.max(rect.height, 1);
+      camera.updateProjectionMatrix();
+    }
+
+    function updateDomLabels() {
+      if (!camera || !renderer) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      const world = new THREE.Vector3();
+      domLabels.forEach((anchor) => {
+        anchor.getWorldPosition(world);
+        world.project(camera);
+        const visible = world.z > -1 && world.z < 1;
+        const el = anchor.userData.labelEl;
+        el.style.display = visible ? "block" : "none";
+        if (!visible) return;
+        const x = (world.x * 0.5 + 0.5) * rect.width;
+        const y = (-world.y * 0.5 + 0.5) * rect.height;
+        el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!renderer || !scene || !camera) return;
+      state.pulse += 0.035;
+      const glowScale = 1 + Math.sin(state.pulse * 2.4) * 0.12;
+      if (highGlow) highGlow.scale.setScalar(glowScale);
+      magneticArrows.forEach((arrow, index) => {
+        const opacity = 0.42 + Math.sin(state.pulse + index * 0.35) * 0.12;
+        arrow.line.material.opacity = opacity;
+        arrow.cone.material.opacity = opacity + 0.18;
+      });
+      if (state.freeRotate && planeGroup) planeGroup.rotation.y += 0.002;
+      controls.update();
+      renderer.render(scene, camera);
+      updateDomLabels();
+    }
+  </script>
+</body>
+</html>
