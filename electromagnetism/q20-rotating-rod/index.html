@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第20题：旋转导体与电磁感应 — 3D交互课件</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; overflow-x: hidden; }
+        .canvas-container { width: 100%; height: 58vh; min-height: 380px; position: relative; border-radius: 12px; overflow: hidden; }
+        #canvas { width: 100%; height: 100%; display: block; }
+        .control-panel {
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .scene-hud {
+            position: absolute; left: 12px; top: 12px;
+            display: grid; gap: 6px; max-width: 300px;
+            pointer-events: none; z-index: 2;
+        }
+        .hud-card {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+        .scene-bottom {
+            position: absolute; left: 12px; right: 12px; bottom: 12px;
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end;
+            z-index: 2;
+        }
+        .view-btn {
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: #374151; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .view-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+        .view-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .slider-wrap { display: flex; align-items: center; gap: 10px; }
+        input[type=range] {
+            -webkit-appearance: none; appearance: none;
+            height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; flex: 1; min-width: 120px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer;
+        }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .formula { font-family: "Times New Roman", serif; font-style: italic; }
+        .card-hover { transition: all 0.25s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        details { margin-bottom: 8px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+        summary { padding: 12px 16px; cursor: pointer; font-weight: 700; color: #3b82f6; }
+        details img { display: block; max-width: 100%; margin: 0 auto; padding: 8px 16px 16px; }
+        .part-toggle {
+            display: inline-flex; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;
+        }
+        .part-toggle button {
+            padding: 6px 16px; font-size: 13px; font-weight: 600; border: none;
+            background: white; color: #6b7280; cursor: pointer; transition: all 0.2s;
+        }
+        .part-toggle button.active { background: #3b82f6; color: white; }
+        .hand-toggle {
+            display: inline-flex; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;
+        }
+        .hand-toggle button {
+            padding: 6px 10px; font-size: 12px; font-weight: 600; border: none;
+            background: white; color: #6b7280; cursor: pointer; transition: all 0.2s;
+        }
+        .hand-toggle button.active { background: #8b5cf6; color: white; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">🔧 第20题：旋转导体与电磁感应</h1>
+        <p class="text-gray-500 text-sm">3D交互课件 · 调节角速度 ω 观察导体棒 CD 的平衡条件与运动过程</p>
+    </div>
+
+    <!-- Main Layout: 3D + Side Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-6 gap-5 mb-6">
+        <!-- 3D Canvas -->
+        <div class="lg:col-span-4 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="canvas"></canvas>
+                <!-- HUD Overlay -->
+                <div class="scene-hud">
+                    <div class="hud-card">
+                        <div class="text-sm font-bold text-gray-800 mb-1" id="hudTitle">当前模式：静力平衡（第1问）</div>
+                        <div class="text-xs text-gray-500" id="hudSubtitle">调节 ω 观察 CD 棒的受力变化</div>
+                    </div>
+                    <div class="hud-card">
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#8b5cf6"></span>B⊥（导轨）</span>
+                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#10b981"></span>B↑（圆环）</span>
+                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#ef4444"></span>安培力</span>
+                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#f59e0b"></span>重力分量</span>
+                        </div>
+                    </div>
+                    <div class="hud-card" id="physicsInfo">
+                        <div class="text-xs space-y-1">
+                            <div>ω = <span class="font-bold text-blue-600" id="omegaDisplay">20</span> rad/s</div>
+                            <div>E<sub>OP</sub> = <span class="font-bold" id="emfDisplay">0.40</span> V</div>
+                            <div>I = <span class="font-bold" id="currentDisplay">20</span> A</div>
+                            <div>F<sub>安</sub> = <span class="font-bold" id="forceDisplay">2.0</span> N</div>
+                            <div id="equilibriumStatus" class="font-medium text-green-600">✓ 平衡区间</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bottom Controls -->
+                <div class="scene-bottom">
+                    <div class="part-toggle">
+                        <button class="active" data-part="1" id="btnPart1">第(1)问：静力平衡</button>
+                        <button data-part="2" id="btnPart2">第(2)问：匀加速运动</button>
+                    </div>
+                    <div class="control-panel rounded-lg p-2 flex flex-wrap gap-3 items-center">
+                        <div class="slider-wrap">
+                            <span class="text-xs font-medium text-gray-600 whitespace-nowrap">ω:</span>
+                            <input type="range" id="omegaSlider" min="0" max="60" step="0.5" value="20">
+                            <span class="text-xs font-bold text-blue-600 w-12" id="omegaValue">20</span>
+                        </div>
+                        <button class="view-btn text-xs" id="btnPlay">▶ 播放</button>
+                        <button class="view-btn text-xs" id="btnReset">↺ 重置</button>
+                        <button class="view-btn text-xs" id="btnForces">👁 力</button>
+                        <button class="view-btn text-xs" id="btnRightHand">🖐 右手定则</button>
+                        <button class="view-btn text-xs" id="btnLeftHand">🖐 左手定则</button>
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="view-btn text-xs" data-view="overview">全景</button>
+                        <button class="view-btn text-xs" data-view="side">侧视</button>
+                        <button class="view-btn text-xs" data-view="top">俯视</button>
+                        <button class="view-btn text-xs" data-view="rail">沿轨</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="lg:col-span-2 space-y-4">
+            <!-- Problem Images -->
+            <details open>
+                <summary>📄 题目原图</summary>
+                <img src="question-1.png" alt="题目图1">
+                <img src="question-2.png" alt="题目图2">
+            </details>
+
+            <!-- Answer -->
+            <details>
+                <summary>✅ 答案与详解</summary>
+                <img src="answer-1.png" alt="答案图1">
+                <img src="answer-2.png" alt="答案图2">
+            </details>
+
+            <!-- Analysis Card -->
+            <div class="bg-white rounded-xl shadow p-5 card-hover">
+                <h2 class="text-lg font-bold text-gray-900 mb-3">⚡ 核心原理</h2>
+                <div class="space-y-3 text-sm text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">OP 旋转切割磁感线：</strong>金属棒 OP 在竖直向上的匀强磁场中绕 O 点转动，产生感应电动势</p>
+                    <div class="bg-blue-50 rounded-lg p-3 text-center">
+                        <span class="formula text-blue-700 font-bold text-lg">E = ½ Bωr²</span>
+                    </div>
+                    <p><strong class="text-gray-900">回路电流：</strong>OP 与 CD 串联，总电阻 2R，电流 I = E/(2R)</p>
+                    <p><strong class="text-gray-900">CD 受力：</strong>安培力 F<sub>安</sub> = BIL，方向沿导轨向上（由电流方向决定）</p>
+                </div>
+            </div>
+
+            <!-- Part 1 Analysis -->
+            <div class="bg-white rounded-xl shadow p-5 card-hover" id="part1Card">
+                <h2 class="text-lg font-bold text-gray-900 mb-3">🔒 第(1)问：静力平衡</h2>
+                <div class="space-y-2 text-sm text-gray-700">
+                    <p>CD 静止在磁场中，需满足：</p>
+                    <div class="bg-gray-50 rounded-lg p-3 text-sm font-mono">
+                        mg sin37° − μmg cos37° ≤ F<sub>安</sub> ≤ mg sin37° + μmg cos37°
+                    </div>
+                    <p>代入数据：<span class="formula">0.4N ≤ F<sub>安</sub> ≤ 2.0N</span></p>
+                    <p>对应角速度：<span class="formula font-bold text-green-700">8 rad/s ≤ ω ≤ 40 rad/s</span></p>
+                    <div class="mt-3 p-3 bg-amber-50 rounded-lg text-amber-800 text-xs">
+                        💡 提示：当 ω 在 8~40 rad/s 范围内时，安培力恰能平衡重力分量和摩擦力的组合，CD 保持静止。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part 2 Analysis -->
+            <div class="bg-white rounded-xl shadow p-5 card-hover hidden" id="part2Card">
+                <h2 class="text-lg font-bold text-gray-900 mb-3">🚀 第(2)问：匀加速运动</h2>
+                <div class="space-y-2 text-sm text-gray-700">
+                    <p>CD 以 v₁=2m/s 进入磁场，做匀加速运动 a=1m/s²：</p>
+                    <div class="bg-gray-50 rounded-lg p-3 space-y-1">
+                        <div>① ω(t) = <span class="formula font-bold">(16 + 10t)</span> rad/s</div>
+                        <div>② 外力对 OP 做功 W = <span class="formula font-bold text-red-600">−0.42 J</span></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">OP 角速度随时间线性增加，以维持回路中恒定电流 I₁=2A。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-xs text-gray-400 pb-6">
+        拖拽 3D 场景可旋转视角，滚轮缩放 · 使用 Three.js 构建
+    </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ============================================================
+// Constants & Parameters
+// ============================================================
+const PARAMS = {
+    L: 0.2,      // rail spacing
+    r: 0.2,      // ring radius
+    m: 0.2,      // CD mass (kg)
+    mu: 0.5,     // friction coefficient
+    B: 0.5,      // magnetic field (T)
+    R: 0.01,     // resistance (Ω)
+    g: 10,       // gravity (m/s²)
+    theta: 37 * Math.PI / 180,  // incline angle
+    sin37: 0.6,
+    cos37: 0.8,
+    scale: 10    // visual scale factor
+};
+
+// Scaled values for visualization
+const S = PARAMS.scale;
+const Ls = PARAMS.L * S;   // 2
+const rs = PARAMS.r * S;   // 2
+const railLength = 12;
+const BASE_Y = 8;  // base height for the apparatus
+
+// ============================================================
+// Scene Setup
+// ============================================================
+const container = document.getElementById('canvasContainer');
+const canvas = document.getElementById('canvas');
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f4f8);
+scene.fog = new THREE.Fog(0xf0f4f8, 30, 90);
+
+const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(12, BASE_Y + 2, 14);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.target.set(4, BASE_Y - 2, 0);
+controls.maxPolarAngle = Math.PI / 2.05;
+
+// Lights
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight.position.set(10, 20, 10);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 1024;
+dirLight.shadow.mapSize.height = 1024;
+scene.add(dirLight);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.4));
+
+// Ground
+const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 80),
+    new THREE.MeshStandardMaterial({ color: 0xe8eef5, roughness: 0.85, metalness: 0.05 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.5;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const grid = new THREE.GridHelper(80, 40, 0xc0ccd8, 0xd8e0e8);
+grid.position.y = -0.48;
+scene.add(grid);
+
+// ============================================================
+// Geometry Definitions
+// ============================================================
+// Key points
+const O = new THREE.Vector3(0, BASE_Y, 0);
+const M2 = new THREE.Vector3(rs, BASE_Y, 0);          // on ring edge
+const M1 = new THREE.Vector3(rs, BASE_Y, Ls);         // offset by L in z
+const railDir = new THREE.Vector3(0.8, -0.6, 0).normalize();  // 37° downward
+const railEnd1 = M1.clone().add(railDir.clone().multiplyScalar(railLength));
+const railEnd2 = M2.clone().add(railDir.clone().multiplyScalar(railLength));
+
+// Rail plane normal
+const railPlaneNormal = new THREE.Vector3().crossVectors(railDir, new THREE.Vector3(0, 0, 1)).normalize();
+
+// ============================================================
+// Create Rail System
+// ============================================================
+const railMat = new THREE.MeshStandardMaterial({ color: 0x4b5563, roughness: 0.4, metalness: 0.6 });
+const railGeo = new THREE.CylinderGeometry(0.04, 0.04, railLength, 12);
+
+function createRail(start, end) {
+    const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+    const rail = new THREE.Mesh(railGeo, railMat);
+    rail.position.copy(mid);
+    const dir = new THREE.Vector3().subVectors(end, start).normalize();
+    const up = new THREE.Vector3(0, 1, 0);
+    const axis = new THREE.Vector3().crossVectors(up, dir).normalize();
+    const angle = Math.acos(up.dot(dir));
+    rail.setRotationFromAxisAngle(axis, angle);
+    rail.castShadow = true;
+    return rail;
+}
+
+scene.add(createRail(M1, railEnd1));
+scene.add(createRail(M2, railEnd2));
+
+// Inclined plane (transparent)
+const planeGeo = new THREE.PlaneGeometry(railLength + 1, Ls + 0.5);
+const planeMat = new THREE.MeshStandardMaterial({
+    color: 0x93c5fd, transparent: true, opacity: 0.12, side: THREE.DoubleSide
+});
+const inclinePlane = new THREE.Mesh(planeGeo, planeMat);
+const planeCenter = new THREE.Vector3().addVectors(M1, railEnd2).multiplyScalar(0.5);
+inclinePlane.position.copy(planeCenter);
+const planeDir = new THREE.Vector3().subVectors(railEnd2, M2).normalize();
+const planeUp = new THREE.Vector3(0, 0, 1);
+const planeAxis = new THREE.Vector3().crossVectors(planeUp, planeDir).normalize();
+const planeAngle = Math.acos(planeUp.dot(planeDir));
+inclinePlane.setRotationFromAxisAngle(planeAxis, planeAngle);
+inclinePlane.rotateY(Math.PI / 2);
+scene.add(inclinePlane);
+
+// ============================================================
+// Ring and OP Rod
+// ============================================================
+// Circular ring
+const ringGeo = new THREE.TorusGeometry(rs, 0.04, 16, 64);
+const ringMat = new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.3, metalness: 0.7 });
+const ring = new THREE.Mesh(ringGeo, ringMat);
+ring.position.copy(O);
+ring.rotation.x = Math.PI / 2;
+ring.castShadow = true;
+scene.add(ring);
+
+// O point marker
+const oMarker = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0x1f2937 })
+);
+oMarker.position.copy(O);
+scene.add(oMarker);
+
+// OP rod (rotating)
+const opGeo = new THREE.CylinderGeometry(0.05, 0.05, rs, 12);
+const opMat = new THREE.MeshStandardMaterial({ color: 0xd34f2f, roughness: 0.3, metalness: 0.6 });
+const opRod = new THREE.Mesh(opGeo, opMat);
+opRod.geometry.translate(0, rs / 2, 0);
+opRod.position.copy(O);
+opRod.rotation.x = Math.PI / 2;
+scene.add(opRod);
+
+// P marker
+const pMarker = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xd34f2f, emissive: 0xd34f2f, emissiveIntensity: 0.3 })
+);
+scene.add(pMarker);
+
+// Wire from O to M1
+const wire1Geo = new THREE.CylinderGeometry(0.02, 0.02, O.distanceTo(M1), 8);
+const wireMat = new THREE.MeshStandardMaterial({ color: 0x6b7280 });
+const wire1 = new THREE.Mesh(wire1Geo, wireMat);
+wire1.position.copy(new THREE.Vector3().addVectors(O, M1).multiplyScalar(0.5));
+wire1.lookAt(M1);
+wire1.rotateX(Math.PI / 2);
+scene.add(wire1);
+
+// Wire from M2 to ring edge (M2 is already on ring, so this is a point)
+// Actually M2 is on the ring edge, no wire needed
+
+// ============================================================
+// CD Rod
+// ============================================================
+const cdGeo = new THREE.CylinderGeometry(0.05, 0.05, Ls, 12);
+const cdMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3, metalness: 0.6 });
+const cdRod = new THREE.Mesh(cdGeo, cdMat);
+cdRod.geometry.translate(0, Ls / 2, 0);
+scene.add(cdRod);
+
+// C and D markers
+const cMarker = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), new THREE.MeshStandardMaterial({ color: 0x2563eb }));
+const dMarker = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), new THREE.MeshStandardMaterial({ color: 0x2563eb }));
+scene.add(cMarker);
+scene.add(dMarker);
+
+// ============================================================
+// Magnetic Field Arrows
+// ============================================================
+const magFieldGroup = new THREE.Group();
+scene.add(magFieldGroup);
+
+// Rail plane B field (perpendicular to rail plane)
+function addRailBField() {
+    const bDir = railPlaneNormal.clone().multiplyScalar(-1); // "upward" direction
+    const startT = 0.25, endT = 0.65;
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+        const t = startT + (endT - startT) * i / steps;
+        const base = M2.clone().add(railDir.clone().multiplyScalar(t * railLength));
+        for (let j = 0; j < 2; j++) {
+            const offset = j === 0 ? new THREE.Vector3(0, 0, Ls/2) : new THREE.Vector3(0, 0, -Ls/2);
+            const pos = base.clone().add(offset);
+            const arrow = new THREE.ArrowHelper(bDir, pos, 1.2, 0x8b5cf6, 0.3, 0.2);
+            magFieldGroup.add(arrow);
+        }
+    }
+}
+addRailBField();
+
+// Ring B field (vertical upward)
+const ringBGroup = new THREE.Group();
+scene.add(ringBGroup);
+for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 3) {
+    const x = Math.cos(angle) * rs * 0.7;
+    const z = Math.sin(angle) * rs * 0.7;
+    const pos = new THREE.Vector3(x, BASE_Y, z);
+    const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), pos, 1.0, 0x10b981, 0.25, 0.15);
+    ringBGroup.add(arrow);
+}
+
+// ============================================================
+// Force Arrows (initially hidden)
+// ============================================================
+const forcesGroup = new THREE.Group();
+forcesGroup.visible = false;
+scene.add(forcesGroup);
+
+let gravityArrow, frictionArrow, ampereArrow, normalArrow;
+
+function createForceArrow(origin, dir, length, color, label) {
+    const arrow = new THREE.ArrowHelper(dir.normalize(), origin, length, color, 0.25, 0.15);
+    forcesGroup.add(arrow);
+    return arrow;
+}
+
+// ============================================================
+// Labels
+// ============================================================
+function makeTextSprite(text, color = '#1a1a2e', fontSize = 36) {
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    c.width = 512; c.height = 128;
+    ctx.font = `bold ${fontSize}px 'Noto Sans SC', sans-serif`;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 256, 64);
+    const texture = new THREE.CanvasTexture(c);
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+    sprite.scale.set(4.5, 1.1, 1);
+    return sprite;
+}
+
+const labelO = makeTextSprite('O', '#1f2937', 40);
+labelO.position.set(0, BASE_Y + 0.8, 0);
+scene.add(labelO);
+
+const labelM1 = makeTextSprite('M₁', '#1a1a2e', 30);
+labelM1.position.set(rs + 0.3, BASE_Y + 0.4, Ls + 0.2);
+scene.add(labelM1);
+
+const labelM2 = makeTextSprite('M₂', '#1a1a2e', 30);
+labelM2.position.set(rs + 0.4, BASE_Y + 0.4, -0.2);
+scene.add(labelM2);
+
+// ============================================================
+// Geometric Annotations
+// ============================================================
+const annotationGroup = new THREE.Group();
+scene.add(annotationGroup);
+
+function drawDimensionLine(start, end, labelText, color = '#1e3a5f', offset = new THREE.Vector3(0, 0.2, 0)) {
+    const s = start.clone().add(offset);
+    const e = end.clone().add(offset);
+    const dir = new THREE.Vector3().subVectors(e, s);
+    const len = dir.length();
+    const mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
+
+    // Main line
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([s, e]);
+    const lineMat = new THREE.LineBasicMaterial({ color: new THREE.Color(color), linewidth: 2 });
+    annotationGroup.add(new THREE.Line(lineGeo, lineMat));
+
+    // End ticks
+    const tickLen = 0.15;
+    const perp = new THREE.Vector3(0, 1, 0).cross(dir.clone().normalize()).normalize().multiplyScalar(tickLen);
+    if (perp.length() < 0.01) perp.set(0, 0, tickLen);
+    const tick1a = s.clone().add(perp); const tick1b = s.clone().sub(perp);
+    const tick2a = e.clone().add(perp); const tick2b = e.clone().sub(perp);
+    annotationGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([tick1a, tick1b]), lineMat));
+    annotationGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([tick2a, tick2b]), lineMat));
+
+    // Label
+    const label = makeTextSprite(labelText, color, 28);
+    label.position.copy(mid).add(new THREE.Vector3(0, 0.35, 0));
+    annotationGroup.add(label);
+}
+
+function drawAngleArc(center, startDir, endDir, radius, color = '#b45309') {
+    const points = [];
+    const startAngle = Math.atan2(startDir.y, startDir.x);
+    const endAngle = Math.atan2(endDir.y, endDir.x);
+    let sweep = endAngle - startAngle;
+    if (sweep > Math.PI) sweep -= 2 * Math.PI;
+    if (sweep < -Math.PI) sweep += 2 * Math.PI;
+    const steps = 24;
+    for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const angle = startAngle + sweep * t;
+        points.push(new THREE.Vector3(
+            center.x + radius * Math.cos(angle),
+            center.y + radius * Math.sin(angle),
+            center.z
+        ));
+    }
+    const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+    const arcMat = new THREE.LineBasicMaterial({ color: new THREE.Color(color), linewidth: 2 });
+    annotationGroup.add(new THREE.Line(arcGeo, arcMat));
+}
+
+// Rail spacing annotation L = 0.2m
+drawDimensionLine(
+    new THREE.Vector3(rs + 1, BASE_Y + 0.2, 0),
+    new THREE.Vector3(rs + 1, BASE_Y + 0.2, Ls),
+    'L = 0.2 m', '#2563eb', new THREE.Vector3(0.3, 0, 0)
+);
+
+// 37° angle annotation at M2
+const angleCenter = M2.clone().add(new THREE.Vector3(0, 0.3, 0));
+const angleRadius = 1.2;
+drawAngleArc(
+    angleCenter,
+    new THREE.Vector3(-1, 0, 0),  // horizontal left
+    new THREE.Vector3(-0.8, 0.6, 0),  // 37° downward
+    angleRadius, '#d97706'
+);
+const angleLabel = makeTextSprite('37°', '#d97706', 32);
+angleLabel.position.copy(angleCenter).add(new THREE.Vector3(-1.6, 0.5, 0));
+annotationGroup.add(angleLabel);
+
+// Ring radius annotation r = 0.2m
+const rLabel = makeTextSprite('r = 0.2 m', '#0a8d6d', 28);
+rLabel.position.set(rs / 2, BASE_Y + 0.3, 0.5);
+annotationGroup.add(rLabel);
+
+// Incline angle helper line (horizontal reference)
+const refStart = M2.clone().add(new THREE.Vector3(-1.5, 0, 0));
+const refEnd = M2.clone().add(new THREE.Vector3(0.5, 0, 0));
+const refLineGeo = new THREE.BufferGeometry().setFromPoints([refStart, refEnd]);
+const refLine = new THREE.Line(
+    refLineGeo,
+    new THREE.LineDashedMaterial({ color: 0x475569, dashSize: 0.1, gapSize: 0.05 })
+);
+refLine.computeLineDistances();
+annotationGroup.add(refLine);
+
+// ============================================================
+// 3D Hand Models (Right-hand & Left-hand Rules)
+// ============================================================
+const handGroup = new THREE.Group();
+handGroup.visible = false;
+scene.add(handGroup);
+
+function createHandModel(type) {
+    // type: 'right' for right-hand rule, 'left' for left-hand rule
+    const isRight = type === 'right';
+    const sign = isRight ? 1 : -1;  // mirror x for left hand
+    const handColor = isRight ? 0xfca5a5 : 0xa5c4fc;
+    const handMat = new THREE.MeshStandardMaterial({ color: handColor, roughness: 0.4, metalness: 0.1 });
+
+    // Palm
+    const palm = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.2, 1.8), handMat);
+    handGroup.add(palm);
+
+    // 4 fingers
+    for (let i = 0; i < 4; i++) {
+        const finger = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.11, 1.3, 10), handMat);
+        finger.position.set(sign * (-0.52 + i * 0.35), 0, -1.1);
+        finger.rotation.x = Math.PI / 2;
+        handGroup.add(finger);
+        // Finger tip glow
+        const tip = new THREE.Mesh(
+            new THREE.SphereGeometry(0.11, 8, 8),
+            new THREE.MeshStandardMaterial({ color: isRight ? 0xf59e0b : 0x3b82f6, emissive: isRight ? 0xf59e0b : 0x3b82f6, emissiveIntensity: 0.3 })
+        );
+        tip.position.set(sign * (-0.52 + i * 0.35), 0, -1.8);
+        handGroup.add(tip);
+    }
+
+    // Thumb
+    const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 1.0, 10), handMat);
+    thumb.position.set(sign * 0.9, 0, 0.2);
+    thumb.rotation.z = sign * Math.PI / 2.5;
+    handGroup.add(thumb);
+
+    // Direction arrows and labels
+    if (isRight) {
+        // Right-hand rule: B into palm, thumb = v, fingers = I
+        const bArrow = new THREE.ArrowHelper(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0.2, 0), 1.8, 0x8b5cf6, 0.4, 0.2);
+        handGroup.add(bArrow);
+        const bLabel = makeTextSprite('B 穿入手心', '#8b5cf6', 24);
+        bLabel.position.set(0, -1.2, 0);
+        handGroup.add(bLabel);
+
+        const vArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(1.2, 0, 0), 1.5, 0x10b981, 0.3, 0.15);
+        handGroup.add(vArrow);
+        const vLabel = makeTextSprite('拇指 = v (速度)', '#10b981', 24);
+        vLabel.position.set(2.5, 0.5, 0);
+        handGroup.add(vLabel);
+
+        const iArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -1.8), 1.2, 0xf59e0b, 0.3, 0.15);
+        handGroup.add(iArrow);
+        const iLabel = makeTextSprite('四指 = I (电流/高电势)', '#f59e0b', 24);
+        iLabel.position.set(0, 0.5, -2.8);
+        handGroup.add(iLabel);
+    } else {
+        // Left-hand rule: B into palm, fingers = I, thumb = F
+        const bArrow = new THREE.ArrowHelper(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0.2, 0), 1.8, 0x8b5cf6, 0.4, 0.2);
+        handGroup.add(bArrow);
+        const bLabel = makeTextSprite('B 穿入手心', '#8b5cf6', 24);
+        bLabel.position.set(0, -1.2, 0);
+        handGroup.add(bLabel);
+
+        const iArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -1.8), 1.2, 0xf59e0b, 0.3, 0.15);
+        handGroup.add(iArrow);
+        const iLabel = makeTextSprite('四指 = I (电流)', '#f59e0b', 24);
+        iLabel.position.set(0, 0.5, -2.8);
+        handGroup.add(iLabel);
+
+        const fArrow = new THREE.ArrowHelper(new THREE.Vector3(-1, 0, 0), new THREE.Vector3(-1.2, 0, 0), 1.5, 0xef4444, 0.3, 0.15);
+        handGroup.add(fArrow);
+        const fLabel = makeTextSprite('拇指 = F (安培力)', '#ef4444', 24);
+        fLabel.position.set(-2.5, 0.5, 0);
+        handGroup.add(fLabel);
+    }
+
+    // Title label
+    const title = makeTextSprite(isRight ? '右手定则：判断感应电流方向' : '左手定则：判断安培力方向', '#1f2937', 24);
+    title.position.set(0, 1.8, 0);
+    handGroup.add(title);
+
+    // Position the hand model
+    handGroup.position.set(-5, BASE_Y - 2, 2);
+    handGroup.rotation.y = -Math.PI / 6;
+    handGroup.rotation.x = -Math.PI / 8;
+}
+
+// ============================================================
+// State
+// ============================================================
+let state = {
+    part: 1,          // 1 or 2
+    omega: 20,        // rad/s
+    time: 0,          // seconds (for part 2)
+    playing: false,
+    showForces: false,
+    showRightHand: false,
+    showLeftHand: false,
+    opAngle: 0,
+    cdSlideT: 0.45    // CD position along rail (0..1) for part 1 animation
+};
+
+// ============================================================
+// Physics Calculations
+// ============================================================
+function computePhysics() {
+    const { B, r, R, L, m, g, mu, sin37, cos37 } = PARAMS;
+    const omega = state.omega;
+    const E = 0.5 * B * omega * r * r;
+    const I = E / (2 * R);
+    const F_ampere = B * I * L;
+    const F_gravity = m * g * sin37;
+    const F_friction_max = mu * m * g * cos37;
+    const F_min = F_gravity - F_friction_max;
+    const F_max = F_gravity + F_friction_max;
+    const inEquilibrium = F_ampere >= F_min && F_ampere <= F_max;
+    return { E, I, F_ampere, F_gravity, F_friction_max, F_min, F_max, inEquilibrium };
+}
+
+// ============================================================
+// Update Scene
+// ============================================================
+function updateScene() {
+    const phys = computePhysics();
+
+    // Update OP rotation
+    state.opAngle += state.omega * 0.008;
+    opRod.rotation.z = -state.opAngle;
+
+    // Update P marker position
+    const pAngle = state.opAngle;
+    const px = rs * Math.cos(pAngle);
+    const pz = rs * Math.sin(pAngle);
+    pMarker.position.set(px, BASE_Y, pz);
+
+    // Update CD position with smooth easing for part 2
+    let cdT;
+    if (state.part === 1) {
+        // Part 1: CD slides when out of equilibrium
+        const slideSpeed = 0.003;
+        if (phys.inEquilibrium) {
+            // gently drift back to center when balanced
+            state.cdSlideT += (0.45 - state.cdSlideT) * 0.02;
+        } else if (phys.F_ampere < phys.F_min) {
+            // Ampere force too small → CD slides down
+            state.cdSlideT += slideSpeed;
+        } else if (phys.F_ampere > phys.F_max) {
+            // Ampere force too large → CD slides up
+            state.cdSlideT -= slideSpeed;
+        }
+        state.cdSlideT = Math.max(0, Math.min(1, state.cdSlideT));
+        cdT = state.cdSlideT;
+    } else {
+        // Part 2: CD slides with uniform acceleration
+        const v1 = 2, a = 1, duration = 1.0;
+        let tNorm = Math.min(state.time / duration, 1.0);
+        // Apply smooth ease-in-out
+        tNorm = tNorm < 0.5 ? 2 * tNorm * tNorm : 1 - Math.pow(-2 * tNorm + 2, 2) / 2;
+        const s = v1 * state.time + 0.5 * a * state.time * state.time;
+        cdT = 0.05 + tNorm * 0.85;
+    }
+
+    // Smooth interpolation for CD position to avoid jumps
+    const targetCdPos1 = M1.clone().add(railDir.clone().multiplyScalar(cdT * railLength));
+    const targetCdPos2 = M2.clone().add(railDir.clone().multiplyScalar(cdT * railLength));
+
+    // If CD rod hasn't been positioned yet, just set it directly
+    if (!cdRod.userData.lastPos1) {
+        cdRod.userData.lastPos1 = targetCdPos1.clone();
+        cdRod.userData.lastPos2 = targetCdPos2.clone();
+    }
+
+    // Smooth lerp (exponential smoothing)
+    const lerpFactor = 0.25;
+    const cdPos1 = cdRod.userData.lastPos1.lerp(targetCdPos1, lerpFactor);
+    const cdPos2 = cdRod.userData.lastPos2.lerp(targetCdPos2, lerpFactor);
+    cdRod.userData.lastPos1 = cdPos1.clone();
+    cdRod.userData.lastPos2 = cdPos2.clone();
+    const cdMid = new THREE.Vector3().addVectors(cdPos1, cdPos2).multiplyScalar(0.5);
+
+    cdRod.position.copy(cdPos1);
+    cdRod.lookAt(cdPos2);
+    cdRod.rotateX(Math.PI / 2);
+
+    cMarker.position.copy(cdPos1);
+    dMarker.position.copy(cdPos2);
+
+    // Update force arrows
+    while (forcesGroup.children.length > 0) forcesGroup.remove(forcesGroup.children[0]);
+
+    if (state.showForces) {
+        // Gravity component along rail (downward)
+        const gravDir = railDir.clone().multiplyScalar(-1);
+        createForceArrow(cdMid.clone().add(new THREE.Vector3(0, 0.3, 0)), gravDir, 1.2, 0xf59e0b);
+
+        // Ampere force (upward along rail)
+        const ampereDir = railDir.clone();
+        const ampereLength = Math.min(phys.F_ampere * 0.6, 2.5);
+        createForceArrow(cdMid.clone().add(new THREE.Vector3(0, 0.5, 0)), ampereDir, ampereLength, 0xef4444);
+
+        // Friction (opposes motion, or max static)
+        const frictionDir = phys.F_ampere > phys.F_gravity ? gravDir : ampereDir;
+        createForceArrow(cdMid.clone().add(new THREE.Vector3(0, 0.7, 0)), frictionDir, 0.8, 0x6b7280);
+    }
+
+    // Update UI
+    document.getElementById('omegaDisplay').textContent = state.omega.toFixed(1);
+    document.getElementById('emfDisplay').textContent = phys.E.toFixed(3);
+    document.getElementById('currentDisplay').textContent = phys.I.toFixed(1);
+    document.getElementById('forceDisplay').textContent = phys.F_ampere.toFixed(2);
+
+    const eqStatus = document.getElementById('equilibriumStatus');
+    if (state.part === 1) {
+        if (phys.inEquilibrium) {
+            eqStatus.textContent = '✓ 平衡区间 (8 ≤ ω ≤ 40)';
+            eqStatus.className = 'font-medium text-green-600';
+        } else if (phys.F_ampere < phys.F_min) {
+            eqStatus.textContent = '✗ 安培力过小，CD 将下滑';
+            eqStatus.className = 'font-medium text-red-500';
+        } else {
+            eqStatus.textContent = '✗ 安培力过大，CD 将上滑';
+            eqStatus.className = 'font-medium text-red-500';
+        }
+    } else {
+        eqStatus.textContent = `t = ${state.time.toFixed(2)}s, v = ${(2 + state.time).toFixed(2)}m/s`;
+        eqStatus.className = 'font-medium text-blue-600';
+    }
+}
+
+// ============================================================
+// Animation Loop
+// ============================================================
+let lastTime = 0;
+function animate(time) {
+    requestAnimationFrame(animate);
+    const delta = (time - lastTime) * 0.001;
+    lastTime = time;
+
+    if (state.playing && state.part === 2) {
+        state.time += delta;
+        if (state.time > 1.0) {
+            state.time = 1.0;
+            state.playing = false;
+            document.getElementById('btnPlay').textContent = '▶ 播放';
+        }
+    }
+
+    updateScene();
+    controls.update();
+    renderer.render(scene, camera);
+}
+
+// ============================================================
+// UI Event Listeners
+// ============================================================
+const omegaSlider = document.getElementById('omegaSlider');
+const omegaValue = document.getElementById('omegaValue');
+
+omegaSlider.addEventListener('input', (e) => {
+    state.omega = parseFloat(e.target.value);
+    omegaValue.textContent = state.omega.toFixed(1);
+});
+
+document.getElementById('btnPart1').addEventListener('click', () => {
+    state.part = 1;
+    state.time = 0;
+    state.playing = false;
+    state.cdSlideT = 0.45;
+    document.getElementById('btnPlay').textContent = '▶ 播放';
+    document.getElementById('btnPart1').classList.add('active');
+    document.getElementById('btnPart2').classList.remove('active');
+    document.getElementById('part1Card').classList.remove('hidden');
+    document.getElementById('part2Card').classList.add('hidden');
+    document.getElementById('hudTitle').textContent = '当前模式：静力平衡（第1问）';
+    document.getElementById('hudSubtitle').textContent = '调节 ω 观察 CD 棒的受力变化';
+    omegaSlider.disabled = false;
+});
+
+document.getElementById('btnPart2').addEventListener('click', () => {
+    state.part = 2;
+    state.time = 0;
+    state.playing = false;
+    state.omega = 16; // initial ω for part 2
+    omegaSlider.value = 16;
+    omegaValue.textContent = '16.0';
+    document.getElementById('btnPlay').textContent = '▶ 播放';
+    document.getElementById('btnPart2').classList.add('active');
+    document.getElementById('btnPart1').classList.remove('active');
+    document.getElementById('part1Card').classList.add('hidden');
+    document.getElementById('part2Card').classList.remove('hidden');
+    document.getElementById('hudTitle').textContent = '当前模式：匀加速运动（第2问）';
+    document.getElementById('hudSubtitle').textContent = 'CD 以 a=1m/s² 匀加速下滑';
+    omegaSlider.disabled = true;
+});
+
+document.getElementById('btnPlay').addEventListener('click', () => {
+    if (state.part !== 2) {
+        document.getElementById('btnPart2').click();
+    }
+    state.playing = !state.playing;
+    document.getElementById('btnPlay').textContent = state.playing ? '⏸ 暂停' : '▶ 播放';
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+    state.time = 0;
+    state.playing = false;
+    state.cdSlideT = 0.45;
+    state.omega = state.part === 1 ? 20 : 16;
+    omegaSlider.value = state.omega;
+    omegaValue.textContent = state.omega.toFixed(1);
+    document.getElementById('btnPlay').textContent = '▶ 播放';
+});
+
+document.getElementById('btnForces').addEventListener('click', () => {
+    state.showForces = !state.showForces;
+    forcesGroup.visible = state.showForces;
+    document.getElementById('btnForces').classList.toggle('active');
+});
+
+document.getElementById('btnRightHand').addEventListener('click', () => {
+    // Toggle right-hand rule model
+    state.showRightHand = !state.showRightHand;
+    state.showLeftHand = false;
+
+    // Clear existing hand group children
+    while (handGroup.children.length > 0) handGroup.remove(handGroup.children[0]);
+
+    if (state.showRightHand) {
+        createHandModel('right');
+        handGroup.visible = true;
+        document.getElementById('btnRightHand').classList.add('active');
+        document.getElementById('btnLeftHand').classList.remove('active');
+    } else {
+        handGroup.visible = false;
+        document.getElementById('btnRightHand').classList.remove('active');
+    }
+});
+
+document.getElementById('btnLeftHand').addEventListener('click', () => {
+    // Toggle left-hand rule model
+    state.showLeftHand = !state.showLeftHand;
+    state.showRightHand = false;
+
+    // Clear existing hand group children
+    while (handGroup.children.length > 0) handGroup.remove(handGroup.children[0]);
+
+    if (state.showLeftHand) {
+        createHandModel('left');
+        handGroup.visible = true;
+        document.getElementById('btnLeftHand').classList.add('active');
+        document.getElementById('btnRightHand').classList.remove('active');
+    } else {
+        handGroup.visible = false;
+        document.getElementById('btnLeftHand').classList.remove('active');
+    }
+});
+
+// View presets
+document.querySelectorAll('[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        const positions = {
+            overview: new THREE.Vector3(12, BASE_Y + 2, 14),
+            side: new THREE.Vector3(16, BASE_Y, 0),
+            top: new THREE.Vector3(0, BASE_Y + 12, 0.1),
+            rail: new THREE.Vector3(4, BASE_Y - 2, 10)
+        };
+        const targets = {
+            overview: new THREE.Vector3(4, BASE_Y - 2, 0),
+            side: new THREE.Vector3(4, BASE_Y - 2, 0),
+            top: new THREE.Vector3(4, BASE_Y - 4, 0),
+            rail: new THREE.Vector3(4, BASE_Y - 2, 0)
+        };
+        camera.position.copy(positions[view]);
+        controls.target.copy(targets[view]);
+        controls.update();
+    });
+});
+
+// Resize
+window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+// Start
+animate(0);
+</script>
+</body>
+</html>
