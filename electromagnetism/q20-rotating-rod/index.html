@@ -83,9 +83,25 @@
         .view-btn, .choice-btn, .nav-btn { min-height: 40px; padding: 8px 13px; border-radius: 9px; background: #fff; border: 1px solid var(--line); color: #344054; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .18s; }
         .view-btn:hover, .choice-btn:hover, .nav-btn:hover { border-color: var(--blue); color: var(--blue); }
         .view-btn.active, .choice-btn.selected, .nav-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+        .view-btn[aria-pressed="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
         .nav-btn:disabled { opacity: .45; cursor: not-allowed; }
         .nav-btn:not(:disabled):active, .view-btn:active, .choice-btn:active { transform: translateY(1px); }
-        .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+        .question-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 520px; margin: -4px 0 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+        .question-tab { min-height: 54px; padding: 8px 14px; border: 0; border-right: 1px solid var(--line); background: #fff; color: #596579; cursor: pointer; text-align: left; }
+        .question-tab:last-child { border-right: 0; }
+        .question-tab strong, .question-tab span { display: block; }
+        .question-tab strong { font-size: 14px; }
+        .question-tab span { margin-top: 2px; color: #7a8499; font-size: 11px; }
+        .question-tab.active { background: #eff6ff; color: var(--blue); box-shadow: inset 0 -3px 0 var(--blue); }
+        .question-tab.active span { color: #315ea8; }
+        .legend-list { display: flex; flex-wrap: wrap; gap: 5px 13px; }
+        .legend-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .legend-symbol { display: inline-grid; place-items: center; min-width: 17px; font-size: 16px; font-weight: 700; line-height: 1; }
+        .legend-b { color: var(--purple); }
+        .legend-v { color: var(--green); }
+        .legend-i { color: var(--orange); }
+        .legend-f { color: var(--red); }
+        .current-path-banner { color: #9a4c00; font-size: 12px; font-weight: 700; letter-spacing: .01em; }
         .formula { font-family: "Times New Roman", serif; font-style: italic; }
         .guide-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 14px 40px rgba(23,32,51,.08); overflow: hidden; }
         .lesson-grid { align-items: start; }
@@ -134,8 +150,9 @@
         .part2-stage-btn span { display: block; margin: 0 auto 3px; width: 23px; height: 23px; line-height: 23px; border-radius: 50%; background: #e6ebf2; }
         .part2-stage-btn.active { color: var(--blue); background: #eff6ff; }
         .part2-stage-btn.active span { color: #fff; background: var(--blue); }
-        .part2-time-controls { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .part2-time-controls output { min-width: 62px; color: var(--blue); font-weight: 700; text-align: right; }
+        .part2-time-controls { display: grid; gap: 8px; margin-bottom: 12px; }
+        .timeline-control-row { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto; align-items: center; gap: 10px; }
+        .timeline-control-row output { min-width: 62px; color: var(--blue); font-weight: 700; text-align: right; }
         .part2-chart { display: block; width: 100%; height: auto; max-height: 270px; overflow: visible; }
         .chart-mobile-formulas { display: none; }
         .chart-grid { stroke: #dbe2ec; stroke-width: 1; }
@@ -148,10 +165,18 @@
         .chart-gap { stroke: #d97706; stroke-width: 3; }
         .chart-marker-ecd { fill: #fff; stroke: #2563eb; stroke-width: 4; }
         .chart-marker-eop { fill: #fff; stroke: #7c3aed; stroke-width: 4; }
-        .linked-values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 10px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+        .linked-values { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; margin-top: 10px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
         .linked-value { padding: 10px 12px; background: #fff; text-align: center; }
         .linked-value span { display: block; color: var(--muted); font-size: 12px; }
         .linked-value strong { display: block; margin-top: 2px; font-size: 15px; }
+        .omega-derivation { display: grid; grid-template-columns: auto auto auto; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; padding: 11px 12px; color: #43506a; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: center; }
+        .omega-derivation strong { color: var(--purple); font-size: 17px; }
+        .part2-viz.omega-step .chart-ecd,
+        .part2-viz.omega-step .chart-marker-ecd,
+        .part2-viz.omega-step .chart-ecd-label,
+        .part2-viz.omega-step .chart-gap,
+        .part2-viz.omega-step .chart-gap-label { opacity: .28; }
+        .part2-viz.omega-step .chart-eop { stroke-width: 6; }
         .force-balance { display: grid; gap: 16px; padding: 12px 2px 4px; }
         .force-lane { display: grid; grid-template-columns: minmax(115px, .8fr) minmax(160px, 1.4fr) minmax(115px, .8fr); align-items: center; gap: 12px; }
         .force-direction { font-size: 13px; font-weight: 700; color: var(--muted); }
@@ -193,8 +218,11 @@
             .scene-bottom { left: 8px; right: 8px; bottom: 8px; }
             .scene-bottom .view-btn { min-height: 38px; padding: 7px 10px; }
             .guide-content { padding: 18px 15px; }
+            .guide-panel { order: -1; }
             .guide-title { font-size: 20px; }
             .page-title { font-size: 22px !important; line-height: 1.35; }
+            .question-nav { max-width: none; margin-bottom: 12px; }
+            .question-tab { min-height: 50px; padding: 7px 10px; }
             .step-dot { min-height: 52px; font-size: 0; }
             .step-dot span { font-size: 12px; margin-bottom: 0; }
             .choice-grid, .reference-grid { grid-template-columns: 1fr; }
@@ -203,13 +231,13 @@
             .part2-viz { padding: 15px 12px 17px; }
             .part2-viz-header { align-items: flex-start; flex-wrap: wrap; gap: 5px 12px; }
             .part2-viz-status { white-space: normal; }
-            .part2-time-controls { grid-template-columns: 1fr auto; gap: 8px; }
-            .part2-time-controls label { grid-column: 1 / -1; }
+            .timeline-control-row { grid-template-columns: auto minmax(90px, 1fr) auto; gap: 7px; }
             .chart-mobile-formulas { display: grid; gap: 3px; margin-bottom: 4px; color: #43506a; font-size: 12px; }
             .chart-series-label { display: none; }
             .chart-label { font-size: 20px; }
             .chart-label-strong { font-size: 20px; }
             .linked-values { grid-template-columns: 1fr; }
+            .omega-derivation { grid-template-columns: 1fr; gap: 4px; }
             .force-lane { grid-template-columns: 1fr; text-align: center; }
             .force-direction:last-child { text-align: center; }
             .force-rail { min-height: 12px; }
@@ -233,6 +261,15 @@
         <p class="text-gray-500 text-sm">沿着运动、电流与受力的因果链，完成一次可操作的物理推理。</p>
     </header>
 
+    <nav class="question-nav" role="tablist" aria-label="题目分问导航">
+        <button class="question-tab active" type="button" role="tab" aria-selected="true" data-switch-part="1" id="questionTab1">
+            <strong>第（1）问</strong><span id="questionProgress1">引导第 1 / 5 步</span>
+        </button>
+        <button class="question-tab" type="button" role="tab" aria-selected="false" data-switch-part="2" id="questionTab2">
+            <strong>第（2）问</strong><span id="questionProgress2">引导第 1 / 4 步</span>
+        </button>
+    </nav>
+
     <div class="lesson-grid grid grid-cols-1 lg:grid-cols-7 gap-5">
         <section class="lg:col-span-5 bg-white rounded-2xl shadow-lg overflow-hidden" aria-label="三维物理场景">
             <div class="canvas-container" id="canvasContainer">
@@ -243,26 +280,27 @@
                         <div class="text-xs text-gray-500 mt-1" id="hudSubtitle">拖动场景，找到旋转棒 OP 和导体棒 CD</div>
                     </div>
                     <div class="hud-card" id="legendPanel">
-                        <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#7c3aed"></span>磁场 B</span>
-                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#059669"></span>速度 v</span>
-                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#d97706"></span>电流 I</span>
-                            <span class="flex items-center gap-1"><span class="legend-dot" style="background:#dc2626"></span>安培力 F<sub>A</sub></span>
+                        <div class="legend-list text-xs">
+                            <span class="legend-item" data-legend="b"><span class="legend-symbol legend-b">↑</span>磁场 B</span>
+                            <span class="legend-item" data-legend="v"><span class="legend-symbol legend-v">→</span>速度 v</span>
+                            <span class="legend-item" data-legend="i"><span class="legend-symbol legend-i">→</span>传统电流方向</span>
+                            <span class="legend-item" data-legend="f"><span class="legend-symbol legend-f">→</span>安培力 F<sub>A</sub></span>
                         </div>
                     </div>
+                    <div class="hud-card current-path-banner" id="currentPathBanner" hidden>O → M₁ → CD → M₂ → 圆环 → P</div>
                     <div class="hud-card" id="physicsInfo" hidden>
                         <div class="metric-line">
-                            <span>ω=<strong id="omegaDisplay">20.0</strong> rad/s</span>
-                            <span>E<sub>OP</sub>=<strong id="emfDisplay">0.200</strong> V</span>
+                            <span id="omegaMetric">ω=<strong id="omegaDisplay">20.0</strong> rad/s</span>
+                            <span id="emfOpMetric">E<sub>OP</sub>=<strong id="emfDisplay">0.200</strong> V</span>
                             <span id="emfCdMetric" hidden>E<sub>CD</sub>=<strong id="emfCdDisplay">0.000</strong> V</span>
-                            <span>I=<strong id="currentDisplay">10.0</strong> A</span>
-                            <span>F<sub>A</sub>=<strong id="forceDisplay">1.00</strong> N</span>
+                            <span id="currentMetric">I=<strong id="currentDisplay">10.0</strong> A</span>
+                            <span id="forceMetric">F<sub>A</sub>=<strong id="forceDisplay">1.00</strong> N</span>
                         </div>
                         <div id="equilibriumStatus" class="text-xs font-medium text-green-700 mt-1">处于静力平衡范围</div>
                     </div>
                 </div>
                 <div class="scene-bottom">
-                    <button class="view-btn" id="btnPlay" type="button">⏸ 暂停旋转</button>
+                    <button class="view-btn" id="btnPlay" type="button" aria-pressed="true">⏸ 暂停旋转</button>
                     <div id="viewControls" class="flex flex-wrap gap-1" hidden>
                         <button class="view-btn" type="button" data-view="overview">全景</button>
                         <button class="view-btn" type="button" data-view="top">俯视</button>
@@ -291,8 +329,11 @@
                 <div id="part2TimeView" hidden>
                     <div class="part2-time-controls">
                         <label for="timeSlider" class="text-sm font-bold">拖动时间，联动装置与曲线</label>
-                        <input type="range" id="timeSlider" min="0" max="1" step="0.01" value="0">
-                        <output id="timeValue" for="timeSlider">0.00 s</output>
+                        <div class="timeline-control-row">
+                            <button class="view-btn" id="btnTimePlay" type="button" aria-pressed="false">▶ 播放</button>
+                            <input type="range" id="timeSlider" min="0" max="1" step="0.01" value="0">
+                            <output id="timeValue" for="timeSlider">0.00 s</output>
+                        </div>
                     </div>
                     <div class="chart-mobile-formulas" aria-hidden="true">
                         <span>E<sub>CD</sub> = 0.200 + 0.100t</span>
@@ -315,20 +356,23 @@
                         <text class="chart-label" x="665" y="248">1.0 s</text>
                         <path class="chart-ecd" d="M74 131 L676 54"></path>
                         <path class="chart-eop" d="M74 162 L676 85"></path>
-                        <text class="chart-label-strong chart-series-label" x="548" y="45">E<tspan baseline-shift="sub" font-size="11">CD</tspan> = 0.200 + 0.100t</text>
-                        <text class="chart-label-strong chart-series-label" x="520" y="111">E<tspan baseline-shift="sub" font-size="11">OP</tspan> = 0.160 + 0.100t</text>
+                        <text class="chart-label-strong chart-series-label chart-ecd-label" x="548" y="45">E<tspan baseline-shift="sub" font-size="11">CD</tspan> = 0.200 + 0.100t</text>
+                        <text class="chart-label-strong chart-series-label chart-eop-label" x="520" y="111">E<tspan baseline-shift="sub" font-size="11">OP</tspan> = 0.160 + 0.100t</text>
                         <line class="chart-cursor" id="chartCursor" x1="74" y1="35" x2="74" y2="224"></line>
                         <line class="chart-gap" id="chartGap" x1="88" y1="131" x2="88" y2="162"></line>
                         <line class="chart-gap" id="chartGapTop" x1="82" y1="131" x2="94" y2="131"></line>
                         <line class="chart-gap" id="chartGapBottom" x1="82" y1="162" x2="94" y2="162"></line>
-                        <text class="chart-label-strong" id="chartGapLabel" x="101" y="151">差 0.040 V</text>
+                        <text class="chart-label-strong chart-gap-label" id="chartGapLabel" x="101" y="151">差 0.040 V</text>
                         <circle class="chart-marker-ecd" id="chartMarkerEcd" cx="74" cy="131" r="7"></circle>
                         <circle class="chart-marker-eop" id="chartMarkerEop" cx="74" cy="162" r="7"></circle>
                     </svg>
                     <div class="linked-values">
                         <div class="linked-value"><span>CD 速度 v</span><strong id="part2VelocityValue">2.00 m/s</strong></div>
                         <div class="linked-value"><span>电流 I（保持不变）</span><strong id="part2CurrentValue">2.00 A</strong></div>
-                        <div class="linked-value"><span>OP 角速度 ω</span><strong id="part2OmegaValue">16.0 rad/s</strong></div>
+                        <div class="linked-value" id="part2OmegaMetric"><span>OP 角速度 ω</span><strong id="part2OmegaValue">16.0 rad/s</strong></div>
+                    </div>
+                    <div class="omega-derivation" id="omegaDerivation" hidden>
+                        <span>E<sub>OP</sub> = ½Br²ω</span><span>→</span><strong>ω(t) = 16 + 10t rad/s</strong>
                     </div>
                 </div>
 
@@ -375,20 +419,20 @@
                         <button class="choice-btn" type="button" data-prediction="o">O 点电势高</button>
                     </div>
                     <div id="predictionFeedback" class="feedback" hidden aria-live="polite"></div>
-                    <button class="view-btn mt-3" id="btnRightHand" type="button" hidden>显示右手定则</button>
+                    <button class="view-btn mt-3" id="btnRightHand" type="button" aria-pressed="false" hidden>显示右手定则</button>
                 </div>
 
                 <div class="step-tool" id="step3Tool" hidden>
                     <div class="concept-chain"><strong style="color:#d97706">O → M₁ → CD → M₂ → 圆环 → P</strong></div>
                     <p class="text-sm text-gray-600 mt-3">外电路的传统电流由高电势 O 流回 P；在 CD 中从 M₁ 侧流向 M₂ 侧。</p>
-                    <button class="view-btn mt-3 active" id="btnCurrent" type="button">隐藏电流方向</button>
+                    <button class="view-btn mt-3 active" id="btnCurrent" type="button" aria-pressed="true">隐藏电流方向</button>
                 </div>
 
                 <div class="step-tool" id="step4Tool" hidden>
                     <p class="text-sm text-gray-700 leading-7">CD 沿斜面方向同时受到重力分力、摩擦力和安培力。电流方向与磁场共同决定安培力沿导轨向上。</p>
                     <div class="flex flex-wrap gap-2 mt-3">
-                        <button class="view-btn active" id="btnForces" type="button">隐藏受力</button>
-                        <button class="view-btn" id="btnLeftHand" type="button">显示左手定则</button>
+                        <button class="view-btn active" id="btnForces" type="button" aria-pressed="true">隐藏受力</button>
+                        <button class="view-btn" id="btnLeftHand" type="button" aria-pressed="false">显示左手定则</button>
                     </div>
                     <div class="feedback correct mt-3">静摩擦力会在需要的方向上调节，因此“能静止”对应一个安培力范围，而不是单一数值。</div>
                 </div>
@@ -411,17 +455,14 @@
                         <span class="axis-caption">绿色区间：CD 可以静止</span>
                     </div>
                     <div id="exploreConclusion" class="feedback correct" aria-live="polite"></div>
-                    <button class="nav-btn primary w-full mt-3" id="btnFinishGuide" type="button">完成引导，进入自由探究</button>
+                    <button class="nav-btn primary w-full mt-3" id="btnFinishGuide" type="button">完成第（1）问，进入自由探究</button>
+                    <button class="nav-btn primary w-full mt-3" id="btnContinuePart2" type="button" hidden>继续第（2）问</button>
                     <div class="free-explore" id="freeExplorePanel" hidden>
-                        <div class="part-toggle mb-3">
-                            <button class="active" type="button" data-switch-part="1" id="btnPart1">第（1）问</button>
-                            <button type="button" data-switch-part="2" id="btnPart2">第（2）问</button>
-                        </div>
                         <p class="text-xs text-gray-600 leading-6" id="freeExploreHint">改变 ω，比较 F<sub>A</sub> 与静摩擦可调范围。</p>
                         <div class="flex flex-wrap gap-2 mt-3">
                             <button class="view-btn" id="btnReset" type="button">重置</button>
-                            <button class="view-btn active" id="btnCurrentFree" type="button">电流</button>
-                            <button class="view-btn active" id="btnForcesFree" type="button">受力</button>
+                            <button class="view-btn active" id="btnCurrentFree" type="button" aria-pressed="true">电流</button>
+                            <button class="view-btn active" id="btnForcesFree" type="button" aria-pressed="true">受力</button>
                         </div>
                     </div>
                 </div>
@@ -441,10 +482,6 @@
                     <button class="part2-stage-btn" type="button" data-part2-step="4"><span>4</span>能量</button>
                 </div>
                 <div class="guide-content">
-                    <div class="part-toggle mb-3">
-                        <button type="button" data-switch-part="1">第（1）问</button>
-                        <button class="active" type="button" data-switch-part="2">第（2）问</button>
-                    </div>
                     <div class="guide-kicker" id="part2StepKicker">第 1 / 4 步</div>
                     <h2 class="guide-title" id="part2GuideTitle">先由运动状态确定电流</h2>
                     <div class="guide-body" id="part2GuideBody">CD 做加速度为 1 m/s² 的匀加速运动。沿斜面列牛顿第二定律，安培力只能为 0.20 N，因此回路电流被固定为 2.0 A。</div>
@@ -962,27 +999,109 @@ const velocityArrow = new THREE.ArrowHelper(
 const velocityLabel = makeTextSprite('v', '#059669', 30);
 velocityGroup.add(velocityArrow, velocityLabel);
 
-const currentArrow = new THREE.ArrowHelper(
-    new THREE.Vector3(0, 0, -1),
-    new THREE.Vector3(),
-    1.4,
-    0xd97706,
-    0.28,
-    0.18
+const CURRENT_COLOR = 0xf97316;
+const CURRENT_PATH_POINT_COUNT = 14;
+const currentPathPositions = new Float32Array(CURRENT_PATH_POINT_COUNT * 3);
+const currentPathGeometry = new THREE.BufferGeometry();
+currentPathGeometry.setAttribute('position', new THREE.BufferAttribute(currentPathPositions, 3));
+const currentPathLine = new THREE.Line(
+    currentPathGeometry,
+    new THREE.LineBasicMaterial({
+        color: CURRENT_COLOR,
+        transparent: true,
+        opacity: 0.95,
+        depthTest: false
+    })
 );
-const currentLabel = makeTextSprite('I：M₁ → M₂', '#d97706', 28);
-currentGroup.add(currentArrow, currentLabel);
+currentPathLine.renderOrder = 20;
+currentGroup.add(currentPathLine);
 
-const wireCurrentDirection = new THREE.Vector3().subVectors(M1, O).normalize();
-const wireCurrentArrow = new THREE.ArrowHelper(
-    wireCurrentDirection,
-    O.clone().add(wireCurrentDirection.clone().multiplyScalar(0.45)),
-    1.5,
-    0xd97706,
-    0.26,
-    0.16
-);
-currentGroup.add(wireCurrentArrow);
+function createCurrentArrow() {
+    const arrow = new THREE.ArrowHelper(
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(),
+        0.9,
+        CURRENT_COLOR,
+        0.34,
+        0.24
+    );
+    arrow.line.material.depthTest = false;
+    arrow.cone.material.depthTest = false;
+    arrow.line.renderOrder = 21;
+    arrow.cone.renderOrder = 21;
+    currentGroup.add(arrow);
+    return arrow;
+}
+
+const currentArrows = {
+    wire: [createCurrentArrow(), createCurrentArrow()],
+    railDown: [createCurrentArrow(), createCurrentArrow()],
+    cd: [createCurrentArrow(), createCurrentArrow()],
+    railUp: [createCurrentArrow(), createCurrentArrow()],
+    ring: [createCurrentArrow(), createCurrentArrow(), createCurrentArrow()]
+};
+
+const currentLabel = makeTextSprite('I：M₁ → M₂', '#f97316', 32);
+currentLabel.material.depthTest = false;
+currentLabel.renderOrder = 22;
+currentGroup.add(currentLabel);
+
+function placeCurrentArrows(arrows, start, end) {
+    const direction = new THREE.Vector3().subVectors(end, start);
+    const distance = direction.length();
+    if (distance < 0.18) {
+        arrows.forEach((arrow) => { arrow.visible = false; });
+        return;
+    }
+
+    direction.normalize();
+    const arrowLength = Math.max(0.28, Math.min(0.92, distance / (arrows.length + 0.8)));
+    arrows.forEach((arrow, index) => {
+        const fraction = (index + 1) / (arrows.length + 1);
+        arrow.visible = true;
+        arrow.position.copy(start).lerp(end, fraction).addScaledVector(direction, -arrowLength * 0.5);
+        arrow.setDirection(direction);
+        arrow.setLength(arrowLength, Math.min(0.34, arrowLength * 0.42), Math.min(0.24, arrowLength * 0.3));
+    });
+}
+
+function updateCurrentPath(cdPos1, cdPos2) {
+    const points = [O, M1, cdPos1, cdPos2, M2];
+    let ringAngle = state.opAngle % (Math.PI * 2);
+    if (ringAngle < 0) ringAngle += Math.PI * 2;
+    for (let index = 0; index < 9; index++) {
+        const angle = ringAngle * index / 8;
+        points.push(new THREE.Vector3(Math.cos(angle) * rs, BASE_Y, Math.sin(angle) * rs));
+    }
+
+    points.forEach((point, index) => {
+        currentPathPositions[index * 3] = point.x;
+        currentPathPositions[index * 3 + 1] = point.y + 0.06;
+        currentPathPositions[index * 3 + 2] = point.z;
+    });
+    currentPathGeometry.attributes.position.needsUpdate = true;
+    currentPathGeometry.computeBoundingSphere();
+
+    placeCurrentArrows(currentArrows.wire, O, M1);
+    placeCurrentArrows(currentArrows.railDown, M1, cdPos1);
+    placeCurrentArrows(currentArrows.cd, cdPos1, cdPos2);
+    placeCurrentArrows(currentArrows.railUp, cdPos2, M2);
+
+    const ringArcLength = Math.max(0.22, rs * ringAngle);
+    const ringArrowLength = Math.max(0.28, Math.min(0.75, ringArcLength / 4));
+    currentArrows.ring.forEach((arrow, index) => {
+        const angle = ringAngle * (index + 1) / 4;
+        const tangent = new THREE.Vector3(-Math.sin(angle), 0, Math.cos(angle));
+        arrow.visible = ringAngle > 0.12;
+        arrow.position.set(Math.cos(angle) * rs, BASE_Y + 0.06, Math.sin(angle) * rs);
+        arrow.position.addScaledVector(tangent, -ringArrowLength * 0.5);
+        arrow.setDirection(tangent);
+        arrow.setLength(ringArrowLength, Math.min(0.32, ringArrowLength * 0.44), Math.min(0.22, ringArrowLength * 0.3));
+    });
+
+    currentLabel.position.copy(new THREE.Vector3().addVectors(cdPos1, cdPos2).multiplyScalar(0.5));
+    currentLabel.position.y += 1.15;
+}
 
 // ============================================================
 // State
@@ -997,6 +1116,7 @@ const state = {
     prediction: null,
     freeExplore: false,
     omega: 20,
+    part1Omega: 20,
     time: 0,
     playing: !prefersReducedMotion,
     showForces: false,
@@ -1028,7 +1148,7 @@ const STEP_COPY = {
         body: 'O 点电势较高后，传统电流从 O 经外电路流向 P。沿着橙色箭头追踪回路，注意 CD 中的电流方向。',
         hud: '电流：从 O 点沿外电路流向 P 点',
         subtitle: 'CD 中电流方向为 M₁ → M₂',
-        view: 'overview'
+        view: 'circuit'
     },
     4: {
         title: '从电流方向推到安培力',
@@ -1094,6 +1214,7 @@ const omegaValue = document.getElementById('omegaValue');
 const physicsInfo = document.getElementById('physicsInfo');
 const emfCdMetric = document.getElementById('emfCdMetric');
 const btnPlay = document.getElementById('btnPlay');
+const btnTimePlay = document.getElementById('btnTimePlay');
 const btnNextStep = document.getElementById('btnNextStep');
 const btnPrevStep = document.getElementById('btnPrevStep');
 const guideStepButtons = [...document.querySelectorAll('[data-guide-step]')];
@@ -1142,12 +1263,14 @@ function applyCameraPreset(view) {
     const positions = {
         overview: new THREE.Vector3(12, BASE_Y + 2, 14),
         top: new THREE.Vector3(0, BASE_Y + 14, 0.1),
-        rail: new THREE.Vector3(9, BASE_Y - 1, 10)
+        rail: new THREE.Vector3(9, BASE_Y - 1, 10),
+        circuit: new THREE.Vector3(8.5, BASE_Y + 5.5, 10.5)
     };
     const targets = {
         overview: new THREE.Vector3(4, BASE_Y - 2, 0),
         top: new THREE.Vector3(2, BASE_Y - 1, 0),
-        rail: new THREE.Vector3(5, BASE_Y - 2, 0)
+        rail: new THREE.Vector3(5, BASE_Y - 2, 0),
+        circuit: new THREE.Vector3(3.2, BASE_Y - 0.8, 0.8)
     };
     camera.position.copy(positions[view]);
     controls.target.copy(targets[view]);
@@ -1161,6 +1284,8 @@ function clearHandModel() {
     state.showLeftHand = false;
     document.getElementById('btnRightHand').classList.remove('active');
     document.getElementById('btnLeftHand').classList.remove('active');
+    document.getElementById('btnRightHand').setAttribute('aria-pressed', 'false');
+    document.getElementById('btnLeftHand').setAttribute('aria-pressed', 'false');
 }
 
 function toggleHand(type) {
@@ -1172,15 +1297,120 @@ function toggleHand(type) {
     handGroup.visible = true;
     state.showRightHand = type === 'right';
     state.showLeftHand = type === 'left';
-    document.getElementById(type === 'right' ? 'btnRightHand' : 'btnLeftHand').classList.add('active');
+    const activeButton = document.getElementById(type === 'right' ? 'btnRightHand' : 'btnLeftHand');
+    activeButton.classList.add('active');
+    activeButton.setAttribute('aria-pressed', 'true');
 }
 
 function syncPlayButton() {
     if (state.part === 2) {
-        btnPlay.textContent = state.playing ? '⏸ 暂停运动' : '▶ 播放运动';
+        btnTimePlay.textContent = state.playing ? '⏸ 暂停' : '▶ 播放';
+        btnTimePlay.setAttribute('aria-pressed', String(state.playing));
     } else {
         btnPlay.textContent = state.playing ? '⏸ 暂停旋转' : '▶ 播放旋转';
+        btnPlay.setAttribute('aria-pressed', String(state.playing));
     }
+}
+
+function syncQuestionNavigation() {
+    document.querySelectorAll('[data-switch-part]').forEach((button) => {
+        const active = Number(button.dataset.switchPart) === state.part;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', String(active));
+    });
+    document.getElementById('questionProgress1').textContent = state.freeExplore
+        ? '自由探究已开启'
+        : (state.guideCompleted ? '已完成 · 引导第 ' : '引导第 ') + state.guideStep + ' / 5 步';
+    document.getElementById('questionProgress2').textContent = '引导第 ' + state.part2Step + ' / 4 步';
+}
+
+function setLegend(keys, showCurrentPath = false) {
+    document.querySelectorAll('[data-legend]').forEach((item) => {
+        item.hidden = !keys.includes(item.dataset.legend);
+    });
+    document.getElementById('legendPanel').hidden = keys.length === 0;
+    document.getElementById('currentPathBanner').hidden = !showCurrentPath;
+}
+
+function setMetricVisibility(keys) {
+    const metrics = {
+        omega: 'omegaMetric',
+        eop: 'emfOpMetric',
+        ecd: 'emfCdMetric',
+        current: 'currentMetric',
+        force: 'forceMetric'
+    };
+    Object.entries(metrics).forEach(([key, id]) => {
+        document.getElementById(id).hidden = !keys.includes(key);
+    });
+    physicsInfo.hidden = keys.length === 0;
+}
+
+function applyVisualFocus() {
+    let showRailField = false;
+    let showRingField = false;
+    let showAnnotations = false;
+    let showVelocity = false;
+    let legendKeys = [];
+    let metricKeys = [];
+    let showCurrentPath = false;
+
+    if (state.part === 1) {
+        const step = state.guideStep;
+        if (state.freeExplore || step === 5) {
+            showRailField = true;
+            showRingField = true;
+            showAnnotations = true;
+            showVelocity = true;
+            legendKeys = ['b', 'v', 'i', 'f'];
+            metricKeys = ['omega', 'eop', 'current', 'force'];
+        } else if (step === 1) {
+            showRailField = true;
+            showRingField = true;
+            showAnnotations = true;
+            showVelocity = true;
+            legendKeys = ['b', 'v'];
+        } else if (step === 2) {
+            showRingField = true;
+            showVelocity = true;
+            legendKeys = ['b', 'v'];
+        } else if (step === 3) {
+            legendKeys = ['i'];
+            metricKeys = ['current'];
+            showCurrentPath = true;
+        } else if (step === 4) {
+            showRailField = true;
+            legendKeys = ['b', 'i', 'f'];
+            metricKeys = ['current', 'force'];
+        }
+    } else {
+        const step = state.part2Step;
+        if (step === 1) {
+            showRailField = true;
+            legendKeys = ['b', 'f'];
+            metricKeys = ['current', 'force'];
+        } else if (step === 2) {
+            showRailField = true;
+            showRingField = true;
+            showVelocity = true;
+            legendKeys = ['b', 'v', 'i'];
+            metricKeys = ['eop', 'ecd', 'current'];
+            showCurrentPath = true;
+        } else if (step === 3) {
+            showRingField = true;
+            showVelocity = true;
+            legendKeys = ['b', 'v'];
+            metricKeys = ['omega', 'eop'];
+        }
+    }
+
+    magFieldGroup.visible = showRailField;
+    ringBGroup.visible = showRingField;
+    annotationGroup.visible = showAnnotations;
+    velocityGroup.visible = showVelocity;
+    setLegend(legendKeys, showCurrentPath);
+    setMetricVisibility(metricKeys);
+    syncOverlayButtons();
 }
 
 function syncOverlayButtons() {
@@ -1192,6 +1422,7 @@ function syncOverlayButtons() {
         document.getElementById('btnCurrentFree')
     ].forEach((button) => {
         button.classList.toggle('active', state.showCurrent);
+        button.setAttribute('aria-pressed', String(state.showCurrent));
         button.textContent = state.showCurrent ? '隐藏电流方向' : '显示电流方向';
     });
 
@@ -1200,6 +1431,7 @@ function syncOverlayButtons() {
         document.getElementById('btnForcesFree')
     ].forEach((button) => {
         button.classList.toggle('active', state.showForces);
+        button.setAttribute('aria-pressed', String(state.showForces));
         button.textContent = state.showForces ? '隐藏受力' : '显示受力';
     });
 }
@@ -1308,13 +1540,15 @@ function syncPart2Visuals(phys) {
         ' 伏，两者相差0.040伏，电流保持2安。';
 }
 
-function setPart2Step(step) {
+function setPart2Step(step, options = {}) {
     if (state.part !== 2) return;
     state.part2Step = Math.max(1, Math.min(4, step));
     state.playing = false;
 
-    if (state.part2Step === 1) state.time = 0;
-    if (state.part2Step === 4) state.time = 1;
+    if (!options.preserveTime) {
+        if (state.part2Step === 1) state.time = 0;
+        if (state.part2Step === 4) state.time = 1;
+    }
 
     const copy = PART2_COPY[state.part2Step];
     document.getElementById('part2StepKicker').textContent = '第 ' + state.part2Step + ' / 4 步';
@@ -1329,6 +1563,9 @@ function setPart2Step(step) {
     document.getElementById('part2ForceView').hidden = state.part2Step !== 1;
     document.getElementById('part2TimeView').hidden = state.part2Step !== 2 && state.part2Step !== 3;
     document.getElementById('part2EnergyView').hidden = state.part2Step !== 4;
+    document.getElementById('part2OmegaMetric').hidden = state.part2Step !== 3;
+    document.getElementById('omegaDerivation').hidden = state.part2Step !== 3;
+    document.getElementById('part2Viz').classList.toggle('omega-step', state.part2Step === 3);
 
     part2StepButtons.forEach((button) => {
         button.classList.toggle('active', Number(button.dataset.part2Step) === state.part2Step);
@@ -1346,12 +1583,11 @@ function setPart2Step(step) {
     if (state.part2Step < 4) next.textContent = nextLabels[state.part2Step];
 
     state.showForces = state.part2Step === 1;
-    state.showCurrent = state.part2Step === 2 || state.part2Step === 3;
-    velocityGroup.visible = state.part2Step <= 3;
-    physicsInfo.hidden = false;
-    btnPlay.hidden = state.part2Step === 1 || state.part2Step === 4;
+    state.showCurrent = state.part2Step === 2;
+    btnPlay.hidden = true;
     syncPlayButton();
-    syncOverlayButtons();
+    syncQuestionNavigation();
+    applyVisualFocus();
     applyCameraPreset(copy.view);
     updateScene(0);
 }
@@ -1386,33 +1622,49 @@ function setGuideStep(step) {
     clearHandModel();
     state.showCurrent = step >= 3;
     state.showForces = step >= 4;
-    velocityGroup.visible = step <= 2;
-    physicsInfo.hidden = step < 3;
     document.getElementById('freeExplorePanel').hidden = true;
     document.getElementById('viewControls').hidden = true;
+    document.getElementById('btnContinuePart2').hidden = true;
     const finishButton = document.getElementById('btnFinishGuide');
     finishButton.disabled = false;
-    finishButton.textContent = state.guideCompleted ? '返回自由探究' : '完成引导，进入自由探究';
+    finishButton.textContent = state.guideCompleted ? '返回第（1）问自由探究' : '完成第（1）问，进入自由探究';
     btnPlay.hidden = step !== 1 && step !== 5;
 
     state.playing = step === 1 && !prefersReducedMotion;
     syncPlayButton();
-    syncOverlayButtons();
+    syncQuestionNavigation();
+    applyVisualFocus();
     applyCameraPreset(copy.view);
 }
 
-function switchPart(part) {
-    state.part = part;
-    state.time = 0;
+function enterFreeExplore() {
+    state.freeExplore = true;
+    state.guideCompleted = true;
+    state.maxUnlockedStep = 5;
+    state.showCurrent = true;
+    state.showForces = true;
     state.playing = false;
-    state.cdSlideT = part === 1 ? 0.45 : 0.05;
-    state.omega = part === 1 ? 20 : 16;
+    document.getElementById('freeExplorePanel').hidden = false;
+    document.getElementById('viewControls').hidden = false;
+    document.getElementById('btnFinishGuide').textContent = '第（1）问自由探究已开启';
+    document.getElementById('btnFinishGuide').disabled = true;
+    document.getElementById('btnContinuePart2').hidden = false;
+    btnPlay.hidden = false;
+    document.getElementById('hudTitle').textContent = '自由探究：静力平衡';
+    document.getElementById('hudSubtitle').textContent = '8 ≤ ω ≤ 40 rad/s 时，CD 可以保持静止';
+    syncPlayButton();
+    syncQuestionNavigation();
+    applyVisualFocus();
+    applyCameraPreset('overview');
+    updateScene(0);
+}
+
+function switchPart(part) {
+    if (part === state.part) return;
+    if (state.part === 1) state.part1Omega = state.omega;
+    state.part = part;
+    state.playing = false;
     omegaSlider.disabled = part === 2;
-    omegaSlider.value = state.omega;
-    omegaValue.textContent = state.omega.toFixed(1) + ' rad/s';
-    document.querySelectorAll('[data-switch-part]').forEach((button) => {
-        button.classList.toggle('active', Number(button.dataset.switchPart) === part);
-    });
 
     document.getElementById('part1Guide').hidden = part === 2;
     document.getElementById('part2Guide').hidden = part === 1;
@@ -1421,22 +1673,19 @@ function switchPart(part) {
     clearHandModel();
 
     if (part === 2) {
-        state.part2Step = 1;
-        setPart2Step(1);
+        setPart2Step(state.part2Step, { preserveTime: true });
         return;
     }
 
-    state.showCurrent = true;
-    state.showForces = true;
-    velocityGroup.visible = true;
-    physicsInfo.hidden = false;
-    btnPlay.hidden = false;
+    state.omega = state.part1Omega;
+    omegaSlider.value = state.omega;
+    omegaValue.textContent = state.omega.toFixed(1) + ' rad/s';
     document.getElementById('freeExploreHint').innerHTML = '改变 ω，比较 F<sub>A</sub> 与静摩擦可调范围。';
-    document.getElementById('hudTitle').textContent = '自由探究：静力平衡';
-    document.getElementById('hudSubtitle').textContent = '8 ≤ ω ≤ 40 rad/s 时，CD 可以保持静止';
-    syncPlayButton();
-    syncOverlayButtons();
-    updateScene(0);
+    if (state.freeExplore) {
+        enterFreeExplore();
+    } else {
+        setGuideStep(state.guideStep);
+    }
 }
 
 // ============================================================
@@ -1509,11 +1758,7 @@ function updateScene(delta) {
     cMarker.position.copy(cdPos1);
     dMarker.position.copy(cdPos2);
 
-    const cdCurrentDirection = new THREE.Vector3().subVectors(cdPos2, cdPos1).normalize();
-    currentArrow.position.copy(cdPos1).add(cdCurrentDirection.clone().multiplyScalar(0.25));
-    currentArrow.setDirection(cdCurrentDirection);
-    currentArrow.setLength(1.45, 0.28, 0.18);
-    currentLabel.position.copy(cdMid).add(new THREE.Vector3(0, 1.05, 0));
+    updateCurrentPath(cdPos1, cdPos2);
 
     if (state.showForces) {
         const downSlope = railDir.clone();
@@ -1548,7 +1793,6 @@ function updateScene(delta) {
     document.getElementById('emfCdDisplay').textContent = phys.E_cd.toFixed(3);
     document.getElementById('currentDisplay').textContent = phys.I.toFixed(1);
     document.getElementById('forceDisplay').textContent = phys.F_ampere.toFixed(2);
-    emfCdMetric.hidden = state.part !== 2;
 
     if (state.part === 2) {
         omegaSlider.value = phys.omega;
@@ -1558,9 +1802,23 @@ function updateScene(delta) {
 
     const eqStatus = document.getElementById('equilibriumStatus');
     if (state.part === 2) {
-        eqStatus.textContent =
-            't=' + state.time.toFixed(2) + ' s，v=' + phys.velocity.toFixed(2) +
-            ' m/s，E_CD−E_OP=' + phys.E_net.toFixed(3) + ' V';
+        if (state.part2Step === 1) {
+            eqStatus.textContent = '运动状态固定 F_A=0.20 N，因此 I=2.0 A';
+        } else if (state.part2Step === 2) {
+            eqStatus.textContent =
+                't=' + state.time.toFixed(2) + ' s，v=' + phys.velocity.toFixed(2) +
+                ' m/s，E_CD−E_OP=' + phys.E_net.toFixed(3) + ' V';
+        } else {
+            eqStatus.textContent =
+                't=' + state.time.toFixed(2) + ' s，E_OP=' + phys.E_op.toFixed(3) +
+                ' V，ω=' + phys.omega.toFixed(1) + ' rad/s';
+        }
+        eqStatus.className = 'text-xs font-medium text-blue-700 mt-1';
+    } else if (!state.freeExplore && state.guideStep === 3) {
+        eqStatus.textContent = '传统电流：O → M₁ → CD → M₂ → 圆环 → P';
+        eqStatus.className = 'text-xs font-medium text-blue-700 mt-1';
+    } else if (!state.freeExplore && state.guideStep === 4) {
+        eqStatus.textContent = 'CD 中电流与磁场共同决定安培力沿斜面向上';
         eqStatus.className = 'text-xs font-medium text-blue-700 mt-1';
     } else if (phys.inEquilibrium) {
         eqStatus.textContent = 'F_A 位于平衡区间，CD 可以静止';
@@ -1604,6 +1862,7 @@ function animate(time) {
 omegaSlider.addEventListener('input', (event) => {
     if (state.part !== 1) return;
     state.omega = Number(event.target.value);
+    state.part1Omega = state.omega;
     omegaValue.textContent = state.omega.toFixed(1) + ' rad/s';
     updateScene(0);
 });
@@ -1616,14 +1875,17 @@ timeSlider.addEventListener('input', (event) => {
     updateScene(0);
 });
 
-btnPlay.addEventListener('click', () => {
+function togglePlayback() {
     if (state.part === 2 && state.time >= 1) {
         state.time = 0;
         state.cdSlideT = 0.05;
     }
     state.playing = !state.playing;
     syncPlayButton();
-});
+}
+
+btnPlay.addEventListener('click', togglePlayback);
+btnTimePlay.addEventListener('click', togglePlayback);
 
 btnNextStep.addEventListener('click', () => {
     if (state.guideStep === 2 && !state.prediction) return;
@@ -1694,34 +1956,25 @@ document.getElementById('btnLeftHand').addEventListener('click', () => toggleHan
     });
 });
 
-document.getElementById('btnFinishGuide').addEventListener('click', () => {
-    state.freeExplore = true;
-    state.guideCompleted = true;
-    state.maxUnlockedStep = 5;
-    state.showCurrent = true;
-    state.showForces = true;
-    velocityGroup.visible = true;
-    state.playing = false;
-    document.getElementById('freeExplorePanel').hidden = false;
-    document.getElementById('viewControls').hidden = false;
-    document.getElementById('btnFinishGuide').textContent = '自由探究已开启';
-    document.getElementById('btnFinishGuide').disabled = true;
-    physicsInfo.hidden = false;
-    btnPlay.hidden = false;
-    syncOverlayButtons();
-    syncPlayButton();
-    applyCameraPreset('overview');
-});
+document.getElementById('btnFinishGuide').addEventListener('click', enterFreeExplore);
+document.getElementById('btnContinuePart2').addEventListener('click', () => switchPart(2));
 
 document.querySelectorAll('[data-switch-part]').forEach((button) => {
     button.addEventListener('click', () => switchPart(Number(button.dataset.switchPart)));
 });
 
 document.getElementById('btnReset').addEventListener('click', () => {
-    switchPart(state.part);
+    state.omega = 20;
+    state.part1Omega = 20;
+    state.cdSlideT = 0.45;
+    state.playing = false;
+    omegaSlider.value = state.omega;
+    omegaValue.textContent = state.omega.toFixed(1) + ' rad/s';
     state.showCurrent = true;
     state.showForces = true;
     syncOverlayButtons();
+    syncPlayButton();
+    updateScene(0);
 });
 
 document.querySelectorAll('[data-view]').forEach((button) => {
