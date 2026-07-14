@@ -151,6 +151,7 @@
         .part2-stage-btn.active { color: var(--blue); background: #eff6ff; }
         .part2-stage-btn.active span { color: #fff; background: var(--blue); }
         .part2-time-controls { display: grid; gap: 8px; margin-bottom: 12px; }
+        .playback-note { color: var(--muted); font-size: 12px; }
         .timeline-control-row { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto; align-items: center; gap: 10px; }
         .timeline-control-row output { min-width: 62px; color: var(--blue); font-weight: 700; text-align: right; }
         .part2-chart { display: block; width: 100%; height: auto; max-height: 270px; overflow: visible; }
@@ -329,8 +330,9 @@
                 <div id="part2TimeView" hidden>
                     <div class="part2-time-controls">
                         <label for="timeSlider" class="text-sm font-bold">拖动时间，联动装置与曲线</label>
+                        <span class="playback-note" id="playbackNote">慢速演示：物理 1 s 用 4 s 呈现</span>
                         <div class="timeline-control-row">
-                            <button class="view-btn" id="btnTimePlay" type="button" aria-pressed="false">▶ 播放</button>
+                            <button class="view-btn" id="btnTimePlay" type="button" aria-pressed="false" aria-describedby="playbackNote">▶ 慢速播放</button>
                             <input type="range" id="timeSlider" min="0" max="1" step="0.01" value="0">
                             <output id="timeValue" for="timeSlider">0.00 s</output>
                         </div>
@@ -531,6 +533,7 @@ const PARAMS = {
     cos37: 0.8,
     scale: 10    // visual scale factor
 };
+const PART2_PLAYBACK_SECONDS = 4;
 
 // Scaled values for visualization
 const S = PARAMS.scale;
@@ -1304,7 +1307,7 @@ function toggleHand(type) {
 
 function syncPlayButton() {
     if (state.part === 2) {
-        btnTimePlay.textContent = state.playing ? '⏸ 暂停' : '▶ 播放';
+        btnTimePlay.textContent = state.playing ? '⏸ 暂停' : '▶ 慢速播放';
         btnTimePlay.setAttribute('aria-pressed', String(state.playing));
     } else {
         btnPlay.textContent = state.playing ? '⏸ 暂停旋转' : '▶ 播放旋转';
@@ -1844,7 +1847,7 @@ function animate(time) {
     lastTime = time;
 
     if (state.playing && state.part === 2 && state.documentVisible) {
-        state.time = Math.min(1, state.time + delta);
+        state.time = Math.min(1, state.time + delta / PART2_PLAYBACK_SECONDS);
         if (state.time >= 1) {
             state.playing = false;
             syncPlayButton();
