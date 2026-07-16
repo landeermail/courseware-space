@@ -50,6 +50,7 @@ input[type="range"]{width:100%;min-height:42px;accent-color:var(--blue)}
 .causal-node{position:relative;min-width:0;padding:9px 10px;border:1px solid #d7e0ec;border-radius:10px;background:#fff}
 .causal-node:not(:last-child)::after{position:absolute;right:-13px;top:50%;translate:0 -50%;color:#94a3b8;font-size:20px;content:"→"}
 .causal-label{display:block;margin-bottom:3px;color:var(--muted);font-size:11px}.causal-value{display:block;font-weight:750;font-size:13px;line-height:1.35}.causal-note{display:block;margin-top:3px;color:#5c6880;font-size:11px;line-height:1.35}
+.impulse-track{display:block;width:100%;height:6px;margin-top:5px;overflow:hidden;border-radius:99px;background:#e2e8f0}.impulse-fill{display:block;height:100%;border-radius:inherit;background:var(--red);transition:width .12s linear}
 .inquiry-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid var(--line)}
 .inquiry-copy{font-size:13px}.inquiry-copy strong{color:#1d4ed8}.compare-panel{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;padding-top:4px}
 .compare-item{padding:9px 11px;border-left:4px solid var(--compare);background:var(--surface-soft);font-size:12px;line-height:1.55}.compare-item strong{display:block;margin-bottom:2px}
@@ -146,7 +147,7 @@ input[type="range"]{width:100%;min-height:42px;accent-color:var(--blue)}
     <div class="explanation-grid">
       <div class="explanation-item"><strong class="stage-a">A · 变力右移</strong>拖动棒观察 v、I、安培力同时增大；在 x=1.5 m 处读出 F外=7.5 N。</div>
       <div class="explanation-item"><strong class="stage-b">B · 撤力变场</strong>B 随 x 减小、磁通保持 0.6 Wb；E感与E动实时抵消，因此无电流和安培力。</div>
-      <div class="explanation-item"><strong class="stage-c">C · 恒力往返</strong>只展示题设给出的起点、转向、返回三个事件，不伪造未经题设确认的连续轨迹。</div>
+      <div class="explanation-item"><strong class="stage-c">C · 恒力往返</strong>拖动时间或慢放全过程，观察速度、电流和安培力反向；磁力冲量随位移累积，并在返回 x₀ 时回到零。</div>
       <div class="explanation-item"><strong class="stage-d">D · 撤力左行</strong>速度和电流反向，安培力改为向右阻碍左行；拖向原点可见 E=0.05x。</div>
     </div>
     <details class="reference"><summary>查看原题与原答案</summary><div class="reference-images"><a href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第21题原题图"></a><a href="answer.png" target="_blank" rel="noopener"><img src="answer.png" alt="第21题原答案图"></a></div></details>
@@ -160,13 +161,18 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const PARAMS={L:1,R:.02,m:1,B0:.2,B1:.1,v0:1,k:1,x1:3,x0:6,T:5};
 const COLORS={A:'#2563eb',B:'#7c3aed',C:'#d97706',D:'#059669'};
 const S=1.75,Ls=PARAMS.L*S,BASE_Y=1.2,railLength=15;
+const C_GAMMA=PARAMS.B1**2*PARAMS.L**2/PARAMS.R;
+const C_START_V=4;
+const C_TURN=Math.log((C_START_V+PARAMS.T/C_GAMMA)/(PARAMS.T/C_GAMMA))/C_GAMMA;
+const C_XMAX=PARAMS.x0+(C_START_V+PARAMS.T/C_GAMMA)/C_GAMMA*(1-Math.exp(-C_GAMMA*C_TURN))-(PARAMS.T/C_GAMMA)*C_TURN;
+const C_RETURN=1.4308313007;
 const STAGE_META={
   A:{title:'阶段 A：外力推动，速度随位置增大',min:0,max:3,step:.01,duration:5.5},
   B:{title:'阶段 B：撤去外力，变场抵消动生电动势',min:3,max:6,step:.01,duration:4},
-  C:{title:'阶段 C：左向恒力作用下先右后左',min:0,max:2,step:1,duration:0},
+  C:{title:'阶段 C：左向恒力作用下先右后左',min:0,max:C_RETURN,step:.005,duration:7},
   D:{title:'阶段 D：撤去恒力，安培力阻碍左行',min:0,max:6,step:.01,duration:7}
 };
-const state={phase:'A',x:0,cEvent:0,playing:false,playU:0,lastTime:0,dragging:false};
+const state={phase:'A',x:0,cTime:0,playing:false,playU:0,lastTime:0,dragging:false,cTurnHeld:false,holdUntil:0};
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const container=document.getElementById('canvasContainer');
@@ -229,9 +235,17 @@ const externalArrow=new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vec
 const magneticArrow=new THREE.ArrowHelper(new THREE.Vector3(-1,0,0),new THREE.Vector3(),1,0xdc2626,.25,.14);scene.add(magneticArrow);
 
 function cPhysics(){
-  if(state.cEvent===0)return{x:6,vSigned:4,B:.1,phi:.6,eMotion:.4,eInduced:0,eTotal:.4,current:20,fMag:-2,fExternal:-5,event:'起点：仍向右运动'};
-  if(state.cEvent===1)return{x:7.27,vSigned:0,B:.1,phi:.727,eMotion:0,eInduced:0,eTotal:0,current:0,fMag:0,fExternal:-5,event:'转向：瞬时速度为零'};
-  return{x:6,vSigned:-3,B:.1,phi:.6,eMotion:.3,eInduced:0,eTotal:-.3,current:-15,fMag:1.5,fExternal:-5,event:'返回 x₀：速度向左'};
+  const t=state.cTime,decay=Math.exp(-C_GAMMA*t);
+  const vSigned=(C_START_V+PARAMS.T/C_GAMMA)*decay-PARAMS.T/C_GAMMA;
+  const x=PARAMS.x0+(C_START_V+PARAMS.T/C_GAMMA)/C_GAMMA*(1-decay)-(PARAMS.T/C_GAMMA)*t;
+  const eMotion=PARAMS.B1*PARAMS.L*Math.abs(vSigned),current=Math.sign(vSigned)*eMotion/PARAMS.R;
+  const impulseB=-C_GAMMA*(x-PARAMS.x0),impulseT=-PARAMS.T*t,momentum=C_START_V+impulseT+impulseB;
+  let event='右行减速：恒力与安培力都向左';
+  if(Math.abs(t-C_TURN)<.018)event='转向时刻：v、I、Fᴮ 同时为零';
+  else if(t>C_TURN&&t<C_RETURN-.018)event='反向左行：安培力改为向右';
+  else if(t>=C_RETURN-.018)event='返回 x₀：磁力总冲量回到零';
+  else if(t<.018)event='从 x₀ 出发：速度向右';
+  return{x,vSigned,B:PARAMS.B1,phi:PARAMS.B1*x,eMotion,eInduced:0,eTotal:Math.sign(vSigned)*eMotion,current,fMag:-C_GAMMA*vSigned,fExternal:-PARAMS.T,event,t,impulseB,impulseT,momentum};
 }
 function getPhysics(){
   let x=state.x;
@@ -260,8 +274,11 @@ function updateScene(){
   fieldArrows.forEach(a=>a.setLength(.35+.62*(p.B/.2),.18,.1));
   updateVectors(p);
   const motion=directionText(p.vSigned,'向右','向左'),currentDir=directionText(p.current,'c→d','d→c');
-  document.getElementById('hudTitle').textContent=STAGE_META[state.phase].title;
-  document.getElementById('hudSubtitle').textContent=`x=${p.x.toFixed(2)} m ｜ v=${fmt(Math.abs(p.vSigned))} m/s（${motion}）｜ B=${p.B.toFixed(3)} T ｜ I=${fmt(Math.abs(p.current),1)} A（${currentDir}）`;
+  const cReturned=state.phase==='C'&&state.cTime>=C_RETURN-.018;
+  const speedText=cReturned?'≈3 m/s（题设口径，向左）':`${fmt(Math.abs(p.vSigned))} m/s（${motion}）`;
+  const currentText=cReturned?'≈15 A（题设口径，d→c）':`${fmt(Math.abs(p.current),1)} A（${currentDir}）`;
+  document.getElementById('hudTitle').textContent=state.phase==='C'?`阶段 C：${p.event}`:STAGE_META[state.phase].title;
+  document.getElementById('hudSubtitle').textContent=`x=${p.x.toFixed(2)} m ｜ v=${speedText} ｜ B=${p.B.toFixed(3)} T ｜ I=${currentText}`;
   canvas.setAttribute('aria-label',`${STAGE_META[state.phase].title}。金属棒位于${p.x.toFixed(2)}米，${motion}，速率${fmt(Math.abs(p.vSigned))}米每秒，磁场垂直导轨平面向里。`);
   updateCausal(p);return p;
 }
@@ -274,8 +291,16 @@ function updateCausal(p){
     setNode(1,'磁场调节',`B=${p.B.toFixed(3)} T`,'棒以 4 m/s 匀速右移');setNode(2,'磁通约束',`Φ=BLx=${fmt(p.phi)} Wb`,'始终保持不变');setNode(3,'两个电动势',`E动=${fmt(p.eMotion)} V`,'E感=−E动');setNode(4,'回路结果','E总=0，I=0','两个电动势实时抵消');setNode(5,'受力结果','Fᴮ=0','撤去外力后仍能匀速');
     document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>拖动棒，确认 B 在减小而 Φ 不变；因此 E感 恰好抵消 E动。';
   }else if(state.phase==='C'){
-    setNode(1,'题设事件',p.event,'阶段 C 使用离散事件');setNode(2,'左向恒力','T=5.0 N','全程方向保持向左');setNode(3,'速度变化',`|v|=${fmt(Math.abs(p.vSigned))} m/s`,p.vSigned>0?'先减速右行':p.vSigned<0?'随后加速左行':'在最右端转向');setNode(4,'安培力',Math.abs(p.fMag)>.01?`Fᴮ=${fmt(Math.abs(p.fMag))} N`:'Fᴮ=0',p.vSigned>0?'向左':p.vSigned<0?'向右':'速度为零时电流为零');setNode(5,'完整往返','返回 x₀ 后撤力','往返净位移为零，磁力总冲量抵消');
-    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>依次查看起点、转向、返回，比较速度、电流和安培力如何反向。';
+    const atReturn=p.t>=C_RETURN-.018,atTurn=Math.abs(p.t-C_TURN)<.018;
+    setNode(1,'连续过程',`t=${p.t.toFixed(2)} s，x=${p.x.toFixed(2)} m`,p.event);
+    setNode(2,'速度与方向',atReturn?'|v|≈3 m/s，向左':atTurn?'v=0，正在转向':`|v|=${fmt(Math.abs(p.vSigned))} m/s，${p.vSigned>0?'向右':'向左'}`,p.vSigned>0?'右行速度持续减小':p.vSigned<0?'左行速度持续增大':'速度、电流和安培力同时过零');
+    setNode(3,'实时受力','T=5.0 N，始终向左',Math.abs(p.fMag)<.01?'Fᴮ=0':atReturn?'Fᴮ≈1.5 N，向右':`Fᴮ=${fmt(Math.abs(p.fMag))} N，${p.fMag>0?'向右':'向左'}`);
+    const impulseText=Math.abs(p.impulseB)<.005?'0.00':p.impulseB.toFixed(2);
+    setNode(4,'磁力冲量累计',`Jᴮ=${impulseText} N·s`,`Jᴮ=−${C_GAMMA.toFixed(1)}(x−x₀)`);
+    const impulsePercent=Math.min(100,Math.abs(p.impulseB)/(C_GAMMA*(C_XMAX-PARAMS.x0))*100);
+    document.getElementById('causeValue4').innerHTML=`Jᴮ=${impulseText} N·s<span class="impulse-track" aria-hidden="true"><i class="impulse-fill" style="width:${impulsePercent.toFixed(1)}%"></i></span>`;
+    setNode(5,'动量账本',atReturn?'p≈−3 kg·m/s（题设）':`p=${p.momentum.toFixed(2)} kg·m/s`,atReturn?'返回同一点使 Jᴮ=0；题设按1.4 s计算':'p=p₀+Jᵀ+Jᴮ');
+    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>慢放或拖动时间：磁力冲量先累积，在返回 x₀ 时为何恰好回到零？';
   }else{
     setNode(1,'左行运动',`|v|=0.5x=${fmt(Math.abs(p.vSigned))} m/s`,'位置越小，速率越小');setNode(2,'动生电动势',`|E动|=0.05x=${fmt(p.eMotion)} V`,'磁场保持 0.10 T');setNode(3,'反向电流',`|I|=${fmt(Math.abs(p.current),1)} A`,'方向 d→c');setNode(4,'安培力',`Fᴮ=${fmt(Math.abs(p.fMag))} N，向右`,'始终阻碍左行');setNode(5,'位置关系','E=0.05x','x=0 是关系极限，并非有限时间突然到达');
     document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>向原点拖动棒，观察 v、E、I、Fᴮ 如何按比例同时减小。';
@@ -304,21 +329,21 @@ function renderAll(){updateScene();syncControls();redrawCharts();renderer.render
 const slider=document.getElementById('positionSlider'),sliderLabel=document.getElementById('sliderLabel'),positionOutput=document.getElementById('positionOutput'),playButton=document.getElementById('playToggle');
 function syncControls(){
   const meta=STAGE_META[state.phase];slider.min=meta.min;slider.max=meta.max;slider.step=meta.step;
-  if(state.phase==='C'){slider.value=state.cEvent;sliderLabel.textContent='题设事件';positionOutput.textContent=['起点','转向','返回'][state.cEvent];playButton.textContent=state.cEvent<2?'下一事件':'从头查看';playButton.setAttribute('aria-pressed','false')}
-  else{slider.value=state.x;sliderLabel.textContent='位置 x';positionOutput.textContent=`${state.x.toFixed(2)} m`;playButton.textContent=state.playing?'⏸ 暂停':'▶ 教学慢放';playButton.setAttribute('aria-pressed',String(state.playing))}
+  if(state.phase==='C'){slider.value=state.cTime;sliderLabel.textContent='物理时间 t';positionOutput.textContent=state.cTime>=C_RETURN-.018?'≈1.4 s':`${state.cTime.toFixed(2)} s`}
+  else{slider.value=state.x;sliderLabel.textContent='位置 x';positionOutput.textContent=`${state.x.toFixed(2)} m`}
+  playButton.textContent=state.playing?'⏸ 暂停':'▶ 教学慢放';playButton.setAttribute('aria-pressed',String(state.playing));
 }
-function setPhase(phase){state.phase=phase;state.playing=false;state.playU=0;if(phase==='A')state.x=0;else if(phase==='B')state.x=3;else if(phase==='C')state.cEvent=0;else state.x=6;document.querySelectorAll('.phase-btn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.phase===phase)));renderAll()}
+function setPhase(phase){state.phase=phase;state.playing=false;state.playU=0;state.cTurnHeld=false;state.holdUntil=0;if(phase==='A')state.x=0;else if(phase==='B')state.x=3;else if(phase==='C')state.cTime=0;else state.x=6;document.querySelectorAll('.phase-btn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.phase===phase)));renderAll()}
 document.querySelectorAll('.phase-btn').forEach(button=>button.addEventListener('click',()=>setPhase(button.dataset.phase)));
-slider.addEventListener('input',event=>{state.playing=false;if(state.phase==='C')state.cEvent=Number(event.target.value);else state.x=Number(event.target.value);renderAll()});
+slider.addEventListener('input',event=>{state.playing=false;if(state.phase==='C')state.cTime=Number(event.target.value);else state.x=Number(event.target.value);renderAll()});
 document.getElementById('resetButton').addEventListener('click',()=>setPhase(state.phase));
-function currentU(){if(state.phase==='A')return Math.log(state.x+1)/Math.log(4);if(state.phase==='B')return(state.x-3)/3;if(state.phase==='D')return state.x<=.12?1:Math.min(1,-Math.log(state.x/6)/4);return 0}
-function applyPlayback(u){if(state.phase==='A')state.x=Math.exp(Math.log(4)*u)-1;else if(state.phase==='B')state.x=3+3*u;else if(state.phase==='D')state.x=6*Math.exp(-4*u)}
+function currentU(){if(state.phase==='A')return Math.log(state.x+1)/Math.log(4);if(state.phase==='B')return(state.x-3)/3;if(state.phase==='C')return state.cTime/C_RETURN;if(state.phase==='D')return state.x<=.12?1:Math.min(1,-Math.log(state.x/6)/4);return 0}
+function applyPlayback(u){if(state.phase==='A')state.x=Math.exp(Math.log(4)*u)-1;else if(state.phase==='B')state.x=3+3*u;else if(state.phase==='C')state.cTime=C_RETURN*u;else if(state.phase==='D')state.x=6*Math.exp(-4*u)}
 playButton.addEventListener('click',()=>{
-  if(state.phase==='C'){state.cEvent=state.cEvent<2?state.cEvent+1:0;renderAll();return}
   if(state.playing){state.playing=false;syncControls();return}
-  state.playU=currentU();if(state.playU>=.999){setPhase(state.phase);return}
+  state.playU=currentU();if(state.playU>=.999){if(state.phase==='A')state.x=0;else if(state.phase==='B')state.x=3;else if(state.phase==='C')state.cTime=0;else state.x=6;state.playU=0;state.cTurnHeld=false;renderAll()}
   if(reduceMotion){applyPlayback(1);state.playing=false;renderAll();return}
-  state.playing=true;state.lastTime=performance.now();syncControls();
+  state.cTurnHeld=state.phase==='C'&&state.playU>=C_TURN/C_RETURN;state.holdUntil=0;state.playing=true;state.lastTime=performance.now();syncControls();
 });
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{const views={overview:[[8,7.5,10],[6.4,BASE_Y,0]],top:[[6.2,15,.01],[6.2,BASE_Y,0]],rail:[[6.4,2.8,7.8],[6.4,BASE_Y,0]]};const [pos,target]=views[button.dataset.view];camera.position.set(...pos);controls.target.set(...target);controls.update();renderer.render(scene,camera)}));
 const compareButton=document.getElementById('compareToggle'),comparePanel=document.getElementById('comparePanel');compareButton.addEventListener('click',()=>{const open=comparePanel.hidden;comparePanel.hidden=!open;compareButton.setAttribute('aria-expanded',String(open));compareButton.textContent=open?'收起同位置比较':'比较同一位置 x=6'});
@@ -330,7 +355,19 @@ canvas.addEventListener('pointermove',event=>{if(!state.dragging)return;pointerT
 function endDrag(event){if(!state.dragging)return;state.dragging=false;controls.enabled=true;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId)}
 canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
 
-function animate(time){requestAnimationFrame(animate);if(state.playing){const dt=Math.min(.05,(time-state.lastTime)/1000);state.lastTime=time;state.playU=Math.min(1,state.playU+dt/STAGE_META[state.phase].duration);applyPlayback(state.playU);if(state.playU>=1)state.playing=false;renderAll()}controls.update();renderer.render(scene,camera)}
+function animate(time){
+  requestAnimationFrame(animate);
+  if(state.playing){
+    if(state.holdUntil>time){state.lastTime=time;controls.update();renderer.render(scene,camera);return}
+    state.holdUntil=0;
+    const dt=Math.min(.05,(time-state.lastTime)/1000),previousU=state.playU;state.lastTime=time;
+    state.playU=Math.min(1,state.playU+dt/STAGE_META[state.phase].duration);
+    const turnU=C_TURN/C_RETURN;
+    if(state.phase==='C'&&!state.cTurnHeld&&previousU<turnU&&state.playU>=turnU){state.playU=turnU;state.cTurnHeld=true;state.holdUntil=time+900}
+    applyPlayback(state.playU);if(state.playU>=1)state.playing=false;renderAll();
+  }
+  controls.update();renderer.render(scene,camera);
+}
 window.addEventListener('resize',()=>{camera.aspect=container.clientWidth/container.clientHeight;camera.updateProjectionMatrix();renderer.setSize(container.clientWidth,container.clientHeight);renderAll()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.playing){state.playing=false;syncControls()}});
 renderAll();animate(performance.now());
