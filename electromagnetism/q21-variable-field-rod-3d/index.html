@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第21题：变磁场中的导体棒｜因果探究实验台</title>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f6fb;--surface:#fff;--surface-soft:#f8fafc;--text:#152033;--muted:#63708a;--line:#dbe3ef;
+  --blue:#2563eb;--purple:#7c3aed;--amber:#d97706;--green:#059669;--red:#dc2626;--cyan:#0891b2;
+  --shadow:0 10px 28px rgba(30,55,90,.09);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input{font:inherit}
+button{min-height:42px}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid rgba(37,99,235,.35);outline-offset:2px}
+.app-shell{width:min(1440px,100%);margin:0 auto;padding:16px}
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px}
+.page-header h1{margin:0 0 3px;font-size:clamp(22px,2.4vw,32px);line-height:1.2}
+.page-header p{margin:0;color:var(--muted);font-size:14px}
+.lab{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.canvas-container{position:relative;width:100%;height:46vh;min-height:360px;max-height:520px;overflow:hidden;background:#edf2f7}
+#canvas{display:block;width:100%;height:100%;touch-action:none}
+.scene-hud{position:absolute;top:12px;left:12px;display:grid;gap:8px;width:min(430px,calc(100% - 24px));pointer-events:none;z-index:2}
+.hud-card{padding:9px 12px;border:1px solid rgba(100,116,139,.18);border-radius:10px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(30,55,90,.09);backdrop-filter:blur(8px)}
+.hud-title{font-weight:700;font-size:15px}.hud-subtitle{margin-top:3px;color:#4b5871;font-size:12px;line-height:1.55}
+.vector-key{display:flex;flex-wrap:wrap;gap:6px 12px;color:#43506a;font-size:11px}
+.vector-key span{display:inline-flex;align-items:center;gap:5px}.key-line{width:18px;height:3px;border-radius:3px;background:var(--key)}
+.scene-tip{position:absolute;right:12px;top:12px;max-width:260px;padding:7px 10px;border:1px solid rgba(100,116,139,.18);border-radius:9px;background:rgba(255,255,255,.9);color:#4b5871;font-size:11px;line-height:1.45;pointer-events:none}
+.controls{display:grid;gap:10px;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface)}
+.phase-row,.control-row,.view-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.phase-row{justify-content:center}
+.phase-btn,.tool-btn{border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#34435c;cursor:pointer;font-weight:650}
+.phase-btn{padding:7px 13px}.tool-btn{padding:7px 11px}
+.phase-btn:hover,.tool-btn:hover{border-color:var(--blue);color:var(--blue)}
+.phase-btn[aria-pressed="true"]{border-color:var(--stage-color);background:var(--stage-color);color:#fff}
+.phase-btn[data-phase="A"]{--stage-color:var(--blue)}.phase-btn[data-phase="B"]{--stage-color:var(--purple)}
+.phase-btn[data-phase="C"]{--stage-color:var(--amber)}.phase-btn[data-phase="D"]{--stage-color:var(--green)}
+.control-row{justify-content:center}.slider-field{display:grid;grid-template-columns:auto minmax(180px,1fr) 92px;align-items:center;gap:9px;min-width:min(520px,100%)}
+.slider-field label{font-size:13px;font-weight:700}.slider-field output{color:var(--blue);font-variant-numeric:tabular-nums;font-size:13px;font-weight:750;text-align:right}
+input[type="range"]{width:100%;min-height:42px;accent-color:var(--blue)}
+.view-row{justify-content:center}.view-row .tool-btn{min-height:36px;padding-block:5px;font-size:12px}
+.causal-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;gap:16px;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface-soft)}
+.causal-node{position:relative;min-width:0;padding:9px 10px;border:1px solid #d7e0ec;border-radius:10px;background:#fff}
+.causal-node:not(:last-child)::after{position:absolute;right:-13px;top:50%;translate:0 -50%;color:#94a3b8;font-size:20px;content:"→"}
+.causal-label{display:block;margin-bottom:3px;color:var(--muted);font-size:11px}.causal-value{display:block;font-weight:750;font-size:13px;line-height:1.35}.causal-note{display:block;margin-top:3px;color:#5c6880;font-size:11px;line-height:1.35}
+.impulse-track{display:block;width:100%;height:6px;margin-top:5px;overflow:hidden;border-radius:99px;background:#e2e8f0}.impulse-fill{display:block;height:100%;border-radius:inherit;background:var(--red);transition:width .12s linear}
+.inquiry-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid var(--line)}
+.inquiry-copy{font-size:13px}.inquiry-copy strong{color:#1d4ed8}.compare-panel{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;padding-top:4px}
+.compare-item{padding:9px 11px;border-left:4px solid var(--compare);background:var(--surface-soft);font-size:12px;line-height:1.55}.compare-item strong{display:block;margin-bottom:2px}
+.charts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.chart-card{min-width:0;padding:11px;border:1px solid var(--line);border-radius:13px;background:var(--surface);box-shadow:0 3px 12px rgba(30,55,90,.05)}
+.chart-title{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:13px;font-weight:750}.chart-dot{width:8px;height:8px;border-radius:50%;background:var(--dot)}
+.chart-canvas{display:block;width:100%;height:170px}.chart-formula{margin-top:4px;color:var(--muted);font-family:Georgia,"Times New Roman",serif;font-size:11px;text-align:center;white-space:normal}
+.explanation{margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
+.explanation h2{margin:0 0 10px;font-size:17px}.explanation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.explanation-item{font-size:12px;line-height:1.65}.explanation-item strong{display:block;margin-bottom:2px}
+.stage-a{color:#1d4ed8}.stage-b{color:#6d28d9}.stage-c{color:#b45309}.stage-d{color:#047857}
+.reference{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.reference summary{cursor:pointer;color:#334155;font-size:13px;font-weight:700}.reference-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.reference img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+[hidden]{display:none!important}
+@media (min-width:900px) and (orientation:landscape) and (max-height:900px){
+  .app-shell{padding:8px 14px}.page-header{margin-bottom:6px}.page-header h1{font-size:24px}.canvas-container{height:38vh;min-height:285px;max-height:320px}
+  .controls{grid-template-columns:300px minmax(500px,1fr) 132px;align-items:center;gap:7px;padding:7px 12px}.phase-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.phase-btn{min-width:0;padding:5px 4px;font-size:12px;white-space:nowrap}.control-row{flex-wrap:nowrap;justify-content:center;gap:6px}.slider-field{grid-template-columns:auto minmax(120px,1fr) 72px;min-width:260px}.view-row{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.view-row .tool-btn{padding-inline:5px}
+  .causal-strip{gap:13px;padding:8px 12px}.causal-node{padding:7px 8px}.inquiry-row{padding:7px 12px}.chart-canvas{height:140px}.charts-grid{gap:8px;margin-top:8px}.chart-card{padding:8px}.explanation{margin-top:8px;padding:11px}
+}
+@media (max-width:899px){
+  .scene-tip{display:none}.charts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.explanation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .causal-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.causal-node:not(:last-child)::after{content:none}.causal-node:last-child{grid-column:1/-1}
+}
+@media (min-width:700px) and (max-width:899px) and (orientation:portrait){.canvas-container{height:42vh;min-height:360px}.chart-canvas{height:190px}}
+@media (max-width:599px){
+  .app-shell{padding:10px}.page-header{display:block}.page-header p{margin-top:5px}.canvas-container{height:390px;min-height:390px}.scene-hud{top:8px;left:8px;width:calc(100% - 16px)}
+  .controls{padding:9px}.phase-row{display:grid;grid-template-columns:1fr 1fr;width:100%}.phase-btn{padding-inline:6px;font-size:12px}.control-row{display:grid;grid-template-columns:1fr 1fr;width:100%}.slider-field{grid-column:1/-1;grid-template-columns:auto minmax(110px,1fr) 78px;min-width:0}.control-row>.tool-btn{width:100%}
+  .charts-grid{grid-template-columns:1fr}.chart-canvas{height:200px}.explanation-grid,.compare-panel,.reference-images{grid-template-columns:1fr}.causal-strip{grid-template-columns:1fr}.causal-node:last-child{grid-column:auto}.inquiry-row{align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app-shell">
+  <header class="page-header">
+    <div><h1>第21题：变磁场中的导体棒</h1><p>拖动金属棒或位置滑块，追踪“运动 → 电动势 → 电流 → 安培力”的因果链。</p></div>
+  </header>
+
+  <section class="lab" aria-label="导体棒因果探究实验台">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="canvas" role="img" aria-label="平行导轨、闭合电阻回路、移动金属棒与垂直导轨平面向里的磁场三维模型"></canvas>
+      <div class="scene-hud" aria-live="polite">
+        <div class="hud-card"><div class="hud-title" id="hudTitle">阶段 A：外力推动，速度随位置增大</div><div class="hud-subtitle" id="hudSubtitle"></div></div>
+        <div class="hud-card vector-key" aria-label="三维箭头图例">
+          <span><i class="key-line" style="--key:#2563eb"></i>速度 v</span><span><i class="key-line" style="--key:#7c3aed"></i>电流 I</span><span><i class="key-line" style="--key:#d97706"></i>外力</span><span><i class="key-line" style="--key:#dc2626"></i>安培力</span><span><i class="key-line" style="--key:#059669"></i>磁场 B（向下）</span>
+        </div>
+      </div>
+      <div class="scene-tip">可直接拖动蓝色金属棒；拖拽空白处旋转视角。推荐先用“俯视”确认磁场方向，再用“沿轨”观察运动。</div>
+    </div>
+
+    <div class="controls">
+      <div class="phase-row" role="group" aria-label="选择运动阶段">
+        <button class="phase-btn" type="button" data-phase="A" aria-pressed="true">A 变力右移</button>
+        <button class="phase-btn" type="button" data-phase="B" aria-pressed="false">B 撤力变场</button>
+        <button class="phase-btn" type="button" data-phase="C" aria-pressed="false">C 恒力往返</button>
+        <button class="phase-btn" type="button" data-phase="D" aria-pressed="false">D 撤力左行</button>
+      </div>
+      <div class="control-row">
+        <div class="slider-field"><label id="sliderLabel" for="positionSlider">位置 x</label><input id="positionSlider" type="range" min="0" max="3" step="0.01" value="0"><output id="positionOutput" for="positionSlider">0.00 m</output></div>
+        <button class="tool-btn" id="playToggle" type="button" aria-pressed="false">▶ 教学慢放</button>
+        <button class="tool-btn" id="resetButton" type="button">↺ 重置</button>
+      </div>
+      <div class="view-row" role="group" aria-label="三维视角">
+        <button class="tool-btn" type="button" data-view="overview">全景</button><button class="tool-btn" type="button" data-view="top">俯视</button><button class="tool-btn" type="button" data-view="rail">沿轨</button>
+      </div>
+    </div>
+
+    <div class="causal-strip" id="causalStrip" aria-label="当前状态的因果链">
+      <div class="causal-node"><span class="causal-label" id="causeLabel1">运动</span><span class="causal-value" id="causeValue1"></span><span class="causal-note" id="causeNote1"></span></div>
+      <div class="causal-node"><span class="causal-label" id="causeLabel2">磁通</span><span class="causal-value" id="causeValue2"></span><span class="causal-note" id="causeNote2"></span></div>
+      <div class="causal-node"><span class="causal-label" id="causeLabel3">电动势</span><span class="causal-value" id="causeValue3"></span><span class="causal-note" id="causeNote3"></span></div>
+      <div class="causal-node"><span class="causal-label" id="causeLabel4">电流</span><span class="causal-value" id="causeValue4"></span><span class="causal-note" id="causeNote4"></span></div>
+      <div class="causal-node"><span class="causal-label" id="causeLabel5">受力</span><span class="causal-value" id="causeValue5"></span><span class="causal-note" id="causeNote5"></span></div>
+    </div>
+
+    <div class="inquiry-row">
+      <div class="inquiry-copy" id="inquiryCopy"><strong>观察任务：</strong>拖到 x=1.5 m，比较外力、安培力和加速度需要的合力。</div>
+      <button class="tool-btn" id="compareToggle" type="button" aria-expanded="false" aria-controls="comparePanel">比较同一位置 x=6</button>
+      <div class="compare-panel" id="comparePanel" hidden>
+        <div class="compare-item" style="--compare:#7c3aed"><strong>阶段 B · 右行经过 x=6 m</strong>B=0.10 T，v=4.00 m/s，|E动|=0.40 V；E感=−0.40 V，所以 E总=0、I=0。</div>
+        <div class="compare-item" style="--compare:#059669"><strong>阶段 D · 左行经过 x=6 m</strong>B=0.10 T，|v|=3.00 m/s，|E动|=0.30 V；磁场不变，所以 |E总|=0.30 V。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="charts-grid" aria-label="位置关系联动图表">
+    <article class="chart-card"><div class="chart-title"><i class="chart-dot" style="--dot:#2563eb"></i>速率 |v| — 位置 x</div><canvas id="chartV" class="chart-canvas" role="img" aria-label="阶段A、B、D的速率与位置关系图"></canvas><div class="chart-formula">A: 1+x　B: 4　D: 0.5x</div></article>
+    <article class="chart-card"><div class="chart-title"><i class="chart-dot" style="--dot:#059669"></i>磁感应强度 B — 位置 x</div><canvas id="chartB" class="chart-canvas" role="img" aria-label="阶段A、B、D的磁感应强度与位置关系图"></canvas><div class="chart-formula">A: 0.2　B: 0.6/x　D: 0.1</div></article>
+    <article class="chart-card"><div class="chart-title"><i class="chart-dot" style="--dot:#dc2626"></i>动生电动势 |E动| — 位置 x</div><canvas id="chartE" class="chart-canvas" role="img" aria-label="阶段A、B、D的动生电动势大小与位置关系图"></canvas><div class="chart-formula">A: 0.2(1+x)　B: 2.4/x　D: 0.05x</div></article>
+    <article class="chart-card"><div class="chart-title"><i class="chart-dot" style="--dot:#7c3aed"></i>磁通量 Φ — 位置 x</div><canvas id="chartPhi" class="chart-canvas" role="img" aria-label="阶段A、B、D的磁通量与位置关系图"></canvas><div class="chart-formula">A: 0.2x　B: 0.6　D: 0.1x</div></article>
+  </section>
+
+  <section class="explanation">
+    <h2>如何使用模型验证结论</h2>
+    <div class="explanation-grid">
+      <div class="explanation-item"><strong class="stage-a">A · 变力右移</strong>拖动棒观察 v、I、安培力同时增大；在 x=1.5 m 处读出 F外=7.5 N。</div>
+      <div class="explanation-item"><strong class="stage-b">B · 撤力变场</strong>B 随 x 减小、磁通保持 0.6 Wb；E感与E动实时抵消，因此无电流和安培力。</div>
+      <div class="explanation-item"><strong class="stage-c">C · 恒力往返</strong>拖动时间或慢放全过程，观察速度、电流和安培力反向；磁力冲量随位移累积，并在返回 x₀ 时回到零。</div>
+      <div class="explanation-item"><strong class="stage-d">D · 撤力左行</strong>速度和电流反向，安培力改为向右阻碍左行；拖向原点可见 E=0.05x。</div>
+    </div>
+    <details class="reference"><summary>查看原题与原答案</summary><div class="reference-images"><a href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第21题原题图"></a><a href="answer.png" target="_blank" rel="noopener"><img src="answer.png" alt="第21题原答案图"></a></div></details>
+  </section>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const PARAMS={L:1,R:.02,m:1,B0:.2,B1:.1,v0:1,k:1,x1:3,x0:6,T:5};
+const COLORS={A:'#2563eb',B:'#7c3aed',C:'#d97706',D:'#059669'};
+const S=1.75,Ls=PARAMS.L*S,BASE_Y=1.2,railLength=15;
+const C_GAMMA=PARAMS.B1**2*PARAMS.L**2/PARAMS.R;
+const C_START_V=4;
+const C_TURN=Math.log((C_START_V+PARAMS.T/C_GAMMA)/(PARAMS.T/C_GAMMA))/C_GAMMA;
+const C_XMAX=PARAMS.x0+(C_START_V+PARAMS.T/C_GAMMA)/C_GAMMA*(1-Math.exp(-C_GAMMA*C_TURN))-(PARAMS.T/C_GAMMA)*C_TURN;
+const C_RETURN=1.4308313007;
+const STAGE_META={
+  A:{title:'阶段 A：外力推动，速度随位置增大',min:0,max:3,step:.01,duration:5.5},
+  B:{title:'阶段 B：撤去外力，变场抵消动生电动势',min:3,max:6,step:.01,duration:4},
+  C:{title:'阶段 C：左向恒力作用下先右后左',min:0,max:C_RETURN,step:.005,duration:7},
+  D:{title:'阶段 D：撤去恒力，安培力阻碍左行',min:0,max:6,step:.01,duration:7}
+};
+const state={phase:'A',x:0,cTime:0,playing:false,playU:0,lastTime:0,dragging:false,cTurnHeld:false,holdUntil:0};
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const container=document.getElementById('canvasContainer');
+const canvas=document.getElementById('canvas');
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xf0f4f8);
+scene.fog=new THREE.Fog(0xf0f4f8,26,70);
+const camera=new THREE.PerspectiveCamera(38,container.clientWidth/container.clientHeight,.1,1000);
+camera.position.set(8,7.5,10);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setSize(container.clientWidth,container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.dampingFactor=.06;controls.target.set(6.4,BASE_Y,0);controls.maxPolarAngle=Math.PI/2.03;
+
+scene.add(new THREE.AmbientLight(0xffffff,.65));
+const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(8,16,8);sun.castShadow=true;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xffffff,0x43506a,.32));
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(42,24),new THREE.MeshStandardMaterial({color:0xe7edf5,roughness:.92}));
+ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
+scene.add(new THREE.GridHelper(42,28,0xc1ccd9,0xd8e0e9));
+
+const railMat=new THREE.MeshStandardMaterial({color:0x475569,roughness:.35,metalness:.7});
+function cylinderBetweenZ(length,material){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,length,14),material);mesh.rotation.x=Math.PI/2;return mesh}
+function addRail(z){const rail=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,railLength,14),railMat);rail.rotation.z=Math.PI/2;rail.position.set(railLength/2,BASE_Y,z);rail.castShadow=true;scene.add(rail)}
+addRail(Ls/2);addRail(-Ls/2);
+
+const wireTop=cylinderBetweenZ((Ls-.78)/2,railMat);wireTop.position.set(0,BASE_Y,(Ls/2+.39)/2);scene.add(wireTop);
+const wireBottom=cylinderBetweenZ((Ls-.78)/2,railMat);wireBottom.position.set(0,BASE_Y,-(Ls/2+.39)/2);scene.add(wireBottom);
+const resistor=new THREE.Mesh(new THREE.BoxGeometry(.34,.22,.78),new THREE.MeshStandardMaterial({color:0xd97706,roughness:.42,metalness:.25}));
+resistor.position.set(0,BASE_Y,0);resistor.castShadow=true;scene.add(resistor);
+
+const rodAssembly=new THREE.Group();scene.add(rodAssembly);
+const rod=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,Ls,16),new THREE.MeshStandardMaterial({color:0x2563eb,roughness:.26,metalness:.72}));
+rod.rotation.x=Math.PI/2;rod.castShadow=true;rodAssembly.add(rod);
+const tipMat=new THREE.MeshStandardMaterial({color:0x2563eb,emissive:0x2563eb,emissiveIntensity:.22});
+for(const z of [Ls/2,-Ls/2]){const tip=new THREE.Mesh(new THREE.SphereGeometry(.1,16,16),tipMat);tip.position.z=z;rodAssembly.add(tip)}
+const dragHit=new THREE.Mesh(new THREE.BoxGeometry(.5,.5,Ls+.35),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));rodAssembly.add(dragHit);
+
+const fieldGroup=new THREE.Group();scene.add(fieldGroup);
+const fieldBox=new THREE.Mesh(new THREE.BoxGeometry(14,1.5,3.2),new THREE.MeshStandardMaterial({color:0x93c5fd,transparent:true,opacity:.07,side:THREE.DoubleSide}));
+fieldBox.position.set(7,BASE_Y+.72,0);fieldGroup.add(fieldBox);
+const fieldArrows=[];
+for(let x=.6;x<=14;x+=1.45){for(let z=-1.15;z<=1.15;z+=1.15){const arrow=new THREE.ArrowHelper(new THREE.Vector3(0,-1,0),new THREE.Vector3(x,BASE_Y+1.1,z),.85,0x059669,.18,.1);fieldGroup.add(arrow);fieldArrows.push(arrow)}}
+
+function makeLabel(text,pos,color='#334155',scale=2.6,parent=scene){
+  const c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=384;c.height=96;ctx.font='700 30px sans-serif';ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,192,48);
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true}));sprite.scale.set(scale,.65,1);sprite.position.copy(pos);parent.add(sprite);return sprite;
+}
+makeLabel('R',new THREE.Vector3(-.45,BASE_Y+.55,0),'#b45309',1.5);
+makeLabel('M',new THREE.Vector3(-.3,BASE_Y+.28,Ls/2+.25));makeLabel('P',new THREE.Vector3(-.3,BASE_Y+.28,-Ls/2-.25));
+makeLabel('N',new THREE.Vector3(railLength+.2,BASE_Y+.28,Ls/2+.25));makeLabel('Q',new THREE.Vector3(railLength+.2,BASE_Y+.28,-Ls/2-.25));
+makeLabel('c',new THREE.Vector3(0,.28,Ls/2+.2),'#1d4ed8',1.05,rodAssembly);makeLabel('d',new THREE.Vector3(0,.28,-Ls/2-.2),'#1d4ed8',1.05,rodAssembly);
+for(const x of [0,3,6]){const tick=new THREE.Mesh(new THREE.BoxGeometry(.035,.2,.035),new THREE.MeshStandardMaterial({color:0x64748b}));tick.position.set(x*S,BASE_Y-.12,1.18);scene.add(tick);makeLabel(String(x),new THREE.Vector3(x*S,BASE_Y-.38,1.18),'#526079',1.25)}
+
+const velocityArrow=new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(),1,0x2563eb,.25,.14);scene.add(velocityArrow);
+const currentArrow=new THREE.ArrowHelper(new THREE.Vector3(0,0,-1),new THREE.Vector3(),1,0x7c3aed,.22,.12);scene.add(currentArrow);
+const externalArrow=new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(),1,0xd97706,.25,.14);scene.add(externalArrow);
+const magneticArrow=new THREE.ArrowHelper(new THREE.Vector3(-1,0,0),new THREE.Vector3(),1,0xdc2626,.25,.14);scene.add(magneticArrow);
+
+function cPhysics(){
+  const t=state.cTime,decay=Math.exp(-C_GAMMA*t);
+  const vSigned=(C_START_V+PARAMS.T/C_GAMMA)*decay-PARAMS.T/C_GAMMA;
+  const x=PARAMS.x0+(C_START_V+PARAMS.T/C_GAMMA)/C_GAMMA*(1-decay)-(PARAMS.T/C_GAMMA)*t;
+  const eMotion=PARAMS.B1*PARAMS.L*Math.abs(vSigned),current=Math.sign(vSigned)*eMotion/PARAMS.R;
+  const impulseB=-C_GAMMA*(x-PARAMS.x0),impulseT=-PARAMS.T*t,momentum=C_START_V+impulseT+impulseB;
+  let event='右行减速：恒力与安培力都向左';
+  if(Math.abs(t-C_TURN)<.018)event='转向时刻：v、I、Fᴮ 同时为零';
+  else if(t>C_TURN&&t<C_RETURN-.018)event='反向左行：安培力改为向右';
+  else if(t>=C_RETURN-.018)event='返回 x₀：磁力总冲量回到零';
+  else if(t<.018)event='从 x₀ 出发：速度向右';
+  return{x,vSigned,B:PARAMS.B1,phi:PARAMS.B1*x,eMotion,eInduced:0,eTotal:Math.sign(vSigned)*eMotion,current,fMag:-C_GAMMA*vSigned,fExternal:-PARAMS.T,event,t,impulseB,impulseT,momentum};
+}
+function getPhysics(){
+  let x=state.x;
+  if(state.phase==='A'){x=Math.min(Math.max(x,0),3);const v=1+x,e=.2*v;return{x,vSigned:v,B:.2,phi:.2*x,eMotion:e,eInduced:0,eTotal:e,current:e/.02,fMag:-.2*(e/.02),fExternal:3*v,event:''}}
+  if(state.phase==='B'){x=Math.min(Math.max(x,3),6);const B=.6/x,e=4*B;return{x,vSigned:4,B,phi:.6,eMotion:e,eInduced:-e,eTotal:0,current:0,fMag:0,fExternal:0,event:''}}
+  if(state.phase==='C')return cPhysics();
+  x=Math.min(Math.max(x,0),6);const v=-.5*x,e=.1*Math.abs(v),current=-e/.02;return{x,vSigned:v,B:.1,phi:.1*x,eMotion:e,eInduced:0,eTotal:-e,current,fMag:.1*Math.abs(current),fExternal:0,event:''};
+}
+function chartFn(phase,x){
+  if(phase==='A')return{v:1+x,B:.2,E:.2*(1+x),Phi:.2*x};
+  if(phase==='B')return{v:4,B:.6/x,E:2.4/x,Phi:.6};
+  return{v:.5*x,B:.1,E:.05*x,Phi:.1*x};
+}
+function directionText(value,positive,negative){return Math.abs(value)<1e-6?'无':value>0?positive:negative}
+function fmt(value,digits=2){return Math.abs(value)<.0005?'0':Math.abs(value).toFixed(digits)}
+
+function updateVectors(p){
+  const x=p.x*S,forward=p.vSigned>=0?1:-1;
+  velocityArrow.position.set(x,BASE_Y+.42,0);velocityArrow.setDirection(new THREE.Vector3(forward,0,0));velocityArrow.setLength(.65+Math.min(Math.abs(p.vSigned)/5,1)*1.35,.25,.14);velocityArrow.visible=Math.abs(p.vSigned)>.01;
+  currentArrow.position.set(x,BASE_Y+.23,p.current>=0?Ls/2:-Ls/2);currentArrow.setDirection(new THREE.Vector3(0,0,p.current>=0?-1:1));currentArrow.setLength(Math.min(1.25,.5+Math.abs(p.current)/45),.22,.12);currentArrow.visible=Math.abs(p.current)>.01;
+  externalArrow.position.set(x,BASE_Y+.78,0);externalArrow.setDirection(new THREE.Vector3(p.fExternal>=0?1:-1,0,0));externalArrow.setLength(.65+Math.min(Math.abs(p.fExternal)/12,1)*1.35,.25,.14);externalArrow.visible=Math.abs(p.fExternal)>.01;
+  magneticArrow.position.set(x,BASE_Y+1.12,0);magneticArrow.setDirection(new THREE.Vector3(p.fMag>=0?1:-1,0,0));magneticArrow.setLength(.65+Math.min(Math.abs(p.fMag)/8,1)*1.35,.25,.14);magneticArrow.visible=Math.abs(p.fMag)>.01;
+}
+function updateScene(){
+  const p=getPhysics();rodAssembly.position.set(p.x*S,BASE_Y,0);
+  fieldArrows.forEach(a=>a.setLength(.35+.62*(p.B/.2),.18,.1));
+  updateVectors(p);
+  const motion=directionText(p.vSigned,'向右','向左'),currentDir=directionText(p.current,'c→d','d→c');
+  const cReturned=state.phase==='C'&&state.cTime>=C_RETURN-.018;
+  const speedText=cReturned?'≈3 m/s（题设口径，向左）':`${fmt(Math.abs(p.vSigned))} m/s（${motion}）`;
+  const currentText=cReturned?'≈15 A（题设口径，d→c）':`${fmt(Math.abs(p.current),1)} A（${currentDir}）`;
+  document.getElementById('hudTitle').textContent=state.phase==='C'?`阶段 C：${p.event}`:STAGE_META[state.phase].title;
+  document.getElementById('hudSubtitle').textContent=`x=${p.x.toFixed(2)} m ｜ v=${speedText} ｜ B=${p.B.toFixed(3)} T ｜ I=${currentText}`;
+  canvas.setAttribute('aria-label',`${STAGE_META[state.phase].title}。金属棒位于${p.x.toFixed(2)}米，${motion}，速率${fmt(Math.abs(p.vSigned))}米每秒，磁场垂直导轨平面向里。`);
+  updateCausal(p);return p;
+}
+function setNode(index,label,value,note){document.getElementById(`causeLabel${index}`).textContent=label;document.getElementById(`causeValue${index}`).textContent=value;document.getElementById(`causeNote${index}`).textContent=note}
+function updateCausal(p){
+  if(state.phase==='A'){
+    setNode(1,'运动',`v=1+x=${fmt(Math.abs(p.vSigned))} m/s`,'速度增大使切割磁感线更快');setNode(2,'动生电动势',`E动=BLv=${fmt(p.eMotion)} V`,'磁场不变，没有感生电动势');setNode(3,'回路电流',`I=E/R=${fmt(p.current,1)} A`,'方向 c→d');setNode(4,'安培力',`Fᴮ=${fmt(Math.abs(p.fMag))} N，向左`,'阻碍金属棒右移');setNode(5,'外力',`F外=${fmt(Math.abs(p.fExternal))} N，向右`,'同时克服安培力并提供加速度');
+    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>拖到 x=1.5 m，验证 F外=Fᴮ+ma=7.5 N。';
+  }else if(state.phase==='B'){
+    setNode(1,'磁场调节',`B=${p.B.toFixed(3)} T`,'棒以 4 m/s 匀速右移');setNode(2,'磁通约束',`Φ=BLx=${fmt(p.phi)} Wb`,'始终保持不变');setNode(3,'两个电动势',`E动=${fmt(p.eMotion)} V`,'E感=−E动');setNode(4,'回路结果','E总=0，I=0','两个电动势实时抵消');setNode(5,'受力结果','Fᴮ=0','撤去外力后仍能匀速');
+    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>拖动棒，确认 B 在减小而 Φ 不变；因此 E感 恰好抵消 E动。';
+  }else if(state.phase==='C'){
+    const atReturn=p.t>=C_RETURN-.018,atTurn=Math.abs(p.t-C_TURN)<.018;
+    setNode(1,'连续过程',`t=${p.t.toFixed(2)} s，x=${p.x.toFixed(2)} m`,p.event);
+    setNode(2,'速度与方向',atReturn?'|v|≈3 m/s，向左':atTurn?'v=0，正在转向':`|v|=${fmt(Math.abs(p.vSigned))} m/s，${p.vSigned>0?'向右':'向左'}`,p.vSigned>0?'右行速度持续减小':p.vSigned<0?'左行速度持续增大':'速度、电流和安培力同时过零');
+    setNode(3,'实时受力','T=5.0 N，始终向左',Math.abs(p.fMag)<.01?'Fᴮ=0':atReturn?'Fᴮ≈1.5 N，向右':`Fᴮ=${fmt(Math.abs(p.fMag))} N，${p.fMag>0?'向右':'向左'}`);
+    const impulseText=Math.abs(p.impulseB)<.005?'0.00':p.impulseB.toFixed(2);
+    setNode(4,'磁力冲量累计',`Jᴮ=${impulseText} N·s`,`Jᴮ=−${C_GAMMA.toFixed(1)}(x−x₀)`);
+    const impulsePercent=Math.min(100,Math.abs(p.impulseB)/(C_GAMMA*(C_XMAX-PARAMS.x0))*100);
+    document.getElementById('causeValue4').innerHTML=`Jᴮ=${impulseText} N·s<span class="impulse-track" aria-hidden="true"><i class="impulse-fill" style="width:${impulsePercent.toFixed(1)}%"></i></span>`;
+    setNode(5,'动量账本',atReturn?'p≈−3 kg·m/s（题设）':`p=${p.momentum.toFixed(2)} kg·m/s`,atReturn?'返回同一点使 Jᴮ=0；题设按1.4 s计算':'p=p₀+Jᵀ+Jᴮ');
+    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>慢放或拖动时间：磁力冲量先累积，在返回 x₀ 时为何恰好回到零？';
+  }else{
+    setNode(1,'左行运动',`|v|=0.5x=${fmt(Math.abs(p.vSigned))} m/s`,'位置越小，速率越小');setNode(2,'动生电动势',`|E动|=0.05x=${fmt(p.eMotion)} V`,'磁场保持 0.10 T');setNode(3,'反向电流',`|I|=${fmt(Math.abs(p.current),1)} A`,'方向 d→c');setNode(4,'安培力',`Fᴮ=${fmt(Math.abs(p.fMag))} N，向右`,'始终阻碍左行');setNode(5,'位置关系','E=0.05x','x=0 是关系极限，并非有限时间突然到达');
+    document.getElementById('inquiryCopy').innerHTML='<strong>观察任务：</strong>向原点拖动棒，观察 v、E、I、Fᴮ 如何按比例同时减小。';
+  }
+}
+
+const SERIES=[{phase:'A',x0:0,x1:3,color:'#2563eb',dash:false},{phase:'B',x0:3,x1:6,color:'#7c3aed',dash:false},{phase:'D',x0:0,x1:6,color:'#059669',dash:true}];
+function drawChart(id,metric,yMax,yUnit){
+  const canvasEl=document.getElementById(id),rect=canvasEl.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  canvasEl.width=Math.max(1,Math.round(rect.width*dpr));canvasEl.height=Math.max(1,Math.round(rect.height*dpr));
+  const ctx=canvasEl.getContext('2d');ctx.scale(dpr,dpr);const w=rect.width,h=rect.height,pad={t:12,r:10,b:28,l:45},gw=w-pad.l-pad.r,gh=h-pad.t-pad.b;
+  ctx.clearRect(0,0,w,h);ctx.strokeStyle='#edf1f6';ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){const px=pad.l+i/6*gw;ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,h-pad.b);ctx.stroke()}
+  for(let i=0;i<=4;i++){const py=pad.t+i/4*gh;ctx.beginPath();ctx.moveTo(pad.l,py);ctx.lineTo(w-pad.r,py);ctx.stroke()}
+  ctx.strokeStyle='#526079';ctx.lineWidth=1.25;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();
+  ctx.fillStyle='#63708a';ctx.font='11px sans-serif';ctx.textAlign='center';for(let i=0;i<=6;i++)ctx.fillText(String(i),pad.l+i/6*gw,h-pad.b+15);ctx.fillText('x / m',pad.l+gw/2,h-4);
+  ctx.textAlign='right';for(let i=0;i<=4;i++){const value=yMax*(4-i)/4;ctx.fillText(value.toFixed(yMax<1?2:1),pad.l-6,pad.t+i/4*gh+4)}
+  ctx.save();ctx.translate(11,pad.t+gh/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText(yUnit,0,0);ctx.restore();
+  const sx=x=>pad.l+x/6*gw,sy=y=>pad.t+gh-y/yMax*gh;
+  for(const s of SERIES){ctx.strokeStyle=s.color;ctx.lineWidth=2.4;ctx.setLineDash(s.dash?[6,4]:[]);ctx.beginPath();let first=true;for(let x=s.x0;x<=s.x1+.001;x+=.025){const y=chartFn(s.phase,Math.min(x,s.x1))[metric];if(first){ctx.moveTo(sx(x),sy(y));first=false}else ctx.lineTo(sx(x),sy(y))}ctx.stroke()}
+  ctx.setLineDash([]);const p=getPhysics();if(state.phase!=='C'){const value=chartFn(state.phase,p.x)[metric];ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(sx(p.x),sy(value),5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.strokeStyle='rgba(239,68,68,.32)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(sx(p.x),pad.t);ctx.lineTo(sx(p.x),h-pad.b);ctx.stroke();ctx.setLineDash([])}
+}
+function redrawCharts(){drawChart('chartV','v',5,'|v| / m·s⁻¹');drawChart('chartB','B',.25,'B / T');drawChart('chartE','E',1.0,'|E动| / V');drawChart('chartPhi','Phi',.75,'Φ / Wb')}
+function renderAll(){updateScene();syncControls();redrawCharts();renderer.render(scene,camera)}
+
+const slider=document.getElementById('positionSlider'),sliderLabel=document.getElementById('sliderLabel'),positionOutput=document.getElementById('positionOutput'),playButton=document.getElementById('playToggle');
+function syncControls(){
+  const meta=STAGE_META[state.phase];slider.min=meta.min;slider.max=meta.max;slider.step=meta.step;
+  if(state.phase==='C'){slider.value=state.cTime;sliderLabel.textContent='物理时间 t';positionOutput.textContent=state.cTime>=C_RETURN-.018?'≈1.4 s':`${state.cTime.toFixed(2)} s`}
+  else{slider.value=state.x;sliderLabel.textContent='位置 x';positionOutput.textContent=`${state.x.toFixed(2)} m`}
+  playButton.textContent=state.playing?'⏸ 暂停':'▶ 教学慢放';playButton.setAttribute('aria-pressed',String(state.playing));
+}
+function setPhase(phase){state.phase=phase;state.playing=false;state.playU=0;state.cTurnHeld=false;state.holdUntil=0;if(phase==='A')state.x=0;else if(phase==='B')state.x=3;else if(phase==='C')state.cTime=0;else state.x=6;document.querySelectorAll('.phase-btn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.phase===phase)));renderAll()}
+document.querySelectorAll('.phase-btn').forEach(button=>button.addEventListener('click',()=>setPhase(button.dataset.phase)));
+slider.addEventListener('input',event=>{state.playing=false;if(state.phase==='C')state.cTime=Number(event.target.value);else state.x=Number(event.target.value);renderAll()});
+document.getElementById('resetButton').addEventListener('click',()=>setPhase(state.phase));
+function currentU(){if(state.phase==='A')return Math.log(state.x+1)/Math.log(4);if(state.phase==='B')return(state.x-3)/3;if(state.phase==='C')return state.cTime/C_RETURN;if(state.phase==='D')return state.x<=.12?1:Math.min(1,-Math.log(state.x/6)/4);return 0}
+function applyPlayback(u){if(state.phase==='A')state.x=Math.exp(Math.log(4)*u)-1;else if(state.phase==='B')state.x=3+3*u;else if(state.phase==='C')state.cTime=C_RETURN*u;else if(state.phase==='D')state.x=6*Math.exp(-4*u)}
+playButton.addEventListener('click',()=>{
+  if(state.playing){state.playing=false;syncControls();return}
+  state.playU=currentU();if(state.playU>=.999){if(state.phase==='A')state.x=0;else if(state.phase==='B')state.x=3;else if(state.phase==='C')state.cTime=0;else state.x=6;state.playU=0;state.cTurnHeld=false;renderAll()}
+  if(reduceMotion){applyPlayback(1);state.playing=false;renderAll();return}
+  state.cTurnHeld=state.phase==='C'&&state.playU>=C_TURN/C_RETURN;state.holdUntil=0;state.playing=true;state.lastTime=performance.now();syncControls();
+});
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{const views={overview:[[8,7.5,10],[6.4,BASE_Y,0]],top:[[6.2,15,.01],[6.2,BASE_Y,0]],rail:[[6.4,2.8,7.8],[6.4,BASE_Y,0]]};const [pos,target]=views[button.dataset.view];camera.position.set(...pos);controls.target.set(...target);controls.update();renderer.render(scene,camera)}));
+const compareButton=document.getElementById('compareToggle'),comparePanel=document.getElementById('comparePanel');compareButton.addEventListener('click',()=>{const open=comparePanel.hidden;comparePanel.hidden=!open;compareButton.setAttribute('aria-expanded',String(open));compareButton.textContent=open?'收起同位置比较':'比较同一位置 x=6'});
+
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),dragPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-BASE_Y),dragPoint=new THREE.Vector3();
+function pointerToRay(event){const rect=canvas.getBoundingClientRect();pointer.x=(event.clientX-rect.left)/rect.width*2-1;pointer.y=-(event.clientY-rect.top)/rect.height*2+1;raycaster.setFromCamera(pointer,camera)}
+canvas.addEventListener('pointerdown',event=>{if(state.phase==='C')return;pointerToRay(event);if(raycaster.intersectObject(dragHit,false).length){state.dragging=true;state.playing=false;controls.enabled=false;canvas.setPointerCapture(event.pointerId);event.preventDefault()}});
+canvas.addEventListener('pointermove',event=>{if(!state.dragging)return;pointerToRay(event);if(raycaster.ray.intersectPlane(dragPlane,dragPoint)){const meta=STAGE_META[state.phase];state.x=Math.min(meta.max,Math.max(meta.min,dragPoint.x/S));renderAll()}});
+function endDrag(event){if(!state.dragging)return;state.dragging=false;controls.enabled=true;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId)}
+canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+
+function animate(time){
+  requestAnimationFrame(animate);
+  if(state.playing){
+    if(state.holdUntil>time){state.lastTime=time;controls.update();renderer.render(scene,camera);return}
+    state.holdUntil=0;
+    const dt=Math.min(.05,(time-state.lastTime)/1000),previousU=state.playU;state.lastTime=time;
+    state.playU=Math.min(1,state.playU+dt/STAGE_META[state.phase].duration);
+    const turnU=C_TURN/C_RETURN;
+    if(state.phase==='C'&&!state.cTurnHeld&&previousU<turnU&&state.playU>=turnU){state.playU=turnU;state.cTurnHeld=true;state.holdUntil=time+900}
+    applyPlayback(state.playU);if(state.playU>=1)state.playing=false;renderAll();
+  }
+  controls.update();renderer.render(scene,camera);
+}
+window.addEventListener('resize',()=>{camera.aspect=container.clientWidth/container.clientHeight;camera.updateProjectionMatrix();renderer.setSize(container.clientWidth,container.clientHeight);renderAll()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.playing){state.playing=false;syncControls()}});
+renderAll();animate(performance.now());
+</script>
+</body>
+</html>
