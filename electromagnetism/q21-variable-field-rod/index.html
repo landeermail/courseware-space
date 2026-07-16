@@ -109,23 +109,23 @@
     .scene-svg, .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
     .scene-svg text, .chart-svg text { font-family: inherit; }
     .scene-surface { fill: #f8fafc; }
-    .rail { stroke: #27364d; stroke-width: 5; stroke-linecap: round; }
-    .circuit-left { fill: none; stroke: #27364d; stroke-width: 4; }
-    .resistor { fill: #fff; stroke: #27364d; stroke-width: 2; }
+    .rail { stroke: #475569; stroke-width: 3; stroke-linecap: round; }
+    .circuit-left { fill: none; stroke: #475569; stroke-width: 2.4; }
+    .resistor { fill: #fff; stroke: #475569; stroke-width: 1.5; }
     .magnetic-region { fill: rgba(37, 99, 235, .045); }
     .field-area { fill: rgba(37, 99, 235, .075); stroke: rgba(37, 99, 235, .28); stroke-width: 1; }
-    .field-mark { fill: #64748b; font-size: 13px; font-weight: 700; }
-    .rod { stroke: #0f172a; stroke-width: 8; stroke-linecap: round; }
-    .rod-end { fill: #0f172a; }
-    .axis { stroke: #94a3b8; stroke-width: 1.5; }
-    .axis-tick { stroke: #64748b; stroke-width: 1.5; }
+    .field-mark { fill: #7c8aa0; font-size: 12px; font-weight: 600; }
+    .rod { stroke: #1e293b; stroke-width: 4.5; stroke-linecap: round; }
+    .rod-end { fill: #1e293b; }
+    .axis { stroke: #a7b3c4; stroke-width: 1; }
+    .axis-tick { stroke: #7c8aa0; stroke-width: 1.2; }
     .scene-label { fill: #43506a; font-size: 12px; }
     .scene-value { fill: #172033; font-size: 13px; font-weight: 700; }
-    .vector { fill: none; stroke-width: 4; stroke-linecap: round; }
+    .vector { fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .velocity-vector { stroke: var(--green); }
     .external-vector { stroke: var(--blue); }
     .magnetic-vector { stroke: var(--orange); }
-    .current-vector { stroke: var(--red); stroke-width: 3; }
+    .current-vector { stroke: var(--red); stroke-width: 2; }
 
     .direction-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; padding: 0 18px 12px; }
     .direction-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 6px; min-width: 0; color: var(--ink); }
@@ -323,10 +323,10 @@
             <title id="scene-svg-title">平行导轨、左端电阻与移动金属棒的俯视图</title>
             <desc id="scene-svg-desc">磁场约定垂直纸面向里。金属棒的位置、速度、外力、电流与安培力会随阶段和控制值更新。</desc>
             <defs>
-              <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#059669"/></marker>
-              <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
-              <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker>
-              <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#dc2626"/></marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#059669"/></marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
+              <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker>
+              <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#dc2626"/></marker>
             </defs>
             <rect class="scene-surface" x="2" y="2" width="416" height="246" rx="12"/>
             <rect class="magnetic-region" x="76" y="62" width="318" height="118" rx="4"/>
@@ -341,7 +341,7 @@
             <g><line class="axis-tick" x1="342" y1="210" x2="342" y2="222"/><text class="scene-label" x="327" y="239">6 m</text></g>
             <text class="scene-label" x="398" y="221">x</text><text class="scene-label" x="47" y="56">M</text><text class="scene-label" x="47" y="195">P</text>
             <g id="rod-group">
-              <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="5"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="5"/>
+              <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="3.25"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="3.25"/>
               <text class="scene-value" id="rod-c-label" x="82" y="67">c</text><text class="scene-value" id="rod-d-label" x="82" y="191">d</text>
             </g>
             <g id="velocity-group"><line class="vector velocity-vector" id="velocity-arrow" marker-end="url(#arrow-green)"/></g>
@@ -732,14 +732,14 @@
 
     function renderVectors(positionX, physics) {
       const motion = physics.direction;
-      const vectorLength = 42;
-      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 42, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
+      const vectorLength = 34;
+      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 43, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
       const externalDirection = physics.stage === 'A' ? 'right' : (physics.stage === 'C' ? 'left' : 'none');
-      const externalOrigin = positionX + (externalDirection === 'right' ? 18 : (externalDirection === 'left' ? -18 : 0));
-      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 104, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
+      const externalOrigin = positionX + (externalDirection === 'right' ? 22 : (externalDirection === 'left' ? -22 : 0));
+      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 100, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
       const magneticDirection = physics.magneticForce < .01 ? 'none' : (motion === 'right' ? 'left' : (motion === 'left' ? 'right' : 'none'));
-      const magneticOrigin = positionX + (magneticDirection === 'right' ? 18 : 0);
-      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 142, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
+      const magneticOrigin = positionX + (magneticDirection === 'left' ? 52 : 22);
+      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 148, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
       const currentGroup = document.getElementById('current-group');
       if (physics.current < .01 || motion === 'none' || physics.stage === 'B') {
         currentGroup.setAttribute('display', 'none'); currentGroup.dataset.direction = 'none';
@@ -748,7 +748,7 @@
         const upward = motion === 'right';
         currentGroup.dataset.direction = upward ? 'up' : 'down';
         const arrow = document.getElementById('current-arrow');
-        arrow.setAttribute('x1', positionX + 10); arrow.setAttribute('x2', positionX + 10); arrow.setAttribute('y1', upward ? 144 : 102); arrow.setAttribute('y2', upward ? 102 : 144);
+        arrow.setAttribute('x1', positionX + 11); arrow.setAttribute('x2', positionX + 11); arrow.setAttribute('y1', upward ? 137 : 109); arrow.setAttribute('y2', upward ? 109 : 137);
       }
       renderDirectionStrip(motion, externalDirection, magneticDirection, physics);
     }
