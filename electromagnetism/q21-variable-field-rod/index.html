@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第21题：变磁场中的导体棒 — 交互课件</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Cpath d='M14 18h36M14 46h36M34 18v28' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #657089;
+      --line: #dbe2ec;
+      --panel: #ffffff;
+      --page: #f7f9fc;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --green: #059669;
+      --orange: #d97706;
+      --red: #dc2626;
+      --cyan: #0891b2;
+      --soft-blue: #eff6ff;
+      --soft-purple: #f5f3ff;
+      --soft-green: #ecfdf5;
+      --soft-orange: #fff7ed;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; overflow-x: hidden; color: var(--ink); background: var(--page); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif; }
+    h1, h2, h3, p { margin: 0; }
+    button, input { font: inherit; }
+    button { min-height: 44px; }
+    button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid rgba(37, 99, 235, .35); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .page-shell { width: min(1280px, 100%); margin: 0 auto; padding: 24px 16px 36px; }
+    .back-link { display: inline-block; color: #1d4ed8; font-size: 14px; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    .page-header { margin-bottom: 18px; }
+    .page-title { margin-top: 8px; font-size: clamp(23px, 3vw, 32px); line-height: 1.25; }
+    .page-subtitle { margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    .question-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; border: 1px solid var(--line); border-radius: 13px; overflow: hidden; background: var(--panel); }
+    .question-tab { min-width: 0; padding: 10px 14px; border: 0; border-right: 1px solid var(--line); color: #4b5563; background: transparent; text-align: left; cursor: pointer; }
+    .question-tab:last-child { border-right: 0; }
+    .question-tab strong, .question-tab span { display: block; }
+    .question-tab strong { font-size: 15px; }
+    .question-tab span { margin-top: 3px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .question-tab[aria-selected="true"] { color: var(--blue); background: var(--soft-blue); box-shadow: inset 0 -3px 0 var(--blue); }
+
+    .lesson-layout { display: grid; grid-template-areas: "guide" "visual"; gap: 18px; align-items: start; }
+    .guide-panel { grid-area: guide; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 32px rgba(23, 32, 51, .07); }
+    .visual-panel { grid-area: visual; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 32px rgba(23, 32, 51, .07); }
+
+    .step-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: #fbfcfe; }
+    .step-button { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 5px; padding: 4px 3px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; }
+    .step-button span { display: grid; flex: 0 0 auto; place-items: center; width: 20px; height: 20px; border-radius: 999px; color: #64748b; background: #e8edf5; font-size: 11px; font-weight: 700; }
+    .step-button small { display: block; min-width: 0; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .step-button.active { color: var(--blue); background: #f2f7ff; }
+    .step-button.active span { color: #fff; background: var(--blue); }
+    .step-button.done span { color: #fff; background: var(--green); }
+
+    .guide-content { min-height: 330px; padding: 20px; }
+    .guide-kicker { color: var(--blue); font-size: 12px; font-weight: 700; letter-spacing: .03em; }
+    .guide-title { margin-top: 8px; font-size: 22px; line-height: 1.35; }
+    .guide-body { margin-top: 12px; color: #43506a; font-size: 15px; line-height: 1.8; }
+    .guide-tool { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .guide-tool p { color: #43506a; line-height: 1.75; }
+    .formula-line { margin-top: 9px; padding: 10px 12px; border-left: 4px solid var(--blue); border-radius: 0 9px 9px 0; color: #24324a; background: #f8fafc; line-height: 1.65; }
+    .formula-line strong { color: var(--blue); }
+    .causal-line { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 10px; color: #34435c; }
+    .causal-line span { color: var(--muted); }
+    .choice-grid { display: grid; gap: 8px; margin-top: 12px; }
+    .choice-button { padding: 10px 12px; border: 1px solid #cfd8e6; border-radius: 10px; color: #34435c; background: #fff; cursor: pointer; text-align: left; }
+    .choice-button:hover, .choice-button.selected { border-color: var(--blue); background: var(--soft-blue); }
+    .feedback { margin-top: 10px; padding: 10px 12px; border-radius: 10px; color: #334155; background: #f1f5f9; line-height: 1.7; }
+    .feedback.correct { color: #065f46; background: var(--soft-green); }
+    .feedback.note { color: #92400e; background: var(--soft-orange); }
+    .reveal-button, .nav-button, .phase-button, .control-button { border: 1px solid #cfd8e6; border-radius: 10px; color: #34435c; background: #fff; cursor: pointer; }
+    .reveal-button { margin-top: 10px; padding: 9px 13px; }
+    .primary { border-color: var(--blue); color: #fff; background: var(--blue); }
+    .guide-actions { display: flex; justify-content: space-between; gap: 10px; padding: 14px 20px 18px; border-top: 1px solid var(--line); }
+    .nav-button { min-width: 98px; padding: 10px 14px; }
+    .nav-button:disabled { color: #94a3b8; background: #f1f5f9; cursor: not-allowed; }
+
+    .phase-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted); background: #fbfcfe; font-size: 11px; }
+    .phase-heading strong { color: #34435c; font-size: 12px; }
+    .view-mode-label { color: var(--blue); font-weight: 700; }
+    .phase-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+    .phase-button { min-width: 0; padding: 10px 5px; border: 0; border-right: 1px solid var(--line); border-radius: 0; color: var(--muted); background: #f8fafc; }
+    .phase-button:last-child { border-right: 0; }
+    .phase-button strong, .phase-button span { display: block; }
+    .phase-button strong { font-size: 13px; }
+    .phase-button span { margin-top: 2px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .phase-button[data-stage="A"][aria-pressed="true"] { color: #1d4ed8; background: var(--soft-blue); box-shadow: inset 0 -3px 0 var(--blue); }
+    .phase-button[data-stage="B"][aria-pressed="true"] { color: #6d28d9; background: var(--soft-purple); box-shadow: inset 0 -3px 0 var(--purple); }
+    .phase-button[data-stage="C"][aria-pressed="true"] { color: #b45309; background: var(--soft-orange); box-shadow: inset 0 -3px 0 var(--orange); }
+    .phase-button[data-stage="D"][aria-pressed="true"] { color: #047857; background: var(--soft-green); box-shadow: inset 0 -3px 0 var(--green); }
+
+    .visual-heading { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 16px 18px 8px; }
+    .visual-heading h2 { font-size: 17px; line-height: 1.45; }
+    .visual-heading p { margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .stage-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; color: var(--blue); background: var(--soft-blue); font-size: 12px; font-weight: 700; }
+    .scene-view, .chart-zone { min-width: 0; }
+    .scene-wrap { padding: 0 12px 8px; }
+    .scene-svg, .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .scene-svg text, .chart-svg text { font-family: inherit; }
+    .scene-surface { fill: #f8fafc; }
+    .rail { stroke: #27364d; stroke-width: 5; stroke-linecap: round; }
+    .circuit-left { fill: none; stroke: #27364d; stroke-width: 4; }
+    .resistor { fill: #fff; stroke: #27364d; stroke-width: 2; }
+    .magnetic-region { fill: rgba(37, 99, 235, .045); }
+    .field-area { fill: rgba(37, 99, 235, .075); stroke: rgba(37, 99, 235, .28); stroke-width: 1; }
+    .field-mark { fill: #64748b; font-size: 13px; font-weight: 700; }
+    .rod { stroke: #0f172a; stroke-width: 8; stroke-linecap: round; }
+    .rod-end { fill: #0f172a; }
+    .axis { stroke: #94a3b8; stroke-width: 1.5; }
+    .axis-tick { stroke: #64748b; stroke-width: 1.5; }
+    .scene-label { fill: #43506a; font-size: 12px; }
+    .scene-value { fill: #172033; font-size: 13px; font-weight: 700; }
+    .vector { fill: none; stroke-width: 4; stroke-linecap: round; }
+    .velocity-vector { stroke: var(--green); }
+    .external-vector { stroke: var(--blue); }
+    .magnetic-vector { stroke: var(--orange); }
+    .current-vector { stroke: var(--red); stroke-width: 3; }
+
+    .direction-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; padding: 0 18px 12px; }
+    .direction-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 6px; min-width: 0; color: var(--ink); }
+    .direction-glyph { font-size: 23px; font-weight: 700; line-height: 1; text-align: center; }
+    .direction-copy { min-width: 0; }
+    .direction-copy strong, .direction-copy span { display: block; }
+    .direction-copy strong { font-size: 12px; }
+    .direction-copy span { margin-top: 2px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .direction-item[data-kind="motion"] .direction-glyph { color: var(--green); }
+    .direction-item[data-kind="external"] .direction-glyph { color: var(--blue); }
+    .direction-item[data-kind="magnetic"] .direction-glyph { color: var(--orange); }
+    .direction-item[data-kind="current"] .direction-glyph { color: var(--red); }
+    .direction-item.is-zero .direction-glyph { color: #94a3b8; }
+    .direction-item.is-focus-hidden { display: none; }
+    .direction-strip.focus-velocity { grid-template-columns: minmax(0, 220px); }
+    .vector-convention { margin: -2px 18px 12px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+    .metric-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 18px 12px; }
+    .metric { min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; text-align: center; }
+    .metric span, .metric strong { display: block; }
+    .metric span { color: var(--muted); font-size: 11px; }
+    .metric strong { margin-top: 3px; color: var(--ink); font-size: 15px; overflow-wrap: anywhere; }
+
+    .playback-controls { padding: 12px 18px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .control-heading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 8px; }
+    .control-heading label { font-size: 13px; font-weight: 700; }
+    .control-heading output { color: var(--blue); font-size: 13px; font-weight: 700; text-align: right; }
+    .control-row { display: grid; grid-template-columns: auto minmax(100px, 1fr); align-items: center; gap: 10px; }
+    .control-row.slider-only { grid-template-columns: minmax(100px, 1fr); }
+    .control-button { min-width: 100px; padding: 9px 12px; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); min-height: 44px; }
+    .playback-note { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .event-scale { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: -5px; color: var(--muted); font-size: 11px; text-align: center; }
+    .event-scale span:first-child { text-align: left; }
+    .event-scale span:last-child { text-align: right; }
+
+    .chart-zone { padding: 22px 24px 26px; }
+    .chart-zone h3 { font-size: 19px; }
+    .chart-caption { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .chart-frame { width: min(760px, 100%); margin: 14px auto 0; }
+    .chart-axis { stroke: #94a3b8; stroke-width: 1.25; }
+    .chart-grid { stroke: #e2e8f0; stroke-width: 1; }
+    .chart-label { fill: #64748b; font-size: 11px; }
+    .chart-direct-label { fill: #334155; font-size: 11px; font-weight: 700; }
+    .chart-marker { fill: #fff; stroke: var(--blue); stroke-width: 3; }
+    .energy-ledger { display: flex; min-height: 78px; margin-top: 14px; overflow: hidden; border-radius: 12px; color: #fff; text-align: center; }
+    .energy-ledger > div { display: grid; place-content: center; padding: 8px; }
+    .energy-heat { width: 66.666%; background: var(--orange); }
+    .energy-kinetic { width: 33.334%; background: var(--blue); }
+    .energy-ledger small { display: block; margin-top: 3px; font-size: 11px; }
+    .visual-panel[data-primary-visual="chart"] .energy-ledger { min-height: 170px; font-size: 26px; font-weight: 700; }
+    .visual-panel[data-primary-visual="chart"] .energy-ledger small { font-size: 14px; font-weight: 400; }
+    .concept-summary { display: grid; gap: 12px; padding: 4px 0; }
+    .concept-row { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .concept-row:last-child { border-bottom: 0; }
+    .concept-index { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; color: #fff; background: var(--blue); font-weight: 700; }
+    .concept-row strong, .concept-row p { display: block; }
+    .concept-row strong { font-size: 17px; }
+    .concept-row p { margin-top: 5px; color: #43506a; font-size: 14px; line-height: 1.65; }
+
+    .references { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 18px; }
+    details { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    summary { padding: 14px 16px; color: #1d4ed8; font-weight: 700; cursor: pointer; }
+    .reference-body { padding: 0 16px 16px; }
+    .reference-body img { display: block; width: 100%; height: auto; border-radius: 8px; }
+    .reference-image-link { display: block; color: #1d4ed8; text-decoration: none; }
+    .reference-image-link span { display: block; margin-top: 8px; font-size: 13px; text-align: center; }
+    .correction-note { margin-bottom: 12px; padding: 12px; border-left: 4px solid var(--orange); color: #7c2d12; background: var(--soft-orange); line-height: 1.75; }
+    .page-footnote { margin-top: 18px; color: var(--muted); font-size: 12px; line-height: 1.7; text-align: center; }
+
+    @media (min-width: 960px) {
+      .lesson-layout { grid-template-columns: minmax(0, 5fr) minmax(320px, 2fr); grid-template-areas: "visual guide"; }
+      .references { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 1200px) {
+      .page-shell { width: min(1360px, 100%); }
+      .guide-title { font-size: 24px; }
+      .guide-body { font-size: 16px; }
+      .scene-label { font-size: 13px; }
+      .scene-value { font-size: 14px; }
+      .direction-copy strong { font-size: 13px; }
+      .direction-copy span, .vector-convention { font-size: 12px; }
+      .chart-label, .chart-direct-label { font-size: 13px; }
+      .chart-caption { font-size: 14px; }
+    }
+    @media (max-width: 560px) {
+      .page-shell { padding: 16px 10px 28px; }
+      .question-tab { padding: 9px 8px; }
+      .question-tab strong { font-size: 13px; }
+      .question-tab span { font-size: 11px; }
+      .guide-content { min-height: 0; padding: 16px; }
+      .guide-title { font-size: 20px; }
+      .guide-actions { padding: 12px 16px 16px; }
+      .nav-button { min-width: 0; flex: 1; }
+      .phase-button strong { font-size: 12px; }
+      .phase-button span { font-size: 11px; }
+      .phase-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .phase-button { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .phase-button:nth-child(2n) { border-right: 0; }
+      .phase-button:nth-child(n+3) { border-bottom: 0; }
+      .phase-heading { padding: 8px 12px; }
+      .visual-heading { padding: 14px 12px 7px; }
+      .scene-wrap { padding: 0 4px 8px; }
+      .direction-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 12px 12px; }
+      .direction-strip.focus-velocity { grid-template-columns: 1fr; }
+      .vector-convention { margin-left: 12px; margin-right: 12px; }
+      .metric-row { padding: 0 12px 10px; gap: 5px; }
+      .metric { padding: 8px 4px; }
+      .metric strong { font-size: 13px; }
+      .playback-controls, .chart-zone { padding-left: 12px; padding-right: 12px; }
+      .control-row { grid-template-columns: 1fr; }
+      .control-button { width: 100%; }
+      .energy-ledger { min-height: 92px; }
+      .chart-label, .chart-direct-label { font-size: 18px; }
+      .chart-zone { padding-top: 18px; padding-bottom: 20px; }
+      .chart-zone h3 { font-size: 18px; }
+      .visual-panel[data-primary-visual="chart"] .energy-ledger { min-height: 126px; font-size: 22px; }
+      .concept-row { grid-template-columns: 30px minmax(0, 1fr); gap: 9px; }
+      .concept-row strong { font-size: 15px; }
+      .concept-row p { font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <a class="back-link" href="../../">← 返回课件库</a>
+      <h1 class="page-title">第21题：变磁场中的导体棒</h1>
+      <p class="page-subtitle">沿四个运动阶段，分清动生电动势、回路总电动势、安培力与能量流向。</p>
+    </header>
+
+    <nav class="question-tabs" role="tablist" aria-label="题目分问导航">
+      <button class="question-tab" id="question-tab-1" type="button" role="tab" aria-selected="true" aria-controls="question-panel-1" data-question="1">
+        <strong>第（1）问</strong><span id="question-progress-1">引导第 1 / 4 步</span>
+      </button>
+      <button class="question-tab" id="question-tab-2" type="button" role="tab" aria-selected="false" aria-controls="question-panel-2" data-question="2">
+        <strong>第（2）问</strong><span id="question-progress-2">引导第 1 / 4 步</span>
+      </button>
+      <button class="question-tab" id="question-tab-3" type="button" role="tab" aria-selected="false" aria-controls="question-panel-3" data-question="3">
+        <strong>第（3）问</strong><span id="question-progress-3">引导第 1 / 4 步</span>
+      </button>
+    </nav>
+
+    <div class="lesson-layout">
+      <aside class="guide-panel" aria-label="分步学习引导">
+        <section id="question-panel-1" role="tabpanel" aria-labelledby="question-tab-1" data-question-panel="1">
+          <div class="step-strip" aria-label="第一问学习步骤"></div>
+          <div class="guide-content">
+            <div class="guide-kicker"></div><h2 class="guide-title"></h2><div class="guide-body"></div><div class="guide-tool"></div>
+          </div>
+          <div class="guide-actions"><button class="nav-button" type="button" data-prev>上一步</button><button class="nav-button primary" type="button" data-next>下一步</button></div>
+        </section>
+        <section id="question-panel-2" role="tabpanel" aria-labelledby="question-tab-2" data-question-panel="2" hidden>
+          <div class="step-strip" aria-label="第二问学习步骤"></div>
+          <div class="guide-content">
+            <div class="guide-kicker"></div><h2 class="guide-title"></h2><div class="guide-body"></div><div class="guide-tool"></div>
+          </div>
+          <div class="guide-actions"><button class="nav-button" type="button" data-prev>上一步</button><button class="nav-button primary" type="button" data-next>下一步</button></div>
+        </section>
+        <section id="question-panel-3" role="tabpanel" aria-labelledby="question-tab-3" data-question-panel="3" hidden>
+          <div class="step-strip" aria-label="第三问学习步骤"></div>
+          <div class="guide-content">
+            <div class="guide-kicker"></div><h2 class="guide-title"></h2><div class="guide-body"></div><div class="guide-tool"></div>
+          </div>
+          <div class="guide-actions"><button class="nav-button" type="button" data-prev>上一步</button><button class="nav-button primary" type="button" data-next>下一步</button></div>
+        </section>
+      </aside>
+
+      <section class="visual-panel" aria-label="二维导轨与联动图表" data-primary-visual="scene">
+        <div class="phase-heading"><strong>自由查看运动阶段</strong><span class="view-mode-label" id="view-mode-label">当前：引导主视觉</span></div>
+        <div class="phase-strip" role="group" aria-label="四个运动阶段，可自由切换">
+          <button class="phase-button" type="button" data-stage="A" aria-pressed="true"><strong>A · 变力右移</strong><span>x：0 → 3 m</span></button>
+          <button class="phase-button" type="button" data-stage="B" aria-pressed="false"><strong>B · 撤力变场</strong><span>x：3 → 6 m</span></button>
+          <button class="phase-button" type="button" data-stage="C" aria-pressed="false"><strong>C · 恒力往返</strong><span>先右后左</span></button>
+          <button class="phase-button" type="button" data-stage="D" aria-pressed="false"><strong>D · 撤力左行</strong><span>x：6 → 0</span></button>
+        </div>
+        <div class="scene-view" id="scene-view">
+        <div class="visual-heading">
+          <div><h2 id="scene-title">阶段 A：变力推动金属棒</h2><p id="scene-status">约定磁场垂直纸面向里（×）；安培力始终阻碍运动。</p></div>
+          <span class="stage-badge" id="stage-badge">阶段 A</span>
+        </div>
+        <div class="scene-wrap">
+          <svg class="scene-svg" id="rail-scene" viewBox="0 0 420 250" role="img" aria-labelledby="scene-svg-title scene-svg-desc" data-stage="A" data-field-direction="into">
+            <title id="scene-svg-title">平行导轨、左端电阻与移动金属棒的俯视图</title>
+            <desc id="scene-svg-desc">磁场约定垂直纸面向里。金属棒的位置、速度、外力、电流与安培力会随阶段和控制值更新。</desc>
+            <defs>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#059669"/></marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
+              <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker>
+              <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#dc2626"/></marker>
+            </defs>
+            <rect class="scene-surface" x="2" y="2" width="416" height="246" rx="12"/>
+            <rect class="magnetic-region" x="76" y="62" width="318" height="118" rx="4"/>
+            <rect class="field-area" id="field-area" x="76" y="62" width="1" height="118" rx="4"/>
+            <g id="field-marks" aria-hidden="true"></g>
+            <line class="rail" x1="48" y1="72" x2="394" y2="72"/><line class="rail" x1="48" y1="174" x2="394" y2="174"/>
+            <path class="circuit-left" d="M48 72H34V91M34 155V174H48"/><rect class="resistor" x="25" y="91" width="18" height="64" rx="4"/>
+            <text class="scene-value" x="10" y="126">R</text><text class="scene-label" x="8" y="142">0.02 Ω</text>
+            <line class="axis" x1="76" y1="216" x2="392" y2="216"/><path d="M392 216l-8-5v10z" fill="#94a3b8"/>
+            <g><line class="axis-tick" x1="76" y1="210" x2="76" y2="222"/><text class="scene-label" x="70" y="239">0</text></g>
+            <g><line class="axis-tick" x1="209" y1="210" x2="209" y2="222"/><text class="scene-label" x="195" y="239">3 m</text></g>
+            <g><line class="axis-tick" x1="342" y1="210" x2="342" y2="222"/><text class="scene-label" x="327" y="239">6 m</text></g>
+            <text class="scene-label" x="398" y="221">x</text><text class="scene-label" x="47" y="56">M</text><text class="scene-label" x="47" y="195">P</text>
+            <g id="rod-group">
+              <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="5"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="5"/>
+              <text class="scene-value" id="rod-c-label" x="82" y="67">c</text><text class="scene-value" id="rod-d-label" x="82" y="191">d</text>
+            </g>
+            <g id="velocity-group"><line class="vector velocity-vector" id="velocity-arrow" marker-end="url(#arrow-green)"/></g>
+            <g id="external-group"><line class="vector external-vector" id="external-arrow" marker-end="url(#arrow-blue)"/></g>
+            <g id="magnetic-group"><line class="vector magnetic-vector" id="magnetic-arrow" marker-end="url(#arrow-orange)"/></g>
+            <g id="current-group"><line class="vector current-vector" id="current-arrow" marker-end="url(#arrow-red)"/></g>
+            <text class="scene-value" id="field-label" x="92" y="52">B = 0.20 T，方向 ×</text>
+            <text class="scene-label" id="position-label" x="250" y="202">棒的位置 x = 0.00 m</text>
+          </svg>
+        </div>
+        <div class="direction-strip" id="direction-strip" role="list" aria-label="当前速度、外力、安培力和传统电流方向">
+          <div class="direction-item" data-kind="motion" role="listitem"><span class="direction-glyph" id="direction-motion-glyph">→</span><span class="direction-copy"><strong>速度 v</strong><span id="direction-motion-text">向右</span></span></div>
+          <div class="direction-item" data-kind="external" role="listitem"><span class="direction-glyph" id="direction-external-glyph">→</span><span class="direction-copy"><strong>外力 F</strong><span id="direction-external-text">向右</span></span></div>
+          <div class="direction-item" data-kind="magnetic" role="listitem"><span class="direction-glyph" id="direction-magnetic-glyph">←</span><span class="direction-copy"><strong>安培力 F<sub>B</sub></strong><span id="direction-magnetic-text">向左</span></span></div>
+          <div class="direction-item" data-kind="current" role="listitem"><span class="direction-glyph" id="direction-current-glyph">↑</span><span class="direction-copy"><strong>传统电流 I</strong><span id="direction-current-text">d → c</span></span></div>
+        </div>
+        <p class="vector-convention" id="vector-convention">箭头只表示方向；大小请读下方数值。</p>
+        <div class="metric-row" id="metric-row">
+          <div class="metric"><span id="metric-label-1">位置</span><strong id="metric-value-1" data-testid="metric-1" data-value="0">0.00 m</strong></div>
+          <div class="metric"><span id="metric-label-2">速度</span><strong id="metric-value-2" data-testid="metric-2" data-value="1">1.00 m/s</strong></div>
+          <div class="metric"><span id="metric-label-3">动生电动势</span><strong id="metric-value-3" data-testid="metric-3" data-value="0.2">0.20 V</strong></div>
+        </div>
+        </div>
+        <div class="playback-controls" id="playback-controls">
+          <div class="control-heading"><label id="progress-label" for="progress-slider">阶段 A 的物理时间</label><output id="progress-output" for="progress-slider">t=0.00 s，x=0.00 m</output></div>
+          <div class="control-row"><button class="control-button" id="play-toggle" type="button" aria-pressed="false">▶ 慢速播放</button><input id="progress-slider" type="range" min="0" max="1.3863" step="0.001" value="0"></div>
+          <div class="event-scale" id="event-scale" hidden><span>起点</span><span>转向</span><span>返回 x₀</span></div>
+          <p class="playback-note" id="playback-note">教学慢放：约 5.5 秒呈现真实物理过程；拖动滑杆会自动暂停。</p>
+        </div>
+        <div class="chart-zone" id="chart-view">
+          <h3 id="chart-title">位置改变时，速度与受力同步变化</h3><p class="chart-caption" id="chart-caption">曲线只显示当前推理需要的量；后续答案不会提前出现。</p>
+          <div class="chart-frame" id="chart-frame"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="sr-only" id="interaction-status" role="status" aria-live="polite"></div>
+
+    <div class="references">
+      <details><summary>查看题目原图</summary><div class="reference-body"><a class="reference-image-link" href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第21题题目原图：平行导轨、左端电阻和移动导体棒"><span>点按查看原尺寸题图</span></a></div></details>
+      <details><summary>查看原答案图与勘误</summary><div class="reference-body"><div class="correction-note"><strong>勘误：</strong>原答案页首行把 22.5 J 对应到焦耳热，正确焦耳热应为 <strong>15 J</strong>，22.5 J 是外力做功；详解中的 <strong>x₀=6 cm</strong> 应为 <strong>x₀=6 m</strong>。阶段 C 按题设给定的往返条件处理。</div><a class="reference-image-link" href="answer.png" target="_blank" rel="noopener"><img src="answer.png" alt="第21题原答案图，图中含已在上方说明的笔误"><span>点按查看原尺寸答案图</span></a></div></details>
+    </div>
+    <p class="page-footnote">颜色同时配合文字、线型和箭头；问题、阶段与滑杆均支持键盘和触控操作。</p>
+  </main>
+
+  <script>
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STAGE_DEFAULTS = { A: 0, B: 0, C: 0, D: 6 };
+    const STAGE_META = {
+      A: { title: '阶段 A：变力推动金属棒', badge: '阶段 A', color: '#2563eb', max: Math.log(4), step: 0.001, duration: 5.5, label: '阶段 A 的物理时间', note: '教学慢放：约 5.5 秒呈现真实物理过程；拖动滑杆会自动暂停。' },
+      B: { title: '阶段 B：撤力后变场匀速', badge: '阶段 B', color: '#7c3aed', max: 0.75, step: 0.001, duration: 4, label: '变磁场的物理时间', note: '教学慢放：约 4 秒呈现真实 0.75 秒；磁场按 0.6/(3+4t) 变化。' },
+      C: { title: '阶段 C：左向恒力使棒往返', badge: '阶段 C', color: '#d97706', max: 2, step: 1, duration: 0, label: '题设事件（离散切换）', note: '只切换起点、转向和返回 x₀ 三个事件；不插值题目未给出的中间轨迹。' },
+      D: { title: '阶段 D：撤力后向左渐近运动', badge: '阶段 D', color: '#059669', max: 6, step: 0.01, duration: 0, label: '末段位置 x（位置探究）', note: '末段只用位置探究：x(t)=6e⁻ᵗ⁄²，棒在有限时间内不会突然到达原点。' }
+    };
+    const state = {
+      activeQuestion: 1,
+      playing: false,
+      rafId: null,
+      lastTs: 0,
+      documentVisible: !document.hidden,
+      questions: {
+        1: { step: 1, stage: 'A', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
+        2: { step: 1, stage: 'A', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
+        3: { step: 1, stage: 'D', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false }
+      }
+    };
+
+    const GUIDE_VIEW = {
+      1: ['scene', 'chart', 'chart', 'chart'],
+      2: ['chart', 'chart', 'chart', 'chart'],
+      3: ['chart', 'chart', 'chart', 'chart']
+    };
+
+    const GUIDE = {
+      1: [
+        { name: '末速度', stage: 'A', title: '先确定进入变场阶段的速度', body: '金属棒从 x=0 开始满足 v=v₀+kx。先只使用 v₀=1 m/s、k=1 s⁻¹ 和 x₁=3 m，不需要猜后面的位移。' },
+        { name: '零电流', stage: 'B', title: '撤力后仍匀速，意味着什么？', body: '无摩擦且没有外力，如果回路中有电流，安培力就会改变速度。因此匀速首先告诉我们：回路总电动势和电流必须为零。' },
+        { name: '磁通锁定', stage: 'B', title: '动生与感生电动势恰好抵消', body: '棒仍在切割磁感线，所以动生电动势不为零；变化磁场同时产生方向相反的感生电动势。两者抵消，使 BLx 保持 0.6 Wb。' },
+        { name: '求时间', stage: 'B', title: '由磁通守恒找到终点和时间', body: '当磁场由 0.20 T 变为 0.10 T，回路面积必须增大一倍。再利用棒保持 4 m/s 匀速，得到变场持续时间。' }
+      ],
+      2: [
+        { name: '随位移变化', stage: 'A', title: '“另类匀加速”并非恒加速度', body: '因为 v=1+x，所以 a=v·dv/dx=1+x。速度、加速度、电流、安培阻力和外力都随位置线性改变。' },
+        { name: '焦耳热', stage: 'A', title: '把安培阻力做功转化为焦耳热', body: '电阻是回路中唯一耗散元件。积分 I²Rdt，或等价地积分安培阻力对位移的作用，都得到焦耳热。' },
+        { name: '能量账本', stage: 'A', title: '外力功分成热量与动能', body: '外力做功没有全部变成热量。金属棒末速度由 1 m/s 增至 4 m/s，动能也增加了 7.5 J。' },
+        { name: '中点外力', stage: 'A', title: '用 F-x 直线读取位移中点', body: 'F外=3(1+x) 是一次函数。x=1.5 m 既是位移中点，也是端点拉力 3 N 与 12 N 的平均位置。' }
+      ],
+      3: [
+        { name: '是否唯一', stage: 'D', title: '同一位置的 E 一定相同吗？', body: '金属棒多次经过同一位置，但磁场和速度可能不同。先判断 E 是否能只由位置 x 唯一决定。' },
+        { name: '右行分支', stage: 'B', title: '先保留两段右行轨迹', body: '首次右行时 B=0.20 T、v=1+x；变场右行时 v=4 m/s、B=0.6/x。两段在 x=3 m 处连续，但关系不同。' },
+        { name: '题设往返', stage: 'C', title: '返回同一点，磁力总冲量抵消', body: '阶段 C 按题设给定的往返条件示意。棒先继续右移，再反向返回 x₀；往返净位移为零，所以磁力总冲量为零。' },
+        { name: '最终左行', stage: 'D', title: '最后一次左行才有 E=0.05x', body: '撤去恒力后，棒以 3 m/s 从 x₀ 向左运动，只受向右的安培阻力。由动量关系得到速率 u=0.5x。' }
+      ]
+    };
+
+    const qTabs = [...document.querySelectorAll('[role="tab"]')];
+    const qPanels = [...document.querySelectorAll('[data-question-panel]')];
+    const phaseButtons = [...document.querySelectorAll('.phase-button')];
+    const slider = document.getElementById('progress-slider');
+    const playButton = document.getElementById('play-toggle');
+    const stageBadge = document.getElementById('stage-badge');
+    const scene = document.getElementById('rail-scene');
+    const fieldArea = document.getElementById('field-area');
+    const fieldMarks = document.getElementById('field-marks');
+    const rod = document.getElementById('rod');
+    const rodC = document.getElementById('rod-c');
+    const rodD = document.getElementById('rod-d');
+    const rodCLabel = document.getElementById('rod-c-label');
+    const rodDLabel = document.getElementById('rod-d-label');
+    const visualPanel = document.querySelector('.visual-panel');
+    const sceneView = document.getElementById('scene-view');
+    const chartView = document.getElementById('chart-view');
+    const playbackControls = document.getElementById('playback-controls');
+    const viewModeLabel = document.getElementById('view-mode-label');
+    const eventScale = document.getElementById('event-scale');
+    const interactionStatus = document.getElementById('interaction-status');
+
+    function primaryVisual() {
+      const q = state.questions[state.activeQuestion];
+      if (state.activeQuestion === 3 && q.summary) return 'summary';
+      if (q.view === 'scene') return 'scene';
+      return GUIDE_VIEW[state.activeQuestion][q.step - 1];
+    }
+
+    function announce(message) {
+      interactionStatus.textContent = '';
+      requestAnimationFrame(() => { interactionStatus.textContent = message; });
+    }
+
+    function deriveA(t) {
+      const x = Math.exp(t) - 1;
+      const v = 1 + x;
+      return { stage: 'A', t, x, B: .2, flux: .2 * x, v, speed: v, a: v, emf: .2 * v, inducedEmf: 0, totalEmf: .2 * v, current: 10 * v, magneticForce: 2 * v, externalForce: 3 * v, direction: 'right' };
+    }
+    function deriveB(t) {
+      const x = 3 + 4 * t;
+      const B = .6 / x;
+      const emf = 2.4 / x;
+      return { stage: 'B', t, x, B, flux: .6, v: 4, speed: 4, a: 0, emf, inducedEmf: -emf, totalEmf: 0, current: 0, magneticForce: 0, externalForce: 0, direction: 'right' };
+    }
+    function deriveC(value) {
+      const eventIndex = Math.max(0, Math.min(2, Math.round(value)));
+      const events = [
+        { x: 6, direction: 'right', speed: 4, v: 4, milestone: 'start', t: 0 },
+        { x: 7.1, direction: 'none', speed: 0, v: 0, milestone: 'turn', t: null },
+        { x: 6, direction: 'left', speed: 3, v: -3, milestone: 'end', t: 1.4 }
+      ];
+      const event = events[eventIndex];
+      return {
+        stage: 'C', eventIndex, t: event.t, x: event.x, B: .1, flux: .1 * event.x,
+        v: event.v, speed: event.speed, a: null, emf: .1 * event.speed,
+        inducedEmf: 0, totalEmf: .1 * event.speed, current: 5 * event.speed,
+        magneticForce: .5 * event.speed, externalForce: 5,
+        direction: event.direction, schematic: true, milestone: event.milestone
+      };
+    }
+    function deriveD(x) {
+      const safeX = Math.max(0, Math.min(6, x));
+      const speed = .5 * safeX;
+      return { stage: 'D', t: null, x: safeX, B: .1, flux: .1 * safeX, v: -speed, speed, a: null, emf: .05 * safeX, inducedEmf: 0, totalEmf: .05 * safeX, current: 2.5 * safeX, magneticForce: .25 * safeX, externalForce: 0, direction: safeX < .01 ? 'none' : 'left' };
+    }
+    function currentPhysics() {
+      const q = state.questions[state.activeQuestion];
+      const value = q.values[q.stage];
+      if (q.stage === 'A') return deriveA(value);
+      if (q.stage === 'B') return deriveB(value);
+      if (q.stage === 'C') return deriveC(value);
+      return deriveD(value);
+    }
+
+    function setStage(stage, options = {}) {
+      pausePlayback();
+      const q = state.questions[state.activeQuestion];
+      q.stage = stage;
+      q.view = 'scene';
+      q.summary = false;
+      if (Number.isFinite(options.value)) q.values[stage] = options.value;
+      render();
+      announce(`已进入${STAGE_META[stage].title}自由场景。`);
+    }
+    function setQuestion(question) {
+      pausePlayback();
+      state.activeQuestion = question;
+      render();
+    }
+    function setStep(question, step) {
+      pausePlayback();
+      const q = state.questions[question];
+      q.step = Math.max(1, Math.min(4, step));
+      q.view = 'guide';
+      q.summary = false;
+      const focusStage = GUIDE[question][q.step - 1].stage;
+      q.stage = focusStage;
+      if (question === 1 && q.step === 4) q.values.B = .75;
+      if (question === 2 && q.step === 2) q.values.A = Math.log(4);
+      if (question === 2 && q.step === 3) q.values.A = Math.log(4);
+      if (question === 2 && q.step === 4) q.values.A = Math.log(2.5);
+      if (question === 3 && q.step === 3) q.values.C = 0;
+      if (question === 3 && q.step === 4) q.values.D = 6;
+      render();
+      announce(`第${question}问，第${q.step}步：${GUIDE[question][q.step - 1].title}。`);
+    }
+
+    function renderQuestionNavigation() {
+      qTabs.forEach((tab) => {
+        const question = Number(tab.dataset.question);
+        const active = question === state.activeQuestion;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      qPanels.forEach((panel) => { panel.hidden = Number(panel.dataset.questionPanel) !== state.activeQuestion; });
+      [1, 2, 3].forEach((question) => {
+        const q = state.questions[question];
+        document.getElementById(`question-progress-${question}`).textContent = q.completed ? `已完成 · 正在复习第 ${q.step} 步` : `引导第 ${q.step} / 4 步`;
+      });
+    }
+
+    function renderGuidePanel(question) {
+      const panel = document.querySelector(`[data-question-panel="${question}"]`);
+      const q = state.questions[question];
+      const config = GUIDE[question][q.step - 1];
+      const strip = panel.querySelector('.step-strip');
+      strip.innerHTML = GUIDE[question].map((step, index) => {
+        const stepNumber = index + 1;
+        const active = q.step === stepNumber;
+        const done = q.completed ? !active : stepNumber < q.step;
+        return `<button class="step-button ${active ? 'active' : ''} ${done ? 'done' : ''}" type="button" data-step="${stepNumber}" aria-pressed="${active}"><span>${stepNumber}</span><small>${step.name}</small></button>`;
+      }).join('');
+      if (question === 3 && q.summary) {
+        panel.querySelector('.guide-kicker').textContent = '学习完成';
+        panel.querySelector('.guide-title').textContent = '三条结论已经连成一条推理链';
+        panel.querySelector('.guide-body').textContent = '你仍可点击任一步骤或任一运动阶段复查，完成状态不会丢失。';
+        panel.querySelector('.guide-tool').innerHTML = '';
+        const prev = panel.querySelector('[data-prev]');
+        const next = panel.querySelector('[data-next]');
+        prev.disabled = false;
+        next.textContent = '已完成';
+        next.disabled = true;
+        return;
+      }
+      panel.querySelector('.guide-kicker').textContent = `第 ${q.step} / 4 步`;
+      panel.querySelector('.guide-title').textContent = config.title;
+      panel.querySelector('.guide-body').textContent = config.body;
+      panel.querySelector('.guide-tool').innerHTML = guideToolMarkup(question, q.step, q);
+      const prev = panel.querySelector('[data-prev]');
+      const next = panel.querySelector('[data-next]');
+      prev.disabled = q.step === 1;
+      next.textContent = q.step === 4
+        ? (q.completed ? (question < 3 ? `继续第（${question + 1}）问` : '查看总结') : `完成第（${question}）问`)
+        : '下一步';
+      next.disabled = false;
+      next.classList.toggle('primary', true);
+    }
+
+    function guideToolMarkup(question, step, q) {
+      if (question === 1 && step === 1) {
+        const answer = q.prediction;
+        return `<p><strong>在 x=3 m 处，速度是多少？</strong></p><div class="choice-grid" role="group" aria-label="末速度预测">${[3,4,5].map(v => `<button class="choice-button ${answer === String(v) ? 'selected' : ''}" type="button" data-prediction="${v}" aria-pressed="${answer === String(v)}">${v} m/s</button>`).join('')}</div>${answer ? `<div class="feedback ${answer === '4' ? 'correct' : ''}">${answer === '4' ? '正确：v=1+3=4 m/s。' : '再代入一次 v=1+x；预测不会阻止你继续。'}</div>` : ''}`;
+      }
+      if (question === 1 && step === 2) {
+        const revealed = q.revealed[2];
+        return `<div class="causal-line"><strong>撤去外力仍匀速</strong><span>→</span><strong>安培力为零</strong><span>→</span><strong>I=0</strong></div><button class="reveal-button" type="button" data-reveal="2">${revealed ? '收起抵消关系' : '揭示两个电动势'}</button>${revealed ? '<div class="formula-line">E<sub>动</sub>=BLv，E<sub>感</sub>=−BLv，所以 <strong>E<sub>总</sub>=0、I=0、F<sub>B</sub>=0</strong>。</div>' : ''}`;
+      }
+      if (question === 1 && step === 3) return '<div class="formula-line">Φ=BLx=0.20×1×3=<strong>0.60 Wb</strong><br>B(x)=0.6/x，B(t)=0.6/(3+4t)</div><div class="feedback note">磁场不是线性下降；拖动时间，观察 B 曲线逐渐变缓，而磁通量始终水平。</div>';
+      if (question === 1 && step === 4) return '<div class="formula-line">0.20×3=0.10×x₀ → <strong>x₀=6 m</strong><br>Δt=(6−3)/4=<strong>0.75 s</strong></div>';
+      if (question === 2 && step === 1) return '<div class="formula-line">a=v·dv/dx=1+x<br>E=0.2(1+x)，I=10(1+x)<br>F<sub>B</sub>=2(1+x)，<strong>F<sub>外</sub>=3(1+x)</strong></div>';
+      if (question === 2 && step === 2) return '<div class="formula-line">Q=∫I²Rdt=∫₀³2(1+x)dx=<strong>15 J</strong></div><div class="feedback note">22.5 J 是外力做功，不是焦耳热。</div>';
+      if (question === 2 && step === 3) return '<div class="causal-line"><strong>外力功 22.5 J</strong><span>=</span><strong>焦耳热 15 J</strong><span>+</span><strong>动能增加 7.5 J</strong></div>';
+      if (question === 2 && step === 4) return '<div class="formula-line">F<sub>外</sub>(x)=3(1+x)<br>F<sub>外</sub>(1.5)=<strong>7.5 N</strong></div><p>曲线下方面积对应外力做功 22.5 J。</p>';
+      if (question === 3 && step === 1) {
+        const answer = q.prediction;
+        return `<p><strong>同一个 x，动生电动势 E 是否一定相同？</strong></p><div class="choice-grid" role="group" aria-label="电动势是否唯一"><button class="choice-button ${answer === 'no' ? 'selected' : ''}" type="button" data-prediction="no" aria-pressed="${answer === 'no'}">不一定，还取决于阶段</button><button class="choice-button ${answer === 'yes' ? 'selected' : ''}" type="button" data-prediction="yes" aria-pressed="${answer === 'yes'}">一定，只取决于位置</button></div>${answer ? `<div class="feedback ${answer === 'no' ? 'correct' : ''}">${answer === 'no' ? '正确：同一位置可能具有不同 B 或速度。' : '再比较 x=6 m 处变场右行和最终左行的速度。'}</div>` : ''}`;
+      }
+      if (question === 3 && step === 2) return '<div class="formula-line">首次右行：E₁=0.2(1+x)，0≤x≤3<br>变场右行：E₂=2.4/x，3≤x≤6</div>';
+      if (question === 3 && step === 3) return '<div class="feedback note"><strong>按题设给定的往返条件示意</strong>，不用于读取精确转向位置。</div><div class="formula-line">p：+4 → −3 kg·m/s<br>J<sub>T</sub>=−5×1.4=−7 N·s<br>返回同一点：J<sub>B</sub>∝Δx=0</div>';
+      return '<div class="formula-line">u=3−[B²L²/(mR)](6−x)=0.5x<br><strong>E=BLu=0.05x V</strong></div><div class="feedback correct">这条关系只属于撤去恒力后的最终左行，不代表全过程。</div>';
+    }
+
+    function renderPhaseStrip() {
+      const stage = state.questions[state.activeQuestion].stage;
+      phaseButtons.forEach((button) => {
+        const active = button.dataset.stage === stage;
+        button.setAttribute('aria-pressed', String(active));
+        if (active) button.setAttribute('aria-current', 'step'); else button.removeAttribute('aria-current');
+      });
+    }
+
+    function renderControls(physics) {
+      const q = state.questions[state.activeQuestion];
+      const meta = STAGE_META[q.stage];
+      slider.min = q.stage === 'D' ? '0' : '0';
+      slider.max = String(meta.max);
+      slider.step = String(meta.step);
+      slider.value = String(q.values[q.stage]);
+      document.getElementById('progress-label').textContent = meta.label;
+      document.getElementById('playback-note').textContent = prefersReducedMotion && q.stage !== 'D'
+        ? `${meta.note} 系统已启用“减少动态”，请拖动滑杆探究。`
+        : meta.note;
+      playButton.hidden = q.stage === 'C' || q.stage === 'D' || prefersReducedMotion;
+      playButton.closest('.control-row').classList.toggle('slider-only', playButton.hidden);
+      eventScale.hidden = q.stage !== 'C';
+      playButton.textContent = state.playing ? '⏸ 暂停' : '▶ 慢速播放';
+      playButton.setAttribute('aria-pressed', String(state.playing));
+      if (q.stage === 'D') {
+        document.getElementById('progress-output').textContent = physics.x < .01
+          ? 'x→0（极限位置，不是有限时刻）'
+          : `x=${physics.x.toFixed(2)} m，正向 0 渐近`;
+      } else if (q.stage === 'C') {
+        document.getElementById('progress-output').textContent = physics.milestone === 'start'
+          ? '起点：x₀=6 m，v=+4 m/s'
+          : (physics.milestone === 'turn'
+            ? '转向事件：v=0（位置不读取）'
+            : '返回 x₀：v=−3 m/s，t=1.40 s');
+      } else {
+        document.getElementById('progress-output').textContent = `t=${physics.t.toFixed(2)} s，x=${physics.x.toFixed(2)} m`;
+      }
+    }
+
+    function setMetric(index, label, value, rawValue) {
+      document.getElementById(`metric-label-${index}`).textContent = label;
+      const element = document.getElementById(`metric-value-${index}`);
+      element.textContent = value;
+      if (Number.isFinite(rawValue)) element.dataset.value = String(rawValue);
+      else delete element.dataset.value;
+    }
+
+    function renderScene(physics) {
+      const stage = physics.stage;
+      const meta = STAGE_META[stage];
+      const cEndpoint = physics.schematic && (physics.milestone === 'start' || physics.milestone === 'end');
+      const cExactEvent = physics.schematic && Boolean(physics.milestone);
+      scene.dataset.stage = stage;
+      scene.dataset.model = physics.schematic ? 'event-schematic' : 'exact';
+      scene.dataset.x = physics.schematic ? (cEndpoint ? '6' : '') : String(physics.x);
+      scene.dataset.velocity = physics.schematic ? (cExactEvent ? String(physics.v) : '') : String(physics.v);
+      scene.dataset.b = String(physics.B);
+      scene.dataset.flux = physics.schematic ? '' : String(physics.flux);
+      scene.dataset.emf = physics.schematic ? (cExactEvent ? String(physics.emf) : '') : String(physics.emf);
+      scene.dataset.inducedEmf = String(physics.inducedEmf);
+      scene.dataset.totalEmf = physics.schematic ? (cExactEvent ? String(physics.totalEmf) : '') : String(physics.totalEmf);
+      scene.dataset.current = physics.schematic ? (cExactEvent ? String(physics.current) : '') : String(physics.current);
+      scene.dataset.magneticForce = physics.schematic ? (cExactEvent ? String(physics.magneticForce) : '') : String(physics.magneticForce);
+      scene.dataset.externalForce = String(physics.externalForce);
+      scene.dataset.motionDirection = physics.direction;
+      document.getElementById('scene-title').textContent = meta.title;
+      stageBadge.textContent = meta.badge;
+      stageBadge.style.color = meta.color;
+      stageBadge.style.background = `${meta.color}18`;
+      const positionX = 76 + Math.min(7.15, Math.max(0, physics.x)) / 6 * 266;
+      [rod, rodC, rodD].forEach((element) => { element.setAttribute(element.tagName === 'line' ? 'x1' : 'cx', positionX); });
+      rod.setAttribute('x2', positionX);
+      rodCLabel.setAttribute('x', positionX + 7); rodDLabel.setAttribute('x', positionX + 7);
+      fieldArea.setAttribute('width', Math.max(1, positionX - 76));
+      renderFieldMarks(physics.B);
+      const fieldLabel = document.getElementById('field-label');
+      fieldLabel.setAttribute('x', positionX < 150 ? 200 : 92);
+      fieldLabel.textContent = `B = ${physics.B.toFixed(3)} T，方向 ×`;
+      document.getElementById('position-label').textContent = stage === 'C'
+        ? (cEndpoint ? '棒位于 x₀=6 m（题设端点）' : '转向事件：位置不读取')
+        : `棒的位置 x = ${physics.x.toFixed(2)} m`;
+      renderVectors(positionX, physics);
+      renderMetrics(physics);
+      document.getElementById('scene-status').textContent = sceneStatus(physics);
+      applySceneFocus(physics);
+      const motionText = physics.direction === 'right' ? '向右' : (physics.direction === 'left' ? '向左' : '瞬时静止');
+      document.getElementById('scene-svg-desc').textContent = `${meta.title}。金属棒${motionText}；箭头只表示方向，大小请读数值。${physics.schematic ? '阶段C只显示题设离散事件，不表示连续轨迹。' : ''}`;
+    }
+
+    function renderFieldMarks(B) {
+      let markup = '';
+      for (let col = 0; col < 9; col += 1) {
+        const x = 94 + col * 34;
+        [91, 123, 155].forEach((y) => { markup += `<text class="field-mark" x="${x}" y="${y}" opacity="${Math.max(.42, B / .2)}">×</text>`; });
+      }
+      fieldMarks.innerHTML = markup;
+    }
+
+    function placeHorizontalVector(groupId, lineId, originX, y, direction, length, marker) {
+      const group = document.getElementById(groupId);
+      if (direction === 'none' || length <= .01) { group.setAttribute('display', 'none'); group.dataset.direction = 'none'; return; }
+      group.removeAttribute('display'); group.dataset.direction = direction;
+      const line = document.getElementById(lineId);
+      const sign = direction === 'right' ? 1 : -1;
+      const x2 = Math.max(18, Math.min(404, originX + sign * length));
+      line.setAttribute('x1', originX); line.setAttribute('y1', y); line.setAttribute('x2', x2); line.setAttribute('y2', y); line.setAttribute('marker-end', `url(#${marker})`);
+    }
+
+    function renderVectors(positionX, physics) {
+      const motion = physics.direction;
+      const vectorLength = 42;
+      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 42, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
+      const externalDirection = physics.stage === 'A' ? 'right' : (physics.stage === 'C' ? 'left' : 'none');
+      const externalOrigin = positionX + (externalDirection === 'right' ? 18 : (externalDirection === 'left' ? -18 : 0));
+      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 104, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
+      const magneticDirection = physics.magneticForce < .01 ? 'none' : (motion === 'right' ? 'left' : (motion === 'left' ? 'right' : 'none'));
+      const magneticOrigin = positionX + (magneticDirection === 'right' ? 18 : 0);
+      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 142, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
+      const currentGroup = document.getElementById('current-group');
+      if (physics.current < .01 || motion === 'none' || physics.stage === 'B') {
+        currentGroup.setAttribute('display', 'none'); currentGroup.dataset.direction = 'none';
+      } else {
+        currentGroup.removeAttribute('display');
+        const upward = motion === 'right';
+        currentGroup.dataset.direction = upward ? 'up' : 'down';
+        const arrow = document.getElementById('current-arrow');
+        arrow.setAttribute('x1', positionX + 10); arrow.setAttribute('x2', positionX + 10); arrow.setAttribute('y1', upward ? 144 : 102); arrow.setAttribute('y2', upward ? 102 : 144);
+      }
+      renderDirectionStrip(motion, externalDirection, magneticDirection, physics);
+    }
+
+    function applySceneFocus(physics) {
+      const q = state.questions[state.activeQuestion];
+      const velocityOnly = state.activeQuestion === 1 && q.step === 1 && q.view === 'guide' && primaryVisual() === 'scene';
+      ['external', 'magnetic', 'current'].forEach((kind) => {
+        const group = document.getElementById(`${kind}-group`);
+        const item = document.querySelector(`.direction-item[data-kind="${kind}"]`);
+        if (velocityOnly) group.setAttribute('display', 'none');
+        item.classList.toggle('is-focus-hidden', velocityOnly);
+      });
+      document.getElementById('direction-strip').classList.toggle('focus-velocity', velocityOnly);
+      if (velocityOnly) {
+        setMetric(1, '位置 x', `${physics.x.toFixed(2)} m`, physics.x);
+        setMetric(2, '速度 v', `${physics.speed.toFixed(2)} m/s`, physics.speed);
+        setMetric(3, '速度关系', 'v = 1 + x', null);
+        document.getElementById('scene-status').textContent = '先只观察位置和速度：v=1+x；其余物理量将在后续步骤出现。';
+      }
+    }
+
+    function setDirectionItem(kind, glyph, text, isZero = false) {
+      const item = document.querySelector(`.direction-item[data-kind="${kind}"]`);
+      document.getElementById(`direction-${kind}-glyph`).textContent = glyph;
+      document.getElementById(`direction-${kind}-text`).textContent = text;
+      item.classList.toggle('is-zero', isZero);
+    }
+
+    function renderDirectionStrip(motion, externalDirection, magneticDirection, physics) {
+      setDirectionItem('motion', motion === 'right' ? '→' : (motion === 'left' ? '←' : '·'), motion === 'right' ? '向右' : (motion === 'left' ? '向左' : '瞬时静止'), motion === 'none');
+      setDirectionItem('external', externalDirection === 'right' ? '→' : (externalDirection === 'left' ? '←' : '·'), externalDirection === 'right' ? '向右' : (externalDirection === 'left' ? '向左' : '无外力'), externalDirection === 'none');
+      setDirectionItem('magnetic', magneticDirection === 'right' ? '→' : (magneticDirection === 'left' ? '←' : '0'), magneticDirection === 'right' ? '向右' : (magneticDirection === 'left' ? '向左' : '为 0'), magneticDirection === 'none');
+      const currentUp = physics.current >= .01 && motion === 'right' && physics.stage !== 'B';
+      const currentDown = physics.current >= .01 && motion === 'left' && physics.stage !== 'B';
+      setDirectionItem('current', currentUp ? '↑' : (currentDown ? '↓' : '0'), currentUp ? 'd → c' : (currentDown ? 'c → d' : 'I = 0'), !currentUp && !currentDown);
+    }
+
+    function renderMetrics(physics) {
+      if (physics.stage === 'A') {
+        setMetric(1, '位置 x', `${physics.x.toFixed(2)} m`, physics.x);
+        setMetric(2, '速度 v', `${physics.speed.toFixed(2)} m/s`, physics.speed);
+        setMetric(3, '外力 F', `${physics.externalForce.toFixed(2)} N`, physics.externalForce);
+      } else if (physics.stage === 'B') {
+        setMetric(1, '磁场 B', `${physics.B.toFixed(3)} T`, physics.B);
+        setMetric(2, '棒的动生电动势', `${physics.emf.toFixed(3)} V`, physics.emf);
+        setMetric(3, '回路电流 I', '0 A', 0);
+      } else if (physics.stage === 'C') {
+        if (physics.milestone) {
+          const milestoneLabel = physics.milestone === 'start' ? '起点' : (physics.milestone === 'turn' ? '转向' : '返回 x₀');
+          setMetric(1, `${milestoneLabel}：速度 v`, `${physics.v.toFixed(2)} m/s`, physics.v);
+          setMetric(2, `${milestoneLabel}：动生电动势`, `${physics.emf.toFixed(3)} V`, physics.emf);
+        } else {
+          setMetric(1, '运动状态', physics.direction === 'right' ? '向右减速（示意）' : '向左返回（示意）', null);
+          setMetric(2, '动生电动势', '随速率变化（示意）', null);
+        }
+        setMetric(3, '左向恒力 T', '5.00 N', 5);
+      } else {
+        setMetric(1, '位置 x', `${physics.x.toFixed(2)} m`, physics.x);
+        setMetric(2, '左行速率 u', `${physics.speed.toFixed(2)} m/s`, physics.speed);
+        setMetric(3, '动生电动势 E', `${physics.emf.toFixed(3)} V`, physics.emf);
+      }
+    }
+
+    function sceneStatus(physics) {
+      if (physics.stage === 'A') return '磁场方向约定为 ×；棒右行，传统电流 d→c，安培力向左。';
+      if (physics.stage === 'B') return `E动=${physics.emf.toFixed(3)} V 与 E感=${physics.inducedEmf.toFixed(3)} V 抵消；I=0，安培力为零。`;
+      if (physics.stage === 'C') {
+        if (physics.direction === 'none') return '转向瞬间：v、动生电动势、电流和安培力均为零，左向恒力仍为 5 N。';
+        return physics.direction === 'right' ? '棒仍向右，左向恒力与安培力共同减速；按题设条件示意。' : '棒已向左，安培力改为向右；继续返回 x₀。';
+      }
+      return physics.x < .01 ? 'x→0 时，速度、电动势、电流和安培力均渐近于零。' : '棒向左运动，传统电流 c→d，安培力向右并逐渐减小。';
+    }
+
+    function renderChart(physics) {
+      const question = state.activeQuestion;
+      const questionState = state.questions[question];
+      const step = questionState.step;
+      const frame = document.getElementById('chart-frame');
+      if (question === 3 && questionState.summary) {
+        document.getElementById('chart-title').textContent = '三问形成一条完整推理链';
+        document.getElementById('chart-caption').textContent = '从磁通约束，到能量分配，再到分阶段的 E-x 关系。';
+        frame.innerHTML = completionSummaryMarkup();
+        return;
+      }
+      const guidedStage = GUIDE[question][step - 1].stage;
+      if (physics.stage !== guidedStage) {
+        renderStageOverview(physics, frame);
+        return;
+      }
+      if (question === 1 && step === 1) {
+        document.getElementById('chart-title').textContent = '阶段 A：v 随 x 线性增大';
+        document.getElementById('chart-caption').textContent = '拖动阶段 A，观察运动点沿 v=1+x 前进。';
+        frame.innerHTML = lineChartMarkup({ kind: 'velocity', markerX: physics.stage === 'A' ? physics.x : 0 });
+      } else if (question === 1 && step === 2) {
+        document.getElementById('chart-title').textContent = '两个电动势等大反向';
+        document.getElementById('chart-caption').textContent = '动生电动势存在，不代表回路总电动势和电流不为零。';
+        frame.innerHTML = cancellationMarkup(physics.stage === 'B' ? physics.emf : .8);
+      } else if (question === 1) {
+        document.getElementById('chart-title').textContent = 'B 非线性减小，磁通量保持不变';
+        document.getElementById('chart-caption').textContent = '运动点同时联动 B(t) 与 Φ(t)，反驳“磁场线性下降”的误读。';
+        frame.innerHTML = fluxChartMarkup(physics.stage === 'B' ? physics.t : .75);
+      } else if (question === 2 && step === 3) {
+        document.getElementById('chart-title').textContent = '外力功的能量去向';
+        document.getElementById('chart-caption').textContent = '22.5 J 外力功中，15 J 转化为焦耳热，7.5 J 转化为动能。';
+        frame.innerHTML = '<div class="energy-ledger" role="img" aria-label="外力功22.5焦，其中15焦为焦耳热，7.5焦为动能增加"><div class="energy-heat">15 J<small>焦耳热</small></div><div class="energy-kinetic">7.5 J<small>动能增加</small></div></div>';
+      } else if (question === 2) {
+        document.getElementById('chart-title').textContent = step === 2 ? '焦耳热随位移累积' : '外力 F-x 直线';
+        document.getElementById('chart-caption').textContent = step === 2
+          ? 'Q(x)=2x+x²，在 x=3 m 时累积为 15 J。'
+          : (step === 4 ? '在 x=1.5 m 处读出 F外=7.5 N；整段曲线面积为 22.5 J。' : '拖动阶段 A，观察外力随位置线性增大。');
+        frame.innerHTML = lineChartMarkup({ kind: step === 2 ? 'heat' : 'force', markerX: physics.stage === 'A' ? physics.x : 0, emphasizeMidpoint: step === 4 });
+      } else if (question === 3 && step === 3) {
+        document.getElementById('chart-title').textContent = '阶段 C：只对完整往返过程列冲量账本';
+        document.getElementById('chart-caption').textContent = '返回同一点使磁力总冲量为零；这不是中间时刻的动量—时间图。';
+        frame.innerHTML = impulseMarkup();
+      } else {
+        document.getElementById('chart-title').textContent = step === 1 ? '同在 x=6 m，E 仍可能不同' : (step === 2 ? '先建立两段右行分支' : '动生电动势 E-x 是分阶段多分支关系');
+        document.getElementById('chart-caption').textContent = step === 1
+          ? (state.questions[3].prediction ? '比较变场右行与最终左行经过 x=6 m 时的动生电动势。' : '先作判断，再显示同一位置在不同阶段为何有不同 E。')
+          : (step === 2 ? '阶段 A 与 B 在 x=3 m 处连续，但函数关系不同；最终左行分支暂不展开。' : 'A、B、D 三段各有自己的关系；绿色点线 D 分支才是本问最终所求。');
+        frame.innerHTML = step === 1 && !state.questions[3].prediction
+          ? '<div class="feedback">请选择“同一个 x，E 是否一定相同”，比较结果将在判断后出现。</div>'
+          : emfBranchesMarkup(physics, step === 1 ? 'comparison' : (step === 2 ? 'right' : 'all'));
+      }
+    }
+
+    function renderStageOverview(physics, frame) {
+      document.getElementById('chart-title').textContent = `自由探究 · ${STAGE_META[physics.stage].title}`;
+      if (physics.stage === 'A') {
+        document.getElementById('chart-caption').textContent = '你已暂时离开当前引导阶段；场景与曲线仍按阶段 A 的当前位置联动。';
+        frame.innerHTML = lineChartMarkup({ kind: 'velocity', markerX: physics.x });
+      } else if (physics.stage === 'B') {
+        document.getElementById('chart-caption').textContent = '你已暂时离开当前引导阶段；观察 B 非线性减小而磁通量保持不变。';
+        frame.innerHTML = fluxChartMarkup(physics.t);
+      } else if (physics.stage === 'C') {
+        document.getElementById('chart-caption').textContent = '你已暂时离开当前引导阶段；场景只示意往返顺序，图中只列完整过程的冲量账本。';
+        frame.innerHTML = impulseMarkup();
+      } else {
+        document.getElementById('chart-caption').textContent = '你已暂时离开当前引导阶段；拖动位置，观察末段各量一起趋近于零。';
+        frame.innerHTML = dStageMarkup(physics);
+      }
+    }
+
+    function lineChartMarkup({ kind, markerX, emphasizeMidpoint = false }) {
+      const W = 420, H = 230, left = 44, right = 398, top = 20, bottom = 190;
+      let maxY = 15, label = '', formula = '', color = '#2563eb', valueFn;
+      if (kind === 'velocity') { maxY = 4.5; label = 'v / (m·s⁻¹)'; formula = 'v=1+x'; color = '#059669'; valueFn = x => 1 + x; }
+      else if (kind === 'heat') { maxY = 16; label = 'Q / J'; formula = 'Q=2x+x²'; color = '#d97706'; valueFn = x => 2 * x + x * x; }
+      else { maxY = 13; label = 'F / N'; formula = 'F外=3(1+x)'; color = '#2563eb'; valueFn = x => 3 * (1 + x); }
+      const sx = x => left + x / 3 * (right - left); const sy = y => bottom - y / maxY * (bottom - top);
+      const path = Array.from({ length: 61 }, (_, i) => { const x = i / 20; return `${i ? 'L' : 'M'}${sx(x).toFixed(1)},${sy(valueFn(x)).toFixed(1)}`; }).join(' ');
+      const mx = Math.max(0, Math.min(3, markerX)); const my = valueFn(mx);
+      const midpointGuide = emphasizeMidpoint ? `<line class="chart-grid" x1="${sx(1.5)}" y1="${top}" x2="${sx(1.5)}" y2="${bottom}"/><text class="chart-label" x="${sx(1.5)-10}" y="208">1.5</text>` : '';
+      return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${formula}曲线，当前x为${mx.toFixed(2)}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/>${midpointGuide}<text class="chart-label" x="8" y="18">${label}</text><text class="chart-label" x="${left-4}" y="208">0</text><text class="chart-label" x="${right-5}" y="208">3 m</text><path d="${path}" fill="none" stroke="${color}" stroke-width="4"/><text class="chart-direct-label" x="250" y="38">${formula}</text><circle class="chart-marker" cx="${sx(mx)}" cy="${sy(my)}" r="6"/><text class="chart-direct-label" x="${Math.min(318,sx(mx)+9)}" y="${Math.max(18,sy(my)-8)}">x=${mx.toFixed(2)}，${kind === 'force' ? 'F' : kind === 'heat' ? 'Q' : 'v'}=${my.toFixed(2)}</text></svg>`;
+    }
+
+    function cancellationMarkup(emf) {
+      const length = 130 * Math.min(1, emf / .8);
+      return `<svg class="chart-svg" viewBox="0 0 420 180" role="img" aria-label="动生电动势与感生电动势大小相等方向相反，总电动势为零"><line x1="210" y1="70" x2="${210+length}" y2="70" stroke="#7c3aed" stroke-width="12" stroke-linecap="round"/><path d="M${210+length} 70l-12-8v16z" fill="#7c3aed"/><text class="chart-direct-label" x="220" y="48">E动 = +${emf.toFixed(3)} V</text><line x1="210" y1="110" x2="${210-length}" y2="110" stroke="#0891b2" stroke-width="12" stroke-linecap="round" stroke-dasharray="8 5"/><path d="M${210-length} 110l12-8v16z" fill="#0891b2"/><text class="chart-direct-label" x="55" y="140">E感 = −${emf.toFixed(3)} V</text><circle cx="210" cy="90" r="25" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text class="chart-direct-label" x="194" y="87">E总</text><text class="chart-direct-label" x="200" y="103">= 0</text></svg>`;
+    }
+
+    function fluxChartMarkup(markerT) {
+      const left=44,right=397,top=22,mid=100,bottom=190,sx=t=>left+t/.75*(right-left),syB=b=>mid-(b-.1)/.1*65;
+      const pathB=Array.from({length:61},(_,i)=>{const t=.75*i/60,b=.6/(3+4*t);return `${i?'L':'M'}${sx(t).toFixed(1)},${syB(b).toFixed(1)}`;}).join(' ');
+      const t=Math.max(0,Math.min(.75,markerT)),b=.6/(3+4*t);
+      return `<svg class="chart-svg" viewBox="0 0 420 230" role="img" aria-label="磁场随时间按0.6除以3加4t非线性减小，磁通量恒为0.6韦伯"><line class="chart-axis" x1="${left}" y1="${mid}" x2="${right}" y2="${mid}"/><line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${mid}"/><path d="${pathB}" fill="none" stroke="#7c3aed" stroke-width="4"/><text class="chart-direct-label" x="245" y="35">B(t)=0.6/(3+4t)</text><circle cx="${sx(t)}" cy="${syB(b)}" r="6" fill="#fff" stroke="#7c3aed" stroke-width="3"/><text class="chart-label" x="5" y="32">B / T</text><text class="chart-label" x="${left-10}" y="116">0</text><text class="chart-label" x="${right-22}" y="116">0.75 s</text><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line x1="${left}" y1="150" x2="${right}" y2="150" stroke="#059669" stroke-width="4" stroke-dasharray="9 5"/><circle cx="${sx(t)}" cy="150" r="6" fill="#fff" stroke="#059669" stroke-width="3"/><text class="chart-direct-label" x="248" y="143">Φ = 0.60 Wb（恒定）</text><text class="chart-label" x="4" y="154">Φ</text></svg>`;
+    }
+
+    function impulseMarkup() {
+      return `<svg class="chart-svg" viewBox="0 0 420 220" role="img" aria-label="完整往返过程的冲量账本：初动量正4，恒力冲量负7，磁力总冲量为零，末动量负3"><defs><marker id="impulse-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker></defs><line class="chart-axis" x1="55" y1="110" x2="375" y2="110"/><text class="chart-label" x="48" y="132">−4</text><text class="chart-label" x="209" y="132">0</text><text class="chart-label" x="365" y="132">+4</text><circle cx="370" cy="110" r="8" fill="#fff" stroke="#2563eb" stroke-width="4"/><text class="chart-direct-label" x="322" y="86">p初=+4</text><line x1="360" y1="110" x2="95" y2="110" stroke="#d97706" stroke-width="5" marker-end="url(#impulse-arrow)"/><text class="chart-direct-label" x="182" y="88">JT=−7 N·s</text><circle cx="95" cy="110" r="8" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="62" y="158">p末=−3</text><path d="M132 170C180 198 267 198 315 170" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="8 5"/><text class="chart-direct-label" x="112" y="210">JB=−(B²L²/R)·Δx=0（返回同一点）</text><text class="chart-label" x="110" y="28">只比较整段起点与终点，不表示中间 p-t 轨迹</text></svg>`;
+    }
+
+    function dStageMarkup(physics) {
+      const left=44,right=397,top=24,bottom=190,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.32*(bottom-top);
+      const path=Array.from({length:31},(_,i)=>{const x=6*i/30,e=.05*x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
+      return `<svg class="chart-svg" viewBox="0 0 420 225" role="img" aria-label="最终左行阶段动生电动势随位置按0.05x变化，当前位置${physics.x.toFixed(2)}米"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="22">E / V</text><text class="chart-label" x="322" y="220">x / m</text><path d="${path}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 3"/><text class="chart-direct-label" x="236" y="58">D：E=0.05x</text><circle cx="${sx(physics.x)}" cy="${sy(physics.emf)}" r="7" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="${Math.min(290,sx(physics.x)+10)}" y="${Math.max(22,sy(physics.emf)-9)}">x=${physics.x.toFixed(2)}，E=${physics.emf.toFixed(3)} V</text><text class="chart-label" x="${left-4}" y="209">0</text><text class="chart-label" x="${right-8}" y="209">6</text></svg>`;
+    }
+
+    function emfBranchesMarkup(physics, mode) {
+      const left=44,right=397,top=20,bottom=205,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.9*(bottom-top);
+      if (mode === 'comparison') {
+        return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="同在x等于6米，阶段B动生电动势为0.4伏，阶段D为0.3伏"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="3"/><circle cx="${sx(6)}" cy="${sy(.4)}" r="8" fill="#fff" stroke="#7c3aed" stroke-width="4"/><circle cx="${sx(6)}" cy="${sy(.3)}" r="8" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="220" y="${sy(.4)-10}">B 右行：0.400 V</text><text class="chart-direct-label" x="220" y="${sy(.3)+25}">D 左行：0.300 V</text><text class="chart-label" x="390" y="222">6</text><text class="chart-direct-label" x="78" y="55">同一 x，B 或 v 不同 → E 不同</text></svg>`;
+      }
+      const a=Array.from({length:31},(_,i)=>{const x=3*i/30,e=.2*(1+x);return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
+      const b=Array.from({length:31},(_,i)=>{const x=3+3*i/30,e=2.4/x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
+      const d=Array.from({length:31},(_,i)=>{const x=6-6*i/30,e=.05*x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
+      const showD = mode === 'all';
+      const markerAllowed = physics.stage === 'A' || physics.stage === 'B' || (showD && physics.stage === 'D');
+      const markerX = Math.max(0, Math.min(6, physics.x));
+      const marker = markerAllowed ? `<circle cx="${sx(markerX)}" cy="${sy(Math.min(.9, physics.emf))}" r="6" fill="#fff" stroke="${STAGE_META[physics.stage].color}" stroke-width="3"/>` : '';
+      const dBranch = showD ? `<path d="${d}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 4"/><text class="chart-direct-label" x="150" y="166">D 左行：E=0.05x</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="2"/><text class="chart-label" x="273" y="108">x=6：0.4 V / 0.3 V</text>` : '';
+      return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="${showD ? '动生电动势与位置的三条分阶段关系：首次右行、变场右行和最终左行' : '首次右行和变场右行的两条动生电动势位置关系'}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><path d="${a}" fill="none" stroke="#2563eb" stroke-width="${showD ? 3 : 4}" opacity="${showD ? .68 : 1}"/><path d="${b}" fill="none" stroke="#7c3aed" stroke-width="${showD ? 3 : 4}" stroke-dasharray="9 5" opacity="${showD ? .68 : 1}"/><text class="chart-direct-label" x="66" y="78" opacity="${showD ? .82 : 1}">A 右行：0.2(1+x) →</text><text class="chart-direct-label" x="235" y="38" opacity="${showD ? .82 : 1}">B 右行：2.4/x →</text>${dBranch}${marker}</svg>`;
+    }
+
+    function completionSummaryMarkup() {
+      return `<div class="concept-summary" role="list" aria-label="本题三条核心结论">
+        <div class="concept-row" role="listitem"><span class="concept-index">1</span><div><strong>磁通锁定</strong><p>撤力变场仍匀速 → I=0 → Φ=BLx=0.60 Wb → Δt=0.75 s</p></div></div>
+        <div class="concept-row" role="listitem"><span class="concept-index">2</span><div><strong>能量分配</strong><p>W外=22.5 J = Q=15 J + ΔEₖ=7.5 J；F(1.5 m)=7.5 N</p></div></div>
+        <div class="concept-row" role="listitem"><span class="concept-index">3</span><div><strong>分阶段关系</strong><p>A：E=0.2(1+x)；B：E=2.4/x；D：E=0.05x</p></div></div>
+      </div>`;
+    }
+
+    function render() {
+      renderQuestionNavigation();
+      renderGuidePanel(state.activeQuestion);
+      renderPhaseStrip();
+      renderDynamic();
+    }
+
+    function renderDynamic() {
+      const physics = currentPhysics();
+      renderScene(physics);
+      renderControls(physics);
+      renderChart(physics);
+      renderVisualMode();
+    }
+
+    function renderVisualMode() {
+      const q = state.questions[state.activeQuestion];
+      const visual = primaryVisual();
+      const showScene = visual === 'scene';
+      const showSummary = visual === 'summary';
+      const guideSlider = q.view === 'guide' && (
+        (state.activeQuestion === 1 && q.step >= 2) ||
+        (state.activeQuestion === 2 && q.step !== 3)
+      );
+      visualPanel.dataset.primaryVisual = visual;
+      sceneView.hidden = !showScene;
+      chartView.hidden = showScene;
+      playbackControls.hidden = !(showScene || guideSlider);
+      viewModeLabel.textContent = showSummary
+        ? '当前：学习总结'
+        : (q.view === 'scene' ? '当前：自由场景' : '当前：引导主视觉');
+    }
+
+    function pausePlayback() {
+      state.playing = false;
+      state.lastTs = 0;
+      if (state.rafId !== null) cancelAnimationFrame(state.rafId);
+      state.rafId = null;
+      if (playButton) { playButton.setAttribute('aria-pressed', 'false'); playButton.textContent = '▶ 慢速播放'; }
+    }
+    function startPlayback() {
+      const q = state.questions[state.activeQuestion];
+      if (q.stage === 'C' || q.stage === 'D' || prefersReducedMotion || !state.documentVisible) return;
+      const meta = STAGE_META[q.stage];
+      if (q.values[q.stage] >= meta.max) q.values[q.stage] = 0;
+      state.playing = true;
+      state.lastTs = 0;
+      playButton.setAttribute('aria-pressed', 'true');
+      playButton.textContent = '⏸ 暂停';
+      state.rafId = requestAnimationFrame(tick);
+    }
+    function tick(timestamp) {
+      if (!state.playing || !state.documentVisible) return pausePlayback();
+      const q = state.questions[state.activeQuestion];
+      const meta = STAGE_META[q.stage];
+      const delta = state.lastTs ? Math.min(.05, (timestamp - state.lastTs) / 1000) : 0;
+      state.lastTs = timestamp;
+      q.values[q.stage] = Math.min(meta.max, q.values[q.stage] + delta * meta.max / meta.duration);
+      renderDynamic();
+      if (q.values[q.stage] >= meta.max) return pausePlayback();
+      state.rafId = requestAnimationFrame(tick);
+    }
+
+    qTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => setQuestion(Number(tab.dataset.question)));
+      tab.addEventListener('keydown', (event) => {
+        let target = index;
+        if (event.key === 'ArrowRight') target = (index + 1) % qTabs.length;
+        else if (event.key === 'ArrowLeft') target = (index - 1 + qTabs.length) % qTabs.length;
+        else if (event.key === 'Home') target = 0;
+        else if (event.key === 'End') target = qTabs.length - 1;
+        else return;
+        event.preventDefault(); qTabs[target].focus(); setQuestion(Number(qTabs[target].dataset.question));
+      });
+    });
+    phaseButtons.forEach((button) => button.addEventListener('click', () => setStage(button.dataset.stage)));
+    qPanels.forEach((panel) => {
+      panel.addEventListener('click', (event) => {
+        const q = Number(panel.dataset.questionPanel);
+        const stepButton = event.target.closest('[data-step]');
+        if (stepButton) return setStep(q, Number(stepButton.dataset.step));
+        if (event.target.closest('[data-prev]')) return setStep(q, state.questions[q].step - 1);
+        if (event.target.closest('[data-next]')) {
+          const questionState = state.questions[q];
+          if (questionState.step < 4) return setStep(q, questionState.step + 1);
+          if (questionState.completed && q < 3) return setQuestion(q + 1);
+          if (q === 3 && questionState.completed) {
+            questionState.summary = true;
+            questionState.view = 'guide';
+            render();
+            announce('学习完成。正在显示三条核心结论。');
+            return;
+          }
+          questionState.completed = true;
+          if (q === 3) questionState.summary = true;
+          render();
+          announce(q === 3 ? '学习完成。正在显示三条核心结论。' : `第${q}问已完成。`);
+          return;
+        }
+        const prediction = event.target.closest('[data-prediction]');
+        if (prediction) { state.questions[q].prediction = prediction.dataset.prediction; render(); return; }
+        const reveal = event.target.closest('[data-reveal]');
+        if (reveal) { const key = Number(reveal.dataset.reveal); state.questions[q].revealed[key] = !state.questions[q].revealed[key]; render(); }
+      });
+    });
+    slider.addEventListener('input', (event) => {
+      pausePlayback();
+      const q = state.questions[state.activeQuestion];
+      q.values[q.stage] = Number(event.target.value);
+      render();
+    });
+    slider.addEventListener('change', () => {
+      announce(`${STAGE_META[state.questions[state.activeQuestion].stage].badge}：${document.getElementById('progress-output').textContent}`);
+    });
+    playButton.addEventListener('click', () => state.playing ? pausePlayback() : startPlayback());
+    document.addEventListener('visibilitychange', () => { state.documentVisible = !document.hidden; if (!state.documentVisible) pausePlayback(); });
+
+    render();
+  </script>
+</body>
+</html>
