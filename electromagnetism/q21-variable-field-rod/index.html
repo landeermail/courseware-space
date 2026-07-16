@@ -31,6 +31,7 @@
     button { min-height: 44px; }
     button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid rgba(37, 99, 235, .35); outline-offset: 2px; }
     [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
     .page-shell { width: min(1280px, 100%); margin: 0 auto; padding: 24px 16px 36px; }
     .back-link { display: inline-block; color: #1d4ed8; font-size: 14px; text-decoration: none; }
     .back-link:hover { text-decoration: underline; }
@@ -50,12 +51,11 @@
     .guide-panel { grid-area: guide; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 32px rgba(23, 32, 51, .07); }
     .visual-panel { grid-area: visual; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 32px rgba(23, 32, 51, .07); }
 
-    .step-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
-    .step-button { min-width: 0; padding: 9px 4px; border: 0; border-right: 1px solid var(--line); color: var(--muted); background: #f8fafc; cursor: pointer; }
-    .step-button:last-child { border-right: 0; }
-    .step-button span { display: grid; place-items: center; width: 24px; height: 24px; margin: 0 auto 4px; border-radius: 999px; color: #64748b; background: #e8edf5; font-size: 12px; font-weight: 700; }
-    .step-button small { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .step-button.active { color: var(--blue); background: var(--soft-blue); }
+    .step-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: #fbfcfe; }
+    .step-button { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 5px; padding: 4px 3px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; }
+    .step-button span { display: grid; flex: 0 0 auto; place-items: center; width: 20px; height: 20px; border-radius: 999px; color: #64748b; background: #e8edf5; font-size: 11px; font-weight: 700; }
+    .step-button small { display: block; min-width: 0; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .step-button.active { color: var(--blue); background: #f2f7ff; }
     .step-button.active span { color: #fff; background: var(--blue); }
     .step-button.done span { color: #fff; background: var(--green); }
 
@@ -82,6 +82,9 @@
     .nav-button { min-width: 98px; padding: 10px 14px; }
     .nav-button:disabled { color: #94a3b8; background: #f1f5f9; cursor: not-allowed; }
 
+    .phase-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted); background: #fbfcfe; font-size: 11px; }
+    .phase-heading strong { color: #34435c; font-size: 12px; }
+    .view-mode-label { color: var(--blue); font-weight: 700; }
     .phase-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
     .phase-button { min-width: 0; padding: 10px 5px; border: 0; border-right: 1px solid var(--line); border-radius: 0; color: var(--muted); background: #f8fafc; }
     .phase-button:last-child { border-right: 0; }
@@ -97,6 +100,7 @@
     .visual-heading h2 { font-size: 17px; line-height: 1.45; }
     .visual-heading p { margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.5; }
     .stage-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; color: var(--blue); background: var(--soft-blue); font-size: 12px; font-weight: 700; }
+    .scene-view, .chart-zone { min-width: 0; }
     .scene-wrap { padding: 0 12px 8px; }
     .scene-svg, .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
     .scene-svg text, .chart-svg text { font-family: inherit; }
@@ -118,7 +122,22 @@
     .external-vector { stroke: var(--blue); }
     .magnetic-vector { stroke: var(--orange); }
     .current-vector { stroke: var(--red); stroke-width: 3; }
-    .vector-label { stroke: #f8fafc; stroke-width: 4px; paint-order: stroke fill; stroke-linejoin: round; font-size: 14px; font-weight: 700; }
+
+    .direction-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; padding: 0 18px 12px; }
+    .direction-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 6px; min-width: 0; color: var(--ink); }
+    .direction-glyph { font-size: 23px; font-weight: 700; line-height: 1; text-align: center; }
+    .direction-copy { min-width: 0; }
+    .direction-copy strong, .direction-copy span { display: block; }
+    .direction-copy strong { font-size: 12px; }
+    .direction-copy span { margin-top: 2px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .direction-item[data-kind="motion"] .direction-glyph { color: var(--green); }
+    .direction-item[data-kind="external"] .direction-glyph { color: var(--blue); }
+    .direction-item[data-kind="magnetic"] .direction-glyph { color: var(--orange); }
+    .direction-item[data-kind="current"] .direction-glyph { color: var(--red); }
+    .direction-item.is-zero .direction-glyph { color: #94a3b8; }
+    .direction-item.is-focus-hidden { display: none; }
+    .direction-strip.focus-velocity { grid-template-columns: minmax(0, 220px); }
+    .vector-convention { margin: -2px 18px 12px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 
     .metric-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 18px 12px; }
     .metric { min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; text-align: center; }
@@ -135,11 +154,14 @@
     .control-button { min-width: 100px; padding: 9px 12px; }
     input[type="range"] { width: 100%; accent-color: var(--blue); min-height: 44px; }
     .playback-note { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .event-scale { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: -5px; color: var(--muted); font-size: 11px; text-align: center; }
+    .event-scale span:first-child { text-align: left; }
+    .event-scale span:last-child { text-align: right; }
 
-    .chart-zone { padding: 16px 18px 20px; }
-    .chart-zone h3 { font-size: 16px; }
+    .chart-zone { padding: 22px 24px 26px; }
+    .chart-zone h3 { font-size: 19px; }
     .chart-caption { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-    .chart-frame { margin-top: 10px; }
+    .chart-frame { width: min(760px, 100%); margin: 14px auto 0; }
     .chart-axis { stroke: #94a3b8; stroke-width: 1.25; }
     .chart-grid { stroke: #e2e8f0; stroke-width: 1; }
     .chart-label { fill: #64748b; font-size: 11px; }
@@ -150,6 +172,15 @@
     .energy-heat { width: 66.666%; background: var(--orange); }
     .energy-kinetic { width: 33.334%; background: var(--blue); }
     .energy-ledger small { display: block; margin-top: 3px; font-size: 11px; }
+    .visual-panel[data-primary-visual="chart"] .energy-ledger { min-height: 170px; font-size: 26px; font-weight: 700; }
+    .visual-panel[data-primary-visual="chart"] .energy-ledger small { font-size: 14px; font-weight: 400; }
+    .concept-summary { display: grid; gap: 12px; padding: 4px 0; }
+    .concept-row { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .concept-row:last-child { border-bottom: 0; }
+    .concept-index { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; color: #fff; background: var(--blue); font-weight: 700; }
+    .concept-row strong, .concept-row p { display: block; }
+    .concept-row strong { font-size: 17px; }
+    .concept-row p { margin-top: 5px; color: #43506a; font-size: 14px; line-height: 1.65; }
 
     .references { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 18px; }
     details { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
@@ -164,6 +195,17 @@
     @media (min-width: 960px) {
       .lesson-layout { grid-template-columns: minmax(0, 5fr) minmax(320px, 2fr); grid-template-areas: "visual guide"; }
       .references { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 1200px) {
+      .page-shell { width: min(1360px, 100%); }
+      .guide-title { font-size: 24px; }
+      .guide-body { font-size: 16px; }
+      .scene-label { font-size: 13px; }
+      .scene-value { font-size: 14px; }
+      .direction-copy strong { font-size: 13px; }
+      .direction-copy span, .vector-convention { font-size: 12px; }
+      .chart-label, .chart-direct-label { font-size: 13px; }
+      .chart-caption { font-size: 14px; }
     }
     @media (max-width: 560px) {
       .page-shell { padding: 16px 10px 28px; }
@@ -180,8 +222,12 @@
       .phase-button { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .phase-button:nth-child(2n) { border-right: 0; }
       .phase-button:nth-child(n+3) { border-bottom: 0; }
+      .phase-heading { padding: 8px 12px; }
       .visual-heading { padding: 14px 12px 7px; }
       .scene-wrap { padding: 0 4px 8px; }
+      .direction-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 12px 12px; }
+      .direction-strip.focus-velocity { grid-template-columns: 1fr; }
+      .vector-convention { margin-left: 12px; margin-right: 12px; }
       .metric-row { padding: 0 12px 10px; gap: 5px; }
       .metric { padding: 8px 4px; }
       .metric strong { font-size: 13px; }
@@ -189,7 +235,13 @@
       .control-row { grid-template-columns: 1fr; }
       .control-button { width: 100%; }
       .energy-ledger { min-height: 92px; }
-      .chart-label, .chart-direct-label { font-size: 16px; }
+      .chart-label, .chart-direct-label { font-size: 18px; }
+      .chart-zone { padding-top: 18px; padding-bottom: 20px; }
+      .chart-zone h3 { font-size: 18px; }
+      .visual-panel[data-primary-visual="chart"] .energy-ledger { min-height: 126px; font-size: 22px; }
+      .concept-row { grid-template-columns: 30px minmax(0, 1fr); gap: 9px; }
+      .concept-row strong { font-size: 15px; }
+      .concept-row p { font-size: 13px; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -242,13 +294,15 @@
         </section>
       </aside>
 
-      <section class="visual-panel" aria-label="二维导轨与联动图表">
+      <section class="visual-panel" aria-label="二维导轨与联动图表" data-primary-visual="scene">
+        <div class="phase-heading"><strong>自由查看运动阶段</strong><span class="view-mode-label" id="view-mode-label">当前：引导主视觉</span></div>
         <div class="phase-strip" role="group" aria-label="四个运动阶段，可自由切换">
           <button class="phase-button" type="button" data-stage="A" aria-pressed="true"><strong>A · 变力右移</strong><span>x：0 → 3 m</span></button>
           <button class="phase-button" type="button" data-stage="B" aria-pressed="false"><strong>B · 撤力变场</strong><span>x：3 → 6 m</span></button>
           <button class="phase-button" type="button" data-stage="C" aria-pressed="false"><strong>C · 恒力往返</strong><span>先右后左</span></button>
           <button class="phase-button" type="button" data-stage="D" aria-pressed="false"><strong>D · 撤力左行</strong><span>x：6 → 0</span></button>
         </div>
+        <div class="scene-view" id="scene-view">
         <div class="visual-heading">
           <div><h2 id="scene-title">阶段 A：变力推动金属棒</h2><p id="scene-status">约定磁场垂直纸面向里（×）；安培力始终阻碍运动。</p></div>
           <span class="stage-badge" id="stage-badge">阶段 A</span>
@@ -279,30 +333,41 @@
               <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="5"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="5"/>
               <text class="scene-value" id="rod-c-label" x="82" y="67">c</text><text class="scene-value" id="rod-d-label" x="82" y="191">d</text>
             </g>
-            <g id="velocity-group"><line class="vector velocity-vector" id="velocity-arrow" marker-end="url(#arrow-green)"/><text class="vector-label" id="velocity-label" fill="#047857">速度 v</text></g>
-            <g id="external-group"><line class="vector external-vector" id="external-arrow" marker-end="url(#arrow-blue)"/><text class="vector-label" id="external-label" fill="#1d4ed8">外力 F</text></g>
-            <g id="magnetic-group"><line class="vector magnetic-vector" id="magnetic-arrow" marker-end="url(#arrow-orange)"/><text class="vector-label" id="magnetic-label" fill="#b45309">安培力 F<tspan baseline-shift="sub" font-size="9">B</tspan></text></g>
-            <g id="current-group"><line class="vector current-vector" id="current-arrow" marker-end="url(#arrow-red)"/><text class="vector-label" id="current-label" fill="#b91c1c">传统电流</text></g>
+            <g id="velocity-group"><line class="vector velocity-vector" id="velocity-arrow" marker-end="url(#arrow-green)"/></g>
+            <g id="external-group"><line class="vector external-vector" id="external-arrow" marker-end="url(#arrow-blue)"/></g>
+            <g id="magnetic-group"><line class="vector magnetic-vector" id="magnetic-arrow" marker-end="url(#arrow-orange)"/></g>
+            <g id="current-group"><line class="vector current-vector" id="current-arrow" marker-end="url(#arrow-red)"/></g>
             <text class="scene-value" id="field-label" x="92" y="52">B = 0.20 T，方向 ×</text>
             <text class="scene-label" id="position-label" x="250" y="202">棒的位置 x = 0.00 m</text>
           </svg>
         </div>
+        <div class="direction-strip" id="direction-strip" role="list" aria-label="当前速度、外力、安培力和传统电流方向">
+          <div class="direction-item" data-kind="motion" role="listitem"><span class="direction-glyph" id="direction-motion-glyph">→</span><span class="direction-copy"><strong>速度 v</strong><span id="direction-motion-text">向右</span></span></div>
+          <div class="direction-item" data-kind="external" role="listitem"><span class="direction-glyph" id="direction-external-glyph">→</span><span class="direction-copy"><strong>外力 F</strong><span id="direction-external-text">向右</span></span></div>
+          <div class="direction-item" data-kind="magnetic" role="listitem"><span class="direction-glyph" id="direction-magnetic-glyph">←</span><span class="direction-copy"><strong>安培力 F<sub>B</sub></strong><span id="direction-magnetic-text">向左</span></span></div>
+          <div class="direction-item" data-kind="current" role="listitem"><span class="direction-glyph" id="direction-current-glyph">↑</span><span class="direction-copy"><strong>传统电流 I</strong><span id="direction-current-text">d → c</span></span></div>
+        </div>
+        <p class="vector-convention" id="vector-convention">箭头只表示方向；大小请读下方数值。</p>
         <div class="metric-row" id="metric-row">
           <div class="metric"><span id="metric-label-1">位置</span><strong id="metric-value-1" data-testid="metric-1" data-value="0">0.00 m</strong></div>
           <div class="metric"><span id="metric-label-2">速度</span><strong id="metric-value-2" data-testid="metric-2" data-value="1">1.00 m/s</strong></div>
           <div class="metric"><span id="metric-label-3">动生电动势</span><strong id="metric-value-3" data-testid="metric-3" data-value="0.2">0.20 V</strong></div>
         </div>
-        <div class="playback-controls">
+        </div>
+        <div class="playback-controls" id="playback-controls">
           <div class="control-heading"><label id="progress-label" for="progress-slider">阶段 A 的物理时间</label><output id="progress-output" for="progress-slider">t=0.00 s，x=0.00 m</output></div>
           <div class="control-row"><button class="control-button" id="play-toggle" type="button" aria-pressed="false">▶ 慢速播放</button><input id="progress-slider" type="range" min="0" max="1.3863" step="0.001" value="0"></div>
+          <div class="event-scale" id="event-scale" hidden><span>起点</span><span>转向</span><span>返回 x₀</span></div>
           <p class="playback-note" id="playback-note">教学慢放：约 5.5 秒呈现真实物理过程；拖动滑杆会自动暂停。</p>
         </div>
-        <div class="chart-zone">
+        <div class="chart-zone" id="chart-view">
           <h3 id="chart-title">位置改变时，速度与受力同步变化</h3><p class="chart-caption" id="chart-caption">曲线只显示当前推理需要的量；后续答案不会提前出现。</p>
           <div class="chart-frame" id="chart-frame"></div>
         </div>
       </section>
     </div>
+
+    <div class="sr-only" id="interaction-status" role="status" aria-live="polite"></div>
 
     <div class="references">
       <details><summary>查看题目原图</summary><div class="reference-body"><a class="reference-image-link" href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第21题题目原图：平行导轨、左端电阻和移动导体棒"><span>点按查看原尺寸题图</span></a></div></details>
@@ -317,7 +382,7 @@
     const STAGE_META = {
       A: { title: '阶段 A：变力推动金属棒', badge: '阶段 A', color: '#2563eb', max: Math.log(4), step: 0.001, duration: 5.5, label: '阶段 A 的物理时间', note: '教学慢放：约 5.5 秒呈现真实物理过程；拖动滑杆会自动暂停。' },
       B: { title: '阶段 B：撤力后变场匀速', badge: '阶段 B', color: '#7c3aed', max: 0.75, step: 0.001, duration: 4, label: '变磁场的物理时间', note: '教学慢放：约 4 秒呈现真实 0.75 秒；磁场按 0.6/(3+4t) 变化。' },
-      C: { title: '阶段 C：左向恒力使棒往返', badge: '阶段 C', color: '#d97706', max: 1.4, step: 0.001, duration: 5.6, label: '题设总时长中的过程进度', note: '只按“右移—转向—返回 x₀”呈现事件顺序；除起点、转向和终点外，不给出伪精确的中间速度与位置。' },
+      C: { title: '阶段 C：左向恒力使棒往返', badge: '阶段 C', color: '#d97706', max: 2, step: 1, duration: 0, label: '题设事件（离散切换）', note: '只切换起点、转向和返回 x₀ 三个事件；不插值题目未给出的中间轨迹。' },
       D: { title: '阶段 D：撤力后向左渐近运动', badge: '阶段 D', color: '#059669', max: 6, step: 0.01, duration: 0, label: '末段位置 x（位置探究）', note: '末段只用位置探究：x(t)=6e⁻ᵗ⁄²，棒在有限时间内不会突然到达原点。' }
     };
     const state = {
@@ -327,10 +392,16 @@
       lastTs: 0,
       documentVisible: !document.hidden,
       questions: {
-        1: { step: 1, stage: 'A', values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
-        2: { step: 1, stage: 'A', values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
-        3: { step: 1, stage: 'D', values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false }
+        1: { step: 1, stage: 'A', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
+        2: { step: 1, stage: 'A', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false },
+        3: { step: 1, stage: 'D', view: 'guide', summary: false, values: { ...STAGE_DEFAULTS }, prediction: null, revealed: {}, completed: false }
       }
+    };
+
+    const GUIDE_VIEW = {
+      1: ['scene', 'chart', 'chart', 'chart'],
+      2: ['chart', 'chart', 'chart', 'chart'],
+      3: ['chart', 'chart', 'chart', 'chart']
     };
 
     const GUIDE = {
@@ -368,6 +439,25 @@
     const rodD = document.getElementById('rod-d');
     const rodCLabel = document.getElementById('rod-c-label');
     const rodDLabel = document.getElementById('rod-d-label');
+    const visualPanel = document.querySelector('.visual-panel');
+    const sceneView = document.getElementById('scene-view');
+    const chartView = document.getElementById('chart-view');
+    const playbackControls = document.getElementById('playback-controls');
+    const viewModeLabel = document.getElementById('view-mode-label');
+    const eventScale = document.getElementById('event-scale');
+    const interactionStatus = document.getElementById('interaction-status');
+
+    function primaryVisual() {
+      const q = state.questions[state.activeQuestion];
+      if (state.activeQuestion === 3 && q.summary) return 'summary';
+      if (q.view === 'scene') return 'scene';
+      return GUIDE_VIEW[state.activeQuestion][q.step - 1];
+    }
+
+    function announce(message) {
+      interactionStatus.textContent = '';
+      requestAnimationFrame(() => { interactionStatus.textContent = message; });
+    }
 
     function deriveA(t) {
       const x = Math.exp(t) - 1;
@@ -380,35 +470,20 @@
       const emf = 2.4 / x;
       return { stage: 'B', t, x, B, flux: .6, v: 4, speed: 4, a: 0, emf, inducedEmf: -emf, totalEmf: 0, current: 0, magneticForce: 0, externalForce: 0, direction: 'right' };
     }
-    function deriveC(t) {
-      const duration = 1.4;
-      const turnProgress = .48;
-      const s = Math.max(0, Math.min(1, t / duration));
-      const atStart = s <= .001;
-      const atTurn = Math.abs(s - turnProgress) <= .012;
-      const atEnd = s >= .999;
-      let x;
-      let direction;
-      let speed;
-      if (s <= turnProgress) {
-        const progress = s / turnProgress;
-        x = 6 + 1.15 * Math.sin(progress * Math.PI / 2);
-        speed = 4 * Math.cos(progress * Math.PI / 2);
-        direction = atTurn ? 'none' : 'right';
-      } else {
-        const progress = (s - turnProgress) / (1 - turnProgress);
-        x = 6 + 1.15 * Math.cos(progress * Math.PI / 2);
-        speed = 3 * Math.sin(progress * Math.PI / 2);
-        direction = atTurn ? 'none' : 'left';
-      }
-      if (atTurn) speed = 0;
-      const signedVelocity = direction === 'left' ? -speed : speed;
-      const milestone = atStart ? 'start' : (atTurn ? 'turn' : (atEnd ? 'end' : null));
+    function deriveC(value) {
+      const eventIndex = Math.max(0, Math.min(2, Math.round(value)));
+      const events = [
+        { x: 6, direction: 'right', speed: 4, v: 4, milestone: 'start', t: 0 },
+        { x: 7.1, direction: 'none', speed: 0, v: 0, milestone: 'turn', t: null },
+        { x: 6, direction: 'left', speed: 3, v: -3, milestone: 'end', t: 1.4 }
+      ];
+      const event = events[eventIndex];
       return {
-        stage: 'C', t, x, B: .1, flux: .1 * x, v: signedVelocity, speed, a: null,
-        emf: .1 * speed, inducedEmf: 0, totalEmf: .1 * speed,
-        current: 5 * speed, magneticForce: .5 * speed, externalForce: 5,
-        direction, schematic: true, milestone
+        stage: 'C', eventIndex, t: event.t, x: event.x, B: .1, flux: .1 * event.x,
+        v: event.v, speed: event.speed, a: null, emf: .1 * event.speed,
+        inducedEmf: 0, totalEmf: .1 * event.speed, current: 5 * event.speed,
+        magneticForce: .5 * event.speed, externalForce: 5,
+        direction: event.direction, schematic: true, milestone: event.milestone
       };
     }
     function deriveD(x) {
@@ -429,8 +504,11 @@
       pausePlayback();
       const q = state.questions[state.activeQuestion];
       q.stage = stage;
+      q.view = 'scene';
+      q.summary = false;
       if (Number.isFinite(options.value)) q.values[stage] = options.value;
       render();
+      announce(`已进入${STAGE_META[stage].title}自由场景。`);
     }
     function setQuestion(question) {
       pausePlayback();
@@ -441,6 +519,8 @@
       pausePlayback();
       const q = state.questions[question];
       q.step = Math.max(1, Math.min(4, step));
+      q.view = 'guide';
+      q.summary = false;
       const focusStage = GUIDE[question][q.step - 1].stage;
       q.stage = focusStage;
       if (question === 1 && q.step === 4) q.values.B = .75;
@@ -450,6 +530,7 @@
       if (question === 3 && q.step === 3) q.values.C = 0;
       if (question === 3 && q.step === 4) q.values.D = 6;
       render();
+      announce(`第${question}问，第${q.step}步：${GUIDE[question][q.step - 1].title}。`);
     }
 
     function renderQuestionNavigation() {
@@ -462,7 +543,7 @@
       qPanels.forEach((panel) => { panel.hidden = Number(panel.dataset.questionPanel) !== state.activeQuestion; });
       [1, 2, 3].forEach((question) => {
         const q = state.questions[question];
-        document.getElementById(`question-progress-${question}`).textContent = q.completed ? `已完成 · 第 ${q.step} / 4 步` : `引导第 ${q.step} / 4 步`;
+        document.getElementById(`question-progress-${question}`).textContent = q.completed ? `已完成 · 正在复习第 ${q.step} 步` : `引导第 ${q.step} / 4 步`;
       });
     }
 
@@ -471,7 +552,24 @@
       const q = state.questions[question];
       const config = GUIDE[question][q.step - 1];
       const strip = panel.querySelector('.step-strip');
-      strip.innerHTML = GUIDE[question].map((step, index) => `<button class="step-button ${q.step === index + 1 ? 'active' : ''} ${q.completed && index + 1 <= q.step ? 'done' : ''}" type="button" data-step="${index + 1}" aria-pressed="${q.step === index + 1}"><span>${index + 1}</span><small>${step.name}</small></button>`).join('');
+      strip.innerHTML = GUIDE[question].map((step, index) => {
+        const stepNumber = index + 1;
+        const active = q.step === stepNumber;
+        const done = q.completed ? !active : stepNumber < q.step;
+        return `<button class="step-button ${active ? 'active' : ''} ${done ? 'done' : ''}" type="button" data-step="${stepNumber}" aria-pressed="${active}"><span>${stepNumber}</span><small>${step.name}</small></button>`;
+      }).join('');
+      if (question === 3 && q.summary) {
+        panel.querySelector('.guide-kicker').textContent = '学习完成';
+        panel.querySelector('.guide-title').textContent = '三条结论已经连成一条推理链';
+        panel.querySelector('.guide-body').textContent = '你仍可点击任一步骤或任一运动阶段复查，完成状态不会丢失。';
+        panel.querySelector('.guide-tool').innerHTML = '';
+        const prev = panel.querySelector('[data-prev]');
+        const next = panel.querySelector('[data-next]');
+        prev.disabled = false;
+        next.textContent = '已完成';
+        next.disabled = true;
+        return;
+      }
       panel.querySelector('.guide-kicker').textContent = `第 ${q.step} / 4 步`;
       panel.querySelector('.guide-title').textContent = config.title;
       panel.querySelector('.guide-body').textContent = config.body;
@@ -480,9 +578,9 @@
       const next = panel.querySelector('[data-next]');
       prev.disabled = q.step === 1;
       next.textContent = q.step === 4
-        ? (q.completed ? (question < 3 ? `继续第（${question + 1}）问` : '全部完成') : `完成第（${question}）问`)
+        ? (q.completed ? (question < 3 ? `继续第（${question + 1}）问` : '查看总结') : `完成第（${question}）问`)
         : '下一步';
-      next.disabled = q.step === 4 && q.completed && question === 3;
+      next.disabled = false;
       next.classList.toggle('primary', true);
     }
 
@@ -530,8 +628,9 @@
       document.getElementById('playback-note').textContent = prefersReducedMotion && q.stage !== 'D'
         ? `${meta.note} 系统已启用“减少动态”，请拖动滑杆探究。`
         : meta.note;
-      playButton.hidden = q.stage === 'D' || prefersReducedMotion;
+      playButton.hidden = q.stage === 'C' || q.stage === 'D' || prefersReducedMotion;
       playButton.closest('.control-row').classList.toggle('slider-only', playButton.hidden);
+      eventScale.hidden = q.stage !== 'C';
       playButton.textContent = state.playing ? '⏸ 暂停' : '▶ 慢速播放';
       playButton.setAttribute('aria-pressed', String(state.playing));
       if (q.stage === 'D') {
@@ -539,7 +638,11 @@
           ? 'x→0（极限位置，不是有限时刻）'
           : `x=${physics.x.toFixed(2)} m，正向 0 渐近`;
       } else if (q.stage === 'C') {
-        document.getElementById('progress-output').textContent = `题设进度 t=${physics.t.toFixed(2)} / 1.40 s（中间轨迹示意）`;
+        document.getElementById('progress-output').textContent = physics.milestone === 'start'
+          ? '起点：x₀=6 m，v=+4 m/s'
+          : (physics.milestone === 'turn'
+            ? '转向事件：v=0（位置不读取）'
+            : '返回 x₀：v=−3 m/s，t=1.40 s');
       } else {
         document.getElementById('progress-output').textContent = `t=${physics.t.toFixed(2)} s，x=${physics.x.toFixed(2)} m`;
       }
@@ -585,11 +688,14 @@
       fieldLabel.setAttribute('x', positionX < 150 ? 200 : 92);
       fieldLabel.textContent = `B = ${physics.B.toFixed(3)} T，方向 ×`;
       document.getElementById('position-label').textContent = stage === 'C'
-        ? (cEndpoint ? '棒位于 x₀=6 m（题设端点）' : '中间位置仅示意，不读取转向坐标')
+        ? (cEndpoint ? '棒位于 x₀=6 m（题设端点）' : '转向事件：位置不读取')
         : `棒的位置 x = ${physics.x.toFixed(2)} m`;
       renderVectors(positionX, physics);
       renderMetrics(physics);
       document.getElementById('scene-status').textContent = sceneStatus(physics);
+      applySceneFocus(physics);
+      const motionText = physics.direction === 'right' ? '向右' : (physics.direction === 'left' ? '向左' : '瞬时静止');
+      document.getElementById('scene-svg-desc').textContent = `${meta.title}。金属棒${motionText}；箭头只表示方向，大小请读数值。${physics.schematic ? '阶段C只显示题设离散事件，不表示连续轨迹。' : ''}`;
     }
 
     function renderFieldMarks(B) {
@@ -601,7 +707,7 @@
       fieldMarks.innerHTML = markup;
     }
 
-    function placeHorizontalVector(groupId, lineId, labelId, originX, y, direction, length, marker) {
+    function placeHorizontalVector(groupId, lineId, originX, y, direction, length, marker) {
       const group = document.getElementById(groupId);
       if (direction === 'none' || length <= .01) { group.setAttribute('display', 'none'); group.dataset.direction = 'none'; return; }
       group.removeAttribute('display'); group.dataset.direction = direction;
@@ -609,26 +715,18 @@
       const sign = direction === 'right' ? 1 : -1;
       const x2 = Math.max(18, Math.min(404, originX + sign * length));
       line.setAttribute('x1', originX); line.setAttribute('y1', y); line.setAttribute('x2', x2); line.setAttribute('y2', y); line.setAttribute('marker-end', `url(#${marker})`);
-      const label = document.getElementById(labelId);
-      let labelX = Math.min(originX, x2) + Math.abs(x2 - originX) / 2 - 18;
-      let labelY = y - 7;
-      if (originX > 320) labelX = originX - (labelId === 'magnetic-label' ? 88 : 70);
-      if (originX < 110 && (labelId === 'velocity-label' || labelId === 'external-label')) labelX = originX + 54;
-      if (labelId === 'magnetic-label' && originX < 110) labelX = originX + 12;
-      if (labelId === 'magnetic-label' && (originX > 320 || originX < 110)) labelY = y + 22;
-      label.setAttribute('x', Math.max(8, Math.min(330, labelX))); label.setAttribute('y', labelY);
     }
 
     function renderVectors(positionX, physics) {
       const motion = physics.direction;
       const vectorLength = 42;
-      const velocityLength = physics.stage === 'C' ? Math.min(vectorLength, physics.speed * 10) : vectorLength;
-      placeHorizontalVector('velocity-group', 'velocity-arrow', 'velocity-label', positionX, 42, motion, physics.speed > .02 ? velocityLength : 0, 'arrow-green');
+      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 42, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
       const externalDirection = physics.stage === 'A' ? 'right' : (physics.stage === 'C' ? 'left' : 'none');
-      placeHorizontalVector('external-group', 'external-arrow', 'external-label', positionX, 104, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
+      const externalOrigin = positionX + (externalDirection === 'right' ? 18 : (externalDirection === 'left' ? -18 : 0));
+      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 104, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
       const magneticDirection = physics.magneticForce < .01 ? 'none' : (motion === 'right' ? 'left' : (motion === 'left' ? 'right' : 'none'));
-      const magneticLength = positionX < 110 && magneticDirection === 'left' ? 28 : vectorLength;
-      placeHorizontalVector('magnetic-group', 'magnetic-arrow', 'magnetic-label', positionX, 142, magneticDirection, physics.magneticForce > .01 ? magneticLength : 0, 'arrow-orange');
+      const magneticOrigin = positionX + (magneticDirection === 'right' ? 18 : 0);
+      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 142, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
       const currentGroup = document.getElementById('current-group');
       if (physics.current < .01 || motion === 'none' || physics.stage === 'B') {
         currentGroup.setAttribute('display', 'none'); currentGroup.dataset.direction = 'none';
@@ -637,11 +735,43 @@
         const upward = motion === 'right';
         currentGroup.dataset.direction = upward ? 'up' : 'down';
         const arrow = document.getElementById('current-arrow');
-        arrow.setAttribute('x1', positionX + 13); arrow.setAttribute('x2', positionX + 13); arrow.setAttribute('y1', upward ? 151 : 94); arrow.setAttribute('y2', upward ? 94 : 151);
-        const label = document.getElementById('current-label');
-        label.setAttribute('x', positionX > 320 ? positionX - 94 : (positionX < 110 ? 130 : positionX + 19));
-        label.setAttribute('y', positionX > 320 ? 112 : 126);
+        arrow.setAttribute('x1', positionX + 10); arrow.setAttribute('x2', positionX + 10); arrow.setAttribute('y1', upward ? 144 : 102); arrow.setAttribute('y2', upward ? 102 : 144);
       }
+      renderDirectionStrip(motion, externalDirection, magneticDirection, physics);
+    }
+
+    function applySceneFocus(physics) {
+      const q = state.questions[state.activeQuestion];
+      const velocityOnly = state.activeQuestion === 1 && q.step === 1 && q.view === 'guide' && primaryVisual() === 'scene';
+      ['external', 'magnetic', 'current'].forEach((kind) => {
+        const group = document.getElementById(`${kind}-group`);
+        const item = document.querySelector(`.direction-item[data-kind="${kind}"]`);
+        if (velocityOnly) group.setAttribute('display', 'none');
+        item.classList.toggle('is-focus-hidden', velocityOnly);
+      });
+      document.getElementById('direction-strip').classList.toggle('focus-velocity', velocityOnly);
+      if (velocityOnly) {
+        setMetric(1, '位置 x', `${physics.x.toFixed(2)} m`, physics.x);
+        setMetric(2, '速度 v', `${physics.speed.toFixed(2)} m/s`, physics.speed);
+        setMetric(3, '速度关系', 'v = 1 + x', null);
+        document.getElementById('scene-status').textContent = '先只观察位置和速度：v=1+x；其余物理量将在后续步骤出现。';
+      }
+    }
+
+    function setDirectionItem(kind, glyph, text, isZero = false) {
+      const item = document.querySelector(`.direction-item[data-kind="${kind}"]`);
+      document.getElementById(`direction-${kind}-glyph`).textContent = glyph;
+      document.getElementById(`direction-${kind}-text`).textContent = text;
+      item.classList.toggle('is-zero', isZero);
+    }
+
+    function renderDirectionStrip(motion, externalDirection, magneticDirection, physics) {
+      setDirectionItem('motion', motion === 'right' ? '→' : (motion === 'left' ? '←' : '·'), motion === 'right' ? '向右' : (motion === 'left' ? '向左' : '瞬时静止'), motion === 'none');
+      setDirectionItem('external', externalDirection === 'right' ? '→' : (externalDirection === 'left' ? '←' : '·'), externalDirection === 'right' ? '向右' : (externalDirection === 'left' ? '向左' : '无外力'), externalDirection === 'none');
+      setDirectionItem('magnetic', magneticDirection === 'right' ? '→' : (magneticDirection === 'left' ? '←' : '0'), magneticDirection === 'right' ? '向右' : (magneticDirection === 'left' ? '向左' : '为 0'), magneticDirection === 'none');
+      const currentUp = physics.current >= .01 && motion === 'right' && physics.stage !== 'B';
+      const currentDown = physics.current >= .01 && motion === 'left' && physics.stage !== 'B';
+      setDirectionItem('current', currentUp ? '↑' : (currentDown ? '↓' : '0'), currentUp ? 'd → c' : (currentDown ? 'c → d' : 'I = 0'), !currentUp && !currentDown);
     }
 
     function renderMetrics(physics) {
@@ -682,8 +812,15 @@
 
     function renderChart(physics) {
       const question = state.activeQuestion;
-      const step = state.questions[question].step;
+      const questionState = state.questions[question];
+      const step = questionState.step;
       const frame = document.getElementById('chart-frame');
+      if (question === 3 && questionState.summary) {
+        document.getElementById('chart-title').textContent = '三问形成一条完整推理链';
+        document.getElementById('chart-caption').textContent = '从磁通约束，到能量分配，再到分阶段的 E-x 关系。';
+        frame.innerHTML = completionSummaryMarkup();
+        return;
+      }
       const guidedStage = GUIDE[question][step - 1].stage;
       if (physics.stage !== guidedStage) {
         renderStageOverview(physics, frame);
@@ -790,8 +927,16 @@
       const markerAllowed = physics.stage === 'A' || physics.stage === 'B' || (showD && physics.stage === 'D');
       const markerX = Math.max(0, Math.min(6, physics.x));
       const marker = markerAllowed ? `<circle cx="${sx(markerX)}" cy="${sy(Math.min(.9, physics.emf))}" r="6" fill="#fff" stroke="${STAGE_META[physics.stage].color}" stroke-width="3"/>` : '';
-      const dBranch = showD ? `<path d="${d}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 3"/><text class="chart-direct-label" x="180" y="178">← D 左行：0.05x</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="2"/><text class="chart-label" x="278" y="112">x=6：0.4 V / 0.3 V</text>` : '';
-      return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="${showD ? '动生电动势与位置的三条分阶段关系：首次右行、变场右行和最终左行' : '首次右行和变场右行的两条动生电动势位置关系'}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><path d="${a}" fill="none" stroke="#2563eb" stroke-width="${showD ? 2 : 4}" opacity="${showD ? .28 : 1}"/><path d="${b}" fill="none" stroke="#7c3aed" stroke-width="${showD ? 2 : 4}" stroke-dasharray="8 5" opacity="${showD ? .28 : 1}"/><text class="chart-direct-label" x="66" y="78" opacity="${showD ? .42 : 1}">A 右行：0.2(1+x) →</text><text class="chart-direct-label" x="235" y="38" opacity="${showD ? .42 : 1}">B 右行：2.4/x →</text>${dBranch}${marker}</svg>`;
+      const dBranch = showD ? `<path d="${d}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 4"/><text class="chart-direct-label" x="150" y="166">D 左行：E=0.05x</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="2"/><text class="chart-label" x="273" y="108">x=6：0.4 V / 0.3 V</text>` : '';
+      return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="${showD ? '动生电动势与位置的三条分阶段关系：首次右行、变场右行和最终左行' : '首次右行和变场右行的两条动生电动势位置关系'}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><path d="${a}" fill="none" stroke="#2563eb" stroke-width="${showD ? 3 : 4}" opacity="${showD ? .68 : 1}"/><path d="${b}" fill="none" stroke="#7c3aed" stroke-width="${showD ? 3 : 4}" stroke-dasharray="9 5" opacity="${showD ? .68 : 1}"/><text class="chart-direct-label" x="66" y="78" opacity="${showD ? .82 : 1}">A 右行：0.2(1+x) →</text><text class="chart-direct-label" x="235" y="38" opacity="${showD ? .82 : 1}">B 右行：2.4/x →</text>${dBranch}${marker}</svg>`;
+    }
+
+    function completionSummaryMarkup() {
+      return `<div class="concept-summary" role="list" aria-label="本题三条核心结论">
+        <div class="concept-row" role="listitem"><span class="concept-index">1</span><div><strong>磁通锁定</strong><p>撤力变场仍匀速 → I=0 → Φ=BLx=0.60 Wb → Δt=0.75 s</p></div></div>
+        <div class="concept-row" role="listitem"><span class="concept-index">2</span><div><strong>能量分配</strong><p>W外=22.5 J = Q=15 J + ΔEₖ=7.5 J；F(1.5 m)=7.5 N</p></div></div>
+        <div class="concept-row" role="listitem"><span class="concept-index">3</span><div><strong>分阶段关系</strong><p>A：E=0.2(1+x)；B：E=2.4/x；D：E=0.05x</p></div></div>
+      </div>`;
     }
 
     function render() {
@@ -806,6 +951,25 @@
       renderScene(physics);
       renderControls(physics);
       renderChart(physics);
+      renderVisualMode();
+    }
+
+    function renderVisualMode() {
+      const q = state.questions[state.activeQuestion];
+      const visual = primaryVisual();
+      const showScene = visual === 'scene';
+      const showSummary = visual === 'summary';
+      const guideSlider = q.view === 'guide' && (
+        (state.activeQuestion === 1 && q.step >= 2) ||
+        (state.activeQuestion === 2 && q.step !== 3)
+      );
+      visualPanel.dataset.primaryVisual = visual;
+      sceneView.hidden = !showScene;
+      chartView.hidden = showScene;
+      playbackControls.hidden = !(showScene || guideSlider);
+      viewModeLabel.textContent = showSummary
+        ? '当前：学习总结'
+        : (q.view === 'scene' ? '当前：自由场景' : '当前：引导主视觉');
     }
 
     function pausePlayback() {
@@ -817,7 +981,7 @@
     }
     function startPlayback() {
       const q = state.questions[state.activeQuestion];
-      if (q.stage === 'D' || prefersReducedMotion || !state.documentVisible) return;
+      if (q.stage === 'C' || q.stage === 'D' || prefersReducedMotion || !state.documentVisible) return;
       const meta = STAGE_META[q.stage];
       if (q.values[q.stage] >= meta.max) q.values[q.stage] = 0;
       state.playing = true;
@@ -861,7 +1025,18 @@
           const questionState = state.questions[q];
           if (questionState.step < 4) return setStep(q, questionState.step + 1);
           if (questionState.completed && q < 3) return setQuestion(q + 1);
-          questionState.completed = true; render(); return;
+          if (q === 3 && questionState.completed) {
+            questionState.summary = true;
+            questionState.view = 'guide';
+            render();
+            announce('学习完成。正在显示三条核心结论。');
+            return;
+          }
+          questionState.completed = true;
+          if (q === 3) questionState.summary = true;
+          render();
+          announce(q === 3 ? '学习完成。正在显示三条核心结论。' : `第${q}问已完成。`);
+          return;
         }
         const prediction = event.target.closest('[data-prediction]');
         if (prediction) { state.questions[q].prediction = prediction.dataset.prediction; render(); return; }
@@ -874,6 +1049,9 @@
       const q = state.questions[state.activeQuestion];
       q.values[q.stage] = Number(event.target.value);
       render();
+    });
+    slider.addEventListener('change', () => {
+      announce(`${STAGE_META[state.questions[state.activeQuestion].stage].badge}：${document.getElementById('progress-output').textContent}`);
     });
     playButton.addEventListener('click', () => state.playing ? pausePlayback() : startPlayback());
     document.addEventListener('visibilitychange', () => { state.documentVisible = !document.hidden; if (!state.documentVisible) pausePlayback(); });
