@@ -82,19 +82,23 @@
     .nav-button { min-width: 98px; padding: 10px 14px; }
     .nav-button:disabled { color: #94a3b8; background: #f1f5f9; cursor: not-allowed; }
 
-    .phase-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted); background: #fbfcfe; font-size: 11px; }
-    .phase-heading strong { color: #34435c; font-size: 12px; }
-    .view-mode-label { color: var(--blue); font-weight: 700; }
-    .phase-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
-    .phase-button { min-width: 0; padding: 10px 5px; border: 0; border-right: 1px solid var(--line); border-radius: 0; color: var(--muted); background: #f8fafc; }
-    .phase-button:last-child { border-right: 0; }
-    .phase-button strong, .phase-button span { display: block; }
-    .phase-button strong { font-size: 13px; }
-    .phase-button span { margin-top: 2px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .phase-button[data-stage="A"][aria-pressed="true"] { color: #1d4ed8; background: var(--soft-blue); box-shadow: inset 0 -3px 0 var(--blue); }
-    .phase-button[data-stage="B"][aria-pressed="true"] { color: #6d28d9; background: var(--soft-purple); box-shadow: inset 0 -3px 0 var(--purple); }
-    .phase-button[data-stage="C"][aria-pressed="true"] { color: #b45309; background: var(--soft-orange); box-shadow: inset 0 -3px 0 var(--orange); }
-    .phase-button[data-stage="D"][aria-pressed="true"] { color: #047857; background: var(--soft-green); box-shadow: inset 0 -3px 0 var(--green); }
+    .process-nav { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 10px; border-bottom: 1px solid var(--line); background: #fbfcfe; }
+    .process-nav-label { color: #34435c; font-size: 12px; white-space: nowrap; }
+    .phase-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; min-width: 0; }
+    .phase-button { display: flex; position: relative; min-width: 0; min-height: 44px; align-items: center; justify-content: center; gap: 5px; padding: 5px 7px; border: 0; border-radius: 8px; color: #64748b; background: transparent; }
+    .phase-button::after { position: absolute; right: -5px; color: #cbd5e1; content: '›'; pointer-events: none; }
+    .phase-button:last-child::after { content: none; }
+    .phase-code { flex: 0 0 auto; font-size: 12px; font-weight: 700; }
+    .phase-name { min-width: 0; overflow: hidden; font-size: 12px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+    .phase-button small { flex: 0 1 auto; color: #8490a5; font-size: 10px; white-space: nowrap; }
+    .phase-button[data-stage="A"][aria-pressed="true"] { color: #1d4ed8; background: var(--soft-blue); box-shadow: inset 0 -2px 0 var(--blue); }
+    .phase-button[data-stage="B"][aria-pressed="true"] { color: #6d28d9; background: var(--soft-purple); box-shadow: inset 0 -2px 0 var(--purple); }
+    .phase-button[data-stage="C"][aria-pressed="true"] { color: #b45309; background: var(--soft-orange); box-shadow: inset 0 -2px 0 var(--orange); }
+    .phase-button[data-stage="D"][aria-pressed="true"] { color: #047857; background: var(--soft-green); box-shadow: inset 0 -2px 0 var(--green); }
+    .process-nav-state { display: flex; align-items: center; justify-content: flex-end; gap: 7px; white-space: nowrap; }
+    .view-mode-label { color: var(--muted); font-size: 11px; }
+    .process-nav.is-free .view-mode-label { color: var(--blue); font-weight: 700; }
+    .return-guide-button { min-height: 36px; padding: 5px 9px; border: 1px solid #bfdbfe; border-radius: 8px; color: #1d4ed8; background: #fff; cursor: pointer; font-size: 11px; font-weight: 700; }
 
     .visual-heading { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 16px 18px 8px; }
     .visual-heading h2 { font-size: 17px; line-height: 1.45; }
@@ -105,23 +109,23 @@
     .scene-svg, .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
     .scene-svg text, .chart-svg text { font-family: inherit; }
     .scene-surface { fill: #f8fafc; }
-    .rail { stroke: #27364d; stroke-width: 5; stroke-linecap: round; }
-    .circuit-left { fill: none; stroke: #27364d; stroke-width: 4; }
-    .resistor { fill: #fff; stroke: #27364d; stroke-width: 2; }
+    .rail { stroke: #475569; stroke-width: 3; stroke-linecap: round; }
+    .circuit-left { fill: none; stroke: #475569; stroke-width: 2.4; }
+    .resistor { fill: #fff; stroke: #475569; stroke-width: 1.5; }
     .magnetic-region { fill: rgba(37, 99, 235, .045); }
     .field-area { fill: rgba(37, 99, 235, .075); stroke: rgba(37, 99, 235, .28); stroke-width: 1; }
-    .field-mark { fill: #64748b; font-size: 13px; font-weight: 700; }
-    .rod { stroke: #0f172a; stroke-width: 8; stroke-linecap: round; }
-    .rod-end { fill: #0f172a; }
-    .axis { stroke: #94a3b8; stroke-width: 1.5; }
-    .axis-tick { stroke: #64748b; stroke-width: 1.5; }
+    .field-mark { fill: #7c8aa0; font-size: 12px; font-weight: 600; }
+    .rod { stroke: #1e293b; stroke-width: 4.5; stroke-linecap: round; }
+    .rod-end { fill: #1e293b; }
+    .axis { stroke: #a7b3c4; stroke-width: 1; }
+    .axis-tick { stroke: #7c8aa0; stroke-width: 1.2; }
     .scene-label { fill: #43506a; font-size: 12px; }
     .scene-value { fill: #172033; font-size: 13px; font-weight: 700; }
-    .vector { fill: none; stroke-width: 4; stroke-linecap: round; }
+    .vector { fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .velocity-vector { stroke: var(--green); }
     .external-vector { stroke: var(--blue); }
     .magnetic-vector { stroke: var(--orange); }
-    .current-vector { stroke: var(--red); stroke-width: 3; }
+    .current-vector { stroke: var(--red); stroke-width: 2; }
 
     .direction-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; padding: 0 18px 12px; }
     .direction-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 6px; min-width: 0; color: var(--ink); }
@@ -162,11 +166,14 @@
     .chart-zone h3 { font-size: 19px; }
     .chart-caption { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .chart-frame { width: min(760px, 100%); margin: 14px auto 0; }
-    .chart-axis { stroke: #94a3b8; stroke-width: 1.25; }
+    .chart-axis { stroke: #94a3b8; stroke-width: 1.2; }
     .chart-grid { stroke: #e2e8f0; stroke-width: 1; }
     .chart-label { fill: #64748b; font-size: 11px; }
     .chart-direct-label { fill: #334155; font-size: 11px; font-weight: 700; }
-    .chart-marker { fill: #fff; stroke: var(--blue); stroke-width: 3; }
+    .chart-series { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-marker { fill: #fff; stroke: var(--blue); stroke-width: 2; }
+    .chart-guide { fill: none; stroke: #94a3b8; stroke-width: 1; }
+    .chart-legend-swatch { fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .energy-ledger { display: flex; min-height: 78px; margin-top: 14px; overflow: hidden; border-radius: 12px; color: #fff; text-align: center; }
     .energy-ledger > div { display: grid; place-content: center; padding: 8px; }
     .energy-heat { width: 66.666%; background: var(--orange); }
@@ -216,15 +223,19 @@
       .guide-title { font-size: 20px; }
       .guide-actions { padding: 12px 16px 16px; }
       .nav-button { min-width: 0; flex: 1; }
-      .phase-button strong { font-size: 12px; }
-      .phase-button span { font-size: 11px; }
+      .process-nav { grid-template-columns: 1fr auto; gap: 5px 8px; padding: 6px 8px; }
+      .process-nav-label { grid-column: 1; grid-row: 1; align-self: center; }
+      .process-nav-state { grid-column: 2; grid-row: 1; min-width: 0; }
       .phase-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .phase-button { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-      .phase-button:nth-child(2n) { border-right: 0; }
-      .phase-button:nth-child(n+3) { border-bottom: 0; }
-      .phase-heading { padding: 8px 12px; }
+      .phase-strip { grid-column: 1 / -1; grid-row: 2; }
+      .phase-button::after { content: none; }
+      .phase-button { padding-left: 5px; padding-right: 5px; }
+      .process-nav.is-free .view-mode-label { display: none; }
       .visual-heading { padding: 14px 12px 7px; }
+      .stage-badge { display: none; }
       .scene-wrap { padding: 0 4px 8px; }
+      .scene-label { font-size: 16px; }
+      .scene-value { font-size: 17px; }
       .direction-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 12px 12px; }
       .direction-strip.focus-velocity { grid-template-columns: 1fr; }
       .vector-convention { margin-left: 12px; margin-right: 12px; }
@@ -295,12 +306,18 @@
       </aside>
 
       <section class="visual-panel" aria-label="二维导轨与联动图表" data-primary-visual="scene">
-        <div class="phase-heading"><strong>自由查看运动阶段</strong><span class="view-mode-label" id="view-mode-label">当前：引导主视觉</span></div>
-        <div class="phase-strip" role="group" aria-label="四个运动阶段，可自由切换">
-          <button class="phase-button" type="button" data-stage="A" aria-pressed="true"><strong>A · 变力右移</strong><span>x：0 → 3 m</span></button>
-          <button class="phase-button" type="button" data-stage="B" aria-pressed="false"><strong>B · 撤力变场</strong><span>x：3 → 6 m</span></button>
-          <button class="phase-button" type="button" data-stage="C" aria-pressed="false"><strong>C · 恒力往返</strong><span>先右后左</span></button>
-          <button class="phase-button" type="button" data-stage="D" aria-pressed="false"><strong>D · 撤力左行</strong><span>x：6 → 0</span></button>
+        <div class="process-nav" id="process-nav">
+          <strong class="process-nav-label">全过程</strong>
+          <div class="phase-strip" role="group" aria-label="全过程四个阶段，可自由查看">
+            <button class="phase-button" type="button" data-stage="A" aria-pressed="false"><span class="phase-code">A</span><span class="phase-name">变力右移</span><small>0 → 3 m</small></button>
+            <button class="phase-button" type="button" data-stage="B" aria-pressed="false"><span class="phase-code">B</span><span class="phase-name">撤力变场</span><small>3 → 6 m</small></button>
+            <button class="phase-button" type="button" data-stage="C" aria-pressed="false"><span class="phase-code">C</span><span class="phase-name">恒力往返</span><small>先右后左</small></button>
+            <button class="phase-button" type="button" data-stage="D" aria-pressed="false"><span class="phase-code">D</span><span class="phase-name">撤力左行</span><small>6 → 0</small></button>
+          </div>
+          <div class="process-nav-state">
+            <span class="view-mode-label" id="view-mode-label">可随时查看</span>
+            <button class="return-guide-button" id="return-guide" type="button" hidden>↩ 返回当前引导</button>
+          </div>
         </div>
         <div class="scene-view" id="scene-view">
         <div class="visual-heading">
@@ -312,10 +329,10 @@
             <title id="scene-svg-title">平行导轨、左端电阻与移动金属棒的俯视图</title>
             <desc id="scene-svg-desc">磁场约定垂直纸面向里。金属棒的位置、速度、外力、电流与安培力会随阶段和控制值更新。</desc>
             <defs>
-              <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#059669"/></marker>
-              <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
-              <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker>
-              <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#dc2626"/></marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#059669"/></marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker>
+              <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker>
+              <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#dc2626"/></marker>
             </defs>
             <rect class="scene-surface" x="2" y="2" width="416" height="246" rx="12"/>
             <rect class="magnetic-region" x="76" y="62" width="318" height="118" rx="4"/>
@@ -326,19 +343,17 @@
             <text class="scene-value" x="10" y="126">R</text><text class="scene-label" x="8" y="142">0.02 Ω</text>
             <line class="axis" x1="76" y1="216" x2="392" y2="216"/><path d="M392 216l-8-5v10z" fill="#94a3b8"/>
             <g><line class="axis-tick" x1="76" y1="210" x2="76" y2="222"/><text class="scene-label" x="70" y="239">0</text></g>
-            <g><line class="axis-tick" x1="209" y1="210" x2="209" y2="222"/><text class="scene-label" x="195" y="239">3 m</text></g>
-            <g><line class="axis-tick" x1="342" y1="210" x2="342" y2="222"/><text class="scene-label" x="327" y="239">6 m</text></g>
+            <g><line class="axis-tick" x1="201" y1="210" x2="201" y2="222"/><text class="scene-label" x="187" y="239">3 m</text></g>
+            <g><line class="axis-tick" x1="326" y1="210" x2="326" y2="222"/><text class="scene-label" x="311" y="239">6 m</text></g>
             <text class="scene-label" x="398" y="221">x</text><text class="scene-label" x="47" y="56">M</text><text class="scene-label" x="47" y="195">P</text>
             <g id="rod-group">
-              <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="5"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="5"/>
+              <line class="rod" id="rod" x1="76" y1="72" x2="76" y2="174"/><circle class="rod-end" id="rod-c" cx="76" cy="72" r="3.25"/><circle class="rod-end" id="rod-d" cx="76" cy="174" r="3.25"/>
               <text class="scene-value" id="rod-c-label" x="82" y="67">c</text><text class="scene-value" id="rod-d-label" x="82" y="191">d</text>
             </g>
             <g id="velocity-group"><line class="vector velocity-vector" id="velocity-arrow" marker-end="url(#arrow-green)"/></g>
             <g id="external-group"><line class="vector external-vector" id="external-arrow" marker-end="url(#arrow-blue)"/></g>
             <g id="magnetic-group"><line class="vector magnetic-vector" id="magnetic-arrow" marker-end="url(#arrow-orange)"/></g>
             <g id="current-group"><line class="vector current-vector" id="current-arrow" marker-end="url(#arrow-red)"/></g>
-            <text class="scene-value" id="field-label" x="92" y="52">B = 0.20 T，方向 ×</text>
-            <text class="scene-label" id="position-label" x="250" y="202">棒的位置 x = 0.00 m</text>
           </svg>
         </div>
         <div class="direction-strip" id="direction-strip" role="list" aria-label="当前速度、外力、安培力和传统电流方向">
@@ -443,7 +458,9 @@
     const sceneView = document.getElementById('scene-view');
     const chartView = document.getElementById('chart-view');
     const playbackControls = document.getElementById('playback-controls');
+    const processNav = document.getElementById('process-nav');
     const viewModeLabel = document.getElementById('view-mode-label');
+    const returnGuideButton = document.getElementById('return-guide');
     const eventScale = document.getElementById('event-scale');
     const interactionStatus = document.getElementById('interaction-status');
 
@@ -609,9 +626,9 @@
     }
 
     function renderPhaseStrip() {
-      const stage = state.questions[state.activeQuestion].stage;
+      const q = state.questions[state.activeQuestion];
       phaseButtons.forEach((button) => {
-        const active = button.dataset.stage === stage;
+        const active = q.view === 'scene' && button.dataset.stage === q.stage;
         button.setAttribute('aria-pressed', String(active));
         if (active) button.setAttribute('aria-current', 'step'); else button.removeAttribute('aria-current');
       });
@@ -678,18 +695,12 @@
       stageBadge.textContent = meta.badge;
       stageBadge.style.color = meta.color;
       stageBadge.style.background = `${meta.color}18`;
-      const positionX = 76 + Math.min(7.15, Math.max(0, physics.x)) / 6 * 266;
+      const positionX = 76 + Math.min(7.55, Math.max(0, physics.x)) / 6 * 250;
       [rod, rodC, rodD].forEach((element) => { element.setAttribute(element.tagName === 'line' ? 'x1' : 'cx', positionX); });
       rod.setAttribute('x2', positionX);
       rodCLabel.setAttribute('x', positionX + 7); rodDLabel.setAttribute('x', positionX + 7);
       fieldArea.setAttribute('width', Math.max(1, positionX - 76));
       renderFieldMarks(physics.B);
-      const fieldLabel = document.getElementById('field-label');
-      fieldLabel.setAttribute('x', positionX < 150 ? 200 : 92);
-      fieldLabel.textContent = `B = ${physics.B.toFixed(3)} T，方向 ×`;
-      document.getElementById('position-label').textContent = stage === 'C'
-        ? (cEndpoint ? '棒位于 x₀=6 m（题设端点）' : '转向事件：位置不读取')
-        : `棒的位置 x = ${physics.x.toFixed(2)} m`;
       renderVectors(positionX, physics);
       renderMetrics(physics);
       document.getElementById('scene-status').textContent = sceneStatus(physics);
@@ -719,14 +730,14 @@
 
     function renderVectors(positionX, physics) {
       const motion = physics.direction;
-      const vectorLength = 42;
-      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 42, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
+      const vectorLength = 34;
+      placeHorizontalVector('velocity-group', 'velocity-arrow', positionX, 43, motion, physics.speed > .02 ? vectorLength : 0, 'arrow-green');
       const externalDirection = physics.stage === 'A' ? 'right' : (physics.stage === 'C' ? 'left' : 'none');
-      const externalOrigin = positionX + (externalDirection === 'right' ? 18 : (externalDirection === 'left' ? -18 : 0));
-      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 104, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
+      const externalOrigin = positionX + (externalDirection === 'right' ? 22 : (externalDirection === 'left' ? -22 : 0));
+      placeHorizontalVector('external-group', 'external-arrow', externalOrigin, 100, externalDirection, physics.externalForce > .01 ? vectorLength : 0, 'arrow-blue');
       const magneticDirection = physics.magneticForce < .01 ? 'none' : (motion === 'right' ? 'left' : (motion === 'left' ? 'right' : 'none'));
-      const magneticOrigin = positionX + (magneticDirection === 'right' ? 18 : 0);
-      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 142, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
+      const magneticOrigin = positionX + (magneticDirection === 'left' ? 52 : -52);
+      placeHorizontalVector('magnetic-group', 'magnetic-arrow', magneticOrigin, 148, magneticDirection, physics.magneticForce > .01 ? vectorLength : 0, 'arrow-orange');
       const currentGroup = document.getElementById('current-group');
       if (physics.current < .01 || motion === 'none' || physics.stage === 'B') {
         currentGroup.setAttribute('display', 'none'); currentGroup.dataset.direction = 'none';
@@ -735,7 +746,7 @@
         const upward = motion === 'right';
         currentGroup.dataset.direction = upward ? 'up' : 'down';
         const arrow = document.getElementById('current-arrow');
-        arrow.setAttribute('x1', positionX + 10); arrow.setAttribute('x2', positionX + 10); arrow.setAttribute('y1', upward ? 144 : 102); arrow.setAttribute('y2', upward ? 102 : 144);
+        arrow.setAttribute('x1', positionX + 11); arrow.setAttribute('x2', positionX + 11); arrow.setAttribute('y1', upward ? 137 : 109); arrow.setAttribute('y2', upward ? 109 : 137);
       }
       renderDirectionStrip(motion, externalDirection, magneticDirection, physics);
     }
@@ -766,8 +777,8 @@
     }
 
     function renderDirectionStrip(motion, externalDirection, magneticDirection, physics) {
-      setDirectionItem('motion', motion === 'right' ? '→' : (motion === 'left' ? '←' : '·'), motion === 'right' ? '向右' : (motion === 'left' ? '向左' : '瞬时静止'), motion === 'none');
-      setDirectionItem('external', externalDirection === 'right' ? '→' : (externalDirection === 'left' ? '←' : '·'), externalDirection === 'right' ? '向右' : (externalDirection === 'left' ? '向左' : '无外力'), externalDirection === 'none');
+      setDirectionItem('motion', motion === 'right' ? '→' : (motion === 'left' ? '←' : '—'), motion === 'right' ? '向右' : (motion === 'left' ? '向左' : '瞬时静止'), motion === 'none');
+      setDirectionItem('external', externalDirection === 'right' ? '→' : (externalDirection === 'left' ? '←' : '—'), externalDirection === 'right' ? '向右' : (externalDirection === 'left' ? '向左' : '无外力'), externalDirection === 'none');
       setDirectionItem('magnetic', magneticDirection === 'right' ? '→' : (magneticDirection === 'left' ? '←' : '0'), magneticDirection === 'right' ? '向右' : (magneticDirection === 'left' ? '向左' : '为 0'), magneticDirection === 'none');
       const currentUp = physics.current >= .01 && motion === 'right' && physics.stage !== 'B';
       const currentDown = physics.current >= .01 && motion === 'left' && physics.stage !== 'B';
@@ -801,13 +812,13 @@
     }
 
     function sceneStatus(physics) {
-      if (physics.stage === 'A') return '磁场方向约定为 ×；棒右行，传统电流 d→c，安培力向左。';
-      if (physics.stage === 'B') return `E动=${physics.emf.toFixed(3)} V 与 E感=${physics.inducedEmf.toFixed(3)} V 抵消；I=0，安培力为零。`;
+      if (physics.stage === 'A') return `B=${physics.B.toFixed(3)} T，方向 ×；棒位于 x=${physics.x.toFixed(2)} m，向右运动。`;
+      if (physics.stage === 'B') return `B=${physics.B.toFixed(3)} T，x=${physics.x.toFixed(2)} m；E动与 E感抵消，I=0。`;
       if (physics.stage === 'C') {
-        if (physics.direction === 'none') return '转向瞬间：v、动生电动势、电流和安培力均为零，左向恒力仍为 5 N。';
-        return physics.direction === 'right' ? '棒仍向右，左向恒力与安培力共同减速；按题设条件示意。' : '棒已向左，安培力改为向右；继续返回 x₀。';
+        if (physics.direction === 'none') return `B=${physics.B.toFixed(3)} T；转向瞬间各电磁量为零，左向恒力仍为 5 N。`;
+        return physics.direction === 'right' ? `B=${physics.B.toFixed(3)} T；棒由 x₀ 继续向右，按题设条件示意。` : `B=${physics.B.toFixed(3)} T；棒向左返回 x₀，安培力改为向右。`;
       }
-      return physics.x < .01 ? 'x→0 时，速度、电动势、电流和安培力均渐近于零。' : '棒向左运动，传统电流 c→d，安培力向右并逐渐减小。';
+      return physics.x < .01 ? 'B=0.100 T；x→0 时，速度和各电磁量均渐近于零。' : `B=0.100 T，x=${physics.x.toFixed(2)} m；棒向左，安培力向右。`;
     }
 
     function renderChart(physics) {
@@ -881,7 +892,7 @@
     }
 
     function lineChartMarkup({ kind, markerX, emphasizeMidpoint = false }) {
-      const W = 420, H = 230, left = 44, right = 398, top = 20, bottom = 190;
+      const W = 420, H = 230, left = 44, right = 398, top = 52, bottom = 190;
       let maxY = 15, label = '', formula = '', color = '#2563eb', valueFn;
       if (kind === 'velocity') { maxY = 4.5; label = 'v / (m·s⁻¹)'; formula = 'v=1+x'; color = '#059669'; valueFn = x => 1 + x; }
       else if (kind === 'heat') { maxY = 16; label = 'Q / J'; formula = 'Q=2x+x²'; color = '#d97706'; valueFn = x => 2 * x + x * x; }
@@ -889,46 +900,50 @@
       const sx = x => left + x / 3 * (right - left); const sy = y => bottom - y / maxY * (bottom - top);
       const path = Array.from({ length: 61 }, (_, i) => { const x = i / 20; return `${i ? 'L' : 'M'}${sx(x).toFixed(1)},${sy(valueFn(x)).toFixed(1)}`; }).join(' ');
       const mx = Math.max(0, Math.min(3, markerX)); const my = valueFn(mx);
+      const valueSymbol = kind === 'force' ? 'F' : kind === 'heat' ? 'Q' : 'v';
       const midpointGuide = emphasizeMidpoint ? `<line class="chart-grid" x1="${sx(1.5)}" y1="${top}" x2="${sx(1.5)}" y2="${bottom}"/><text class="chart-label" x="${sx(1.5)-10}" y="208">1.5</text>` : '';
-      return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${formula}曲线，当前x为${mx.toFixed(2)}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/>${midpointGuide}<text class="chart-label" x="8" y="18">${label}</text><text class="chart-label" x="${left-4}" y="208">0</text><text class="chart-label" x="${right-5}" y="208">3 m</text><path d="${path}" fill="none" stroke="${color}" stroke-width="4"/><text class="chart-direct-label" x="250" y="38">${formula}</text><circle class="chart-marker" cx="${sx(mx)}" cy="${sy(my)}" r="6"/><text class="chart-direct-label" x="${Math.min(318,sx(mx)+9)}" y="${Math.max(18,sy(my)-8)}">x=${mx.toFixed(2)}，${kind === 'force' ? 'F' : kind === 'heat' ? 'Q' : 'v'}=${my.toFixed(2)}</text></svg>`;
+      return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${formula}曲线，当前x为${mx.toFixed(2)}"><text class="chart-direct-label" x="44" y="22">${formula}</text><text class="chart-direct-label" x="398" y="22" text-anchor="end">当前：x=${mx.toFixed(2)}，${valueSymbol}=${my.toFixed(2)}</text><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/>${midpointGuide}<text class="chart-label" x="8" y="50">${label}</text><text class="chart-label" x="${left-4}" y="208">0</text><text class="chart-label" x="${right-5}" y="208">3 m</text><path class="chart-series" d="${path}" stroke="${color}"/><circle class="chart-marker" cx="${sx(mx)}" cy="${sy(my)}" r="5" stroke="${color}"/></svg>`;
     }
 
     function cancellationMarkup(emf) {
       const length = 130 * Math.min(1, emf / .8);
-      return `<svg class="chart-svg" viewBox="0 0 420 180" role="img" aria-label="动生电动势与感生电动势大小相等方向相反，总电动势为零"><line x1="210" y1="70" x2="${210+length}" y2="70" stroke="#7c3aed" stroke-width="12" stroke-linecap="round"/><path d="M${210+length} 70l-12-8v16z" fill="#7c3aed"/><text class="chart-direct-label" x="220" y="48">E动 = +${emf.toFixed(3)} V</text><line x1="210" y1="110" x2="${210-length}" y2="110" stroke="#0891b2" stroke-width="12" stroke-linecap="round" stroke-dasharray="8 5"/><path d="M${210-length} 110l12-8v16z" fill="#0891b2"/><text class="chart-direct-label" x="55" y="140">E感 = −${emf.toFixed(3)} V</text><circle cx="210" cy="90" r="25" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text class="chart-direct-label" x="194" y="87">E总</text><text class="chart-direct-label" x="200" y="103">= 0</text></svg>`;
+      return `<svg class="chart-svg" viewBox="0 0 420 190" role="img" aria-label="动生电动势与感生电动势大小相等方向相反，总电动势为零"><defs><marker id="cancel-purple" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#7c3aed"/></marker><marker id="cancel-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#0891b2"/></marker></defs><text class="chart-direct-label" x="44" y="28">动生电动势</text><text class="chart-direct-label" x="376" y="28" text-anchor="end">+${emf.toFixed(3)} V</text><line class="chart-series" x1="210" y1="52" x2="${210+length}" y2="52" stroke="#7c3aed" marker-end="url(#cancel-purple)"/><text class="chart-direct-label" x="44" y="92">感生电动势</text><text class="chart-direct-label" x="376" y="92" text-anchor="end">−${emf.toFixed(3)} V</text><line class="chart-series" x1="210" y1="116" x2="${210-length}" y2="116" stroke="#0891b2" stroke-dasharray="7 5" marker-end="url(#cancel-cyan)"/><line class="chart-axis" x1="44" y1="146" x2="376" y2="146"/><text class="chart-direct-label" x="210" y="174" text-anchor="middle">E总 = E动 + E感 = 0</text></svg>`;
     }
 
     function fluxChartMarkup(markerT) {
-      const left=44,right=397,top=22,mid=100,bottom=190,sx=t=>left+t/.75*(right-left),syB=b=>mid-(b-.1)/.1*65;
+      const left=44,right=397,top=22,mid=102,bottom=210,sx=t=>left+t/.75*(right-left),syB=b=>mid-(b-.1)/.1*65;
       const pathB=Array.from({length:61},(_,i)=>{const t=.75*i/60,b=.6/(3+4*t);return `${i?'L':'M'}${sx(t).toFixed(1)},${syB(b).toFixed(1)}`;}).join(' ');
       const t=Math.max(0,Math.min(.75,markerT)),b=.6/(3+4*t);
-      return `<svg class="chart-svg" viewBox="0 0 420 230" role="img" aria-label="磁场随时间按0.6除以3加4t非线性减小，磁通量恒为0.6韦伯"><line class="chart-axis" x1="${left}" y1="${mid}" x2="${right}" y2="${mid}"/><line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${mid}"/><path d="${pathB}" fill="none" stroke="#7c3aed" stroke-width="4"/><text class="chart-direct-label" x="245" y="35">B(t)=0.6/(3+4t)</text><circle cx="${sx(t)}" cy="${syB(b)}" r="6" fill="#fff" stroke="#7c3aed" stroke-width="3"/><text class="chart-label" x="5" y="32">B / T</text><text class="chart-label" x="${left-10}" y="116">0</text><text class="chart-label" x="${right-22}" y="116">0.75 s</text><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line x1="${left}" y1="150" x2="${right}" y2="150" stroke="#059669" stroke-width="4" stroke-dasharray="9 5"/><circle cx="${sx(t)}" cy="150" r="6" fill="#fff" stroke="#059669" stroke-width="3"/><text class="chart-direct-label" x="248" y="143">Φ = 0.60 Wb（恒定）</text><text class="chart-label" x="4" y="154">Φ</text></svg>`;
+      return `<svg class="chart-svg" viewBox="0 0 420 240" role="img" aria-label="磁场随时间按0.6除以3加4t非线性减小，磁通量恒为0.6韦伯"><line class="chart-axis" x1="${left}" y1="${mid}" x2="${right}" y2="${mid}"/><line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${mid}"/><path class="chart-series" d="${pathB}" stroke="#7c3aed"/><text class="chart-direct-label" x="245" y="32">B(t)=0.6/(3+4t)</text><circle class="chart-marker" cx="${sx(t)}" cy="${syB(b)}" r="5" stroke="#7c3aed"/><text class="chart-label" x="5" y="32">B / T</text><text class="chart-label" x="${left-10}" y="126">0</text><text class="chart-label" x="${right-26}" y="126">0.75 s</text><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-series" x1="${left}" y1="166" x2="${right}" y2="166" stroke="#059669" stroke-dasharray="8 5"/><circle class="chart-marker" cx="${sx(t)}" cy="166" r="5" stroke="#059669"/><text class="chart-direct-label" x="248" y="156">Φ = 0.60 Wb（恒定）</text><text class="chart-label" x="4" y="170">Φ</text></svg>`;
     }
 
     function impulseMarkup() {
-      return `<svg class="chart-svg" viewBox="0 0 420 220" role="img" aria-label="完整往返过程的冲量账本：初动量正4，恒力冲量负7，磁力总冲量为零，末动量负3"><defs><marker id="impulse-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker></defs><line class="chart-axis" x1="55" y1="110" x2="375" y2="110"/><text class="chart-label" x="48" y="132">−4</text><text class="chart-label" x="209" y="132">0</text><text class="chart-label" x="365" y="132">+4</text><circle cx="370" cy="110" r="8" fill="#fff" stroke="#2563eb" stroke-width="4"/><text class="chart-direct-label" x="322" y="86">p初=+4</text><line x1="360" y1="110" x2="95" y2="110" stroke="#d97706" stroke-width="5" marker-end="url(#impulse-arrow)"/><text class="chart-direct-label" x="182" y="88">JT=−7 N·s</text><circle cx="95" cy="110" r="8" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="62" y="158">p末=−3</text><path d="M132 170C180 198 267 198 315 170" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="8 5"/><text class="chart-direct-label" x="112" y="210">JB=−(B²L²/R)·Δx=0（返回同一点）</text><text class="chart-label" x="110" y="28">只比较整段起点与终点，不表示中间 p-t 轨迹</text></svg>`;
+      return `<svg class="chart-svg" viewBox="0 0 420 230" role="img" aria-label="完整往返过程的冲量账本：初动量正4，恒力冲量负7，磁力总冲量为零，末动量负3"><defs><marker id="impulse-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#d97706"/></marker></defs><text class="chart-label" x="210" y="24" text-anchor="middle">只比较整段起点与终点，不表示中间 p-t 轨迹</text><text class="chart-direct-label" x="210" y="58" text-anchor="middle">恒力冲量 JT = −7 N·s</text><line class="chart-guide" x1="370" y1="78" x2="370" y2="108"/><line class="chart-guide" x1="95" y1="78" x2="95" y2="108"/><line class="chart-series" x1="360" y1="78" x2="105" y2="78" stroke="#d97706" marker-end="url(#impulse-arrow)"/><line class="chart-axis" x1="55" y1="118" x2="375" y2="118"/><text class="chart-label" x="48" y="140">−4</text><text class="chart-label" x="209" y="140">0</text><text class="chart-label" x="365" y="140">+4</text><circle class="chart-marker" cx="370" cy="118" r="6" stroke="#2563eb"/><circle class="chart-marker" cx="95" cy="118" r="6" stroke="#059669"/><text class="chart-direct-label" x="310" y="166">p初 = +4</text><text class="chart-direct-label" x="62" y="166">p末 = −3</text><line class="chart-series" x1="95" y1="194" x2="370" y2="194" stroke="#7c3aed" stroke-dasharray="7 5"/><text class="chart-direct-label" x="210" y="220" text-anchor="middle">磁力总冲量 JB = 0（返回同一点）</text></svg>`;
     }
 
     function dStageMarkup(physics) {
-      const left=44,right=397,top=24,bottom=190,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.32*(bottom-top);
+      const left=44,right=397,top=52,bottom=190,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.32*(bottom-top);
       const path=Array.from({length:31},(_,i)=>{const x=6*i/30,e=.05*x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
-      return `<svg class="chart-svg" viewBox="0 0 420 225" role="img" aria-label="最终左行阶段动生电动势随位置按0.05x变化，当前位置${physics.x.toFixed(2)}米"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="22">E / V</text><text class="chart-label" x="322" y="220">x / m</text><path d="${path}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 3"/><text class="chart-direct-label" x="236" y="58">D：E=0.05x</text><circle cx="${sx(physics.x)}" cy="${sy(physics.emf)}" r="7" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="${Math.min(290,sx(physics.x)+10)}" y="${Math.max(22,sy(physics.emf)-9)}">x=${physics.x.toFixed(2)}，E=${physics.emf.toFixed(3)} V</text><text class="chart-label" x="${left-4}" y="209">0</text><text class="chart-label" x="${right-8}" y="209">6</text></svg>`;
+      return `<svg class="chart-svg" viewBox="0 0 420 225" role="img" aria-label="最终左行阶段动生电动势随位置按0.05x变化，当前位置${physics.x.toFixed(2)}米"><text class="chart-direct-label" x="44" y="22">D：E=0.05x</text><text class="chart-direct-label" x="398" y="22" text-anchor="end">当前：x=${physics.x.toFixed(2)}，E=${physics.emf.toFixed(3)} V</text><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="50">E / V</text><text class="chart-label" x="322" y="220">x / m</text><path class="chart-series" d="${path}" stroke="#059669" stroke-dasharray="5 4"/><circle class="chart-marker" cx="${sx(physics.x)}" cy="${sy(physics.emf)}" r="5" stroke="#059669"/><text class="chart-label" x="${left-4}" y="209">0</text><text class="chart-label" x="${right-8}" y="209">6</text></svg>`;
     }
 
     function emfBranchesMarkup(physics, mode) {
-      const left=44,right=397,top=20,bottom=205,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.9*(bottom-top);
       if (mode === 'comparison') {
-        return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="同在x等于6米，阶段B动生电动势为0.4伏，阶段D为0.3伏"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="3"/><circle cx="${sx(6)}" cy="${sy(.4)}" r="8" fill="#fff" stroke="#7c3aed" stroke-width="4"/><circle cx="${sx(6)}" cy="${sy(.3)}" r="8" fill="#fff" stroke="#059669" stroke-width="4"/><text class="chart-direct-label" x="220" y="${sy(.4)-10}">B 右行：0.400 V</text><text class="chart-direct-label" x="220" y="${sy(.3)+25}">D 左行：0.300 V</text><text class="chart-label" x="390" y="222">6</text><text class="chart-direct-label" x="78" y="55">同一 x，B 或 v 不同 → E 不同</text></svg>`;
+        const valueX = e => 150 + e / .45 * 205;
+        return `<svg class="chart-svg" viewBox="0 0 420 190" role="img" aria-label="同在x等于6米，阶段B动生电动势为0.4伏，阶段D为0.3伏"><text class="chart-direct-label" x="210" y="24" text-anchor="middle">同一位置 x=6 m</text><text class="chart-direct-label" x="20" y="70">阶段 B 右行</text><line class="chart-series" x1="150" y1="66" x2="${valueX(.4)}" y2="66" stroke="#7c3aed"/><circle class="chart-marker" cx="${valueX(.4)}" cy="66" r="5" stroke="#7c3aed"/><text class="chart-direct-label" x="${valueX(.4)+10}" y="70">0.400 V</text><text class="chart-direct-label" x="20" y="116">阶段 D 左行</text><line class="chart-series" x1="150" y1="112" x2="${valueX(.3)}" y2="112" stroke="#059669" stroke-dasharray="6 4"/><circle class="chart-marker" cx="${valueX(.3)}" cy="112" r="5" stroke="#059669"/><text class="chart-direct-label" x="${valueX(.3)+10}" y="116">0.300 V</text><line class="chart-axis" x1="150" y1="150" x2="355" y2="150"/><text class="chart-label" x="145" y="172">0</text><text class="chart-label" x="330" y="172">0.45 V</text></svg>`;
       }
+      const showD = mode === 'all';
+      const left=44,right=showD?325:397,top=68,bottom=230,sx=x=>left+x/6*(right-left),sy=e=>bottom-e/.9*(bottom-top);
       const a=Array.from({length:31},(_,i)=>{const x=3*i/30,e=.2*(1+x);return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
       const b=Array.from({length:31},(_,i)=>{const x=3+3*i/30,e=2.4/x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
       const d=Array.from({length:31},(_,i)=>{const x=6-6*i/30,e=.05*x;return `${i?'L':'M'}${sx(x).toFixed(1)},${sy(e).toFixed(1)}`;}).join(' ');
-      const showD = mode === 'all';
       const markerAllowed = physics.stage === 'A' || physics.stage === 'B' || (showD && physics.stage === 'D');
       const markerX = Math.max(0, Math.min(6, physics.x));
-      const marker = markerAllowed ? `<circle cx="${sx(markerX)}" cy="${sy(Math.min(.9, physics.emf))}" r="6" fill="#fff" stroke="${STAGE_META[physics.stage].color}" stroke-width="3"/>` : '';
-      const dBranch = showD ? `<path d="${d}" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="2 4"/><text class="chart-direct-label" x="150" y="166">D 左行：E=0.05x</text><line x1="${sx(6)}" y1="${sy(.4)}" x2="${sx(6)}" y2="${sy(.3)}" stroke="#dc2626" stroke-width="2"/><text class="chart-label" x="273" y="108">x=6：0.4 V / 0.3 V</text>` : '';
-      return `<svg class="chart-svg" viewBox="0 0 420 250" role="img" aria-label="${showD ? '动生电动势与位置的三条分阶段关系：首次右行、变场右行和最终左行' : '首次右行和变场右行的两条动生电动势位置关系'}"><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="20">E / V</text><text class="chart-label" x="330" y="240">x / m</text><path d="${a}" fill="none" stroke="#2563eb" stroke-width="${showD ? 3 : 4}" opacity="${showD ? .68 : 1}"/><path d="${b}" fill="none" stroke="#7c3aed" stroke-width="${showD ? 3 : 4}" stroke-dasharray="9 5" opacity="${showD ? .68 : 1}"/><text class="chart-direct-label" x="66" y="78" opacity="${showD ? .82 : 1}">A 右行：0.2(1+x) →</text><text class="chart-direct-label" x="235" y="38" opacity="${showD ? .82 : 1}">B 右行：2.4/x →</text>${dBranch}${marker}</svg>`;
+      const marker = markerAllowed ? `<circle class="chart-marker" cx="${sx(markerX)}" cy="${sy(Math.min(.9, physics.emf))}" r="5" stroke="${STAGE_META[physics.stage].color}"/>` : '';
+      const dLegend = showD ? `<line class="chart-legend-swatch" x1="44" y1="48" x2="64" y2="48" stroke="#059669" stroke-dasharray="5 4"/><text class="chart-direct-label" x="71" y="52">D：0.05x</text>` : '';
+      const comparison = showD ? `<line class="chart-guide" x1="333" y1="${sy(.4)}" x2="333" y2="${sy(.3)}"/><line class="chart-guide" x1="325" y1="${sy(.4)}" x2="333" y2="${sy(.4)}"/><line class="chart-guide" x1="325" y1="${sy(.3)}" x2="333" y2="${sy(.3)}"/><text class="chart-direct-label" x="342" y="${sy(.4)-4}">B 0.4 V</text><text class="chart-direct-label" x="342" y="${sy(.3)+14}">D 0.3 V</text>` : '';
+      const dBranch = showD ? `<path class="chart-series" d="${d}" stroke="#059669" stroke-dasharray="5 4"/>` : '';
+      return `<svg class="chart-svg" viewBox="0 0 420 270" role="img" aria-label="${showD ? '动生电动势与位置的三条分阶段关系：首次右行、变场右行和最终左行' : '首次右行和变场右行的两条动生电动势位置关系'}"><line class="chart-legend-swatch" x1="44" y1="22" x2="64" y2="22" stroke="#2563eb"/><text class="chart-direct-label" x="71" y="26">A：0.2(1+x)</text><line class="chart-legend-swatch" x1="210" y1="22" x2="230" y2="22" stroke="#7c3aed" stroke-dasharray="6 4"/><text class="chart-direct-label" x="237" y="26">B：2.4/x</text>${dLegend}<line class="chart-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"/><line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}"/><text class="chart-label" x="7" y="72">E / V</text><text class="chart-label" x="330" y="262">x / m</text><path class="chart-series" d="${a}" stroke="#2563eb" opacity="${showD ? .72 : 1}"/><path class="chart-series" d="${b}" stroke="#7c3aed" stroke-dasharray="7 5" opacity="${showD ? .72 : 1}"/>${dBranch}${comparison}${marker}</svg>`;
     }
 
     function completionSummaryMarkup() {
@@ -967,9 +982,13 @@
       sceneView.hidden = !showScene;
       chartView.hidden = showScene;
       playbackControls.hidden = !(showScene || guideSlider);
-      viewModeLabel.textContent = showSummary
-        ? '当前：学习总结'
-        : (q.view === 'scene' ? '当前：自由场景' : '当前：引导主视觉');
+      const freeStage = q.view === 'scene';
+      processNav.classList.toggle('is-free', freeStage);
+      returnGuideButton.hidden = !freeStage;
+      returnGuideButton.setAttribute('aria-label', `返回第（${state.activeQuestion}）问第 ${q.step} 步引导`);
+      viewModeLabel.textContent = freeStage
+        ? `正在自由查看阶段 ${q.stage}`
+        : (showSummary ? '学习总结' : '可随时查看');
     }
 
     function pausePlayback() {
@@ -1015,6 +1034,10 @@
       });
     });
     phaseButtons.forEach((button) => button.addEventListener('click', () => setStage(button.dataset.stage)));
+    returnGuideButton.addEventListener('click', () => {
+      const q = state.questions[state.activeQuestion];
+      setStep(state.activeQuestion, q.step);
+    });
     qPanels.forEach((panel) => {
       panel.addEventListener('click', (event) => {
         const q = Number(panel.dataset.questionPanel);
