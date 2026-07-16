@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第21题：变磁场中的导体棒 &mdash; 参数关系可视化</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+body{font-family:'Noto Sans SC',sans-serif;overflow-x:hidden;background:#f7f9fc;}
+.canvas-container{width:100%;height:48vh;min-height:320px;position:relative;border-radius:12px;overflow:hidden;}
+#canvas{width:100%;height:100%;display:block;}
+.control-panel{background:rgba(255,255,255,0.94);backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+.scene-hud{position:absolute;left:12px;top:12px;display:grid;gap:6px;max-width:280px;pointer-events:none;z-index:2;}
+.hud-card{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 14px rgba(0,0,0,0.05);}
+.scene-bottom{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;z-index:2;}
+.view-btn{padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.08);color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.view-btn:hover{border-color:#3b82f6;color:#3b82f6;}
+.phase-btn{padding:6px 14px;border-radius:8px;background:#fff;border:1px solid #e5e7eb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.phase-btn:hover{border-color:#3b82f6;}
+.phase-btn.active{background:#2563eb;color:#fff;border-color:#2563eb;}
+.phase-btn[data-phase="B"].active{background:#7c3aed;border-color:#7c3aed;}
+.phase-btn[data-phase="D"].active{background:#059669;border-color:#059669;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:#e5e7eb;outline:none;flex:1;min-width:120px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#3b82f6;cursor:pointer;}
+.chart-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:12px;}
+.chart-title{font-size:13px;font-weight:700;color:#374151;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.chart-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.chart-canvas{width:100%;height:160px;}
+.formula{font-family:"Times New Roman",serif;font-style:italic;}
+</style>
+</head>
+<body class="text-gray-800">
+<div class="max-w-7xl mx-auto px-4 py-4">
+<!-- Header -->
+<div class="mb-4">
+<h1 class="text-2xl font-bold text-gray-900 mb-1">第21题：变磁场中的导体棒</h1>
+<p class="text-gray-500 text-sm">参数关系可视化 &mdash; 拖动金属棒或滑块，观察 v、B、E、&Phi; 随位置的联动变化</p>
+</div>
+
+<!-- 3D Scene -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
+<div class="canvas-container" id="canvasContainer">
+<canvas id="canvas"></canvas>
+<div class="scene-hud">
+<div class="hud-card">
+<div class="text-sm font-bold text-gray-800 mb-1" id="hudTitle">阶段 A：外力作用，另类匀加速</div>
+<div class="text-xs text-gray-500" id="hudSubtitle">x = 0.00 m &nbsp;|&nbsp; v = 1.00 m/s &nbsp;|&nbsp; E = 0.20 V</div>
+</div>
+<div class="hud-card">
+<div class="flex flex-wrap gap-2 text-xs">
+<span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2563eb"></span>阶段 A (0&rarr;3)</span>
+<span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7c3aed"></span>阶段 B (3&rarr;6)</span>
+<span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#059669"></span>阶段 D (6&rarr;0)</span>
+</div>
+</div>
+</div>
+<div class="scene-bottom">
+<div class="flex gap-1">
+<button class="phase-btn active" data-phase="A" id="btnA">A 正向 0&rarr;3</button>
+<button class="phase-btn" data-phase="B" id="btnB">B 正向 3&rarr;6</button>
+<button class="phase-btn" data-phase="D" id="btnD">D 反向 6&rarr;0</button>
+</div>
+<div class="control-panel rounded-lg p-2 flex gap-3 items-center">
+<span class="text-xs font-medium text-gray-600">x:</span>
+<input type="range" id="xSlider" min="0" max="3" step="0.01" value="0">
+<span class="text-xs font-bold text-blue-600 w-12" id="xValue">0.00</span>
+<button class="view-btn" id="btnPlay">&#9654; 播放</button>
+<button class="view-btn" id="btnReset">&#8634; 重置</button>
+</div>
+<div class="flex gap-1">
+<button class="view-btn" data-view="overview">全景</button>
+<button class="view-btn" data-view="top">俯视</button>
+<button class="view-btn" data-view="rail">沿轨</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Charts -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+<div class="chart-wrap">
+<div class="chart-title"><span class="chart-dot" style="background:#2563eb"></span>速度 v &mdash; 位置 x</div>
+<canvas id="chartV" class="chart-canvas"></canvas>
+<div class="text-xs text-gray-400 mt-1 text-center formula">A: v=1+x&nbsp;&nbsp;B: v=4&nbsp;&nbsp;D: v=0.5x</div>
+</div>
+<div class="chart-wrap">
+<div class="chart-title"><span class="chart-dot" style="background:#059669"></span>磁感应强度 B &mdash; 位置 x</div>
+<canvas id="chartB" class="chart-canvas"></canvas>
+<div class="text-xs text-gray-400 mt-1 text-center formula">A: 0.2&nbsp;&nbsp;B: 0.6/x&nbsp;&nbsp;D: 0.1</div>
+</div>
+<div class="chart-wrap">
+<div class="chart-title"><span class="chart-dot" style="background:#dc2626"></span>电动势 E &mdash; 位置 x</div>
+<canvas id="chartE" class="chart-canvas"></canvas>
+<div class="text-xs text-gray-400 mt-1 text-center formula">A: 0.2(1+x)&nbsp;&nbsp;B: 2.4/x&nbsp;&nbsp;D: 0.05x</div>
+</div>
+<div class="chart-wrap">
+<div class="chart-title"><span class="chart-dot" style="background:#7c3aed"></span>磁通量 &Phi; &mdash; 位置 x</div>
+<canvas id="chartPhi" class="chart-canvas"></canvas>
+<div class="text-xs text-gray-400 mt-1 text-center formula">A: 0.2x&nbsp;&nbsp;B: 0.6&nbsp;&nbsp;D: 0.1x</div>
+</div>
+</div>
+
+<!-- Explanation -->
+<div class="bg-white rounded-xl shadow p-5">
+<h2 class="text-lg font-bold text-gray-900 mb-3">&#128161; 图表说明</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
+<div>
+<strong class="text-blue-600">&#9679; 蓝色实线</strong> &mdash; 阶段 A (0 &rarr; 3 m)<br>
+外力作用，另类匀加速 <span class="formula">v = v&#8320; + kx</span>，B 恒定 0.2 T
+</div>
+<div>
+<strong class="text-purple-600">&#9679; 紫色实线</strong> &mdash; 阶段 B (3 &rarr; 6 m)<br>
+撤外力，磁场变化，<span class="formula">BLx&#8321; = B'Lx&#8320;</span> 保持磁通守恒
+</div>
+<div>
+<strong class="text-green-600">&#9473; 绿色虚线</strong> &mdash; 阶段 D (6 &rarr; 0 m)<br>
+向左运动，<span class="formula">E = 0.05x</span>，磁通量 <span class="formula">&Phi; = 0.1x</span>
+</div>
+</div>
+<div class="mt-4 p-3 bg-amber-50 rounded-lg text-amber-800 text-xs">
+&#128227; 提示：点击上方阶段按钮切换运动方向，拖动滑块或点击播放观察红点在各图表上的联动位置。红色竖线为当前位置参考线。
+</div>
+</div>
+
+<div class="text-center text-xs text-gray-400 py-4">拖拽 3D 场景旋转视角，滚轮缩放 &middot; Three.js 构建</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ===================== Constants =====================
+const PARAMS = {L:1, R:0.02, m:1, B0:0.2, B1:0.1, v0:1, k:1, x1:3, x0:6};
+const S = 2.2;
+const Ls = PARAMS.L * S;
+const BASE_Y = 1.5;
+const railLength = 14;
+
+// ===================== Scene =====================
+const container = document.getElementById('canvasContainer');
+const canvas = document.getElementById('canvas');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f4f8);
+scene.fog = new THREE.Fog(0xf0f4f8, 25, 80);
+
+const camera = new THREE.PerspectiveCamera(40, container.clientWidth/container.clientHeight, 0.1, 1000);
+camera.position.set(8, 7, 10);
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.target.set(6, BASE_Y, 0);
+controls.maxPolarAngle = Math.PI/2.05;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+dl.position.set(8, 18, 8); dl.castShadow = true;
+dl.shadow.mapSize.width = 1024; dl.shadow.mapSize.height = 1024;
+scene.add(dl);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.35));
+
+// Ground
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(50, 30), new THREE.MeshStandardMaterial({color:0xe8eef5, roughness:0.9}));
+ground.rotation.x = -Math.PI/2; ground.position.y = -0.5; ground.receiveShadow = true;
+scene.add(ground);
+scene.add(new THREE.GridHelper(50, 25, 0xc0ccd8, 0xd8e0e8));
+
+// Rails
+const railMat = new THREE.MeshStandardMaterial({color:0x4b5563, roughness:0.4, metalness:0.6});
+const railGeo = new THREE.CylinderGeometry(0.05, 0.05, railLength, 12);
+function addRail(z){const r=new THREE.Mesh(railGeo,railMat);r.position.set(railLength/2,BASE_Y,z);r.rotation.z=Math.PI/2;r.castShadow=true;scene.add(r);}
+addRail(Ls/2); addRail(-Ls/2);
+
+// Resistor
+const res = new THREE.Mesh(new THREE.BoxGeometry(0.35,0.5,0.7), new THREE.MeshStandardMaterial({color:0xd97706, roughness:0.3, metalness:0.4}));
+res.position.set(-0.6, BASE_Y+0.45, 0); res.castShadow = true; scene.add(res);
+
+// Rod
+const rodGeo = new THREE.CylinderGeometry(0.07, 0.07, Ls, 12);
+const rodMat = new THREE.MeshStandardMaterial({color:0x2563eb, roughness:0.3, metalness:0.6});
+const rod = new THREE.Mesh(rodGeo, rodMat);
+rod.geometry.translate(0, Ls/2, 0);
+scene.add(rod);
+const tipGeo = new THREE.SphereGeometry(0.09, 14, 14);
+const tipMat = new THREE.MeshStandardMaterial({color:0x2563eb, emissive:0x2563eb, emissiveIntensity:0.2});
+const tip1 = new THREE.Mesh(tipGeo, tipMat); scene.add(tip1);
+const tip2 = new THREE.Mesh(tipGeo, tipMat); scene.add(tip2);
+
+// Field region
+const fGrp = new THREE.Group(); scene.add(fGrp);
+const fBox = new THREE.Mesh(new THREE.BoxGeometry(13, 3.5, 3.5), new THREE.MeshStandardMaterial({color:0x93c5fd, transparent:true, opacity:0.07, side:THREE.DoubleSide}));
+fBox.position.set(6.5, BASE_Y+1.75, 0); fGrp.add(fBox);
+for(let x=0.5;x<=12;x+=1.5)for(let z=-1.2;z<=1.2;z+=1.2)
+fGrp.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(x,BASE_Y,z), 0.7, 0x10b981, 0.18, 0.1));
+
+// Markers
+function addLabel(text, pos, size=26, color='#1a1a2e'){
+const c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=512;c.height=128;
+ctx.font=`bold ${size}px 'Noto Sans SC',sans-serif`;ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText(text,256,64);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c)}));s.scale.set(3.5,0.85,1);s.position.copy(pos);scene.add(s);return s;
+}
+addLabel('R', new THREE.Vector3(-0.6,BASE_Y+1.1,0), 28, '#d97706');
+addLabel('M', new THREE.Vector3(-0.6,BASE_Y+0.7,Ls/2+0.25), 24);
+addLabel('N', new THREE.Vector3(railLength+0.3,BASE_Y+0.7,Ls/2+0.25), 24);
+addLabel('P', new THREE.Vector3(-0.6,BASE_Y+0.7,-Ls/2-0.25), 24);
+addLabel('Q', new THREE.Vector3(railLength+0.3,BASE_Y+0.7,-Ls/2-0.25), 24);
+addLabel('0', new THREE.Vector3(0,BASE_Y-0.5,0.7), 22, '#6b7280');
+addLabel('3', new THREE.Vector3(3*S,BASE_Y-0.5,0.7), 22, '#7c3aed');
+addLabel('6', new THREE.Vector3(6*S,BASE_Y-0.5,0.7), 22, '#059669');
+
+for(let i=0;i<=6;i++){
+const t=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.25,0.03),new THREE.MeshStandardMaterial({color:0x9ca3af}));
+t.position.set(i*S,BASE_Y-0.12,0.45);scene.add(t);
+}
+
+// Axis line
+scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-0.8,BASE_Y,0.45),new THREE.Vector3(14,BASE_Y,0.45)]), new THREE.LineBasicMaterial({color:0x9ca3af})));
+
+// Dashed lines at x=3 and x=6
+const dashMat = new THREE.LineDashedMaterial({color:0xc0ccd8, dashSize:0.15, gapSize:0.08});
+const dash3 = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(3*S,BASE_Y,-1.5),new THREE.Vector3(3*S,BASE_Y,1.5)]), dashMat);
+dash3.computeLineDistances(); scene.add(dash3);
+const dash6 = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(6*S,BASE_Y,-1.5),new THREE.Vector3(6*S,BASE_Y,1.5)]), dashMat);
+dash6.computeLineDistances(); scene.add(dash6);
+
+// ===================== State =====================
+let state = {phase:'A', x:0, playing:false};
+
+function getPhysics(){
+const {L,B0,B1,v0,k,x1}=PARAMS; let x=state.x,v=0,B=0,E=0,Phi=0;
+if(state.phase==='A'){x=Math.min(x,x1); v=v0+k*x; B=B0; E=B*L*v; Phi=B*L*x;}
+else if(state.phase==='B'){x=Math.min(Math.max(x,x1),6); v=v0+k*x1; B=B0*x1/x; E=B*L*v; Phi=B*L*x;}
+else{x=Math.max(Math.min(x,6),0); B=B1; v=0.5*x; E=B*L*v; Phi=B*L*x;}
+return {x,v,B,E,Phi};
+}
+
+function update3D(){
+const p=getPhysics();
+rod.position.set(p.x*S, BASE_Y, -Ls/2);
+tip1.position.set(p.x*S, BASE_Y, Ls/2);
+tip2.position.set(p.x*S, BASE_Y, -Ls/2);
+// Update field arrow lengths
+fGrp.children.forEach(c=>{if(c.isArrowHelper)c.setLength(0.7*(p.B/0.2),0.18,0.1);});
+const ti={A:'阶段 A：外力作用，另类匀加速',B:'阶段 B：撤力变场，磁通守恒',D:'阶段 D：撤力左行，E = 0.05x'};
+const su={A:`x = ${p.x.toFixed(2)} m | v = ${p.v.toFixed(2)} m/s | E = ${p.E.toFixed(2)} V`,
+          B:`x = ${p.x.toFixed(2)} m | v = ${p.v.toFixed(2)} m/s (匀速) | B = ${p.B.toFixed(3)} T`,
+          D:`x = ${p.x.toFixed(2)} m | v = ${p.v.toFixed(2)} m/s (左行) | E = ${p.E.toFixed(2)} V`};
+document.getElementById('hudTitle').textContent=ti[state.phase];
+document.getElementById('hudSubtitle').textContent=su[state.phase];
+}
+
+// ===================== Charts =====================
+function chartFn(phase, x){
+const {L,B0,B1,v0,k,x1}=PARAMS;
+if(phase==='A'){x=Math.min(x,x1); return {v:v0+k*x, B:B0, E:B0*L*(v0+k*x), Phi:B0*L*x};}
+if(phase==='B'){x=Math.min(Math.max(x,x1),6); const v=v0+k*x1, B=B0*x1/x; return {v,B, E:B*L*v, Phi:B*L*x};}
+{x=Math.max(Math.min(x,6),0); const B=B1, v=0.5*x; return {v,B, E:B*L*v, Phi:B*L*x};}
+}
+
+function drawChart(canvasId, getter, yMax, yUnit){
+const canvas=document.getElementById(canvasId);
+const rect=canvas.getBoundingClientRect();
+const dpr=Math.min(window.devicePixelRatio||1,2);
+canvas.width=rect.width*dpr; canvas.height=rect.height*dpr;
+const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+const w=rect.width, h=rect.height;
+const pad={t:8,r:12,b:28,l:48};
+const gw=w-pad.l-pad.r, gh=h-pad.t-pad.b;
+ctx.clearRect(0,0,w,h);
+
+// Grid
+ctx.strokeStyle='#f3f4f6'; ctx.lineWidth=1;
+for(let i=0;i<=6;i++){const x=pad.l+(i/6)*gw; ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();}
+for(let i=0;i<=4;i++){const y=pad.t+(i/4)*gh; ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();}
+
+// Axes
+ctx.strokeStyle='#374151'; ctx.lineWidth=1.5;
+ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();
+
+// X labels
+ctx.fillStyle='#6b7280'; ctx.font='11px "Noto Sans SC",sans-serif'; ctx.textAlign='center';
+for(let i=0;i<=6;i++)ctx.fillText(i,pad.l+(i/6)*gw,h-pad.b+16);
+ctx.fillText('x (m)', pad.l+gw/2, h-5);
+
+// Y labels
+ctx.textAlign='right';
+for(let i=0;i<=4;i++){const v=(yMax*(4-i)/4).toFixed(yMax<1?2:1); ctx.fillText(v,pad.l-6,pad.t+(i/4)*gh+4);}
+ctx.save(); ctx.translate(10,pad.t+gh/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center';
+ctx.fillText(yUnit,0,0); ctx.restore();
+
+// Helper to draw segment
+function seg(x0,x1,color,dash){
+ctx.strokeStyle=color; ctx.lineWidth=2.5; ctx.setLineDash(dash?[5,3]:[]);
+ctx.beginPath(); let first=true;
+for(let xi=x0;xi<=x1;xi+=0.02){
+const px=pad.l+(xi/6)*gw; const py=pad.t+gh-(getter(xi)/yMax)*gh;
+if(first){ctx.moveTo(px,py);first=false;}else ctx.lineTo(px,py);
+}
+ctx.stroke(); ctx.setLineDash([]);
+}
+
+// Draw all three segments
+seg(0,3,'#2563eb',false);
+seg(3,6,'#7c3aed',false);
+seg(0,6,'#059669',true);
+
+// Current point (based on active phase)
+const p=getPhysics();
+const cx=pad.l+(p.x/6)*gw;
+const cy=pad.t+gh-(getter(p.x)/yMax)*gh;
+ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+
+// Guide line
+ctx.strokeStyle='rgba(239,68,68,0.25)'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+ctx.beginPath();ctx.moveTo(cx,pad.t);ctx.lineTo(cx,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+}
+
+function redrawCharts(){
+const p=getPhysics();
+drawChart('chartV', x=>chartFn('A',x).v, 5, 'v (m/s)');
+drawChart('chartB', x=>chartFn('A',x).B, 0.25, 'B (T)');
+drawChart('chartE', x=>chartFn('A',x).E, 1.2, 'E (V)');
+drawChart('chartPhi', x=>chartFn('A',x).Phi, 0.7, '\u03A6 (Wb)');
+}
+
+// ===================== Animation =====================
+let lastTime=0;
+function animate(time){
+requestAnimationFrame(animate);
+const dt=(time-lastTime)*0.001; lastTime=time;
+if(state.playing){
+if(state.phase==='A'){state.x+=0.03; if(state.x>=3){state.x=3; state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E';}}
+else if(state.phase==='B'){state.x+=0.03; if(state.x>=6){state.x=6; state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E';}}
+else{state.x-=0.03; if(state.x<=0){state.x=0; state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E';}}
+document.getElementById('xSlider').value=state.x;
+document.getElementById('xValue').textContent=state.x.toFixed(2);
+}
+update3D(); redrawCharts(); controls.update(); renderer.render(scene,camera);
+}
+
+// ===================== Events =====================
+const xSlider=document.getElementById('xSlider'), xValue=document.getElementById('xValue');
+xSlider.addEventListener('input',e=>{state.x=parseFloat(e.target.value); xValue.textContent=state.x.toFixed(2); state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E';});
+
+function setPhase(p){
+state.phase=p; state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E';
+['A','B','D'].forEach(k=>document.getElementById('btn'+k).classList.toggle('active',k===p));
+if(p==='A'){state.x=0; xSlider.min=0; xSlider.max=3; xSlider.value=0;}
+else if(p==='B'){state.x=3; xSlider.min=3; xSlider.max=6; xSlider.value=3;}
+else{state.x=6; xSlider.min=0; xSlider.max=6; xSlider.value=6;}
+xValue.textContent=state.x.toFixed(2);
+}
+
+document.getElementById('btnA').addEventListener('click',()=>setPhase('A'));
+document.getElementById('btnB').addEventListener('click',()=>setPhase('B'));
+document.getElementById('btnD').addEventListener('click',()=>setPhase('D'));
+
+document.getElementById('btnPlay').addEventListener('click',()=>{state.playing=!state.playing; document.getElementById('btnPlay').textContent=state.playing?'\u23F8 \u6682\u505C':'\u25B6 \u64AD\u653E';});
+document.getElementById('btnReset').addEventListener('click',()=>{state.playing=false; document.getElementById('btnPlay').textContent='\u25B6 \u64AD\u653E'; setPhase(state.phase);});
+
+document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
+const v=btn.dataset.view;
+const pos={overview:new THREE.Vector3(8,7,10), top:new THREE.Vector3(6,14,0.1), rail:new THREE.Vector3(6,2.5,7)};
+const tgt={overview:new THREE.Vector3(6,BASE_Y,0), top:new THREE.Vector3(6,BASE_Y,0), rail:new THREE.Vector3(6,BASE_Y,0)};
+camera.position.copy(pos[v]); controls.target.copy(tgt[v]); controls.update();
+}));
+
+window.addEventListener('resize',()=>{
+camera.aspect=container.clientWidth/container.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(container.clientWidth,container.clientHeight); redrawCharts();
+});
+
+animate(0);
+</script>
+</body>
+</html>
