@@ -28,7 +28,19 @@
 
 ## 验证
 
-修改后，在仓库根目录运行：
+修改后，先在仓库根目录运行快速静态校验：
+
+```bash
+python3 scripts/validate_site.py
+```
+
+修改校验脚本或对应工作流时，另运行：
+
+```bash
+python3 -m unittest discover -s scripts -p "test_*.py"
+```
+
+涉及课件页面时，再启动本地服务器：
 
 ```bash
 python3 -m http.server 8000
@@ -50,6 +62,7 @@ python3 -m http.server 8000
 - 开始任务前确认工作树状态，保留用户已有的未提交修改。
 - 从最新 `main` 创建目的明确的分支，例如 `feat/...`、`fix/...` 或 `chore/...`。
 - 不要提交临时服务器文件、系统文件或无关格式化改动。
+- 完成并验证同一任务的全部关联改动后再集中提交，不要为每个小步骤单独提交或反复请求提交。
 - `main` 上的提交会触发线上部署；正常变更应通过 Pull Request 合并。
 
 ## Agent skills
