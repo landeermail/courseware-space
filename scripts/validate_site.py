@@ -113,26 +113,53 @@ class SiteValidator:
                 )
                 continue
             for lesson_index, lesson in enumerate(lessons, start=1):
-                self.homepage_entries += 1
-                label = f"第 {category_index} 个分类的第 {lesson_index} 个课件"
-                path = lesson.get("path") if isinstance(lesson, dict) else None
-                if not isinstance(path, str) or not path:
-                    self.error(homepage, f"{label}缺少字符串 path")
+                label = f"第 {category_index} 个分类的第 {lesson_index} 张卡片"
+                if not isinstance(lesson, dict):
+                    self.error(homepage, f"{label}必须是对象")
                     continue
-                parsed = urlsplit(path)
-                if parsed.scheme or parsed.netloc or path.startswith("/"):
-                    self.error(homepage, f"{label}的 path 必须是相对路径：{path!r}")
+                title = lesson.get("title")
+                if not isinstance(title, str) or not title.strip():
+                    self.error(homepage, f"{label}缺少字符串 title")
+                entries = lesson.get("entries")
+                if not isinstance(entries, list) or not entries:
+                    self.error(homepage, f"{label}的 entries 必须是非空数组")
                     continue
-                if parsed.query or parsed.fragment:
-                    self.error(homepage, f"{label}的 path 不能包含查询或锚点：{path!r}")
-                if not parsed.path.endswith("/"):
-                    self.error(homepage, f"{label}的 path 必须以 / 结尾：{path!r}")
-                self.check_reference(
-                    homepage,
-                    path,
-                    context=f"首页课件路径 {path!r}",
-                    require_directory_index=True,
-                )
+                for entry_index, entry in enumerate(entries, start=1):
+                    self.homepage_entries += 1
+                    entry_label = f"{label}的第 {entry_index} 个入口"
+                    if not isinstance(entry, dict):
+                        self.error(homepage, f"{entry_label}必须是对象")
+                        continue
+                    entry_title = entry.get("title")
+                    if not isinstance(entry_title, str) or not entry_title.strip():
+                        self.error(homepage, f"{entry_label}缺少字符串 title")
+                    path = entry.get("path")
+                    if not isinstance(path, str) or not path:
+                        self.error(homepage, f"{entry_label}缺少字符串 path")
+                        continue
+                    parsed = urlsplit(path)
+                    if parsed.scheme or parsed.netloc or path.startswith("/"):
+                        self.error(
+                            homepage,
+                            f"{entry_label}的 path 必须是相对路径：{path!r}",
+                        )
+                        continue
+                    if parsed.query or parsed.fragment:
+                        self.error(
+                            homepage,
+                            f"{entry_label}的 path 不能包含查询或锚点：{path!r}",
+                        )
+                    if not parsed.path.endswith("/"):
+                        self.error(
+                            homepage,
+                            f"{entry_label}的 path 必须以 / 结尾：{path!r}",
+                        )
+                    self.check_reference(
+                        homepage,
+                        path,
+                        context=f"首页课件路径 {path!r}",
+                        require_directory_index=True,
+                    )
 
     def validate_html(self, html_file: Path) -> None:
         parser = ReferenceParser()
