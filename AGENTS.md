@@ -51,3 +51,17 @@ python3 -m http.server 8000
 - 从最新 `main` 创建目的明确的分支，例如 `feat/...`、`fix/...` 或 `chore/...`。
 - 不要提交临时服务器文件、系统文件或无关格式化改动。
 - `main` 上的提交会触发线上部署；正常变更应通过 Pull Request 合并。
+
+## Agent skills
+
+### Issue tracker
+
+使用 GitHub Issues 记录重要开发任务；小型修正可以直接通过分支和 Pull Request 完成。详见 `docs/agents/issue-tracker.md`。
+
+### Triage labels
+
+当前未配置专门的任务分流工作流，不要求使用固定的 triage 标签。详见 `docs/agents/triage-labels.md`。
+
+### Domain docs
+
+项目采用单一领域上下文，由根目录 `CONTEXT.md` 记录共同知识，并在 `docs/adr/` 保存重要决策。详见 `docs/agents/domain.md`。
