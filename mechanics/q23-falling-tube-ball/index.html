@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>第23题：落管与上抛小球｜双参考系探究</title>
+<title>第23题：落管与上抛小球｜单屏探究工作台</title>
 <script type="importmap">
 {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
 </script>
@@ -18,151 +18,168 @@
 html{background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
 button,input{font:inherit}
-button{min-height:42px}
+button{min-height:42px;cursor:pointer}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid rgba(37,99,235,.35);outline-offset:2px}
-.app-shell{width:min(1440px,100%);margin:0 auto;padding:16px}
-.page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px}
-.page-header h1{margin:0 0 3px;font-size:clamp(22px,2.4vw,32px);line-height:1.2}
-.page-header p{margin:0;color:var(--muted);font-size:14px}
-.lab{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
-.canvas-container{position:relative;width:100%;height:48vh;min-height:380px;max-height:560px;overflow:hidden;background:#edf2f7}
-#canvas{display:block;width:100%;height:100%;touch-action:none}
-.scene-hud{position:absolute;top:12px;left:12px;display:grid;gap:8px;width:min(460px,calc(100% - 24px));pointer-events:none;z-index:2}
-.hud-card{padding:9px 12px;border:1px solid rgba(100,116,139,.18);border-radius:10px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(30,55,90,.09);backdrop-filter:blur(8px)}
-.hud-title{font-weight:700;font-size:15px}.hud-subtitle{margin-top:3px;color:#4b5871;font-size:12px;line-height:1.55}
-.vector-key{display:flex;flex-wrap:wrap;gap:6px 12px;color:#43506a;font-size:11px}
-.vector-key span{display:inline-flex;align-items:center;gap:5px}.key-dot{width:10px;height:10px;border-radius:50%;background:var(--key)}
-.scene-tip{position:absolute;right:12px;top:12px;max-width:260px;padding:7px 10px;border:1px solid rgba(100,116,139,.18);border-radius:9px;background:rgba(255,255,255,.9);color:#4b5871;font-size:11px;line-height:1.45;pointer-events:none}
-.controls{display:grid;gap:10px;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface)}
-.mode-row,.control-row,.view-row,.anchor-row,.frame-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center}
-.mode-btn,.tool-btn,.anchor-btn{border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#34435c;cursor:pointer;font-weight:650}
-.mode-btn{padding:7px 16px;font-size:14px}.tool-btn{padding:7px 11px}.anchor-btn{padding:6px 11px;min-height:38px;font-size:12px}
-.mode-btn:hover,.tool-btn:hover,.anchor-btn:hover{border-color:var(--blue);color:var(--blue)}
-.mode-btn[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:#fff}
-.tool-btn[aria-pressed="true"]{border-color:var(--purple);background:var(--purple);color:#fff}
-.anchor-btn{border-color:#c7d2e8;background:#f1f5fd;color:#1d4ed8}
-.slider-field{display:grid;grid-template-columns:auto minmax(180px,1fr) 96px;align-items:center;gap:9px;min-width:min(560px,100%)}
-.slider-field label{font-size:13px;font-weight:700}.slider-field output{color:var(--blue);font-variant-numeric:tabular-nums;font-size:13px;font-weight:750;text-align:right}
-.time-field{grid-template-columns:auto minmax(180px,1fr) 110px}
-.time-field output{color:var(--green)}
-input[type="range"]{width:100%;min-height:42px;accent-color:var(--blue)}
-.speed-group{display:inline-flex;gap:4px;align-items:center}
-.speed-group .tool-btn{min-height:38px;padding:5px 10px;font-size:12px}
-.speed-label{font-size:12px;color:var(--muted);font-weight:700}
-.frame-label{font-size:12px;color:var(--muted);font-weight:700}
-.eq-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;gap:14px;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface-soft)}
-.eq-node{min-width:0;padding:9px 10px;border:1px solid #d7e0ec;border-radius:10px;background:#fff}
-.eq-label{display:block;margin-bottom:3px;color:var(--muted);font-size:11px}.eq-value{display:block;font-weight:750;font-size:13px;line-height:1.4;font-variant-numeric:tabular-nums}.eq-note{display:block;margin-top:3px;color:#5c6880;font-size:11px;line-height:1.4;font-variant-numeric:tabular-nums}
-.verdict-chip{display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:750}
+.app-shell{width:min(1560px,100%);margin:0 auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar h1{margin:0;font-size:clamp(18px,2vw,24px);line-height:1.2}
+.topbar .sub{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+.mode-switch{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;flex:none}
+.mode-btn{border:0;background:transparent;padding:8px 14px;font-weight:650;font-size:13px;color:#34435c}
+.mode-btn[aria-pressed="true"]{background:var(--blue);color:#fff}
+
+/* ---------- workbench ---------- */
+.workbench{display:grid;grid-template-columns:1.05fr 1fr;gap:12px;height:calc(100dvh - 204px);min-height:420px}
+.scene-panel,.chart-panel{position:relative;min-height:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 3px 12px rgba(30,55,90,.05);overflow:hidden}
+#canvas{display:block;width:100%;height:100%;touch-action:none;background:#edf2f7}
+.scene-hud{position:absolute;top:10px;left:10px;display:grid;gap:6px;width:min(430px,calc(100% - 20px));pointer-events:none;z-index:2}
+.hud-card{padding:7px 11px;border:1px solid rgba(100,116,139,.18);border-radius:9px;background:rgba(255,255,255,.92);box-shadow:0 4px 14px rgba(30,55,90,.08);backdrop-filter:blur(8px)}
+.hud-title{font-weight:750;font-size:13.5px}
+.hud-subtitle{color:#4b5871;font-size:11.5px;line-height:1.5;font-variant-numeric:tabular-nums}
+.scene-tip{position:absolute;right:10px;bottom:10px;max-width:250px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.88);border:1px solid rgba(100,116,139,.16);color:#5c6880;font-size:10.5px;line-height:1.45;pointer-events:none}
+.chart-panel{display:flex;flex-direction:column}
+.chart-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 12px 4px}
+.chart-title{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:750}
+.chart-legend{display:flex;flex-wrap:wrap;gap:4px 12px;color:#43506a;font-size:11px}
+.chart-legend span{display:inline-flex;align-items:center;gap:5px}
+.key-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--key)}
+#chartYT{flex:1;min-height:0;display:block;width:100%}
+.chart-formula{padding:2px 12px;color:var(--muted);font-family:Georgia,"Times New Roman",serif;font-size:11.5px;text-align:center}
+.eq-line{padding:6px 12px 8px;border-top:1px solid var(--line);color:#33415c;font-size:12px;line-height:1.6;font-variant-numeric:tabular-nums;white-space:nowrap;overflow-x:auto}
+.eq-line b{color:#0f172a}
+.verdict-chip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:750}
 .verdict-chip.ok{background:rgba(5,150,105,.12);color:#047857;border:1px solid rgba(5,150,105,.4)}
 .verdict-chip.bad{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.4)}
-.chart-card{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface);box-shadow:0 3px 12px rgba(30,55,90,.05)}
-.chart-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:6px}
-.chart-title{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:750}
-.chart-legend{display:flex;flex-wrap:wrap;gap:6px 14px;color:#43506a;font-size:11px}
-.chart-legend span{display:inline-flex;align-items:center;gap:5px}
-#chartYT{display:block;width:100%;height:280px}
-.chart-formula{margin-top:4px;color:var(--muted);font-family:Georgia,"Times New Roman",serif;font-size:12px;text-align:center}
-.explanation{margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
-.explanation h2{margin:0 0 10px;font-size:17px}.explanation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.explanation-item{font-size:12px;line-height:1.65}.explanation-item strong{display:block;margin-bottom:2px}
-.reference{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.reference summary{cursor:pointer;color:#334155;font-size:13px;font-weight:700}.reference-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.reference img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
-.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-[hidden]{display:none!important}
-@media (min-width:900px) and (orientation:landscape) and (max-height:900px){
-  .app-shell{padding:8px 14px}.page-header{margin-bottom:6px}.page-header h1{font-size:24px}.canvas-container{height:42vh;min-height:300px;max-height:340px}
-  .controls{gap:7px;padding:8px 12px}.eq-strip{gap:10px;padding:8px 12px}.eq-node{padding:7px 8px}#chartYT{height:220px}.chart-card{margin-top:8px}.explanation{margin-top:8px;padding:11px}
+
+/* ---------- control bar ---------- */
+.control-bar{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 3px 12px rgba(30,55,90,.05);padding:8px 14px}
+.frame-switch{display:inline-flex;align-items:center;gap:6px;flex:none}
+.frame-switch .frame-label,.v0-field label,.time-label{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.seg{display:inline-flex;border:1px solid #cbd5e1;border-radius:9px;overflow:hidden}
+.seg-btn{border:0;background:#fff;padding:6px 12px;font-weight:650;font-size:12.5px;color:#34435c;min-height:38px}
+.seg-btn[aria-pressed="true"]{background:var(--purple);color:#fff}
+.v0-field{display:grid;grid-template-columns:auto minmax(140px,1fr) 84px;align-items:center;gap:8px;flex:1 1 260px;min-width:220px}
+.v0-field output{color:var(--blue);font-weight:750;font-size:13px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.v0-field.emphasize label{color:var(--blue);font-size:13px}
+input[type="range"]{width:100%;min-height:40px;accent-color:var(--blue)}
+.time-block{display:flex;align-items:center;gap:10px;flex:2 1 380px;min-width:280px}
+#playToggle{flex:none;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#34435c;font-weight:700;font-size:13px;padding:6px 14px;min-width:86px}
+#playToggle:hover{border-color:var(--blue);color:var(--blue)}
+#playToggle.playing{border-color:var(--amber);background:var(--amber);color:#fff}
+.timeline{position:relative;flex:1;min-width:140px}
+.timeline input[type="range"]{display:block}
+.tick-layer{position:absolute;left:0;right:0;top:50%;height:0;pointer-events:none}
+.tick{position:absolute;top:0;translate:-50% -50%;width:15px;height:15px;border-radius:50%;border:2px solid #fff;background:var(--tc,#7c3aed);box-shadow:0 1px 4px rgba(15,23,42,.35);pointer-events:auto;min-height:0;padding:0}
+.tick:hover{scale:1.25}
+.tick:focus-visible{outline:3px solid rgba(37,99,235,.4);outline-offset:1px}
+.time-block output{flex:none;color:var(--green);font-weight:750;font-size:13px;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
+
+/* ---------- more ---------- */
+.more{display:grid;gap:8px}
+.more details{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:8px 14px}
+.more summary{cursor:pointer;font-size:13px;font-weight:700;color:#334155;min-height:32px;line-height:32px}
+.more .body{padding-top:8px;font-size:12.5px;line-height:1.7;color:#33415c}
+.more .body strong{color:#0f172a}
+.ref-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.ref-images img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
+
+/* ---------- viewports ---------- */
+@media (min-width:900px) and (max-height:860px){
+  /* iPad 横屏等低高度视口：压缩头部与控件，保证单屏 */
+  .app-shell{padding:8px 12px;gap:7px}
+  .topbar h1{font-size:18px}.topbar .sub{font-size:11.5px}
+  .mode-btn{padding:6px 11px;font-size:12px;min-height:36px}
+  .workbench{height:calc(100dvh - 158px);min-height:360px;gap:9px}
+  .control-bar{padding:6px 10px;gap:6px 12px}
+  .chart-head{padding:6px 10px 2px}.eq-line{padding:4px 10px 6px;font-size:11.5px}
+  .more details{padding:6px 10px}
 }
 @media (max-width:899px){
-  .scene-tip{display:none}.eq-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.eq-node:last-child{grid-column:1/-1}
-  .explanation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media (min-width:700px) and (max-width:899px) and (orientation:portrait){.canvas-container{height:44vh;min-height:380px}}
-@media (max-width:599px){
-  .app-shell{padding:10px}.page-header{display:block}.page-header p{margin-top:5px}.canvas-container{height:400px;min-height:400px}.scene-hud{top:8px;left:8px;width:calc(100% - 16px)}
-  .controls{padding:9px}.mode-row{display:grid;grid-template-columns:1fr 1fr;width:100%}.mode-btn{padding-inline:6px;font-size:13px}
-  .slider-field{grid-template-columns:auto minmax(110px,1fr) 84px;min-width:0;width:100%}
-  .eq-strip{grid-template-columns:1fr}.eq-node:last-child{grid-column:auto}
-  #chartYT{height:240px}.explanation-grid,.reference-images{grid-template-columns:1fr}
+  .app-shell{height:auto}
+  .workbench{display:block;height:auto}
+  .scene-panel{height:44dvh;min-height:320px;margin-bottom:10px}
+  .chart-panel{height:56dvh;min-height:380px}
+  .scene-tip{display:none}
+  .time-block{flex-basis:100%;order:3}
+  .ref-images{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
 <main class="app-shell">
-  <header class="page-header">
-    <div><h1>第23题：落管与上抛小球</h1><p>调节初速度 v₀，在地面参考系与管参考系之间切换，观察小球何时落回管口、何时穿出管底。</p></div>
+  <header class="topbar">
+    <div>
+      <h1>第23题：落管与上抛小球</h1>
+      <p class="sub">管加速下落，球从管口上抛——先看懂"飞出 → 落回 → 穿出"，再探究初速度窗口。</p>
+    </div>
+    <div class="mode-switch" role="group" aria-label="选择题目小问">
+      <button class="mode-btn" type="button" data-mode="q1" aria-pressed="true">第(1)问 · 看懂穿出过程</button>
+      <button class="mode-btn" type="button" data-mode="q2" aria-pressed="false">第(2)问 · 探究 v₀ 窗口</button>
+    </div>
   </header>
 
-  <section class="lab" aria-label="落管与上抛小球三维探究实验台">
-    <div class="canvas-container" id="canvasContainer">
-      <canvas id="canvas" role="img" aria-label="竖直半透明管与管内上抛小球的三维模型"></canvas>
+  <section class="workbench" aria-label="落管与上抛小球探究工作台">
+    <div class="scene-panel" id="scenePanel">
+      <canvas id="canvas" role="img" aria-label="竖直半透明管与上抛小球的三维示意模型"></canvas>
       <div class="scene-hud" aria-live="polite">
-        <div class="hud-card"><div class="hud-title" id="hudTitle">第(1)问 · 地面参考系</div><div class="hud-subtitle" id="hudSubtitle"></div></div>
-        <div class="hud-card vector-key" aria-label="三维图例">
-          <span><i class="key-dot" style="--key:#dc2626"></i>小球</span><span><i class="key-dot" style="--key:#d97706"></i>管口 M</span><span><i class="key-dot" style="--key:#059669"></i>管底 N</span><span><i class="key-dot" style="--key:#7c3aed"></i>相对位移 s</span>
-        </div>
+        <div class="hud-card"><div class="hud-title" id="hudTitle"></div><div class="hud-subtitle" id="hudSubtitle"></div></div>
       </div>
-      <div class="scene-tip">拖拽旋转视角，滚轮或双指缩放。管身为半透明：小球在管内时可以直接看到。</div>
+      <div class="scene-tip">示意图：纵向已压缩 4×，间距与数值以图表和标注为准。拖拽旋转，滚轮或双指缩放。</div>
     </div>
-
-    <div class="controls">
-      <div class="mode-row" role="group" aria-label="选择题目小问">
-        <button class="mode-btn" type="button" data-mode="q1" aria-pressed="true">第(1)问 · 足够高处</button>
-        <button class="mode-btn" type="button" data-mode="q2" aria-pressed="false">第(2)问 · 距地 64 m</button>
+    <div class="chart-panel">
+      <div class="chart-head">
+        <div class="chart-title" id="chartTitle">高度 y — 物理时间 t</div>
+        <div class="chart-legend" id="chartLegend"></div>
+        <span class="verdict-chip ok" id="chartVerdict" hidden></span>
       </div>
-      <div class="control-row">
-        <div class="slider-field"><label id="v0Label" for="v0Slider">初速度 v₀</label><input id="v0Slider" type="range" min="5" max="40" step="0.5" value="10"><output id="v0Output" for="v0Slider">10.0 m/s</output></div>
-      </div>
-      <div class="frame-row" role="group" aria-label="参考系切换">
-        <span class="frame-label">参考系：</span>
-        <button class="tool-btn" type="button" data-frame="ground" aria-pressed="true">地面参考系</button>
-        <button class="tool-btn" type="button" data-frame="tube" aria-pressed="false">管参考系（g′=g−a=8 m/s²）</button>
-      </div>
-      <div class="control-row">
-        <button class="tool-btn" id="playToggle" type="button" aria-pressed="false">▶ 播放</button>
-        <div class="slider-field time-field"><label id="timeLabel" for="timeSlider">物理时间 t</label><input id="timeSlider" type="range" min="0" max="4" step="0.01" value="0"><output id="timeOutput" for="timeSlider">0.00 s</output></div>
-        <div class="speed-group" role="group" aria-label="播放倍率">
-          <span class="speed-label">倍率</span>
-          <button class="tool-btn" type="button" data-speed="0.25" aria-pressed="false">0.25×</button>
-          <button class="tool-btn" type="button" data-speed="0.5" aria-pressed="false">0.5×</button>
-          <button class="tool-btn" type="button" data-speed="1" aria-pressed="true">1×</button>
-          <button class="tool-btn" type="button" data-speed="2" aria-pressed="false">2×</button>
-        </div>
-      </div>
-      <div class="anchor-row" id="anchorRow" role="group" aria-label="事件锚点"></div>
-      <div class="view-row" role="group" aria-label="三维视角">
-        <button class="tool-btn" type="button" data-view="front">正面</button><button class="tool-btn" type="button" data-view="side">侧面</button><button class="tool-btn" type="button" data-view="top">俯视</button>
-      </div>
-    </div>
-
-    <div class="eq-strip" id="eqStrip" aria-label="当前状态的方程与变量关系">
-      <div class="eq-node"><span class="eq-label">小球下落距离（地面系）</span><span class="eq-value" id="eqH1"></span><span class="eq-note" id="eqH1n"></span></div>
-      <div class="eq-node"><span class="eq-label">管下落距离</span><span class="eq-value" id="eqH2"></span><span class="eq-note" id="eqH2n"></span></div>
-      <div class="eq-node"><span class="eq-label">相对位移 s = h₁ − h₂</span><span class="eq-value" id="eqS"></span><span class="eq-note" id="eqSn"></span></div>
-      <div class="eq-node"><span class="eq-label">管参考系视角</span><span class="eq-value" id="eqFrame"></span><span class="eq-note" id="eqFramen"></span></div>
-      <div class="eq-node"><span class="eq-label" id="eqJudgeLabel">判定</span><span class="eq-value" id="eqJudge"></span><span class="eq-note" id="eqJudgen"></span></div>
+      <canvas id="chartYT" role="img" aria-label="小球与管口、管底位置随物理时间变化的图像"></canvas>
+      <div class="chart-formula" id="chartFormula"></div>
+      <div class="eq-line" id="eqLine"></div>
     </div>
   </section>
 
-  <section class="chart-card" aria-label="高度与时间关系图">
-    <div class="chart-head">
-      <div class="chart-title" id="chartTitle">高度 y — 物理时间 t</div>
-      <div class="chart-legend" id="chartLegend"></div>
-      <span class="verdict-chip ok" id="chartVerdict" hidden></span>
+  <section class="control-bar" aria-label="探究控制区">
+    <div class="frame-switch" role="group" aria-label="参考系切换">
+      <span class="frame-label">参考系</span>
+      <span class="seg">
+        <button class="seg-btn" type="button" data-frame="ground" aria-pressed="false">地面</button>
+        <button class="seg-btn" type="button" data-frame="tube" aria-pressed="true">管（g′=8）</button>
+      </span>
     </div>
-    <canvas id="chartYT" role="img" aria-label="小球高度、管口 M 高度、管底 N 高度随物理时间变化的图像"></canvas>
-    <div class="chart-formula" id="chartFormula"></div>
+    <div class="v0-field" id="v0Field">
+      <label id="v0Label" for="v0Slider">初速度 v₀</label>
+      <input id="v0Slider" type="range" min="5" max="40" step="0.5" value="10">
+      <output id="v0Output" for="v0Slider">10.0 m/s</output>
+    </div>
+    <div class="time-block">
+      <button id="playToggle" type="button" aria-pressed="false">▶ 播放</button>
+      <div class="timeline">
+        <input id="timeSlider" type="range" min="0" max="4" step="0.01" value="0" aria-label="物理时间轴">
+        <div class="tick-layer" id="tickLayer"></div>
+      </div>
+      <output id="timeOutput" for="timeSlider">0.00 s</output>
+    </div>
   </section>
 
-  <section class="explanation">
-    <h2>如何使用模型验证结论</h2>
-    <div class="explanation-grid">
-      <div class="explanation-item"><strong style="color:#1d4ed8">核心交互：调 v₀</strong>拖动 v₀ 滑块，事件时刻（相对最高点 v₀/8、落回 M 为 v₀/4、穿出 N 为 (v₀+√(v₀²+384))/8）与图像实时重算，验证你的预测。</div>
-      <div class="explanation-item"><strong style="color:#6d28d9">参考系洞察</strong>管以 a=2 m/s² 加速下落，在管参考系中小球只受等效重力 g′=g−a=8 m/s²，相对运动就是一次普通竖直上抛：s=−v₀t+4t²。</div>
-      <div class="explanation-item"><strong style="color:#b45309">第(1)问</strong>v₀=10 m/s 时：1.25 s 到相对最高点（管口上方 6.25 m），2.5 s 落回 M，4.0 s 从 N 穿出。事件锚点可直接跳转。</div>
-      <div class="explanation-item"><strong style="color:#047857">第(2)问</strong>管 8 s 落地，此时小球高度 y_b=8v₀−232。窗口 0≤y_b≤24 对应 29≤v₀≤32 m/s；v₀&lt;29 小球先落地，v₀&gt;32 小球还在管口上方。</div>
-    </div>
-    <details class="reference"><summary>查看题目与解析（原图）</summary><div class="reference-images"><a href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第23题原题图"></a><a href="answer.png" target="_blank" rel="noopener"><img src="answer.png" alt="第23题解析图"></a></div></details>
+  <section class="more">
+    <details>
+      <summary>教学说明：怎么用这个模型</summary>
+      <div class="body">
+        <p><strong>故事（第(1)问）</strong>：默认管参考系——管固定不动，小球从管口 M 上抛，等效重力 g′=g−a=8 m/s²。播放（0.5×）时模型会在三个事件点自动暂停：相对最高点（v₀/8 s，管口上方 v₀²/16 m）→ 落回 M（v₀/4 s）→ 穿出 N（(v₀+√(v₀²+384))/8 s）。时间轴上的彩色圆点可点击跳转。</p>
+        <p><strong>实验（第(2)问）</strong>：切到第(2)问后拖动 v₀，观察 t′=8 s（管落地）时刻小球高度 y_b=8v₀−232 是否落在窗口 [0, 24] m 内，自己逼近出 29≤v₀≤32 m/s。</p>
+        <p><strong>方程对照</strong>：图表下方的方程行始终用地面参考系的真实数值（h₁=−v₀t+5t²，h₂=t²，s=h₁−h₂），与官方解析逐式对应。</p>
+      </div>
+    </details>
+    <details>
+      <summary>题目与解析（原图）</summary>
+      <div class="ref-images">
+        <a href="question.png" target="_blank" rel="noopener"><img src="question.png" alt="第23题原题图"></a>
+        <a href="answer.png" target="_blank" rel="noopener"><img src="answer.png" alt="第23题解析图"></a>
+      </div>
+    </details>
   </section>
 </main>
 
@@ -172,48 +189,63 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ---------- physical constants (down positive, g = 10 m/s²) ---------- */
 const G=10, A_TUBE=2, L=24, H_N0=64, H_M0=88, TUBE_LAND_T=8;
+const SC=.25;                 /* scene display scale: 1 display unit = 4 m（示意图比例） */
+const SPEED=.5;               /* fixed playback rate: 演示时间 = 物理时间 × 0.5 */
+const D=m=>m*SC;
 const COLORS={ball:'#dc2626',M:'#d97706',N:'#059669',rel:'#7c3aed',cyan:'#0891b2'};
+const TICK_COLORS={'抛出':'#526079','相对最高点':'#7c3aed','落回 M':'#0891b2','穿出 N':'#dc2626','小球落地':'#b45309','管落地':'#475569'};
 
-const state={mode:'q1',v0:10,t:0,playing:false,speed:1,frame:'ground'};
+const state={mode:'q1',v0:10,t:0,playing:false,frame:'tube',lastTime:0};
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- derived quantities ---------- */
 function derived(){
   const v0=state.v0;
-  const relPeakT=v0/(G-A_TUBE);                 // v0/8
-  const reenterT=2*v0/(G-A_TUBE);               // v0/4
-  const exitT=(v0+Math.sqrt(v0*v0+2*(G-A_TUBE)*L))/(G-A_TUBE);     // (v0+√(v0²+384))/8, solves ½(g−a)t²−v0·t−L=0
-  const ballLandT=(v0+Math.sqrt(v0*v0+4*5*H_M0))/10;               // solves 88+v0·t−5t²=0
-  const ybAtLand=8*v0-232;                      // ball height at t′=8 s (Q2)
+  const relPeakT=v0/(G-A_TUBE);                                        // v0/8
+  const reenterT=2*v0/(G-A_TUBE);                                      // v0/4
+  const exitT=(v0+Math.sqrt(v0*v0+2*(G-A_TUBE)*L))/(G-A_TUBE);         // (v0+√(v0²+384))/8, solves ½(g−a)t²−v0·t−L=0
+  const ballLandT=(v0+Math.sqrt(v0*v0+20*H_M0))/10;                    // solves 88+v0·t−5t²=0
+  const ybAtLand=8*v0-232;                                             // ball height at t′=8 s (Q2)
   const tEnd=state.mode==='q1'?exitT:Math.max(TUBE_LAND_T,ballLandT);
   return{relPeakT,reenterT,exitT,ballLandT,ybAtLand,tEnd};
 }
+function events(){
+  const d=derived(),ev=[['抛出',0]];
+  if(state.mode==='q1'){
+    ev.push(['相对最高点',d.relPeakT],['落回 M',d.reenterT],['穿出 N',d.exitT]);
+  }else{
+    if(d.reenterT<=TUBE_LAND_T+1e-9)ev.push(['落回 M',d.reenterT]);
+    if(d.exitT<=TUBE_LAND_T+1e-9&&Math.abs(d.exitT-TUBE_LAND_T)>1e-6)ev.push(['穿出 N',d.exitT]);
+    if(Math.abs(d.ballLandT-TUBE_LAND_T)>1e-6&&d.ballLandT<=d.tEnd+1e-9)ev.push(['小球落地',d.ballLandT]);
+    ev.push(['管落地',TUBE_LAND_T]);
+  }
+  return ev.sort((a,b)=>a[1]-b[1]);
+}
 function verdict(){
   const y=derived().ybAtLand;
-  if(y>=0&&y<=L)return{ok:true,text:'落进管内',reason:y===0?'t′=8 s 时恰好位于管底 N（地面处）':y===L?'t′=8 s 时恰好位于管口 M':`t′=8 s 时位于管内 ${y.toFixed(1)} m 处`};
+  if(y>=0&&y<=L)return{ok:true,text:'落进管内',reason:y===0?'恰好位于管底 N（地面处）':y===L?'恰好位于管口 M':`位于管内 ${y.toFixed(1)} m 处`};
   if(y<0)return{ok:false,text:'落在管外',reason:'小球已先于管落地'};
-  return{ok:false,text:'落在管外',reason:`t′=8 s 时小球在管口 M 上方 ${(y-L).toFixed(1)} m`};
+  return{ok:false,text:'落在管外',reason:`小球在管口 M 上方 ${(y-L).toFixed(1)} m`};
 }
-/* positions in the ground frame (scene y = height, metres) */
+/* positions in the ground frame (metres) */
 function posGround(t){
   const v0=state.v0;
   if(state.mode==='q1')return{yB:v0*t-5*t*t,yM:-t*t,yN:-L-t*t};
   const yM=t<=TUBE_LAND_T?H_M0-t*t:L, yN=t<=TUBE_LAND_T?H_N0-t*t:0;
-  const raw=H_M0+v0*t-5*t*t;
-  return{yB:Math.max(0,raw),yM,yN};
+  return{yB:Math.max(0,H_M0+v0*t-5*t*t),yM,yN};
 }
 function sRel(t){return -state.v0*t+(G-A_TUBE)/2*t*t}
 function fmt(x,d=2){return Math.abs(x)<Math.pow(10,-d)/2?(0).toFixed(d):x.toFixed(d)}
+function posText(s){return s<0?`M 上方 ${fmt(-s,1)} m`:s<=L?`管内，M 下方 ${fmt(s,1)} m`:`已穿出，N 下方 ${fmt(s-L,1)} m`}
 
 /* ---------- three.js scene ---------- */
-const container=document.getElementById('canvasContainer');
+const scenePanel=document.getElementById('scenePanel');
 const canvas=document.getElementById('canvas');
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0xf0f4f8);
-const camera=new THREE.PerspectiveCamera(38,container.clientWidth/container.clientHeight,.1,5000);
-camera.position.set(60,40,60);
+const camera=new THREE.PerspectiveCamera(38,1,.1,5000);
+camera.position.set(1,1,40);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
-renderer.setSize(container.clientWidth,container.clientHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true;controls.dampingFactor=.06;controls.minPolarAngle=.02;controls.maxPolarAngle=Math.PI*.98;
@@ -230,80 +262,84 @@ function makeLabel(text,pos,color='#334155',scale=6,parent=scene){
 }
 function dashedLine(a,b,color,parent){
   const geo=new THREE.BufferGeometry().setFromPoints([a,b]);
-  const line=new THREE.Line(geo,new THREE.LineDashedMaterial({color,dashSize:1.4,gapSize:.9}));
+  const line=new THREE.Line(geo,new THREE.LineDashedMaterial({color,dashSize:.4,gapSize:.26}));
   line.computeLineDistances();(parent||scene).add(line);return line;
 }
 
-/* tube assembly (children positioned relative to tube centre) */
+/* tube assembly — display length D(L)=6，半径保持 1.3（短粗示意管） */
 const tubeGroup=new THREE.Group();scene.add(tubeGroup);
 const tubeWall=new THREE.Mesh(
-  new THREE.CylinderGeometry(1.3,1.3,L,40,1,true),
+  new THREE.CylinderGeometry(1.3,1.3,D(L),40,1,true),
   new THREE.MeshStandardMaterial({color:0x60a5fa,transparent:true,opacity:.26,side:THREE.DoubleSide,depthWrite:false,roughness:.4,metalness:.1}));
 tubeGroup.add(tubeWall);
 const ringM=new THREE.Mesh(new THREE.TorusGeometry(1.3,.12,12,44),new THREE.MeshStandardMaterial({color:0xd97706,roughness:.4}));
-ringM.rotation.x=Math.PI/2;ringM.position.y=L/2;tubeGroup.add(ringM);
+ringM.rotation.x=Math.PI/2;ringM.position.y=D(L)/2;tubeGroup.add(ringM);
 const ringN=new THREE.Mesh(new THREE.TorusGeometry(1.3,.12,12,44),new THREE.MeshStandardMaterial({color:0x059669,roughness:.4}));
-ringN.rotation.x=Math.PI/2;ringN.position.y=-L/2;tubeGroup.add(ringN);
-makeLabel('M（管口）',new THREE.Vector3(4.6,L/2,0),'#b45309',7,tubeGroup);
-makeLabel('N（管底）',new THREE.Vector3(4.6,-L/2,0),'#047857',7,tubeGroup);
-(function(){ /* tube length dimension L = 24 m */
+ringN.rotation.x=Math.PI/2;ringN.position.y=-D(L)/2;tubeGroup.add(ringN);
+makeLabel('M（管口）',new THREE.Vector3(4.4,D(L)/2,0),'#b45309',6.5,tubeGroup);
+makeLabel('N（管底）',new THREE.Vector3(4.4,-D(L)/2,0),'#047857',6.5,tubeGroup);
+(function(){ /* tube length dimension, true value labelled */
   const mat=new THREE.LineBasicMaterial({color:0x64748b});
-  const g1=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2.6,-L/2,0),new THREE.Vector3(-2.6,L/2,0)]);
+  const g1=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2.5,-D(L)/2,0),new THREE.Vector3(-2.5,D(L)/2,0)]);
   tubeGroup.add(new THREE.Line(g1,mat));
-  for(const y of [-L/2,L/2]){const tick=new THREE.Mesh(new THREE.BoxGeometry(.9,.08,.08),new THREE.MeshBasicMaterial({color:0x64748b}));tick.position.set(-2.6,y,0);tubeGroup.add(tick)}
-  makeLabel('L = 24 m',new THREE.Vector3(-5.4,0,0),'#526079',5.5,tubeGroup);
+  for(const y of [-D(L)/2,D(L)/2]){const tick=new THREE.Mesh(new THREE.BoxGeometry(.8,.07,.07),new THREE.MeshBasicMaterial({color:0x64748b}));tick.position.set(-2.5,y,0);tubeGroup.add(tick)}
+  makeLabel('L = 24 m',new THREE.Vector3(-5.2,0,0),'#526079',5,tubeGroup);
 })();
 
 /* ball */
-const ball=new THREE.Mesh(new THREE.SphereGeometry(.85,24,24),new THREE.MeshStandardMaterial({color:0xdc2626,roughness:.3,metalness:.2,emissive:0xdc2626,emissiveIntensity:.15}));
+const ball=new THREE.Mesh(new THREE.SphereGeometry(.62,24,24),new THREE.MeshStandardMaterial({color:0xdc2626,roughness:.3,metalness:.2,emissive:0xdc2626,emissiveIntensity:.15}));
 scene.add(ball);
-makeLabel('小球',new THREE.Vector3(3.4,0,0),'#b91c1c',5,ball);
+makeLabel('小球',new THREE.Vector3(2.9,0,0),'#b91c1c',4.5,ball);
 
 /* ground (Q2) */
 const groundGroup=new THREE.Group();scene.add(groundGroup);
-const groundPlane=new THREE.Mesh(new THREE.PlaneGeometry(90,90),new THREE.MeshStandardMaterial({color:0xe7edf5,roughness:.95}));
+const groundPlane=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:0xe7edf5,roughness:.95}));
 groundPlane.rotation.x=-Math.PI/2;groundGroup.add(groundPlane);
-const grid=new THREE.GridHelper(90,18,0xc1ccd9,0xd8e0e9);grid.position.y=.02;groundGroup.add(grid);
-makeLabel('地面',new THREE.Vector3(-12,.2,0),'#526079',6,groundGroup);
+const grid=new THREE.GridHelper(60,15,0xc1ccd9,0xd8e0e9);grid.position.y=.02;groundGroup.add(grid);
+makeLabel('地面',new THREE.Vector3(-9,.2,0),'#526079',5.5,groundGroup);
 
 /* Q2 start-height markers (ground frame only) */
 const markerGroup=new THREE.Group();scene.add(markerGroup);
-dashedLine(new THREE.Vector3(0,H_N0,0),new THREE.Vector3(-16,H_N0,0),0x059669,markerGroup);
-dashedLine(new THREE.Vector3(0,H_M0,0),new THREE.Vector3(-16,H_M0,0),0xd97706,markerGroup);
-dashedLine(new THREE.Vector3(-16,0,0),new THREE.Vector3(-16,H_M0,0),0x94a3b8,markerGroup);
-makeLabel('N 初始高度 64 m',new THREE.Vector3(-19,H_N0,0),'#047857',8,markerGroup);
-makeLabel('M 初始高度 88 m',new THREE.Vector3(-19,H_M0+2.5,0),'#b45309',8,markerGroup);
+dashedLine(new THREE.Vector3(0,D(H_N0),0),new THREE.Vector3(-12,D(H_N0),0),0x059669,markerGroup);
+dashedLine(new THREE.Vector3(0,D(H_M0),0),new THREE.Vector3(-12,D(H_M0),0),0xd97706,markerGroup);
+dashedLine(new THREE.Vector3(-12,0,0),new THREE.Vector3(-12,D(H_M0),0),0x94a3b8,markerGroup);
+makeLabel('N 初始高度 64 m',new THREE.Vector3(-14.5,D(H_N0),0),'#047857',7,markerGroup);
+makeLabel('M 初始高度 88 m',new THREE.Vector3(-14.5,D(H_M0)+1.2,0),'#b45309',7,markerGroup);
 
 /* Q1 launch-point marker (M start) */
 const launchGroup=new THREE.Group();scene.add(launchGroup);
-const launchRing=new THREE.Mesh(new THREE.TorusGeometry(1.7,.07,10,40),new THREE.MeshBasicMaterial({color:0x94a3b8}));
+const launchRing=new THREE.Mesh(new THREE.TorusGeometry(1.6,.06,10,40),new THREE.MeshBasicMaterial({color:0x94a3b8}));
 launchRing.rotation.x=Math.PI/2;launchGroup.add(launchRing);
-makeLabel('抛出点（M 初始位置）',new THREE.Vector3(-11,0,0),'#526079',8,launchGroup);
+makeLabel('抛出点（M 初始位置）',new THREE.Vector3(-9,0,0),'#526079',7,launchGroup);
 
 /* ---------- camera framing ---------- */
 function contentBounds(){
   const d=derived(),v0=state.v0;
   if(state.frame==='tube'){
-    const top=L+v0*v0/(2*(G-A_TUBE));           // ball peak above N in tube frame: 24+v0²/16
-    if(state.mode==='q1')return{min:Math.min(0,L-sRel(0)),max:Math.max(L,top)};
-    return{min:-H_N0,max:Math.max(L,top)};
+    const top=D(L+v0*v0/(2*(G-A_TUBE)));            // ball peak above N in tube frame
+    if(state.mode==='q1')return{min:-.5,max:Math.max(D(L)+1,top)};
+    return{min:D(-H_N0),max:Math.max(D(L)+1,top)};
   }
-  if(state.mode==='q1')return{min:-L-d.exitT*d.exitT,max:Math.max(2,v0*v0/(2*G))};
-  return{min:0,max:Math.max(H_M0,H_M0+v0*v0/(2*G))};
+  if(state.mode==='q1')return{min:D(-L-d.exitT*d.exitT),max:Math.max(D(2),D(v0*v0/(2*G)))};
+  return{min:0,max:Math.max(D(H_M0),D(H_M0+v0*v0/(2*G)))};
 }
-function fitView(direction){
-  const b=contentBounds(),span=Math.max(20,b.max-b.min),mid=(b.max+b.min)/2;
-  const dist=span*.5/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*1.22;
-  const dir=direction?direction.clone():camera.position.clone().sub(controls.target).normalize();
-  if(dir.lengthSq()<1e-6)dir.set(0,.15,1).normalize();
+function fitView(){
+  const b=contentBounds(),span=Math.max(8,b.max-b.min),mid=(b.max+b.min)/2;
+  const dist=span*.5/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*1.25;
+  const dir=camera.position.clone().sub(controls.target);
+  if(dir.lengthSq()<1e-6)dir.set(.1,.06,1);
+  dir.normalize();
   controls.target.set(0,mid,0);
-  camera.position.copy(controls.target).addScaledVector(dir.normalize(),dist);
+  camera.position.copy(controls.target).addScaledVector(dir,dist);
   camera.near=Math.max(.1,dist/1000);camera.far=dist*8;camera.updateProjectionMatrix();controls.update();
 }
-document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
-  const dirs={front:new THREE.Vector3(.18,.12,1),side:new THREE.Vector3(1,.1,.25),top:new THREE.Vector3(.02,1,.02)};
-  fitView(dirs[btn.dataset.view]);renderAll();
-}));
+function sideView(){ /* 默认侧面正视角 */
+  const b=contentBounds(),span=Math.max(8,b.max-b.min),mid=(b.max+b.min)/2;
+  const dist=span*.5/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*1.25;
+  controls.target.set(0,mid,0);
+  camera.position.set(.8,mid+dist*.06,dist);
+  camera.near=Math.max(.1,dist/1000);camera.far=dist*8;camera.updateProjectionMatrix();controls.update();
+}
 
 /* ---------- chart ---------- */
 const chartCanvas=document.getElementById('chartYT');
@@ -319,11 +355,11 @@ function chartModel(){
     if(state.mode==='q2'&&solidEnd<d.tEnd-1e-9)m.curves.push({color:COLORS.rel,dash:true,from:solidEnd,to:d.tEnd,fn:t=>{const p=posGround(t);return p.yM-p.yB},label:'落地后的实际相对位置'});
     if(d.relPeakT<=d.tMax)m.dots.push({t:d.relPeakT,y:-v0*v0/(2*(G-A_TUBE)),label:`相对最高点 t=${fmt(d.relPeakT)} s`,color:COLORS.rel});
     if(d.reenterT<=d.tMax&&(state.mode==='q1'||d.reenterT<=TUBE_LAND_T))m.dots.push({t:d.reenterT,y:0,label:`落回 M t=${fmt(d.reenterT)} s`,color:COLORS.cyan});
-    if(state.mode==='q1'||d.exitT<=TUBE_LAND_T+1e-9)m.dots.push({t:d.exitT,y:L,label:`穿出 N t=${fmt(d.exitT)} s`,color:COLORS.ball});
+    if(state.mode==='q1'||(d.exitT<=TUBE_LAND_T+1e-9&&Math.abs(d.exitT-TUBE_LAND_T)>1e-6))m.dots.push({t:d.exitT,y:L,label:`穿出 N t=${fmt(d.exitT)} s`,color:COLORS.ball});
     if(state.mode==='q2'){
       m.vlines.push({t:TUBE_LAND_T,label:'管落地 t′=8 s',color:'#64748b'});
       const v=verdict();m.dots.push({t:TUBE_LAND_T,y:sRel(TUBE_LAND_T),label:`t′=8 s：s=${fmt(sRel(TUBE_LAND_T),1)} m`,color:v.ok?'#059669':'#dc2626'});
-      if(v0<29)m.dots.push({t:d.ballLandT,y:sRel(d.ballLandT),label:`小球落地 t=${fmt(d.ballLandT)} s`,color:COLORS.ball});
+      if(Math.abs(d.ballLandT-TUBE_LAND_T)>1e-6)m.dots.push({t:d.ballLandT,y:sRel(d.ballLandT),label:`小球落地 t=${fmt(d.ballLandT)} s`,color:COLORS.ball});
     }
     m.formula='s_rel(t) = −v₀t + ½(g−a)t² = −v₀t + 4t²';
   }else{
@@ -341,19 +377,21 @@ function chartModel(){
     }else{
       m.band={y0:0,y1:L,label:'管落地后管内区间 [0, 24] m'};
       m.vlines.push({t:TUBE_LAND_T,label:'管落地 t′=8 s',color:'#64748b'});
-      const v=verdict(),yb=posGround(TUBE_LAND_T).yB;
-      m.dots.push({t:TUBE_LAND_T,y:Math.max(0,derived().ybAtLand),label:`y_b(8)=${fmt(derived().ybAtLand,1)} m`,color:v.ok?'#059669':'#dc2626'});
-      if(v0<29)m.dots.push({t:d.ballLandT,y:0,label:`小球落地 ${fmt(d.ballLandT)} s`,color:COLORS.ball});
+      const v=verdict();
+      m.dots.push({t:TUBE_LAND_T,y:Math.max(0,d.ybAtLand),label:`y_b(8)=${fmt(d.ybAtLand,1)} m`,color:v.ok?'#059669':'#dc2626'});
+      if(Math.abs(d.ballLandT-TUBE_LAND_T)>1e-6)m.dots.push({t:d.ballLandT,y:0,label:`小球落地 ${fmt(d.ballLandT)} s`,color:COLORS.ball});
       m.formula='y_b = 88 + v₀t − 5t²　　y_M = 88 − t²　　y_N = 64 − t²　（t ≤ 8 s）';
     }
   }
   return m;
 }
 function drawChart(){
-  const rect=chartCanvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  const rect=chartCanvas.getBoundingClientRect();
+  if(rect.width<10||rect.height<10)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
   chartCanvas.width=Math.max(1,Math.round(rect.width*dpr));chartCanvas.height=Math.max(1,Math.round(rect.height*dpr));
   const ctx=chartCanvas.getContext('2d');ctx.scale(dpr,dpr);
-  const W=rect.width,H=rect.height,pad={t:18,r:14,b:32,l:56},gw=W-pad.l-pad.r,gh=H-pad.t-pad.b;
+  const W=rect.width,H=rect.height,pad={t:18,r:14,b:30,l:56},gw=W-pad.l-pad.r,gh=H-pad.t-pad.b;
   ctx.clearRect(0,0,W,H);
   const m=chartModel(),tMax=Math.max(m.tMax,.5);
   let yMin=Infinity,yMax=-Infinity;
@@ -364,7 +402,6 @@ function drawChart(){
   if(!isFinite(yMin)){yMin=0;yMax=1}
   const yPad=Math.max(1.5,(yMax-yMin)*.09);yMin-=yPad;yMax+=yPad;
   const sx=t=>pad.l+t/tMax*gw, sy=y=>pad.t+gh-(y-yMin)/(yMax-yMin)*gh;
-  /* grid + ticks */
   ctx.strokeStyle='#edf1f6';ctx.lineWidth=1;ctx.fillStyle='#63708a';ctx.font='11px sans-serif';ctx.textAlign='center';
   const xStep=niceStep(tMax,7);for(let t=0;t<=tMax+1e-9;t+=xStep){const px=sx(t);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,H-pad.b);ctx.stroke();ctx.fillText(fmt(t,tMax<3?1:0),px,H-pad.b+15)}
   const yStep=niceStep(yMax-yMin,5);ctx.textAlign='right';
@@ -372,39 +409,34 @@ function drawChart(){
   ctx.strokeStyle='#526079';ctx.lineWidth=1.25;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,H-pad.b);ctx.lineTo(W-pad.r,H-pad.b);ctx.stroke();
   ctx.textAlign='center';ctx.fillText('t / s',pad.l+gw/2,H-6);
   ctx.save();ctx.translate(12,pad.t+gh/2);ctx.rotate(-Math.PI/2);ctx.fillText(m.yLabel,0,0);ctx.restore();
-  /* window band */
   if(m.band){ctx.fillStyle='rgba(5,150,105,.08)';ctx.fillRect(pad.l,sy(m.band.y1),gw,sy(m.band.y0)-sy(m.band.y1));
     ctx.strokeStyle='rgba(5,150,105,.45)';ctx.setLineDash([5,4]);ctx.lineWidth=1;
     for(const y of [m.band.y0,m.band.y1]){ctx.beginPath();ctx.moveTo(pad.l,sy(y));ctx.lineTo(W-pad.r,sy(y));ctx.stroke()}ctx.setLineDash([]);
     ctx.fillStyle='#047857';ctx.textAlign='right';ctx.fillText(m.band.label,W-pad.r-4,sy(m.band.y1)+12)}
-  /* curves */
   for(const c of m.curves){ctx.strokeStyle=c.color;ctx.lineWidth=2.4;ctx.setLineDash(c.dash?[7,5]:[]);ctx.beginPath();let first=true;
     for(let i=0;i<=240;i++){const t=c.from+(c.to-c.from)*i/240,y=c.fn(t);if(first){ctx.moveTo(sx(t),sy(y));first=false}else ctx.lineTo(sx(t),sy(y))}
     ctx.stroke();ctx.setLineDash([])}
-  /* event vertical lines */
   for(const v of m.vlines){if(v.t>tMax+1e-9)continue;ctx.strokeStyle=v.color;ctx.globalAlpha=.55;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(sx(v.t),pad.t);ctx.lineTo(sx(v.t),H-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
     ctx.fillStyle=v.color;ctx.textAlign=v.t>tMax*.82?'right':'left';ctx.fillText(v.label,sx(v.t)+(v.t>tMax*.82?-4:4),pad.t+10)}
-  /* event dots */
   for(const d0 of m.dots){if(d0.t>tMax+1e-9)continue;ctx.fillStyle=d0.color;ctx.beginPath();ctx.arc(sx(d0.t),sy(d0.y),4.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.6;ctx.stroke();
     ctx.fillStyle=d0.color;ctx.font='700 10.5px sans-serif';ctx.textAlign=d0.t>tMax*.78?'right':'left';ctx.fillText(d0.label,sx(d0.t)+(d0.t>tMax*.78?-8:8),sy(d0.y)-8);ctx.font='11px sans-serif'}
-  /* playhead */
   const t=Math.min(state.t,tMax);
   ctx.strokeStyle='#0f172a';ctx.globalAlpha=.7;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(sx(t),pad.t);ctx.lineTo(sx(t),H-pad.b);ctx.stroke();ctx.globalAlpha=1;
   for(const c of m.curves){if(t<c.from-1e-9||t>c.to+1e-9)continue;ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(sx(t),sy(c.fn(t)),4,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke()}
   ctx.fillStyle='#0f172a';ctx.textAlign=t>tMax*.85?'right':'left';ctx.font='700 11px sans-serif';ctx.fillText(`t=${fmt(t)} s`,sx(t)+(t>tMax*.85?-5:5),pad.t+24);ctx.font='11px sans-serif';
-  /* legend + verdict */
-  document.getElementById('chartLegend').innerHTML=m.curves.map(c=>`<span><i class="key-dot" style="--key:${c.color};display:inline-block;width:10px;height:10px;border-radius:${c.dash?'2px':'50%'}"></i>${c.label}</span>`).join('');
+  document.getElementById('chartLegend').innerHTML=m.curves.map(c=>`<span><i class="key-dot" style="--key:${c.color};border-radius:${c.dash?'2px':'50%'}"></i>${c.label}</span>`).join('');
   document.getElementById('chartFormula').textContent=m.formula;
+  document.getElementById('chartTitle').textContent=state.frame==='tube'?'相对位移 s — 物理时间 t':'高度 y — 物理时间 t';
   const chip=document.getElementById('chartVerdict');
   if(state.mode==='q2'){const v=verdict();chip.hidden=false;chip.className=`verdict-chip ${v.ok?'ok':'bad'}`;chip.textContent=`${v.ok?'✓':'✗'} ${v.text}：${v.reason}`}else chip.hidden=true;
 }
 
-/* ---------- HUD + equation strip ---------- */
+/* ---------- HUD + equation line ---------- */
 function phaseText(){
   const d=derived(),t=state.t,e=.012;
   if(state.mode==='q1'){
     if(t<e)return'抛出瞬间：小球从管口 M 以 v₀ 竖直上抛，管从静止加速下落';
-    if(Math.abs(t-d.relPeakT)<=e)return'相对最高点：小球离管口最远（M 上方 v₀²/16 m）';
+    if(Math.abs(t-d.relPeakT)<=e)return`相对最高点：小球离管口最远（M 上方 ${fmt(state.v0*state.v0/16,2)} m）`;
     if(t<d.relPeakT)return'小球相对管口上升中（相对速度向上，逐渐减小）';
     if(Math.abs(t-d.reenterT)<=e)return'落回 M：小球回到管口（s=0）';
     if(t<d.reenterT)return'小球在管口上方向 M 回落';
@@ -418,55 +450,43 @@ function phaseText(){
   if(t<TUBE_LAND_T)return'管与小球同时下落（管 a=2 m/s²，小球 g=10 m/s²）';
   const v=verdict();return`过程结束：${v.text}——${v.reason}`;
 }
-function updateHudAndEquations(){
+function updateHudAndEq(){
   const d=derived(),t=state.t,v0=state.v0;
-  const modeName=state.mode==='q1'?'第(1)问 · 足够高处':'第(2)问 · 距地 64 m';
+  const modeName=state.mode==='q1'?'第(1)问 · 看懂穿出过程':'第(2)问 · 探究 v₀ 窗口';
   const frameName=state.frame==='ground'?'地面参考系':'管参考系';
   document.getElementById('hudTitle').textContent=`${modeName} ｜ ${frameName}`;
-  document.getElementById('hudSubtitle').textContent=`物理时间 t = ${fmt(t)} s ｜ 播放倍率 ×${state.speed} ｜ v₀ = ${fmt(v0,1)} m/s ｜ ${phaseText()}`;
-  const h1=-v0*t+5*t*t;
+  document.getElementById('hudSubtitle').textContent=`物理时间 t = ${fmt(t)} s ｜ 播放倍率 0.5× ｜ v₀ = ${fmt(v0,1)} m/s ｜ ${phaseText()}`;
+  const h1=-v0*t+5*t*t, s=sRel(t);
   const h2show=state.mode==='q1'?t*t:Math.min(t,TUBE_LAND_T)**2;
-  document.getElementById('eqH1').textContent=`h₁ = −v₀t + 5t² = ${fmt(h1,1)} m`;
-  document.getElementById('eqH1n').textContent=`= −${fmt(v0,1)}×${fmt(t)} + 5×${fmt(t)}²`;
-  document.getElementById('eqH2').textContent=`h₂ = ½at² = t² = ${fmt(h2show,1)} m`;
-  document.getElementById('eqH2n').textContent=state.mode==='q2'&&t>TUBE_LAND_T?'管已落地，停在 64 m':'mg−F=ma → a=(20−16)/2=2 m/s²';
-  const s=sRel(t);
-  document.getElementById('eqS').textContent=`s = −v₀t + 4t² = ${fmt(s,1)} m`;
-  document.getElementById('eqSn').textContent=`0=管口M，24=管底N；当前${s<0?`在 M 上方 ${fmt(-s,1)} m`:s<=L?`在 M 下方 ${fmt(s,1)} m（管内）`:`在 N 下方 ${fmt(s-L,1)} m（已穿出）`}`;
-  document.getElementById('eqFrame').textContent=`g′ = g − a = 8 m/s²`;
-  document.getElementById('eqFramen').textContent=`管参考系中小球相当于以 v₀=${fmt(v0,1)} m/s 竖直上抛`;
-  const judgeLabel=document.getElementById('eqJudgeLabel'),judge=document.getElementById('eqJudge'),judgen=document.getElementById('eqJudgen');
+  let html=`<b>t = ${fmt(t)} s</b> ｜ h₁ = −v₀t+5t² = ${fmt(h1,1)} m ｜ h₂ = t² = ${fmt(h2show,1)} m ｜ s = h₁−h₂ = ${fmt(s,1)} m（${posText(s)}）`;
   if(state.mode==='q1'){
-    judgeLabel.textContent='穿出条件 s = 24 m';
-    judge.textContent=`t = (v₀+√(v₀²+384))/8 = ${fmt(d.exitT)} s`;
-    judgen.textContent=`事件序列：相对最高点 ${fmt(d.relPeakT)} s → 落回 M ${fmt(d.reenterT)} s → 穿出 N ${fmt(d.exitT)} s`;
+    html+=` ｜ 穿出 N：t = (v₀+√(v₀²+384))/8 = <b>${fmt(d.exitT)} s</b>`;
   }else{
     const v=verdict();
-    judgeLabel.textContent='落管窗口判定（t′=8 s）';
-    judge.textContent=`y_b(8) = 8v₀−232 = ${fmt(d.ybAtLand,1)} m`;
-    judgen.innerHTML=`窗口 0 ≤ y_b ≤ 24 ⟺ 29 ≤ v₀ ≤ 32 <span class="verdict-chip ${v.ok?'ok':'bad'}">${v.ok?'✓':'✗'} ${v.text}</span>`;
+    html+=` ｜ y_b(8) = 8v₀−232 = <b>${fmt(d.ybAtLand,1)} m</b> ｜ 窗口 0≤y_b≤24 ⟺ 29≤v₀≤32 <span class="verdict-chip ${v.ok?'ok':'bad'}">${v.ok?'✓':'✗'} ${v.text}</span>`;
   }
+  document.getElementById('eqLine').innerHTML=html;
 }
 
 /* ---------- scene sync ---------- */
 function updateScene(){
   const t=state.t,p=posGround(t);
   if(state.frame==='ground'){
-    tubeGroup.position.set(0,(p.yM+p.yN)/2,0);
-    ball.position.set(0,p.yB,0);
+    tubeGroup.position.set(0,D((p.yM+p.yN)/2),0);
+    ball.position.set(0,D(p.yB),0);
     groundGroup.position.y=0;
     groundGroup.visible=state.mode==='q2';
     markerGroup.visible=state.mode==='q2';
     launchGroup.visible=state.mode==='q1';
   }else{
-    tubeGroup.position.set(0,L/2,0);            /* tube fixed: N at 0, M at 24 */
-    ball.position.set(0,p.yB-p.yN,0);
+    tubeGroup.position.set(0,D(L)/2,0);            /* tube fixed: N at 0, M at D(24) */
+    ball.position.set(0,D(p.yB-p.yN),0);
     groundGroup.visible=state.mode==='q2';
-    if(state.mode==='q2')groundGroup.position.y=-p.yN;
+    if(state.mode==='q2')groundGroup.position.y=D(-p.yN);
     markerGroup.visible=false;launchGroup.visible=false;
   }
   const inTube=p.yB<=p.yM&&p.yB>=p.yN;
-  ball.material.emissiveIntensity=inTube?.3:.12;
+  ball.material.emissiveIntensity=inTube?.35:.12;
   canvas.setAttribute('aria-label',`${state.mode==='q1'?'第一问':'第二问'}，${state.frame==='ground'?'地面参考系':'管参考系'}。物理时间${fmt(t)}秒，小球${inTube?'在管内':'在管外'}。`);
 }
 
@@ -479,57 +499,72 @@ function syncControls(){
   v0Slider.value=state.v0;v0Output.textContent=`${fmt(state.v0,1)} m/s`;
   timeSlider.max=d.tEnd;timeSlider.value=Math.min(state.t,d.tEnd);
   timeOutput.textContent=`${fmt(Math.min(state.t,d.tEnd))} s`;
-  playButton.textContent=state.playing?'⏸ 暂停':'▶ 播放';playButton.setAttribute('aria-pressed',String(state.playing));
+  const label=state.playing?'⏸ 暂停':(state.t>=d.tEnd-.005?'↺ 重播':(state.t>.005?'▶ 继续':'▶ 播放'));
+  playButton.textContent=label;playButton.setAttribute('aria-pressed',String(state.playing));
+  playButton.classList.toggle('playing',state.playing);
   document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
   document.querySelectorAll('[data-frame]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.frame===state.frame)));
-  document.querySelectorAll('[data-speed]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.speed)===state.speed)));
+  document.getElementById('v0Field').classList.toggle('emphasize',state.mode==='q2');
 }
-/* event anchor buttons — rebuilt only when mode / v0 changes, not per frame */
-function rebuildAnchors(){
-  const d=derived();
-  const anchors=state.mode==='q1'
-    ?[['抛出',0],['相对最高点',d.relPeakT],['落回 M',d.reenterT],['穿出 N',d.exitT]]
-    :state.v0<29?[['抛出',0],['小球落地',d.ballLandT],['管落地',TUBE_LAND_T]]:[['抛出',0],['管落地',TUBE_LAND_T]];
-  const row=document.getElementById('anchorRow');
-  row.innerHTML='<span class="frame-label">事件锚点：</span>'+anchors.map(([label,t],i)=>`<button class="anchor-btn" type="button" data-i="${i}">${label} ${fmt(t)} s</button>`).join('');
-  row.querySelectorAll('.anchor-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    state.t=Math.min(anchors[Number(btn.dataset.i)][1],derived().tEnd);renderAll();
+/* event ticks on the timeline — rebuilt only when mode / v0 changes */
+function rebuildTicks(){
+  const d=derived(),layer=document.getElementById('tickLayer');
+  layer.innerHTML=events().filter(([,et])=>et>1e-6).map(([name,et])=>
+    `<button class="tick" type="button" style="left:${(et/d.tEnd*100).toFixed(2)}%;--tc:${TICK_COLORS[name]||'#7c3aed'}" data-t="${et}" title="${name} ${fmt(et)} s" aria-label="跳转到事件：${name}，${fmt(et)} 秒"></button>`
+  ).join('');
+  layer.querySelectorAll('.tick').forEach(btn=>btn.addEventListener('click',()=>{
+    state.t=Math.min(Number(btn.dataset.t),derived().tEnd);state.playing=false;renderAll();
   }));
 }
-function renderAll(){updateScene();updateHudAndEquations();drawChart();syncControls();renderer.render(scene,camera)}
-function setParams({clampTime=true}={}){const d=derived();if(clampTime)state.t=Math.min(state.t,d.tEnd);fitView();rebuildAnchors();renderAll()}
+function renderAll(){updateScene();updateHudAndEq();drawChart();syncControls();renderer.render(scene,camera)}
+function setParams({resetCamera=false}={}){
+  const d=derived();state.t=Math.min(state.t,d.tEnd);
+  if(resetCamera)sideView();else fitView();
+  rebuildTicks();renderAll();
+}
 
 document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{
   if(state.mode===btn.dataset.mode)return;
-  state.mode=btn.dataset.mode;state.v0=state.mode==='q1'?10:29;state.t=0;state.playing=false;setParams();
+  state.mode=btn.dataset.mode;
+  state.v0=state.mode==='q1'?10:29;
+  state.frame=state.mode==='q1'?'tube':'ground';
+  state.t=0;state.playing=false;setParams({resetCamera:true});
 }));
 v0Slider.addEventListener('input',e=>{state.v0=Number(e.target.value);setParams()});
 document.querySelectorAll('[data-frame]').forEach(btn=>btn.addEventListener('click',()=>{state.frame=btn.dataset.frame;setParams()}));
-timeSlider.addEventListener('input',e=>{state.t=Number(e.target.value);renderAll()});
-document.querySelectorAll('[data-speed]').forEach(btn=>btn.addEventListener('click',()=>{state.speed=Number(btn.dataset.speed);syncControls();updateHudAndEquations()}));
+timeSlider.addEventListener('input',e=>{state.t=Number(e.target.value);state.playing=false;renderAll()});
 playButton.addEventListener('click',()=>{
   if(state.playing){state.playing=false;syncControls();return}
   const d=derived();
   if(state.t>=d.tEnd-.005)state.t=0;
   if(reduceMotion){state.t=d.tEnd;state.playing=false;renderAll();return}
-  state.playing=true;state.lastTime=performance.now();syncControls();updateHudAndEquations();
+  state.playing=true;state.lastTime=performance.now();syncControls();updateHudAndEq();
 });
 
-/* ---------- animation loop (physical time × playback rate) ---------- */
+/* ---------- animation loop (物理时间 × 0.5，事件点自动暂停) ---------- */
 function animate(now){
   requestAnimationFrame(animate);
   if(state.playing){
     const dt=Math.min(.05,(now-state.lastTime)/1000);state.lastTime=now;
-    const d=derived();
-    state.t=Math.min(d.tEnd,state.t+dt*state.speed);
-    if(state.t>=d.tEnd)state.playing=false;
+    const d=derived(),prev=state.t;
+    let nt=Math.min(d.tEnd,prev+dt*SPEED);
+    const hit=events().find(([,et])=>et>prev+1e-6&&et<=nt+1e-9);
+    if(hit){state.t=hit[1];state.playing=false}
+    else{state.t=nt;if(state.t>=d.tEnd)state.playing=false}
     renderAll();
   }else state.lastTime=now;
   controls.update();renderer.render(scene,camera);
 }
-window.addEventListener('resize',()=>{camera.aspect=container.clientWidth/container.clientHeight;camera.updateProjectionMatrix();renderer.setSize(container.clientWidth,container.clientHeight);renderAll()});
+function resizeAll(){
+  const w=scenePanel.clientWidth,h=scenePanel.clientHeight;
+  if(w>10&&h>10){camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+  renderAll();
+}
+new ResizeObserver(resizeAll).observe(scenePanel);
+new ResizeObserver(()=>drawChart()).observe(chartCanvas);
+window.addEventListener('resize',resizeAll);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.playing){state.playing=false;syncControls()}});
-setParams({clampTime:false});state.t=0;renderAll();animate(performance.now());
+resizeAll();setParams({resetCamera:true});state.t=0;renderAll();animate(performance.now());
 </script>
 </body>
 </html>
