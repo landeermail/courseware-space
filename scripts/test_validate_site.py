@@ -22,7 +22,18 @@ class ValidatorCliTests(unittest.TestCase):
 
     def create_site(self, root: Path, lesson_path: str = "lesson/") -> Path:
         courseware_data = {
-            "categories": [{"lessons": [{"path": lesson_path}]}],
+            "categories": [
+                {
+                    "lessons": [
+                        {
+                            "title": "测试主题",
+                            "entries": [
+                                {"title": "测试入口", "path": lesson_path},
+                            ],
+                        }
+                    ]
+                }
+            ],
         }
         (root / "index.html").write_text(
             f"<script>const coursewareData = {json.dumps(courseware_data)};</script>",
@@ -105,6 +116,22 @@ class ValidatorCliTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 1)
             self.assertIn("path 必须以 / 结尾", result.stderr)
+
+    def test_cli_rejects_card_without_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            courseware_data = {
+                "categories": [{"lessons": [{"title": "空卡片"}]}],
+            }
+            (root / "index.html").write_text(
+                f"<script>const coursewareData = {json.dumps(courseware_data)};</script>",
+                encoding="utf-8",
+            )
+
+            result = self.run_validator(root)
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("entries 必须是非空数组", result.stderr)
 
 
 if __name__ == "__main__":

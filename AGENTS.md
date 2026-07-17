@@ -14,8 +14,8 @@
 - 将课件放在与主题对应的目录中，目录名使用小写英文和连字符。
 - 每个课件目录必须包含可直接访问的 `index.html`。
 - 图片、脚本、图标等专用资源应保存在课件目录内，避免依赖仓库根目录的相对路径。
-- 同时更新根目录 `index.html` 中的 `coursewareData`，确保首页可以进入新课件。
-- 首页登记路径使用相对路径，并以 `/` 结尾，例如 `electromagnetism/q20-rotating-rod/`。
+- 同时更新根目录 `index.html` 中的 `coursewareData`：按题目或学习主题维护卡片，并为每个课件页面添加具名入口。
+- 每个入口的 `path` 使用相对路径，并以 `/` 结尾，例如 `electromagnetism/q20-rotating-rod/`。
 
 ## 实现要求
 
