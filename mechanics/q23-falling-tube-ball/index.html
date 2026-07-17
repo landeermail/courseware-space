@@ -289,22 +289,22 @@ makeLabel('N（管底）',new THREE.Vector3(4.4,-D(L)/2,0),'#047857',6.5,tubeGro
 /* ball */
 const ball=new THREE.Mesh(new THREE.SphereGeometry(.62,24,24),new THREE.MeshStandardMaterial({color:0xdc2626,roughness:.3,metalness:.2,emissive:0xdc2626,emissiveIntensity:.15}));
 scene.add(ball);
-makeLabel('小球',new THREE.Vector3(2.9,0,0),'#b91c1c',4.5,ball);
+makeLabel('小球',new THREE.Vector3(-2.9,0,0),'#b91c1c',4.5,ball);
 
 /* ground (Q2) */
 const groundGroup=new THREE.Group();scene.add(groundGroup);
-const groundPlane=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:0xe7edf5,roughness:.95}));
+const groundPlane=new THREE.Mesh(new THREE.PlaneGeometry(34,34),new THREE.MeshStandardMaterial({color:0xe7edf5,roughness:.95}));
 groundPlane.rotation.x=-Math.PI/2;groundGroup.add(groundPlane);
-const grid=new THREE.GridHelper(60,15,0xc1ccd9,0xd8e0e9);grid.position.y=.02;groundGroup.add(grid);
-makeLabel('地面',new THREE.Vector3(-9,.2,0),'#526079',5.5,groundGroup);
+const grid=new THREE.GridHelper(34,17,0xc1ccd9,0xd8e0e9);grid.position.y=.02;groundGroup.add(grid);
+makeLabel('地面',new THREE.Vector3(-7,.2,0),'#526079',5.5,groundGroup);
 
 /* Q2 start-height markers (ground frame only) */
 const markerGroup=new THREE.Group();scene.add(markerGroup);
-dashedLine(new THREE.Vector3(0,D(H_N0),0),new THREE.Vector3(-12,D(H_N0),0),0x059669,markerGroup);
-dashedLine(new THREE.Vector3(0,D(H_M0),0),new THREE.Vector3(-12,D(H_M0),0),0xd97706,markerGroup);
-dashedLine(new THREE.Vector3(-12,0,0),new THREE.Vector3(-12,D(H_M0),0),0x94a3b8,markerGroup);
-makeLabel('N 初始高度 64 m',new THREE.Vector3(-14.5,D(H_N0),0),'#047857',7,markerGroup);
-makeLabel('M 初始高度 88 m',new THREE.Vector3(-14.5,D(H_M0)+1.2,0),'#b45309',7,markerGroup);
+dashedLine(new THREE.Vector3(0,D(H_N0),0),new THREE.Vector3(-9,D(H_N0),0),0x059669,markerGroup);
+dashedLine(new THREE.Vector3(0,D(H_M0),0),new THREE.Vector3(-9,D(H_M0),0),0xd97706,markerGroup);
+dashedLine(new THREE.Vector3(-9,0,0),new THREE.Vector3(-9,D(H_M0),0),0x94a3b8,markerGroup);
+makeLabel('N 初始高度 64 m',new THREE.Vector3(-11.5,D(H_N0),0),'#047857',7,markerGroup);
+makeLabel('M 初始高度 88 m',new THREE.Vector3(-11.5,D(H_M0)+1.2,0),'#b45309',7,markerGroup);
 
 /* Q1 launch-point marker (M start) */
 const launchGroup=new THREE.Group();scene.add(launchGroup);
@@ -333,11 +333,12 @@ function fitView(){
   camera.position.copy(controls.target).addScaledVector(dir,dist);
   camera.near=Math.max(.1,dist/1000);camera.far=dist*8;camera.updateProjectionMatrix();controls.update();
 }
-function sideView(){ /* 默认侧面正视角 */
+function sideView(){ /* 默认侧面正视角（Q2 略带俯视以呈现地面纵深） */
   const b=contentBounds(),span=Math.max(8,b.max-b.min),mid=(b.max+b.min)/2;
   const dist=span*.5/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*1.25;
+  const q2=state.mode==='q2';
   controls.target.set(0,mid,0);
-  camera.position.set(.8,mid+dist*.06,dist);
+  camera.position.set(q2?dist*.24:.8,mid+dist*(q2?.22:.06),dist);
   camera.near=Math.max(.1,dist/1000);camera.far=dist*8;camera.updateProjectionMatrix();controls.update();
 }
 
@@ -353,8 +354,8 @@ function chartModel(){
     const solidEnd=state.mode==='q1'?d.exitT:Math.min(TUBE_LAND_T,d.ballLandT);
     m.curves.push({color:COLORS.rel,from:0,to:solidEnd,fn:t=>sRel(t),label:'s_rel = −v₀t+4t²'});
     if(state.mode==='q2'&&solidEnd<d.tEnd-1e-9)m.curves.push({color:COLORS.rel,dash:true,from:solidEnd,to:d.tEnd,fn:t=>{const p=posGround(t);return p.yM-p.yB},label:'落地后的实际相对位置'});
-    if(d.relPeakT<=d.tMax)m.dots.push({t:d.relPeakT,y:-v0*v0/(2*(G-A_TUBE)),label:`相对最高点 t=${fmt(d.relPeakT)} s`,color:COLORS.rel});
-    if(d.reenterT<=d.tMax&&(state.mode==='q1'||d.reenterT<=TUBE_LAND_T))m.dots.push({t:d.reenterT,y:0,label:`落回 M t=${fmt(d.reenterT)} s`,color:COLORS.cyan});
+    if(d.relPeakT<=m.tMax)m.dots.push({t:d.relPeakT,y:-v0*v0/(2*(G-A_TUBE)),label:`相对最高点 t=${fmt(d.relPeakT)} s`,color:COLORS.rel});
+    if(d.reenterT<=m.tMax&&(state.mode==='q1'||d.reenterT<=TUBE_LAND_T))m.dots.push({t:d.reenterT,y:0,label:`落回 M t=${fmt(d.reenterT)} s`,color:COLORS.cyan});
     if(state.mode==='q1'||(d.exitT<=TUBE_LAND_T+1e-9&&Math.abs(d.exitT-TUBE_LAND_T)>1e-6))m.dots.push({t:d.exitT,y:L,label:`穿出 N t=${fmt(d.exitT)} s`,color:COLORS.ball});
     if(state.mode==='q2'){
       m.vlines.push({t:TUBE_LAND_T,label:'管落地 t′=8 s',color:'#64748b'});
@@ -364,9 +365,9 @@ function chartModel(){
     m.formula='s_rel(t) = −v₀t + ½(g−a)t² = −v₀t + 4t²';
   }else{
     m.yLabel=state.mode==='q1'?'y / m（相对抛出点，向上为正）':'y / m（距地面）';
-    m.curves.push({color:COLORS.ball,from:0,to:d.tMax,fn:t=>posGround(t).yB,label:'小球 y_b'});
-    m.curves.push({color:COLORS.M,from:0,to:d.tMax,fn:t=>posGround(t).yM,label:'管口 M'});
-    m.curves.push({color:COLORS.N,from:0,to:d.tMax,fn:t=>posGround(t).yN,label:'管底 N'});
+    m.curves.push({color:COLORS.ball,from:0,to:d.tEnd,fn:t=>posGround(t).yB,label:'小球 y_b'});
+    m.curves.push({color:COLORS.M,from:0,to:d.tEnd,fn:t=>posGround(t).yM,label:'管口 M'});
+    m.curves.push({color:COLORS.N,from:0,to:d.tEnd,fn:t=>posGround(t).yN,label:'管底 N'});
     if(state.mode==='q1'){
       m.vlines.push({t:d.relPeakT,label:`相对最高点 ${fmt(d.relPeakT)} s`,color:COLORS.rel});
       m.vlines.push({t:d.reenterT,label:`落回 M ${fmt(d.reenterT)} s`,color:COLORS.cyan});
@@ -458,12 +459,12 @@ function updateHudAndEq(){
   document.getElementById('hudSubtitle').textContent=`物理时间 t = ${fmt(t)} s ｜ 播放倍率 0.5× ｜ v₀ = ${fmt(v0,1)} m/s ｜ ${phaseText()}`;
   const h1=-v0*t+5*t*t, s=sRel(t);
   const h2show=state.mode==='q1'?t*t:Math.min(t,TUBE_LAND_T)**2;
-  let html=`<b>t = ${fmt(t)} s</b> ｜ h₁ = −v₀t+5t² = ${fmt(h1,1)} m ｜ h₂ = t² = ${fmt(h2show,1)} m ｜ s = h₁−h₂ = ${fmt(s,1)} m（${posText(s)}）`;
+  let html;
   if(state.mode==='q1'){
-    html+=` ｜ 穿出 N：t = (v₀+√(v₀²+384))/8 = <b>${fmt(d.exitT)} s</b>`;
+    html=`<b>t = ${fmt(t)} s</b> ｜ h₁ = −v₀t+5t² = ${fmt(h1,1)} m ｜ h₂ = t² = ${fmt(h2show,1)} m ｜ s = h₁−h₂ = ${fmt(s,1)} m（${posText(s)}） ｜ 穿出 N：<b>t = ${fmt(d.exitT)} s</b>`;
   }else{
     const v=verdict();
-    html+=` ｜ y_b(8) = 8v₀−232 = <b>${fmt(d.ybAtLand,1)} m</b> ｜ 窗口 0≤y_b≤24 ⟺ 29≤v₀≤32 <span class="verdict-chip ${v.ok?'ok':'bad'}">${v.ok?'✓':'✗'} ${v.text}</span>`;
+    html=`<b>t = ${fmt(t)} s</b> ｜ y_b(t) = 88+v₀t−5t² ｜ t′=8：y_b(8) = 8v₀−232 = <b>${fmt(d.ybAtLand,1)} m</b> ｜ 窗口 0≤y_b≤24 ⟺ 29≤v₀≤32 <span class="verdict-chip ${v.ok?'ok':'bad'}">${v.ok?'✓':'✗'} ${v.text}</span>`;
   }
   document.getElementById('eqLine').innerHTML=html;
 }
