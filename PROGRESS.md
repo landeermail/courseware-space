@@ -10,3 +10,5 @@
 - 机器验收：2 组实例、4 组方向组合、3 组越界拒绝全部通过；原站基线仍为 8/30/6/14。
 - 浏览器验收：桌面与 375px 可用，速度/方向/时间联动正确，播放到终点停止，控制台 0 个 warning/error。
 - 当前停点：因 KIMI_API_KEY 缺失，按任务书暂停任务 2～4；恢复后从任务 2.1 开始，不重做模板。
+- 2026-07-28：对新提供的 key 执行官方 Chat Completions hello 请求，实际返回 HTTP 401 `Invalid Authentication`；key 未持久化。
+- 停点不变：等待可用于 `api.moonshot.cn/v1/chat/completions` 的有效 key，验证通过后进入任务 2.1。
