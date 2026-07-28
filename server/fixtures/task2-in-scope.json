@@ -1,0 +1,32 @@
+[
+  {
+    "id": "basic-right-into",
+    "source": "自拟：高中物理滑动导体杆经典模型",
+    "expected": {"magnetic_field_t": 0.5, "rod_length_m": 1.0, "rod_speed_m_s": 2.0, "resistance_ohm": 0.4, "field_direction": "into_page", "motion_direction": "right"},
+    "question": "两根平行光滑金属导轨组成闭合回路，导轨间距为1.0 m，左端接0.40 Ω电阻，其余电阻不计。整个装置处于垂直导轨平面向里的0.50 T匀强磁场中，导体杆以2.0 m/s向右做匀速直线运动。求感应电动势、电流方向和安培力大小。"
+  },
+  {
+    "id": "unit-conversion-left-out",
+    "source": "自拟：含厘米单位的滑动导体杆模型",
+    "expected": {"magnetic_field_t": 0.8, "rod_length_m": 0.6, "rod_speed_m_s": 1.5, "resistance_ohm": 0.36, "field_direction": "out_of_page", "motion_direction": "left"},
+    "question": "间距60 cm的水平平行导轨左端由0.36 Ω电阻闭合，导体棒电阻及导轨电阻均忽略。磁感应强度0.80 T的匀强磁场垂直纸面向外，金属棒以1.5 m/s向左匀速滑动。判断电流方向并求安培力。"
+  },
+  {
+    "id": "small-resistance-right-into",
+    "source": "改编自仓库第21题的匀强磁场阶段",
+    "expected": {"magnetic_field_t": 0.2, "rod_length_m": 1.0, "rod_speed_m_s": 4.0, "resistance_ohm": 0.02, "field_direction": "into_page", "motion_direction": "right"},
+    "question": "平行导轨间距L=1 m，回路左端接R=0.020 Ω的定值电阻，其余电阻不计。B=0.20 T的匀强磁场垂直导轨平面向里，一根导体杆以恒定速率v=4.0 m/s向右运动，回路保持闭合。求杆中的感应电流和磁场力。"
+  },
+  {
+    "id": "left-into",
+    "source": "自拟：反向运动方向辨析",
+    "expected": {"magnetic_field_t": 0.4, "rod_length_m": 0.5, "rod_speed_m_s": 3.0, "resistance_ohm": 0.3, "field_direction": "into_page", "motion_direction": "left"},
+    "question": "两根平行导轨相距0.50 m并由0.30 Ω电阻接成闭合回路。匀强磁场B=0.40 T垂直纸面向里。导体杆沿导轨以3.0 m/s的恒定速率向左运动，忽略其他电阻。求杆两端电势高低及安培力方向。"
+  },
+  {
+    "id": "right-out-centimeter",
+    "source": "自拟：反向磁场与厘米单位辨析",
+    "expected": {"magnetic_field_t": 1.2, "rod_length_m": 0.25, "rod_speed_m_s": 0.8, "resistance_ohm": 0.15, "field_direction": "out_of_page", "motion_direction": "right"},
+    "question": "闭合平行金属导轨的间距为25 cm，总电阻为0.15 Ω。磁感应强度为1.2 T的匀强磁场垂直导轨平面向外，直导体杆以0.80 m/s向右做匀速直线运动。求动生电动势、回路电流及安培力。"
+  }
+]

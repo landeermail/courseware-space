@@ -21,8 +21,10 @@ def _script_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 
-def render_case(case_path: Path) -> str:
-    config = normalize_config(json.loads(case_path.read_text(encoding="utf-8")))
+def render_config(raw_config: dict[str, object]) -> str:
+    """Render one validated configuration without allowing executable input."""
+
+    config = normalize_config(raw_config)
     model = assert_physics(config, derive_physics(config))
     source = TEMPLATE_PATH.read_text(encoding="utf-8")
     replacements = {
@@ -37,6 +39,10 @@ def render_case(case_path: Path) -> str:
     if "__CONFIG_JSON__" in source or "__MODEL_JSON__" in source:
         raise RuntimeError("模板仍有未替换标记")
     return source
+
+
+def render_case(case_path: Path) -> str:
+    return render_config(json.loads(case_path.read_text(encoding="utf-8")))
 
 
 def expected_outputs() -> dict[Path, str]:

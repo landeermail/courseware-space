@@ -12,11 +12,23 @@ python3 -m http.server 8000
 
 然后访问 <http://localhost:8000/>。不要直接双击打开 HTML 文件；部分浏览器功能和相对资源需要通过 HTTP 正常加载。
 
+如果需要使用老师课件生成器，请通过本地生成服务启动：
+
+```bash
+KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
+  python3 server/app.py
+```
+
+然后访问 <http://localhost:8000/generator/>。生成器后端、密钥管理和验收方法见 `server/README.md`。
+
 ## 目录结构
 
 ```text
 .
 ├── index.html                 # 课件库首页和课件清单
+├── generator/                 # 老师生成页面和已验证生成产物
+├── templates/                 # 锁定物理关系的参数化课件模板
+├── server/                    # 本地异步生成服务与真实验收证据
 ├── electromagnetism/          # 电磁学课件
 ├── helicopter-dynamics/       # 直升机动力学课件
 ├── mh370-physics/             # MH370 物理分析课件
@@ -47,4 +59,3 @@ python3 -m http.server 8000
 <https://landeermail.github.io/courseware-space/>
 
 除非正在处理紧急修复，否则不要直接向 `main` 推送。
-
