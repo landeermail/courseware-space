@@ -13,6 +13,8 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 然后访问 <http://localhost:8000/generator/>。
 
+图片/PDF 与文字输入都位于 <http://localhost:8000/generator/>；`/generator/media/` 只保留为开发期独立确认台。视觉模型的输出只会创建待确认记录；老师核对或修正全部关键参数并显式勾选后，后端才签发一次性确认令牌并创建生成任务。
+
 默认运行数据保存在 `/tmp/courseware-space-generator/`：
 
 - `generated/<job-id>/index.html`：生成结果；
@@ -24,9 +26,13 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 - `GET /api/health`：服务和 provider 配置状态；
 - `POST /api/generate`：提交 `{ "question": "..." }`，立即返回异步任务；
+- `POST /api/media/parse`：提交图片/PDF 的文件名、MIME 与 Base64 内容，返回逐题结构化解析；
+- `POST /api/media/confirm`：提交老师确认后的题意、B/L/v/R、磁场/运动/电流方向与所求量；未经服务端解析记录和显式确认会被拒绝；
 - `GET /api/jobs/<job-id>`：查询生成状态；
 - `POST /api/manual-requests`：为已转人工的任务补充称呼和联系方式；
 - `GET /generated/<job-id>/`：打开生成页面。
+
+图片最大 8 MB，PDF 最大 20 MB、6 页。PDF 使用 `pdfinfo` + `pdftoppm` 逐页转成图片，每页要求视觉模型返回 `questions[]`，因此一页多题可以作为多条候选供老师选择。这是当前最简单且可审查的切分方案：不尝试不可靠的自动坐标裁图，也不让模型直接读取整份 PDF。无法解析、置信不足、模板范围外或关键参数缺失时返回补述/人工提示，不会直接生成。
 
 ## 验证
 
@@ -45,6 +51,18 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
   python3 server/run_acceptance.py benchmark
 ```
 
+图片/PDF 验收同样会消耗 Kimi Code 额度，并在结果存在时拒绝重跑：
+
+```bash
+KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
+  python3 server/run_media_acceptance.py
+
+KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
+  python3 server/run_media_edge_acceptance.py
+```
+
+云端一次性回归使用 `server/run_cloud_acceptance.py --base-url <FC URL>`，结果写入 `server/evidence/cloud-v2/results.json`。它会真实验证 5+3 道文字题、20 题基准、5+3 张图片、PDF 多题和确认闸红→绿，并逐个打开 OSS 产物；证据存在时同样拒绝重跑。
+
 ## 部署边界
 
-GitHub Pages 只能发布静态前端和已生成课件，不能运行该 Python API。当前 MVP 面向本机现场演示；公开生成服务需要另行确定后端托管方案，并在商业上线前迁移到 Kimi 开放平台或取得相应许可。
+GitHub Pages 只发布静态前端；公开生成 API 运行在阿里云 FC，产物写入 OSS。Pages 前端只向配置的 FC 地址发送 JSON `fetch`，服务端以精确 Origin 白名单和限流保护演示接口。该匿名接口不等于生产鉴权，生产化前仍需身份系统、持久化任务状态与持久化限流。

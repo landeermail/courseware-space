@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "4d4a956c4f8f",
+  "title": "匀强磁场中的滑动导体杆：向右切割",
+  "owner": "演示账号",
+  "status": "pending_review",
+  "source_input_type": "image",
+  "physics_summary": {
+    "topic": "匀强磁场中的滑动导体杆",
+    "parameters": {
+      "B_T": 0.5,
+      "L_m": 1.0,
+      "v_m_s": 2.0,
+      "R_ohm": 0.4
+    },
+    "magnetic_direction": "垂直纸面向里",
+    "motion_direction": "向右",
+    "current_direction": "d → c（沿棒向上）",
+    "asks": [
+      "求感应电动势",
+      "判断电流方向"
+    ]
+  },
+  "generated_at": "2026-07-28T09:29:52.565912+00:00",
+  "path": "generator/staging/4d4a956c4f8f/",
+  "review": {
+    "reviewer": "待课件验收",
+    "reviewed_at": null,
+    "physics_confirmed": false
+  }
+}

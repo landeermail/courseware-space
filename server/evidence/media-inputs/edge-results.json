@@ -1,0 +1,62 @@
+{
+  "acceptance": "media-edge-cases-v1",
+  "run_at": "2026-07-28T09:29:52.617151+00:00",
+  "model": "kimi-for-coding",
+  "uncertain_samples": [
+    {
+      "sample_id": "uncertain-01",
+      "status": "needs_input",
+      "message": "识别置信不足或关键参数不完整，请补述题意或转人工处理。",
+      "confidence": 0.95,
+      "supported": false,
+      "reasons": [
+        "B 的大小和回路电阻 R 未给出，数值缺失，无法按完整模板计算感应电动势和电流大小。"
+      ],
+      "ready_count": 0
+    },
+    {
+      "sample_id": "uncertain-02",
+      "status": "needs_input",
+      "message": "识别置信不足或关键参数不完整，请补述题意或转人工处理。",
+      "confidence": 0.95,
+      "supported": true,
+      "reasons": [
+        "磁场方向标记模糊，无法判断感应电流方向"
+      ],
+      "ready_count": 0
+    },
+    {
+      "sample_id": "uncertain-03",
+      "status": "needs_input",
+      "message": "识别置信不足或关键参数不完整，请补述题意或转人工处理。",
+      "confidence": 0.95,
+      "supported": true,
+      "reasons": [
+        "运动方向未标明，无法确定电流方向与电势高低。"
+      ],
+      "ready_count": 0
+    }
+  ],
+  "pdf": {
+    "path": "server/evidence/media-inputs/multi-question.pdf",
+    "page_count": 1,
+    "question_count": 2,
+    "question_ids": [
+      "p1-q1",
+      "p1-q2"
+    ],
+    "selected_job_status": "succeeded",
+    "selected_output_path": "server/evidence/media-runtime-edge/generated/d4f2a2e32cae/index.html"
+  },
+  "reverse_field_red_green": {
+    "ai_field_direction": "out_of_page",
+    "ai_current_direction": "d_to_c",
+    "red_status": "blocked",
+    "red_reason": "电流方向与已确认的磁场、运动方向不一致，请重新核对",
+    "teacher_field_direction": "into_page",
+    "teacher_current_direction": "d_to_c",
+    "green_status": "succeeded",
+    "green_final_field_direction": "into_page",
+    "green_output_path": "server/evidence/media-runtime-edge/generated/4d4a956c4f8f/index.html"
+  }
+}

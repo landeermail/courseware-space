@@ -7,6 +7,7 @@ import os
 import time
 import urllib.error
 import urllib.request
+import base64
 from dataclasses import dataclass
 from typing import Any
 
@@ -47,16 +48,43 @@ class KimiCodeClient:
         return bool(self.api_key)
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
+        return self.complete_messages(
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ]
+        )
+
+    def complete_vision(self, system_prompt: str, user_prompt: str, mime_type: str, image: bytes) -> str:
+        """Send one in-memory image without persisting it or exposing it in logs."""
+
+        encoded = base64.b64encode(image).decode("ascii")
+        return self.complete_messages(
+            [
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": user_prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:{mime_type};base64,{encoded}"},
+                        },
+                    ],
+                },
+            ]
+        )
+
+    def complete_messages(self, messages: list[dict[str, Any]]) -> str:
         if not self.api_key:
             raise ProviderError("configuration", "生成服务尚未配置 Kimi API Key")
+        if not isinstance(messages, list) or not messages:
+            raise ValueError("messages 必须是非空数组")
 
         payload = json.dumps(
             {
                 "model": self.model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
+                "messages": messages,
                 "stream": False,
             },
             ensure_ascii=False,

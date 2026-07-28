@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from artifact_store import ArtifactStore, ArtifactStoreError, LocalArtifactStore
 from kimi_client import KimiCodeClient, ProviderError
 
 
@@ -67,6 +68,7 @@ class GenerationOutcome:
     reason: str = ""
     config: dict[str, Any] | None = None
     output_path: str | None = None
+    metadata: dict[str, Any] | None = None
     prompt_version: str = PROMPT_VERSION
 
 
@@ -141,6 +143,45 @@ def build_template_config(question: str, parameters: dict[str, Any]) -> dict[str
     return config
 
 
+def build_staging_metadata(
+    config: dict[str, Any],
+    *,
+    request_id: str,
+    source_input_type: str,
+    asks: list[str],
+    owner: str = "演示账号",
+) -> dict[str, Any]:
+    model = assert_physics(config, derive_physics(config))
+    return {
+        "schema_version": 1,
+        "id": request_id,
+        "title": config["title"],
+        "owner": owner.strip(),
+        "status": "pending_review",
+        "source_input_type": source_input_type,
+        "physics_summary": {
+            "topic": "匀强磁场中的滑动导体杆",
+            "parameters": {
+                "B_T": config["magnetic_field_t"],
+                "L_m": config["rod_length_m"],
+                "v_m_s": config["rod_speed_m_s"],
+                "R_ohm": config["resistance_ohm"],
+            },
+            "magnetic_direction": model["field_label"],
+            "motion_direction": model["motion_label"],
+            "current_direction": model["rod_current_label"],
+            "asks": [item.strip() for item in asks],
+        },
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "path": f"generator/staging/{request_id}/",
+        "review": {
+            "reviewer": "待课件验收",
+            "reviewed_at": None,
+            "physics_confirmed": False,
+        },
+    }
+
+
 class GenerationService:
     def __init__(self, client: KimiCodeClient, recorder: ManualRequestRecorder) -> None:
         self.client = client
@@ -164,6 +205,16 @@ class GenerationService:
                 output_dir.mkdir(parents=True, exist_ok=True)
                 output_path = output_dir / "index.html"
                 output_path.write_text(html, encoding="utf-8")
+                metadata = build_staging_metadata(
+                    config,
+                    request_id=request_id,
+                    source_input_type="text",
+                    asks=["按原题讲解感应电动势、电流与安培力"],
+                )
+                (output_dir / "metadata.json").write_text(
+                    json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
                 try:
                     display_path = str(output_path.relative_to(ROOT))
                 except ValueError:
@@ -173,6 +224,7 @@ class GenerationService:
                     normalized_question,
                     config=config,
                     output_path=display_path,
+                    metadata=metadata,
                 )
         except (ProviderError, ValueError, ModelValidationError, RuntimeError, OSError) as error:
             outcome = GenerationOutcome("manual_required", normalized_question, str(error))
@@ -189,13 +241,73 @@ class GenerationService:
             )
         return outcome
 
+    def generate_confirmed_sync(
+        self,
+        question: object,
+        parameters: dict[str, Any],
+        output_dir: Path,
+        *,
+        request_id: str,
+        source_input_type: str,
+        asks: list[str],
+        owner: str = "演示账号",
+    ) -> GenerationOutcome:
+        """Render only parameters already accepted by the server-side confirmation gate."""
+
+        normalized_question = normalize_question(question)
+        if source_input_type not in {"image", "pdf"}:
+            raise ValueError("确认闸只接受 image 或 pdf 来源")
+        if not isinstance(owner, str) or not owner.strip():
+            raise ValueError("owner 不能为空")
+        if not isinstance(asks, list) or not asks or any(
+            not isinstance(item, str) or not item.strip() or len(item.strip()) > 160 for item in asks
+        ):
+            raise ValueError("所求量必须是非空文本数组")
+
+        config = build_template_config(normalized_question, parameters)
+        assert_physics(config, derive_physics(config))
+        html = render_config(config)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = output_dir / "index.html"
+        output_path.write_text(html, encoding="utf-8")
+        metadata = build_staging_metadata(
+            config,
+            request_id=request_id,
+            source_input_type=source_input_type,
+            asks=asks,
+            owner=owner,
+        )
+        (output_dir / "metadata.json").write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        try:
+            display_path = str(output_path.relative_to(ROOT))
+        except ValueError:
+            display_path = str(output_path)
+        return GenerationOutcome(
+            "succeeded",
+            normalized_question,
+            config=config,
+            output_path=display_path,
+            metadata=metadata,
+        )
+
 
 class GenerationManager:
-    def __init__(self, service: GenerationService, runtime_dir: Path, max_workers: int = 2) -> None:
+    def __init__(
+        self,
+        service: GenerationService,
+        runtime_dir: Path,
+        max_workers: int = 2,
+        artifact_store: ArtifactStore | None = None,
+    ) -> None:
         self.service = service
         self.runtime_dir = runtime_dir
+        self.artifact_store = artifact_store or LocalArtifactStore()
         self.executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="courseware-generator")
         self.jobs: dict[str, dict[str, Any]] = {}
+        self._confirmation_tokens: set[str] = set()
         self._lock = threading.Lock()
 
     def submit(self, question: object) -> dict[str, Any]:
@@ -214,19 +326,127 @@ class GenerationManager:
         self.executor.submit(self._run, job_id, normalized_question)
         return dict(job)
 
+    def submit_confirmed(
+        self,
+        *,
+        confirmation_id: str,
+        question: str,
+        parameters: dict[str, Any],
+        source_input_type: str,
+        asks: list[str],
+    ) -> dict[str, Any]:
+        if not isinstance(confirmation_id, str) or not re.fullmatch(r"[a-f0-9]{24}", confirmation_id):
+            raise ValueError("缺少有效的服务端确认记录")
+        with self._lock:
+            if confirmation_id not in self._confirmation_tokens:
+                raise ValueError("参数尚未经过服务端老师确认闸")
+            self._confirmation_tokens.remove(confirmation_id)
+        normalized_question = normalize_question(question)
+        job_id = uuid.uuid4().hex[:12]
+        now = datetime.now(timezone.utc).isoformat()
+        job = {
+            "id": job_id,
+            "status": "queued",
+            "question": normalized_question,
+            "source_input_type": source_input_type,
+            "confirmation_id": confirmation_id,
+            "created_at": now,
+            "updated_at": now,
+        }
+        with self._lock:
+            self.jobs[job_id] = job
+        self.executor.submit(
+            self._run_confirmed,
+            job_id,
+            confirmation_id,
+            normalized_question,
+            dict(parameters),
+            source_input_type,
+            list(asks),
+        )
+        return dict(job)
+
+    def authorize_confirmation(self, confirmation_id: str) -> None:
+        """Register a one-time token minted only after the media workflow validates teacher confirmation."""
+
+        if not isinstance(confirmation_id, str) or not re.fullmatch(r"[a-f0-9]{24}", confirmation_id):
+            raise ValueError("确认记录格式无效")
+        with self._lock:
+            self._confirmation_tokens.add(confirmation_id)
+
     def _run(self, job_id: str, question: str) -> None:
         self._update(job_id, status="running")
         output_dir = self.runtime_dir / "generated" / job_id
         outcome = self.service.generate_sync(question, output_dir, request_id=job_id)
         if outcome.status == "succeeded":
-            self._update(
-                job_id,
-                status="succeeded",
-                output_url=f"/generated/{job_id}/",
-                config=outcome.config,
-            )
+            self._publish_outcome(job_id, question, output_dir, outcome)
         else:
             self._update(job_id, status="manual_required", reason=outcome.reason)
+
+    def _run_confirmed(
+        self,
+        job_id: str,
+        confirmation_id: str,
+        question: str,
+        parameters: dict[str, Any],
+        source_input_type: str,
+        asks: list[str],
+    ) -> None:
+        self._update(job_id, status="running")
+        output_dir = self.runtime_dir / "generated" / job_id
+        try:
+            outcome = self.service.generate_confirmed_sync(
+                question,
+                parameters,
+                output_dir,
+                request_id=job_id,
+                source_input_type=source_input_type,
+                asks=asks,
+            )
+        except (ValueError, ModelValidationError, RuntimeError, OSError) as error:
+            self.service.recorder.append(
+                {
+                    "request_id": job_id,
+                    "event": "confirmed_generation_fallback",
+                    "question": question,
+                    "reason": str(error),
+                    "confirmation_id": confirmation_id,
+                    "status": "awaiting_contact",
+                }
+            )
+            self._update(job_id, status="manual_required", reason=str(error))
+            return
+        self._publish_outcome(job_id, question, output_dir, outcome)
+
+    def _publish_outcome(
+        self,
+        job_id: str,
+        question: str,
+        output_dir: Path,
+        outcome: GenerationOutcome,
+    ) -> None:
+        try:
+            output_url = self.artifact_store.publish(job_id, output_dir)
+        except ArtifactStoreError as error:
+            self.service.recorder.append(
+                {
+                    "request_id": job_id,
+                    "event": "artifact_publish_fallback",
+                    "question": question,
+                    "reason": str(error),
+                    "status": "awaiting_contact",
+                }
+            )
+            self._update(job_id, status="manual_required", reason="课件已生成但发布失败，已转人工处理")
+            return
+        self._update(
+            job_id,
+            status="succeeded",
+            output_url=output_url,
+            storage_backend=self.artifact_store.backend,
+            config=outcome.config,
+            metadata=outcome.metadata,
+        )
 
     def _update(self, job_id: str, **changes: Any) -> None:
         with self._lock:

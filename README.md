@@ -21,6 +21,8 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 然后访问 <http://localhost:8000/generator/>。生成器后端、密钥管理和验收方法见 `server/README.md`。
 
+文字、图片和 PDF 三种输入已经合并在 <http://localhost:8000/generator/>。图片/PDF 必须经过老师逐项确认后才会生成。阿里云 FC + OSS 的部署结构、可复跑命令和安全边界见 `deploy/README.md` 与 `docs/deploy/`；当前云端状态以 `PROGRESS.md` 与 `BLOCKED.md` 为准，不能用本地结果代替公网验收。
+
 ## 目录结构
 
 ```text

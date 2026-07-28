@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "schema_version": 1,
+      "id": "q6-plane-direction-judgment",
+      "title": "第6题：飞机机翼电势差·逐项判断",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "导体切割磁感线与电势高低",
+        "parameters": {"scene": "南半球地磁场中的飞机机翼", "field_vertical_component": "向上"},
+        "magnetic_direction": "地磁场竖直分量向上",
+        "motion_direction": "按四个飞行方向分别比较",
+        "current_direction": null,
+        "asks": ["判断不同飞行方向下机翼两端电势高低"]
+      },
+      "generated_at": "2026-07-09T17:40:43+08:00",
+      "path": "electromagnetism/q6-plane/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q6-plane-spatial-reasoning",
+      "title": "第6题：飞机机翼电势差·空间推理",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "速度、磁场与洛伦兹力的空间关系",
+        "parameters": {"scene": "飞机机翼等效直导体", "field_vertical_component": "向上"},
+        "magnetic_direction": "地磁场竖直分量向上",
+        "motion_direction": "按飞行航向改变",
+        "current_direction": null,
+        "asks": ["建立飞行方向与机翼电势差的空间关系"]
+      },
+      "generated_at": "2026-07-09T16:49:46+08:00",
+      "path": "mh370-physics/mh370-physics/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q13-rotor-step-explainer",
+      "title": "第13题：旋翼感应电动势·分步讲解",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "旋转导体的动生电动势",
+        "parameters": {"emf_relation": "E=πfBL²", "object": "旋转螺旋桨"},
+        "magnetic_direction": "地磁场竖直向上",
+        "motion_direction": "从上方观察为顺时针/逆时针情景",
+        "current_direction": null,
+        "asks": ["判断近轴端与叶尖电势高低", "推导旋转导体电动势"]
+      },
+      "generated_at": "2026-07-09T17:40:43+08:00",
+      "path": "electromagnetism/q13-helicopter-physics/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q13-rotor-spatial-reasoning",
+      "title": "第13题：旋翼感应电动势·空间推理",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "旋转叶片切割磁感线",
+        "parameters": {"emf_relation": "E=πfBL²", "object": "直升机旋翼"},
+        "magnetic_direction": "地磁场竖直向上",
+        "motion_direction": "旋翼绕轴转动",
+        "current_direction": null,
+        "asks": ["观察叶尖电势与转速、长度、磁场的关系"]
+      },
+      "generated_at": "2026-07-09T16:49:46+08:00",
+      "path": "helicopter-dynamics/q13-helicopter/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q20-rotating-rod-coupled-motion",
+      "title": "第20题：旋转导体与电磁感应",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "旋转导体、回路电流与导轨杆受力耦合",
+        "parameters": {"current_example": "2.0 A", "magnetic_force_example": "0.20 N"},
+        "magnetic_direction": "竖直向上",
+        "motion_direction": "OP棒旋转，CD棒沿斜面运动",
+        "current_direction": "CD棒中由M₁侧流向M₂侧",
+        "asks": ["判断电势和电流方向", "分析安培力与运动状态", "比较能量转化"]
+      },
+      "generated_at": "2026-07-14T16:20:45+08:00",
+      "path": "electromagnetism/q20-rotating-rod/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q21-variable-field-guided",
+      "title": "第21题：变磁场中的导体棒·三问引导",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "变磁场中导体棒的分阶段运动",
+        "parameters": {"L_m": 1, "R_ohm": 0.02, "B_initial_T": 0.2, "mass_kg": 1},
+        "magnetic_direction": "垂直导轨平面向里",
+        "motion_direction": "先右行，受恒力后往返，最终左行",
+        "current_direction": "随阶段与运动方向改变",
+        "asks": ["求变场时间", "求焦耳热和外力", "建立动生电动势与位置关系"]
+      },
+      "generated_at": "2026-07-16T15:57:16+08:00",
+      "path": "electromagnetism/q21-variable-field-rod/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q21-variable-field-causal-lab",
+      "title": "第21题：变磁场中的导体棒·因果探究",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "运动、电流、安培力和磁通的因果链",
+        "parameters": {"L_m": 1, "R_ohm": 0.02, "B_initial_T": 0.2, "mass_kg": 1},
+        "magnetic_direction": "垂直导轨平面向里",
+        "motion_direction": "四阶段右行、转向与左行",
+        "current_direction": "阶段A为d→c，反向运动时反向",
+        "asks": ["操作并验证分阶段电磁因果关系"]
+      },
+      "generated_at": "2026-07-16T18:31:53+08:00",
+      "path": "electromagnetism/q21-variable-field-rod-3d/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    },
+    {
+      "schema_version": 1,
+      "id": "q23-falling-tube-ball",
+      "title": "第23题：落管与上抛小球",
+      "owner": "官方题库",
+      "status": "published",
+      "source_input_type": "manual",
+      "physics_summary": {
+        "topic": "加速落管中的相对运动",
+        "parameters": {"tube_mass_kg": 2, "tube_length_m": 24, "upward_force_N": 16, "gravity_m_s2": 10},
+        "magnetic_direction": null,
+        "motion_direction": "空管向下加速，小球由N端竖直上抛",
+        "current_direction": null,
+        "asks": ["求小球从N端穿出时间", "求小球初速度范围"]
+      },
+      "generated_at": "2026-07-17T19:23:19+08:00",
+      "path": "mechanics/q23-falling-tube-ball/",
+      "review": {"reviewer": "项目维护者", "reviewed_at": "2026-07-28T00:00:00+08:00", "physics_confirmed": true}
+    }
+  ]
+}

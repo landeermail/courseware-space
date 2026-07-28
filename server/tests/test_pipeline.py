@@ -11,11 +11,13 @@ SERVER_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVER_DIR))
 
 from generator_service import (  # noqa: E402
+    GenerationManager,
     GenerationService,
     ManualRequestRecorder,
     build_template_config,
     parse_ai_response,
 )
+from artifact_store import ArtifactStoreError  # noqa: E402
 
 
 VALID_PARAMETERS = {
@@ -34,6 +36,13 @@ class FixedClient:
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
         return self.response
+
+
+class FailingArtifactStore:
+    backend = "oss"
+
+    def publish(self, job_id: str, output_dir: Path) -> str:
+        raise ArtifactStoreError("simulated OSS failure")
 
 
 class PipelineTests(unittest.TestCase):
@@ -74,6 +83,10 @@ class PipelineTests(unittest.TestCase):
             )
             self.assertEqual(outcome.status, "succeeded")
             self.assertTrue((root / "output" / "index.html").is_file())
+            metadata = json.loads((root / "output" / "metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["owner"], "演示账号")
+            self.assertEqual(metadata["status"], "pending_review")
+            self.assertEqual(metadata["source_input_type"], "text")
 
     def test_service_records_scope_fallback(self) -> None:
         response = {"supported": False, "reason": "旋转导体超出范围", "parameters": None}
@@ -88,6 +101,23 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(outcome.status, "manual_required")
             record = json.loads(recorder_path.read_text(encoding="utf-8"))
             self.assertEqual(record["status"], "awaiting_contact")
+
+    def test_artifact_publish_failure_turns_job_into_manual_fallback(self) -> None:
+        response = {"supported": True, "reason": "", "parameters": VALID_PARAMETERS}
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            recorder_path = root / "manual.jsonl"
+            service = GenerationService(FixedClient(response), ManualRequestRecorder(recorder_path))  # type: ignore[arg-type]
+            manager = GenerationManager(service, root, artifact_store=FailingArtifactStore())  # type: ignore[arg-type]
+            job = manager.submit(
+                "闭合平行导轨间距1 m，0.5 T匀强磁场向里，杆以2 m/s向右匀速运动，总电阻0.4 Ω。"
+            )
+            manager.close()
+            completed = manager.get(job["id"])
+            self.assertEqual(completed["status"], "manual_required")
+            self.assertIn("发布失败", completed["reason"])
+            records = [json.loads(line) for line in recorder_path.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual(records[-1]["event"], "artifact_publish_fallback")
 
 
 if __name__ == "__main__":

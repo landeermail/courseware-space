@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>图片 / PDF 课件生成确认台</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d7deea;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #eef4ff;
+      --green: #047857;
+      --green-soft: #ecfdf5;
+      --amber: #92400e;
+      --amber-soft: #fff7e6;
+      --red: #b42318;
+      --surface: #fff;
+      --shadow: 0 16px 44px rgba(38, 53, 83, .11);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 18% -12%, #dbeafe 0, transparent 34%), #f5f7fb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, input, select, textarea, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid rgba(37, 99, 235, .28); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+    .page { width: min(1180px, calc(100% - 32px)); margin: auto; padding: 22px 0 56px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    .brand { font-weight: 850; }
+    .topbar a {
+      display: inline-flex;
+      min-height: 44px;
+      padding: 8px 10px;
+      align-items: center;
+      justify-content: center;
+      color: #344054;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .hero { max-width: 810px; margin-bottom: 24px; }
+    .eyebrow { color: var(--blue); font-size: 13px; font-weight: 850; letter-spacing: .04em; }
+    h1 { margin: 7px 0 9px; font-size: clamp(30px, 4.5vw, 50px); line-height: 1.12; letter-spacing: -.035em; }
+    .hero p { margin: 0; color: var(--muted); font-size: 17px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
+    .step { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: rgba(255,255,255,.75); font-weight: 750; }
+    .step.active { border-color: #a9c3fb; color: var(--blue-dark); background: var(--blue-soft); }
+    .step.done { border-color: #a9dac8; color: var(--green); background: var(--green-soft); }
+    .panel { margin-top: 16px; padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0; font-size: 22px; }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .panel-head p { margin: 4px 0 0; color: var(--muted); }
+    .dropzone { display: grid; place-items: center; min-height: 220px; padding: 28px; border: 2px dashed #b8c5d9; border-radius: 16px; background: #f8faff; text-align: center; cursor: pointer; }
+    .dropzone.drag { border-color: var(--blue); background: var(--blue-soft); }
+    .dropzone strong { display: block; margin-bottom: 6px; font-size: 18px; }
+    .dropzone span { color: var(--muted); }
+    .file-name { margin-top: 10px; color: var(--blue-dark) !important; font-weight: 750; }
+    .actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+    button, .button-link { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border: 1px solid #c4cedd; border-radius: 12px; color: #344054; background: #fff; cursor: pointer; font-weight: 800; text-decoration: none; }
+    button:hover, .button-link:hover { background: #f8fafc; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .primary { border-color: var(--blue); color: #fff; background: var(--blue); }
+    .primary:hover { background: var(--blue-dark); }
+    .notice { margin: 14px 0 0; padding: 11px 13px; border-radius: 11px; color: var(--amber); background: var(--amber-soft); }
+    .error { color: var(--red); }
+    .question-list { display: grid; gap: 10px; margin-bottom: 18px; }
+    .question-option { display: grid; grid-template-columns: auto 1fr auto; gap: 11px; align-items: start; padding: 13px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+    .question-option:has(input:checked) { border-color: #8eb2fb; background: var(--blue-soft); }
+    .question-option input { margin-top: 5px; }
+    .question-option strong { display: block; }
+    .question-option small { color: var(--muted); }
+    .confidence { white-space: nowrap; padding: 3px 8px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 850; }
+    .confidence.low { color: var(--amber); background: var(--amber-soft); }
+    .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .wide { grid-column: 1 / -1; }
+    .half { grid-column: span 2; }
+    label { display: block; margin-bottom: 6px; color: #344054; font-weight: 800; }
+    input, select, textarea { width: 100%; min-height: 46px; border: 1px solid #b9c4d5; border-radius: 11px; color: var(--ink); background: #fff; }
+    input, select { padding: 9px 11px; }
+    textarea { min-height: 108px; padding: 11px 12px; resize: vertical; }
+    .confirm-box { display: flex; gap: 10px; align-items: flex-start; padding: 13px; border: 1px solid #bfd2f7; border-radius: 12px; background: var(--blue-soft); }
+    .confirm-box input { width: 22px; min-height: 22px; margin: 2px 0 0; }
+    .confirm-box label { margin: 0; cursor: pointer; }
+    .status { display: flex; gap: 13px; align-items: center; }
+    .spinner { width: 28px; height: 28px; flex: 0 0 auto; border: 3px solid #ccd9ef; border-top-color: var(--blue); border-radius: 50%; animation: spin .9s linear infinite; }
+    @keyframes spin { to { transform: rotate(1turn); } }
+    .result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .result-head p { margin: 4px 0 0; color: var(--muted); }
+    iframe { width: 100%; min-height: 640px; border: 1px solid var(--line); border-radius: 14px; background: #f5f7fb; }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 20px, 1180px); padding-top: 14px; }
+      .topbar { margin-bottom: 22px; }
+      .hero p { font-size: 15px; }
+      .steps { grid-template-columns: 1fr; }
+      .panel { padding: 16px; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .half { grid-column: span 1; }
+      .actions, .result-head { align-items: stretch; flex-direction: column; }
+      button, .button-link { width: 100%; }
+      .question-option { grid-template-columns: auto 1fr; }
+      .confidence { grid-column: 2; justify-self: start; }
+      iframe { min-height: 540px; }
+    }
+    @media (max-width: 430px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .wide, .half { grid-column: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 1.8s; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="topbar" aria-label="页面导航">
+      <span class="brand">物理互动课件生成器</span>
+      <a href="/generator/">返回文字输入</a>
+    </nav>
+    <header class="hero">
+      <span class="eyebrow">图片 / PDF 输入实验台</span>
+      <h1>先让 AI 读取，再由老师把关</h1>
+      <p>模型只负责识别题意。磁场、运动、电流方向和数值必须由老师逐项确认，后端才允许生成课件。</p>
+    </header>
+    <div class="steps" aria-label="生成步骤">
+      <div class="step active" data-step="1">1　上传并识别</div>
+      <div class="step" data-step="2">2　老师核对参数</div>
+      <div class="step" data-step="3">3　生成互动课件</div>
+    </div>
+
+    <section class="panel" id="uploadPanel">
+      <div class="panel-head"><div><h2>上传题目</h2><p>支持 PNG、JPEG、WebP 和不超过 6 页的 PDF；一页多题会分别列出。</p></div></div>
+      <label class="dropzone" id="dropzone" for="fileInput">
+        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" hidden>
+        <span><strong>点按选择或把文件拖到这里</strong>图片不超过 8 MB，PDF 不超过 20 MB</span>
+        <span class="file-name" id="fileName"></span>
+      </label>
+      <p class="notice">识别置信不足时不会直接生成；你可以补全参数，或改用人工制作。</p>
+      <div class="actions"><button class="primary" id="parseButton" type="button" disabled>识别题目</button></div>
+      <p class="error" id="uploadError" role="alert"></p>
+    </section>
+
+    <section class="panel" id="loadingPanel" hidden aria-live="polite">
+      <div class="status"><span class="spinner" aria-hidden="true"></span><div><h2>正在读取题目</h2><p>图片越清晰，参数识别越可靠；PDF 会逐页处理。</p></div></div>
+    </section>
+
+    <section class="panel" id="confirmPanel" hidden>
+      <div class="panel-head"><div><h2>老师确认闸</h2><p id="parseMessage"></p></div><button id="changeFile" type="button">更换文件</button></div>
+      <div class="question-list" id="questionList" role="radiogroup" aria-label="识别到的题目"></div>
+      <form id="confirmForm">
+        <div class="form-grid">
+          <div class="wide"><label for="questionText">完整题意</label><textarea id="questionText" required minlength="12" maxlength="500"></textarea></div>
+          <div><label for="fieldValue">磁感应强度 B / T</label><input id="fieldValue" type="number" min="0.01" max="5" step="any" required></div>
+          <div><label for="rodLength">杆长/导轨间距 L / m</label><input id="rodLength" type="number" min="0.1" max="5" step="any" required></div>
+          <div><label for="rodSpeed">杆速 v / (m·s⁻¹)</label><input id="rodSpeed" type="number" min="0.01" max="50" step="any" required></div>
+          <div><label for="resistance">总电阻 R / Ω</label><input id="resistance" type="number" min="0.001" max="100" step="any" required></div>
+          <div class="half"><label for="fieldDirection">磁场方向</label><select id="fieldDirection" required><option value="">请选择</option><option value="into_page">垂直纸面向里（×）</option><option value="out_of_page">垂直纸面向外（•）</option></select></div>
+          <div class="half"><label for="motionDirection">运动方向</label><select id="motionDirection" required><option value="">请选择</option><option value="right">向右</option><option value="left">向左</option></select></div>
+          <div class="half"><label for="currentDirection">杆中电流方向</label><select id="currentDirection" required><option value="">请选择</option><option value="d_to_c">d → c（沿棒向上）</option><option value="c_to_d">c → d（沿棒向下）</option></select></div>
+          <div class="half"><label for="asks">所求量（每行一项）</label><textarea id="asks" required></textarea></div>
+          <div class="wide confirm-box"><input id="teacherConfirmed" type="checkbox" required><label for="teacherConfirmed">我已逐项核对以上题意、数值和三个方向，并确认以修正后的参数生成。未经勾选，后端不会创建生成任务。</label></div>
+        </div>
+        <p class="error" id="confirmError" role="alert"></p>
+        <div class="actions"><button class="primary" id="confirmButton" type="submit">确认参数并生成</button></div>
+      </form>
+    </section>
+
+    <section class="panel" id="generatingPanel" hidden aria-live="polite">
+      <div class="status"><span class="spinner" aria-hidden="true"></span><div><h2>确认已记录，正在生成</h2><p>物理模型会再次校验方向、公式和参数范围。</p></div></div>
+    </section>
+
+    <section class="panel" id="resultPanel" hidden>
+      <div class="result-head"><div><h2>待验收课件已生成</h2><p>当前产物仍在 staging，验收合格后才能晋升题库。</p></div><a class="button-link" id="openResult" target="_blank" rel="noopener">在新页面打开</a></div>
+      <iframe id="resultFrame" title="生成课件预览"></iframe>
+    </section>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      const $ = id => document.getElementById(id);
+      const panels = ['uploadPanel', 'loadingPanel', 'confirmPanel', 'generatingPanel', 'resultPanel'];
+      let file = null;
+      let parse = null;
+      let selectedQuestion = null;
+      let pollTimer = 0;
+
+      function show(panelId, step) {
+        panels.forEach(id => { $(id).hidden = id !== panelId; });
+        document.querySelectorAll('.step').forEach(node => {
+          const number = Number(node.dataset.step);
+          node.classList.toggle('done', number < step);
+          node.classList.toggle('active', number === step);
+        });
+      }
+
+      async function requestJson(url, options = {}) {
+        const response = await fetch(url, { ...options, headers: {'Content-Type': 'application/json'} });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || `请求失败（${response.status}）`);
+        return payload;
+      }
+
+      function toBase64(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('文件读取失败'));
+          reader.onload = () => resolve(String(reader.result).split(',')[1]);
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      function setFile(nextFile) {
+        file = nextFile || null;
+        $('fileName').textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : '';
+        $('parseButton').disabled = !file;
+        $('uploadError').textContent = '';
+      }
+
+      function renderQuestions() {
+        $('questionList').replaceChildren();
+        parse.questions.forEach((question, index) => {
+          const label = document.createElement('label');
+          label.className = 'question-option';
+          const radio = document.createElement('input');
+          radio.type = 'radio'; radio.name = 'parsedQuestion'; radio.value = question.id;
+          radio.checked = index === 0;
+          const copy = document.createElement('span');
+          const strong = document.createElement('strong');
+          strong.textContent = `第 ${question.page} 页 · 第 ${index + 1} 条`;
+          const small = document.createElement('small');
+          small.textContent = question.question_text;
+          copy.append(strong, small);
+          const confidence = document.createElement('span');
+          confidence.className = `confidence${question.ready_for_confirmation ? '' : ' low'}`;
+          confidence.textContent = `置信度 ${Math.round(question.confidence * 100)}%`;
+          label.append(radio, copy, confidence);
+          radio.addEventListener('change', () => chooseQuestion(question));
+          $('questionList').append(label);
+        });
+        chooseQuestion(parse.questions[0]);
+      }
+
+      function chooseQuestion(question) {
+        selectedQuestion = question;
+        $('questionText').value = question.question_text || '';
+        const p = question.parameters;
+        $('fieldValue').value = p.magnetic_field_t ?? '';
+        $('rodLength').value = p.rod_length_m ?? '';
+        $('rodSpeed').value = p.rod_speed_m_s ?? '';
+        $('resistance').value = p.resistance_ohm ?? '';
+        $('fieldDirection').value = p.field_direction ?? '';
+        $('motionDirection').value = p.motion_direction ?? '';
+        $('currentDirection').value = question.current_direction ?? '';
+        $('asks').value = question.asks.join('\n');
+        $('teacherConfirmed').checked = false;
+        $('confirmError').textContent = question.ready_for_confirmation ? '' : (question.reason || '置信不足或参数不完整，请人工核对并补全。');
+      }
+
+      async function poll(jobId, count = 0) {
+        try {
+          const {job} = await requestJson(`/api/jobs/${jobId}`);
+          if (job.status === 'succeeded') {
+            $('openResult').href = job.output_url;
+            $('resultFrame').src = job.output_url;
+            show('resultPanel', 3);
+            return;
+          }
+          if (job.status === 'manual_required') throw new Error(job.reason || '生成未通过物理校验，已转人工处理。');
+          if (count > 120) throw new Error('生成时间超过预期，请稍后重试。');
+          pollTimer = window.setTimeout(() => poll(jobId, count + 1), 1000);
+        } catch (error) {
+          show('confirmPanel', 2);
+          $('confirmError').textContent = error instanceof Error ? error.message : '生成失败';
+          $('confirmButton').disabled = false;
+        }
+      }
+
+      $('fileInput').addEventListener('change', event => setFile(event.target.files[0]));
+      const dropzone = $('dropzone');
+      ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.add('drag'); }));
+      ['dragleave', 'drop'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.remove('drag'); }));
+      dropzone.addEventListener('drop', event => setFile(event.dataTransfer.files[0]));
+
+      $('parseButton').addEventListener('click', async () => {
+        if (!file) return;
+        show('loadingPanel', 1);
+        try {
+          const dataBase64 = await toBase64(file);
+          const result = await requestJson('/api/media/parse', {
+            method: 'POST',
+            body: JSON.stringify({filename: file.name, mime_type: file.type, data_base64: dataBase64})
+          });
+          parse = result.parse;
+          $('parseMessage').textContent = `${parse.message} 共识别 ${parse.questions.length} 道候选题。`;
+          renderQuestions();
+          show('confirmPanel', 2);
+        } catch (error) {
+          show('uploadPanel', 1);
+          $('uploadError').textContent = error instanceof Error ? error.message : '识别失败';
+        }
+      });
+
+      $('changeFile').addEventListener('click', () => {
+        clearTimeout(pollTimer); parse = null; selectedQuestion = null; $('fileInput').value = ''; setFile(null); show('uploadPanel', 1);
+      });
+
+      $('confirmForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!selectedQuestion || !$('teacherConfirmed').checked) return;
+        $('confirmButton').disabled = true;
+        $('confirmError').textContent = '';
+        try {
+          const result = await requestJson('/api/media/confirm', {
+            method: 'POST',
+            body: JSON.stringify({
+              parse_id: parse.id,
+              question_id: selectedQuestion.id,
+              teacher_confirmed: true,
+              question_text: $('questionText').value,
+              parameters: {
+                magnetic_field_t: Number($('fieldValue').value),
+                rod_length_m: Number($('rodLength').value),
+                rod_speed_m_s: Number($('rodSpeed').value),
+                resistance_ohm: Number($('resistance').value),
+                field_direction: $('fieldDirection').value,
+                motion_direction: $('motionDirection').value
+              },
+              current_direction: $('currentDirection').value,
+              asks: $('asks').value.split('\n').map(item => item.trim()).filter(Boolean)
+            })
+          });
+          show('generatingPanel', 3);
+          poll(result.job.id);
+        } catch (error) {
+          $('confirmButton').disabled = false;
+          $('teacherConfirmed').checked = false;
+          $('confirmError').textContent = error instanceof Error ? error.message : '确认失败';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
