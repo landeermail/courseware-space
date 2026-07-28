@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "title": "匀强磁场中的滑动导体杆：向右切割",
+  "source_text": "间距为 1.0 m 的平行导轨处于垂直纸面向里的 0.50 T 匀强磁场中。导体杆以 2.0 m/s 向右匀速运动，回路总电阻为 0.40 Ω。",
+  "magnetic_field_t": 0.5,
+  "rod_length_m": 1.0,
+  "rod_speed_m_s": 2.0,
+  "resistance_ohm": 0.4,
+  "field_direction": "into_page",
+  "motion_direction": "right",
+  "duration_s": 2.0
+}
