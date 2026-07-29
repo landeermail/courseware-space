@@ -1,0 +1,7 @@
+[
+  {"id":"circular-uniform-turn","question":"质量1000 kg的汽车以10 m/s通过半径50 m的水平圆弯道。观察速度与向心加速度方向，并验证向心力关系。","scenario":{"mode":"uniform","mass_kg":1000,"radius_m":50,"g_m_s2":9.8,"speed_m_s":10,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-orbit-earth","question":"质量1000 kg的卫星在距地心7.0×10^6 m的圆轨道运行，地球质量5.972×10^24 kg。观察引力如何成为向心力。","scenario":{"mode":"orbit","mass_kg":1000,"radius_m":7000000,"g_m_s2":9.8,"speed_m_s":0,"central_mass_kg":5.972e24,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-orbit-mars","question":"质量500 kg的探测器绕质量6.39×10^23 kg的火星做半径4.0×10^6 m的圆周运动。操控轨道半径观察速度和周期。","scenario":{"mode":"orbit","mass_kg":500,"radius_m":4000000,"g_m_s2":3.7,"speed_m_s":0,"central_mass_kg":6.39e23,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-vertical-critical","question":"质量1 kg的小球系在长2 m轻绳下端，在竖直面内恰好完成圆周运动，取g=10 m/s²，最低点速度10 m/s。观察最高点张力临界。","scenario":{"mode":"vertical_string","mass_kg":1,"radius_m":2,"g_m_s2":10,"speed_m_s":10,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-vertical-supercritical","question":"质量0.5 kg的小球用1.5 m轻绳约束，在最低点以10 m/s进入竖直圆周，取g=9.8 m/s²。观察速度、能量与张力随位置变化。","scenario":{"mode":"vertical_string","mass_kg":0.5,"radius_m":1.5,"g_m_s2":9.8,"speed_m_s":10,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}}
+]

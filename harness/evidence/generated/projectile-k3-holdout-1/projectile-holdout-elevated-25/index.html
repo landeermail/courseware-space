@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang='zh-CN'>
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; media-src 'none'; font-src 'none'; form-action 'none'; base-uri 'none'">
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>斜抛与平抛：最高点与落地点</title>
+<style>
+:root{--bg:#0f172a;--card:#111c33;--ink:#e5e7eb;--muted:#94a3b8;--acc:#38bdf8;--hot:#f97316;--ok:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1020,#111827);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans SC,sans-serif}
+header{padding:14px 16px;border-bottom:1px solid #243048}h1{font-size:20px;margin:0 0 6px}p{margin:6px 0;color:var(--muted);line-height:1.55}.wrap{display:grid;grid-template-columns:340px 1fr;gap:14px;padding:14px}.card{background:rgba(17,28,51,.92);border:1px solid #26344f;border-radius:16px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.25)}label{display:block;margin:12px 0 4px;color:#cbd5e1;font-size:14px}.row{display:flex;align-items:center;gap:10px}.val{min-width:64px;text-align:right;color:var(--acc);font-variant-numeric:tabular-nums}input[type=range]{flex:1;min-height:44px;accent-color:var(--acc)}button{min-height:44px;min-width:64px;border:0;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}button.secondary{background:#334155}button.warn{background:#b45309}.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.read{font-variant-numeric:tabular-nums;background:#0b1326;border:1px solid #26344f;border-radius:12px;padding:10px;margin-top:10px;line-height:1.7}.big{font-size:18px;color:#fff}.stage{min-height:560px;display:flex;flex-direction:column}.svgbox{flex:1;min-height:430px;background:#08111f;border:1px solid #26344f;border-radius:16px;overflow:hidden}svg{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:13px;padding:10px 2px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.bar{height:14px;border-radius:99px;background:#223049;overflow:hidden;margin:4px 0 10px}.bar>i{display:block;height:100%;width:0;background:var(--ok)}.bar.p>i{background:var(--warn)}.note{font-size:13px;color:#a7b3c7}@media(max-width:760px){.wrap{grid-template-columns:1fr}.stage{min-height:auto}.svgbox{min-height:380px}header, .wrap{padding:10px}}
+</style>
+</head>
+<body>
+<header><h1>斜抛与平抛：最高点与落地点</h1><p>核心问题：同一个小球，初速度大小、仰角和抛出高度怎样共同决定最高点、飞行时间和落地点？先预测，再拖参数验证。</p></header>
+<main class='wrap'>
+<section class='card'>
+<h2>初始条件</h2>
+<label>抛出速率 v₀ <span class='val' id='vSpeed'></span></label>
+<div class='row'><input id='speed' data-control type='range' min='2' max='30' step='0.5' value='16'></div>
+<label>仰角 θ <span class='val' id='vAngle'></span></label>
+<div class='row'><input id='angle' data-control type='range' min='0' max='80' step='1' value='25'></div>
+<label>抛出高度 y₀ <span class='val' id='vY0'></span></label>
+<div class='row'><input id='y0' data-control type='range' min='0' max='25' step='0.5' value='12'></div>
+<label>质量 m <span class='val' id='vMass'></span></label>
+<div class='row'><input id='mass' data-control type='range' min='0.1' max='2' step='0.1' value='0.6'></div>
+<div class='btns'>
+<button id='play'>播放</button><button id='pause' class='secondary'>暂停</button><button id='replay' data-replay class='warn'>回放</button>
+</div>
+<label>演示倍率</label>
+<div class='btns'><button class='secondary' data-rate='0.5'>0.5×</button><button class='secondary' data-rate='1'>1×</button><button class='secondary' data-rate='2'>2×</button><button class='secondary' data-rate='4'>4×</button></div>
+<div class='read'><div>物理时间 <span class='big' data-physical-time id='ptime'>--</span></div><div>演示倍率 <span class='big' data-demo-time id='dtime'>--</span></div><div data-readout id='readout'>等待采样…</div></div>
+<p class='note'>提示：倍率只改变呈现速度；物理时间读数才用于比较“何时到顶、何时落地”。页面隐藏时自动暂停。</p>
+</section>
+<section class='card stage'>
+<div class='svgbox'><svg id='svg' viewBox='0 0 760 520' role='img' aria-label='抛体轨迹图'></svg></div>
+<div class='legend'><span><i class='dot' style='background:#38bdf8'></i>轨迹</span><span><i class='dot' style='background:#f97316'></i>速度方向</span><span><i class='dot' style='background:#ef4444'></i>加速度方向</span><span><i class='dot' style='background:#fbbf24'></i>最高点</span><span><i class='dot' style='background:#34d399'></i>落地点</span></div>
+<h2>能量随位置变化</h2>
+<label>动能</label><div class='bar'><i id='ek'></i></div>
+<label>势能</label><div class='bar p'><i id='ep'></i></div>
+<div class='read' id='energyText'>机械能守恒：动能与势能互相转换。</div>
+</section>
+</main>
+<script>
+<style>[data-control],[data-replay],button,select,input{min-height:44px}</style><script>
+"use strict";
+
+globalThis.CoursewarePrimitives = Object.freeze({
+  createTimeline(options) {
+    const duration = Number(options.durationPhysicalS);
+    const onChange = options.onChange;
+    if (!Number.isFinite(duration) || duration <= 0 || typeof onChange !== "function") {
+      throw new Error("invalid timeline options");
+    }
+    let physicalTime = 0;
+    let demoRate = 0.5;
+    let playing = false;
+    let frame = 0;
+    let previous = 0;
+    const emit = () => onChange(Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }));
+    const tick = now => {
+      if (!playing) return;
+      if (!previous) previous = now;
+      physicalTime = Math.min(duration, physicalTime + ((now - previous) / 1000) * demoRate);
+      previous = now;
+      emit();
+      if (physicalTime >= duration) {
+        playing = false;
+        emit();
+        return;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    return Object.freeze({
+      play() {
+        if (playing || physicalTime >= duration) return;
+        playing = true;
+        previous = 0;
+        emit();
+        frame = requestAnimationFrame(tick);
+      },
+      pause() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        emit();
+      },
+      replay() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        physicalTime = 0;
+        previous = 0;
+        emit();
+      },
+      seek(value) {
+        physicalTime = Math.max(0, Math.min(duration, Number(value)));
+        emit();
+      },
+      setDemoRate(value) {
+        const next = Number(value);
+        if (!Number.isFinite(next) || next < 0.1 || next > 4) throw new Error("invalid demo rate");
+        demoRate = next;
+        emit();
+      },
+      snapshot() { return Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }); },
+    });
+  },
+  formatPhysicalTime(value) { return `${Number(value).toFixed(2)} s（物理时间）`; },
+  formatDemoRate(value) { return `${Number(value).toFixed(2)}×（演示倍率）`; },
+});
+
+</script>
+<script>
+globalThis.coursewareModel=Object.freeze({sample(input){const s=(input&&input.scenario)||{};const arr=(input&&input.times_s)||[];const g=Number(s.g_m_s2),m=Number(s.mass_kg),v=Number(s.speed_m_s),x0=Number(s.x0_m),y0=Number(s.y0_m),a=Number(s.angle_deg)*Math.PI/180;const vx0=v*Math.cos(a),vy0=v*Math.sin(a);const q=vy0*vy0+2*g*y0;const T=g>0?(vy0+Math.sqrt(Math.max(0,q)))/g:0;const R=vx0*T;const ta=vy0>0&&g>0?Math.min(vy0/g,T):0;const h=y0+(vy0>0&&g>0?vy0*vy0/(2*g):0);const xl=x0+R,vyT=vy0-g*T,keT=0.5*m*(vx0*vx0+vyT*vyT);const states=arr.map(function(z){const t=Number(z);if(t>T){return {t_s:t,x_m:xl,y_m:0,vx_m_s:vx0,vy_m_s:vyT,ax_m_s2:0,ay_m_s2:-g,kinetic_j:keT,potential_j:0,mechanical_j:keT};}const x=x0+vx0*t;let y=y0+vy0*t-0.5*g*t*t;if(y<0&&t>=T)y=0;const vx=vx0,vy=vy0-g*t;const ke=0.5*m*(vx*vx+vy*vy),pe=m*g*y;return {t_s:t,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:0,ay_m_s2:-g,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe};});return {states:states,events:{flight_time_s:T,range_m:R,apex_time_s:ta,max_height_m:h,optimal_equal_height_angle_deg:45}};}})
+</script>
+<script>globalThis.__HARNESS_INPUT__=Object.freeze({"scenario":{"mode":"oblique","g_m_s2":9.8,"mass_kg":0.6,"x0_m":-2.0,"y0_m":12.0,"speed_m_s":16.0,"angle_deg":25.0},"times_s":[0.0,0.3000338708516572,0.6000677417033145,0.9001016125549717,1.200135483406629,1.5001693542582861,1.8002032251099434,2.1002370959616004,2.400270966813258]});</script>
+'use strict';
+const $=id=>document.getElementById(id);
+const defaults={angle_deg:25,g_m_s2:9.8,mass_kg:0.6,mode:'oblique',speed_m_s:16,x0_m:-2,y0_m:12};
+const harness=globalThis.__HARNESS_INPUT__||{};
+const base=Object.assign({},defaults,harness.scenario||{});
+const DURATION=6;
+const ids=['speed','angle','y0','mass'];
+function num(id){return Number($(id).value)}
+function syncLabels(){ $('vSpeed').textContent=num('speed').toFixed(1)+' m/s'; $('vAngle').textContent=num('angle').toFixed(0)+'°'; $('vY0').textContent=num('y0').toFixed(1)+' m'; $('vMass').textContent=num('mass').toFixed(1)+' kg'; }
+function scenario(){ const a=num('angle'); return {angle_deg:a,g_m_s2:base.g_m_s2,mass_kg:num('mass'),mode:a===0?'horizontal':'oblique',speed_m_s:num('speed'),x0_m:base.x0_m,y0_m:num('y0')}; }
+function times(){ const n=241,out=[]; for(let i=0;i<n;i++){out.push(DURATION*i/(n-1));} return out; }
+let sampleOut=null, timeline=null, lastUi={physicalTimeS:0,demoRate:1,playing:false};
+function resample(){ sampleOut=coursewareModel.sample({scenario:scenario(),times_s:times()}); drawFrame(); }
+function near(t){ const s=sampleOut.states; let best=0,bd=1e9; for(let i=0;i<s.length;i++){const d=Math.abs(s[i].t_s-t); if(d<bd){bd=d;best=i;}} return s[best]; }
+function scale(){ const s=sampleOut.states; let xMin=1e9,xMax=-1e9,yMax=1; for(const q of s){xMin=Math.min(xMin,q.x_m);xMax=Math.max(xMax,q.x_m);yMax=Math.max(yMax,q.y_m);} xMin=Math.min(xMin,base.x0_m); xMax=Math.max(xMax,base.x0_m+1); yMax=Math.max(yMax,2); const k=Math.min(680/Math.max(1,xMax-xMin),430/Math.max(1,yMax)); return {xMin,xMax,yMax,k}; }
+function sx(x,sc){return 40+(x-sc.xMin)*sc.k}
+function sy(y,sc){return 480-y*sc.k}
+function drawFrame(){ const sc=scale(), s=sampleOut.states,e=sampleOut.events; let d=''; s.forEach((q,i)=>{d+=(i?' L':' M')+sx(q.x_m,sc).toFixed(1)+' '+sy(q.y_m,sc).toFixed(1);}); const apex=near(e.apex_time_s), land=near(e.flight_time_s); $('svg').innerHTML=`<rect x='0' y='0' width='760' height='520' fill='#08111f'/><line x1='30' y1='480' x2='735' y2='480' stroke='#64748b' stroke-width='2'/><text x='36' y='468' fill='#94a3b8' font-size='12'>地面 y=0</text><circle cx='${sx(base.x0_m,sc)}' cy='${sy(s[0].y_m,sc)}' r='5' fill='#e5e7eb'/><text x='${sx(base.x0_m,sc)+8}' y='${sy(s[0].y_m,sc)-8}' fill='#cbd5e1' font-size='12'>抛出点</text><path d='${d}' fill='none' stroke='#38bdf8' stroke-width='3'/><circle cx='${sx(apex.x_m,sc)}' cy='${sy(apex.y_m,sc)}' r='7' fill='#fbbf24'/><text x='${sx(apex.x_m,sc)+9}' y='${sy(apex.y_m,sc)-9}' fill='#fbbf24' font-size='12'>最高点</text><circle cx='${sx(land.x_m,sc)}' cy='${sy(0,sc)}' r='7' fill='#34d399'/><text x='${sx(land.x_m,sc)+9}' y='${sy(0,sc)-12}' fill='#34d399' font-size='12'>落地点</text><g id='dyn'></g>`; render(near(lastUi.physicalTimeS),lastUi); }
+function arrow(x1,y1,x2,y2,color){const a=Math.atan2(y2-y1,x2-x1),h=9;return `<line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' stroke='${color}' stroke-width='3'/><path d='M ${x2} ${y2} L ${x2-h*Math.cos(a-.5)} ${y2-h*Math.sin(a-.5)} L ${x2-h*Math.cos(a+.5)} ${y2-h*Math.sin(a+.5)} Z' fill='${color}'/>`}
+function render(st,ui){ if(!sampleOut)return; const sc=scale(); const x=sx(st.x_m,sc),y=sy(st.y_m,sc); const vh=Math.hypot(st.vx_m_s,st.vy_m_s)||1, vs=42/vh; const ax=st.ax_m_s2, ay=st.ay_m_s2, ah=Math.hypot(ax,ay)||1, as=34/ah; $('dyn').innerHTML=`<circle cx='${x}' cy='${y}' r='8' fill='#fff' stroke='#0ea5e9' stroke-width='3'/>`+arrow(x,y,x+st.vx_m_s*vs,y-st.vy_m_s*vs,'#f97316')+arrow(x,y,x+ax*as,y-ay*as,'#ef4444'); const me=Math.max(1e-9,st.mechanical_j); $('ek').style.width=(100*st.kinetic_j/me)+'%'; $('ep').style.width=(100*st.potential_j/me)+'%'; $('energyText').textContent=`当前动能 ${st.kinetic_j.toFixed(2)} J，势能 ${st.potential_j.toFixed(2)} J，机械能 ${st.mechanical_j.toFixed(2)} J。`; const e=sampleOut.events; $('readout').innerHTML=`状态：x=${st.x_m.toFixed(2)} m，y=${st.y_m.toFixed(2)} m<br>速度：vx=${st.vx_m_s.toFixed(2)} m/s，vy=${st.vy_m_s.toFixed(2)} m/s；加速度：ax=${st.ax_m_s2.toFixed(2)}，ay=${st.ay_m_s2.toFixed(2)} m/s²<br>事件：到顶 ${e.apex_time_s.toFixed(2)} s，最大高度 ${e.max_height_m.toFixed(2)} m；飞行 ${e.flight_time_s.toFixed(2)} s，射程 ${e.range_m.toFixed(2)} m；等高度最优角 ${e.optimal_equal_height_angle_deg.toFixed(1)}°`; }
+function onTick(state){ lastUi=state; $('ptime').textContent=CoursewarePrimitives.formatPhysicalTime(state.physicalTimeS); $('dtime').textContent=CoursewarePrimitives.formatDemoRate(state.demoRate); render(near(state.physicalTimeS),state); if(document.hidden&&state.playing){timeline.pause();} }
+syncLabels(); resample(); timeline=CoursewarePrimitives.createTimeline({durationPhysicalS:DURATION,onChange:onTick});
+ids.forEach(id=>$(id).addEventListener('input',()=>{syncLabels(); timeline.pause(); resample(); timeline.seek(0);}));
+$('play').addEventListener('click',()=>timeline.play()); $('pause').addEventListener('click',()=>timeline.pause()); $('replay').addEventListener('click',()=>timeline.replay());
+document.querySelectorAll('[data-rate]').forEach(b=>b.addEventListener('click',()=>timeline.setDemoRate(Number(b.dataset.rate))));
+document.addEventListener('visibilitychange',()=>{if(document.hidden){timeline.pause();}});
+</script>
+</body>
+</html>

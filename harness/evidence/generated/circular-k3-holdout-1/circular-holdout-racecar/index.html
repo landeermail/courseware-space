@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; media-src 'none'; font-src 'none'; form-action 'none'; base-uri 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>水平圆弯道与圆周运动向心力探究</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f1f5f9;color:#1e293b;line-height:1.5}
+header{background:#0f3d5c;color:#fff;padding:14px 18px}
+header h1{font-size:19px}
+header p{font-size:13px;opacity:.85;margin-top:4px}
+main{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px;max-width:1000px;margin:0 auto}
+.stage{background:#fff;border-radius:12px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+svg{width:100%;height:auto;display:block}
+.panel{display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.card h2{font-size:15px;color:#0f3d5c;margin-bottom:8px}
+.ctl{margin:10px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.ctl input[type=range]{width:100%;height:44px;accent-color:#0f3d5c;cursor:pointer}
+.times{display:flex;gap:10px;flex-wrap:wrap;font-size:14px}
+.times div{background:#eef6fb;border-radius:8px;padding:6px 10px;flex:1;min-width:120px}
+.times b{display:block;font-size:17px;color:#0f3d5c}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{min-height:44px;min-width:64px;border:none;border-radius:10px;padding:8px 14px;font-size:15px;font-weight:600;cursor:pointer;background:#0f3d5c;color:#fff}
+button:active{transform:scale(.96)}
+button.ghost{background:#e2e8f0;color:#0f3d5c}
+button.rate.on{background:#f59e0b;color:#1e293b}
+.ro{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}
+.ro div{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px}
+.ro b{display:block;font-size:16px}
+.blue{color:#1d4ed8}.red{color:#dc2626}
+.hint{font-size:13px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px}
+.legend{font-size:13px;display:flex;gap:16px;margin-top:6px}
+.legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend .lv::before{background:#1d4ed8}.legend .lf::before{background:#dc2626}
+@media(max-width:640px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>水平圆弯道与圆周运动向心力探究</h1><p>赛车 850 kg，驶入水平圆弯道。调节速度与半径，观察速度方向、向心力方向及其大小如何变化。</p></header>
+<style>[data-control],[data-replay],button,select,input{min-height:44px}</style><script>
+"use strict";
+
+globalThis.CoursewarePrimitives = Object.freeze({
+  createTimeline(options) {
+    const duration = Number(options.durationPhysicalS);
+    const onChange = options.onChange;
+    if (!Number.isFinite(duration) || duration <= 0 || typeof onChange !== "function") {
+      throw new Error("invalid timeline options");
+    }
+    let physicalTime = 0;
+    let demoRate = 0.5;
+    let playing = false;
+    let frame = 0;
+    let previous = 0;
+    const emit = () => {
+      if (typeof document !== "undefined" && document.documentElement) {
+        document.documentElement.setAttribute("data-harness-physical-time", physicalTime.toFixed(6));
+        document.documentElement.setAttribute("data-harness-playing", playing ? "true" : "false");
+      }
+      onChange(Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }));
+    };
+    const tick = now => {
+      if (!playing) return;
+      if (!previous) previous = now;
+      physicalTime = Math.min(duration, physicalTime + ((now - previous) / 1000) * demoRate);
+      previous = now;
+      emit();
+      if (physicalTime >= duration) {
+        playing = false;
+        emit();
+        return;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    const controller = Object.freeze({
+      play() {
+        if (playing || physicalTime >= duration) return;
+        playing = true;
+        previous = 0;
+        emit();
+        frame = requestAnimationFrame(tick);
+      },
+      pause() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        emit();
+      },
+      replay() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        physicalTime = 0;
+        previous = 0;
+        emit();
+      },
+      seek(value) {
+        physicalTime = Math.max(0, Math.min(duration, Number(value)));
+        emit();
+      },
+      setDemoRate(value) {
+        const next = Number(value);
+        if (!Number.isFinite(next) || next < 0.1 || next > 4) throw new Error("invalid demo rate");
+        demoRate = next;
+        emit();
+      },
+      snapshot() { return Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }); },
+    });
+    emit();
+    return controller;
+  },
+  formatPhysicalTime(value) { return `${Number(value).toFixed(2)} s（物理时间）`; },
+  formatDemoRate(value) { return `${Number(value).toFixed(2)}×（演示倍率）`; },
+});
+
+</script>
+<script>
+globalThis.coursewareModel=Object.freeze({sample(input){const s=(input&&input.scenario)||{};const angles=Array.isArray(input&&input.angles_rad)?input.angles_rad:[];const G=+s.G_n_m2_kg2||0;const M=+s.central_mass_kg||0;const g=+s.g_m_s2||0;const m=+s.mass_kg||0;const r=+s.radius_m||0;const v0=+s.speed_m_s||0;const mode=s.mode||'uniform';const states=[];function rec(a,x,y,v,ax,ay,fr,ten){const K=0.5*m*v*v;let U=0;if(mode==='orbit'){U=-G*M*m/r;}else if(mode==='vertical_string'){U=m*g*r*(1-Math.cos(a));}states.push({angle_rad:a,x_m:x,y_m:y,speed_m_s:v,ax_m_s2:ax,ay_m_s2:ay,radial_force_n:fr,tension_n:ten,kinetic_j:K,potential_j:U,mechanical_j:K+U});}let v=v0;let ac=r>0?v*v/r:0;let period=null;if(mode==='orbit'){v=(G>0&&M>0&&r>0)?Math.sqrt(G*M/r):0;ac=r>0?v*v/r:0;period=v>0?2*Math.PI*r/v:null;}else if(mode==='vertical_string'){ac=r>0?v0*v0/r:0;if(r>0){const n=8192;const h=2*Math.PI/n;let bad=false;function f(t){const q=v0*v0-2*g*r*(1-Math.cos(t));if(q<=0){bad=true;return 0;}return r/Math.sqrt(q);}let sum=f(0)+f(2*Math.PI);for(let i=1;i<n;i++){sum+=(i%2===1?4:2)*f(i*h);}period=bad?null:sum*h/3;}}else{period=v>0?2*Math.PI*r/v:null;}for(let i=0;i<angles.length;i++){const a=+angles[i]||0;if(mode==='vertical_string'){const c=Math.cos(a);const sn=Math.sin(a);const q=v0*v0-2*g*r*(1-c);const vv=q>0?Math.sqrt(q):0;const x=r*sn;const y=-r*c;const ar=r>0?vv*vv/r:0;const ax=-sn*(ar+g*c);const ay=ar*c-g*sn*sn;let ten=m*(ar+g*c);if(ten<0){ten=0;}rec(a,x,y,vv,ax,ay,m*ar,ten);}else{const c=Math.cos(a);const sn=Math.sin(a);rec(a,r*c,r*sn,v,-ac*c,-ac*sn,m*ac,0);}}const ev={period_s:period,centripetal_acceleration_m_s2:ac};if(mode==='vertical_string'){ev.critical_top_speed_m_s=Math.sqrt(Math.max(0,g*r));ev.critical_bottom_speed_m_s=Math.sqrt(Math.max(0,5*g*r));}return {states:states,events:ev};}});
+</script>
+<script>globalThis.__HARNESS_INPUT__=Object.freeze({"scenario":{"mode":"uniform","mass_kg":850.0,"radius_m":120.0,"g_m_s2":9.8,"speed_m_s":24.0,"central_mass_kg":0.0,"G_n_m2_kg2":6.6743e-11},"angles_rad":[0.0,0.6981317007977318,1.3962634015954636,2.0943951023931953,2.792526803190927,3.490658503988659,4.1887902047863905,4.886921905584122,5.585053606381854]});</script><script>
+(()=>{
+  const root=document.documentElement;
+  const short=value=>String(value&&value.message||value||'unknown runtime error').slice(0,500);
+  addEventListener('error',event=>root.setAttribute('data-harness-runtime-error',short(event.error||event.message)),true);
+  addEventListener('unhandledrejection',event=>root.setAttribute('data-harness-runtime-error',short(event.reason)),true);
+  const expected=globalThis.__HARNESS_INPUT__.scenario;
+  const original=globalThis.coursewareModel;
+  let calls=0;
+  const same=(left,right)=>{
+    if(left===right)return true;
+    if(!left||!right||typeof left!=='object'||typeof right!=='object')return false;
+    const leftKeys=Object.keys(left).sort(),rightKeys=Object.keys(right).sort();
+    return leftKeys.length===rightKeys.length&&leftKeys.every((key,index)=>key===rightKeys[index]&&same(left[key],right[key]));
+  };
+  const guarded=Object.freeze({sample(input){
+    calls+=1;
+    root.setAttribute('data-harness-sample-count',String(calls));
+    if(calls===1){
+      const matched=Boolean(input&&same(input.scenario,expected));
+      root.setAttribute('data-harness-initial-scenario',matched?'matched':'mismatched');
+      if(!matched)throw new Error('首次采样场景与老师确认题设不一致');
+    }
+    return original.sample(input);
+  }});
+  Object.defineProperty(globalThis,'coursewareModel',{value:guarded,writable:false,configurable:false});
+})();
+</script>
+<main>
+<section class="stage">
+<svg id="svg" viewBox="0 0 400 400" aria-label="圆形弯道俯视图">
+<defs>
+<marker id="ahV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d4ed8"/></marker>
+<marker id="ahF" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+</defs>
+<circle cx="200" cy="200" r="150" fill="none" stroke="#e2e8f0" stroke-width="30"/>
+<circle cx="200" cy="200" r="150" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 6"/>
+<circle cx="200" cy="200" r="4" fill="#64748b"/>
+<line id="vArrow" x1="0" y1="0" x2="0" y2="0" stroke="#1d4ed8" stroke-width="3.5" marker-end="url(#ahV)"/>
+<line id="fArrow" x1="0" y1="0" x2="0" y2="0" stroke="#dc2626" stroke-width="4.5" marker-end="url(#ahF)"/>
+<text id="vLab" font-size="15" font-weight="700" fill="#1d4ed8">v</text>
+<text id="fLab" font-size="15" font-weight="700" fill="#dc2626">F向心</text>
+<g id="car"><rect x="-17" y="-9" width="34" height="18" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/><rect x="-12" y="-6" width="10" height="12" rx="3" fill="#78350f"/><circle cx="-10" cy="10" r="3.5" fill="#334155"/><circle cx="10" cy="10" r="3.5" fill="#334155"/><circle cx="-10" cy="-10" r="3.5" fill="#334155"/><circle cx="10" cy="-10" r="3.5" fill="#334155"/></g>
+</svg>
+<div class="legend"><span class="lv">速度 v（切线方向）</span><span class="lf">向心力 F（指向圆心）</span></div>
+</section>
+<section class="panel">
+<div class="card">
+<h2>可调参数</h2>
+<div class="ctl"><label><span>赛车速度 v</span><span id="vVal" class="blue"></span></label><input id="vCtl" data-control="speed" type="range" min="5" max="40" step="1"></div>
+<div class="ctl"><label><span>弯道半径 r</span><span id="rVal" class="blue"></span></label><input id="rCtl" data-control="radius" type="range" min="40" max="200" step="5"></div>
+</div>
+<div class="card">
+<h2>时间与播放</h2>
+<div class="times"><div>物理时间<b data-physical-time id="pt">—</b></div><div>演示倍率<b data-demo-time id="dr">—</b></div><div>转一圈周期<b id="perR">—</b></div></div>
+<div class="btns">
+<button id="playBtn">▶ 播放</button>
+<button id="replayBtn" data-replay class="ghost">↺ 回放</button>
+<button class="rate ghost" data-rate="0.5">0.5×</button>
+<button class="rate ghost" data-rate="1">1×</button>
+<button class="rate ghost" data-rate="2">2×</button>
+<button class="rate ghost" data-rate="4">4×</button>
+</div>
+</div>
+<div class="card">
+<h2>状态读数</h2>
+<div class="ro">
+<div>速度<b data-readout id="spdR" class="blue">—</b></div>
+<div>向心加速度<b data-readout id="accR" class="red">—</b></div>
+<div>所需向心力<b data-readout id="forceR" class="red">—</b></div>
+<div>动能<b data-readout id="keR">—</b></div>
+</div>
+</div>
+<div class="hint">探究任务：① 保持半径不变，把速度加倍，观察向心力变为原来的几倍；② 保持速度不变，把半径减半，向心力又怎样变？③ 慢放并拖动时间轴，注意速度箭头始终沿切线、向心力箭头始终指向圆心——正是这个力不断改变速度方向。向心力由轮胎与路面间的摩擦力提供。</div>
+</section>
+</main>
+<script>
+"use strict";
+var HI=globalThis.__HARNESS_INPUT__;
+var base=HI.scenario;
+function $(id){return document.getElementById(id);}
+var vCtl=$("vCtl"),rCtl=$("rCtl");
+vCtl.value=base.speed_m_s;
+rCtl.value=base.radius_m;
+var N=360,TAU=Math.PI*2;
+var angles=[];
+for(var i=0;i<N;i++){angles.push(i*TAU/(N-1));}
+var states=null,periodS=1,tl=null,playing=false;
+function scenarioFromControls(){
+return {G_n_m2_kg2:base.G_n_m2_kg2,central_mass_kg:base.central_mass_kg,g_m_s2:base.g_m_s2,mass_kg:base.mass_kg,mode:base.mode,radius_m:Number(rCtl.value),speed_m_s:Number(vCtl.value)};
+}
+function resample(){
+var res=coursewareModel.sample({scenario:scenarioFromControls(),angles_rad:angles});
+states=res.states;
+periodS=res.events.period_s;
+$("accR").textContent=res.events.centripetal_acceleration_m_s2.toFixed(2)+" m/s²";
+$("perR").textContent=CoursewarePrimitives.formatPhysicalTime(periodS);
+$("vVal").textContent=Number(vCtl.value).toFixed(0)+" m/s";
+$("rVal").textContent=Number(rCtl.value).toFixed(0)+" m";
+if(tl){tl.pause();}
+tl=CoursewarePrimitives.createTimeline({durationPhysicalS:periodS*2,onChange:render});
+playing=false;
+updatePlayBtn();
+tl.seek(0);
+render({physicalTimeS:0,demoRate:tl&&tl.demoRate||1,playing:false});
+}
+function setLine(el,x1,y1,x2,y2){el.setAttribute("x1",x1);el.setAttribute("y1",y1);el.setAttribute("x2",x2);el.setAttribute("y2",y2);}
+function render(state){
+if(!states){return;}
+var t=state.physicalTimeS;
+$("pt").textContent=CoursewarePrimitives.formatPhysicalTime(t);
+$("dr").textContent=CoursewarePrimitives.formatDemoRate(state.demoRate);
+if(state.playing!==playing){playing=state.playing;updatePlayBtn();}
+var frac=((t%periodS)+periodS)%periodS/periodS;
+var idx=Math.min(N-1,Math.round(frac*(N-1)));
+var s=states[idx];
+var R=Number(rCtl.value),cx=200,cy=200,scale=150/R;
+var px=cx+s.x_m*scale,py=cy-s.y_m*scale;
+var th=Math.atan2(s.y_m,s.x_m);
+var rot=-(th*180/Math.PI+90);
+$("car").setAttribute("transform","translate("+px.toFixed(1)+" "+py.toFixed(1)+") rotate("+rot.toFixed(1)+")");
+var tvx=-Math.sin(th),tvy=-Math.cos(th);
+var vl=s.speed_m_s*1.8;
+setLine($("vArrow"),px,py,px+tvx*vl,py+tvy*vl);
+$("vLab").setAttribute("x",px+tvx*(vl+14)-6);
+$("vLab").setAttribute("y",py+tvy*(vl+14)+5);
+var fx=-Math.cos(th),fy=Math.sin(th);
+var fl=Math.min(125,s.radial_force_n*0.018);
+setLine($("fArrow"),px,py,px+fx*fl,py+fy*fl);
+$("fLab").setAttribute("x",px+fx*(fl+16)-16);
+$("fLab").setAttribute("y",py+fy*(fl+16)+5);
+$("spdR").textContent=s.speed_m_s.toFixed(1)+" m/s";
+$("forceR").textContent=Math.round(s.radial_force_n)+" N";
+$("keR").textContent=Math.round(s.kinetic_j)+" J";
+}
+function updatePlayBtn(){$("playBtn").textContent=playing?"⏸ 暂停":"▶ 播放";}
+$("playBtn").addEventListener("click",function(){if(!tl){return;}if(playing){tl.pause();}else{tl.play();}});
+$("replayBtn").addEventListener("click",function(){if(tl){tl.replay();}});
+var rateBtns=document.querySelectorAll("button.rate");
+rateBtns.forEach(function(b){b.addEventListener("click",function(){if(tl){tl.setDemoRate(Number(b.getAttribute("data-rate")));}rateBtns.forEach(function(x){x.classList.remove("on");});b.classList.add("on");});});
+vCtl.addEventListener("input",resample);
+rCtl.addEventListener("input",resample);
+document.addEventListener("visibilitychange",function(){if(document.hidden&&tl){tl.pause();}});
+resample();
+</script>
+</body>
+</html>

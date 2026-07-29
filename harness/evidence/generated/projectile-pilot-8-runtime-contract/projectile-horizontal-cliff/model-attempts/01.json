@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v2-split",
+  "ran_at": "2026-07-29T07:58:26.225768+00:00",
+  "raw": "{\"title\":\"抛体运动过程模型\",\"domain\":\"projectile\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample(input){var scenario=input&&input.scenario||{};var times=(input&&input.times_s)||[];var g=+scenario.g_m_s2||0;var m=+scenario.mass_kg||0;var x0=+scenario.x0_m||0;var y0=+scenario.y0_m||0;var speed=+scenario.speed_m_s||0;var mode=scenario.mode;var angleDeg=+scenario.angle_deg||0;var theta=mode==='oblique'?angleDeg*Math.PI/180:0;var vx0=speed*Math.cos(theta);var vy0=mode==='oblique'?speed*Math.sin(theta):0;var disc=vy0*vy0+2*g*y0;var tf=0;if(g>0&&disc>=0){tf=(vy0+Math.sqrt(disc))/g;}if(!isFinite(tf)||tf<0)tf=0;var range=x0+vx0*tf;var apexTime=0;var maxHeight=y0;if(vy0>0&&g>0){apexTime=vy0/g;maxHeight=y0+vy0*vy0/(2*g);}var optimal=0;if(g>0){var denom=Math.sqrt(speed*speed+2*g*y0);optimal=denom>0?Math.atan(speed/denom)*180/Math.PI:0;}else{optimal=45;}var states=[];for(var i=0;i<times.length;i++){var t=+times[i];var active=t>tf?tf:t;var x=x0+vx0*active;var y=y0+vy0*active-0.5*g*active*active;if(active===tf&&y<0)y=0;var vx=vx0;var vy=vy0-g*active;var ke=0.5*m*(vx*vx+vy*vy);var pe=m*g*y;var me=ke+pe;states.push({t_s:t,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:0,ay_m_s2:-g,kinetic_j:ke,potential_j:pe,mechanical_j:me});}return{states:states,events:{flight_time_s:tf,range_m:range,apex_time_s:apexTime,max_height_m:maxHeight,optimal_equal_height_angle_deg:optimal}};}});\"}",
+  "status": "rejected",
+  "failure": "equal_height_range_optimum: actual=24.094842552110702, expected=45"
+}

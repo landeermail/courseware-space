@@ -1,0 +1,7 @@
+[
+  {"id":"circular-holdout-carousel","question":"质量40 kg的学生以5 m/s随半径3 m的转盘做匀速圆周运动。观察速度方向和向心加速度方向的持续变化。","scenario":{"mode":"uniform","mass_kg":40,"radius_m":3,"g_m_s2":9.8,"speed_m_s":5,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-holdout-racecar","question":"质量850 kg的赛车以24 m/s通过半径120 m的水平圆弯道。操控速度和半径，验证向心力怎样变化。","scenario":{"mode":"uniform","mass_kg":850,"radius_m":120,"g_m_s2":9.8,"speed_m_s":24,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-holdout-orbit-moon","question":"质量120 kg的探测器绕质量7.342×10^22 kg的月球做半径1.9×10^6 m的圆轨道运动。观察引力、速度和周期的联系。","scenario":{"mode":"orbit","mass_kg":120,"radius_m":1900000,"g_m_s2":1.62,"speed_m_s":0,"central_mass_kg":7.342e22,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-holdout-vertical-small","question":"质量0.3 kg的小球系在长1.2 m轻绳下端，以9 m/s的最低点速度做完整竖直圆周运动，取g=10 m/s²。观察最高点张力余量。","scenario":{"mode":"vertical_string","mass_kg":0.3,"radius_m":1.2,"g_m_s2":10,"speed_m_s":9,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}},
+  {"id":"circular-holdout-vertical-large","question":"质量2 kg的小球用2.5 m轻绳约束，在最低点以12 m/s进入竖直圆周，取g=9.8 m/s²。比较最低点与最高点的速度、张力和能量。","scenario":{"mode":"vertical_string","mass_kg":2,"radius_m":2.5,"g_m_s2":9.8,"speed_m_s":12,"central_mass_kg":0,"G_n_m2_kg2":6.6743e-11}}
+]

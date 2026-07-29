@@ -1,0 +1,5481 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v4-runtime-state",
+  "ran_at": "2026-07-29T12:12:00.174577+00:00",
+  "raw": "{\"title\":\"匀速圆周运动、轨道与竖直绳圆通用物理模型\",\"domain\":\"circular\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample:function(input){var sc=(input&&input.scenario)||{};function N(x,d){var v=Number(x);return Number.isFinite(v)?v:d}var G=N(sc.G_n_m2_kg2,0),M=N(sc.central_mass_kg,0),g=N(sc.g_m_s2,0),m=N(sc.mass_kg,0),r=N(sc.radius_m,0),v0=N(sc.speed_m_s,0),mode=sc.mode||'uniform';var ang=(input&&Array.isArray(input.angles_rad))?input.angles_rad:[0,Math.PI/2,Math.PI,1.5*Math.PI];function orbitV(){return(r>0&&G*M>0)?Math.sqrt(G*M/r):0}function accFor(v){return r>0?v*v/r:0}function state(th){var c=Math.cos(th),s=Math.sin(th),x,y,v,ac,ax,ay,rf,tn,K,U,me,tm;if(mode==='vertical_string'){x=r*s;y=-r*c;U=m*g*r*(1-c);var v2=v0*v0-2*g*r*(1-c);if(v2<0){v2=0}v=Math.sqrt(v2);ac=accFor(v);tm=ac+g*c;tn=m*tm;ax=-tm*s;ay=tm*c-g;rf=m*ac;K=0.5*m*v*v;me=K+U}else if(mode==='orbit'){v=orbitV();ac=accFor(v);x=r*c;y=r*s;ax=-ac*c;ay=-ac*s;rf=m*ac;tn=0;K=0.5*m*v*v;U=r>0?-G*M*m/r:0;me=K+U}else{v=v0;ac=accFor(v);x=r*c;y=r*s;ax=-ac*c;ay=-ac*s;rf=m*ac;tn=0;K=0.5*m*v*v;U=0;me=K}return{angle_rad:th,x_m:x,y_m:y,speed_m_s:v,ax_m_s2:ax,ay_m_s2:ay,radial_force_n:rf,tension_n:tn,kinetic_j:K,potential_j:U,mechanical_j:me}}var states=ang.map(function(a){return state(N(a,0))});var period=null,cent=0,ev;if(mode==='orbit'){var vo=orbitV();cent=accFor(vo);period=vo>0?2*Math.PI*r/vo:null;ev={period_s:period,centripetal_acceleration_m_s2:cent}}else if(mode==='vertical_string'){cent=accFor(v0);var ok=true,n=8192,hh=2*Math.PI/n,sum=0;for(var i=0;i<=n;i++){var th=i*hh,c=Math.cos(th),v2=v0*v0-2*g*r*(1-c);if(!(r>0&&v2>0)){ok=false;break}var w=(i===0||i===n)?1:(i%2===1?4:2);sum+=w*r/Math.sqrt(v2)}period=ok?sum*hh/3:null;ev={period_s:period,centripetal_acceleration_m_s2:cent,critical_top_speed_m_s:Math.sqrt(Math.max(g*r,0)),critical_bottom_speed_m_s:Math.sqrt(Math.max(5*g*r,0))}}else{cent=accFor(v0);period=(v0>0&&r>0)?2*Math.PI*r/v0:null;ev={period_s:period,centripetal_acceleration_m_s2:cent}}return{states:states,events:ev}}});\"}",
+  "provider": {
+    "phase": "physics_model",
+    "requested_model": "k3-256k",
+    "reasoning_effort": "high",
+    "max_completion_tokens": 32768,
+    "response_format": "json_object",
+    "temperature": "provider_default",
+    "top_p": "provider_default",
+    "stream": true,
+    "prompt_cache_key": "2400797bcbd5a0ec4a8c1aaf088ea0e845e88f2c738ef25c664fc481eaff51a9",
+    "response_id": "chatcmpl-XUoTQvMoYScgeIkXeZceckOo",
+    "actual_model": "k3-256k",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 618,
+      "completion_tokens": 6082,
+      "total_tokens": 6700,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5197
+      }
+    },
+    "attempt": 1,
+    "latency_ms": 123123
+  },
+  "status": "passed",
+  "reports": [
+    {
+      "probe": 0,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 99,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.6981317007977318, expected=0.698131700798",
+          "actual": 0.6981317007977318,
+          "expected": 0.6981317007977318
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.3962634015954636, expected=1.3962634016",
+          "actual": 1.3962634015954636,
+          "expected": 1.3962634015954636
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=2.0943951023931953, expected=2.09439510239",
+          "actual": 2.0943951023931953,
+          "expected": 2.0943951023931953
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=2.792526803190927, expected=2.79252680319",
+          "actual": 2.792526803190927,
+          "expected": 2.792526803190927
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=3.490658503988659, expected=3.49065850399",
+          "actual": 3.490658503988659,
+          "expected": 3.490658503988659
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=4.1887902047863905, expected=4.18879020479",
+          "actual": 4.1887902047863905,
+          "expected": 4.1887902047863905
+        },
+        {
+          "name": "state_7_angle_matches_input",
+          "passed": true,
+          "message": "state_7_angle_matches_input: actual=4.886921905584122, expected=4.88692190558",
+          "actual": 4.886921905584122,
+          "expected": 4.886921905584122
+        },
+        {
+          "name": "state_8_angle_matches_input",
+          "passed": true,
+          "message": "state_8_angle_matches_input: actual=5.585053606381854, expected=5.58505360638",
+          "actual": 5.585053606381854,
+          "expected": 5.585053606381854
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=3, expected=3",
+          "actual": 3,
+          "expected": 3.0
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-8.333333333333334, expected=-8.33333333333",
+          "actual": -8.333333333333334,
+          "expected": -8.333333333333334
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=2.298133329356934, expected=2.29813332936",
+          "actual": 2.298133329356934,
+          "expected": 2.298133329356934
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=1.9283628290596178, expected=1.92836282906",
+          "actual": 1.9283628290596178,
+          "expected": 1.9283628290596178
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-6.383703692658151, expected=-6.38370369266",
+          "actual": -6.383703692658151,
+          "expected": -6.383703692658151
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-5.356563414054494, expected=-5.35656341405",
+          "actual": -5.356563414054494,
+          "expected": -5.356563414054494
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=0.5209445330007912, expected=0.520944533001",
+          "actual": 0.5209445330007912,
+          "expected": 0.5209445330007912
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=2.954423259036624, expected=2.95442325904",
+          "actual": 2.954423259036624,
+          "expected": 2.954423259036624
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=-1.4470681472244202, expected=-1.44706814722",
+          "actual": -1.4470681472244202,
+          "expected": -1.4470681472244202
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-8.206731275101735, expected=-8.2067312751",
+          "actual": -8.206731275101735,
+          "expected": -8.206731275101735
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=-1.4999999999999993, expected=-1.5",
+          "actual": -1.4999999999999993,
+          "expected": -1.4999999999999996
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=2.598076211353316, expected=2.59807621135",
+          "actual": 2.598076211353316,
+          "expected": 2.598076211353316
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=4.166666666666665, expected=4.16666666667",
+          "actual": 4.166666666666665,
+          "expected": 4.166666666666665
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-7.216878364870323, expected=-7.21687836487",
+          "actual": -7.216878364870323,
+          "expected": -7.216878364870323
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-2.819077862357725, expected=-2.81907786236",
+          "actual": -2.819077862357725,
+          "expected": -2.819077862357725
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=1.0260604299770066, expected=1.02606042998",
+          "actual": 1.0260604299770066,
+          "expected": 1.0260604299770066
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=7.83077183988257, expected=7.83077183988",
+          "actual": 7.83077183988257,
+          "expected": 7.83077183988257
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=-2.850167861047241, expected=-2.85016786105",
+          "actual": -2.850167861047241,
+          "expected": -2.850167861047241
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-2.8190778623577253, expected=-2.81907786236",
+          "actual": -2.8190778623577253,
+          "expected": -2.8190778623577253
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=-1.026060429977006, expected=-1.02606042998",
+          "actual": -1.026060429977006,
+          "expected": -1.026060429977006
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=7.830771839882571, expected=7.83077183988",
+          "actual": 7.830771839882571,
+          "expected": 7.830771839882571
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=2.850167861047239, expected=2.85016786105",
+          "actual": 2.850167861047239,
+          "expected": 2.850167861047239
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=-1.5000000000000013, expected=-1.5",
+          "actual": -1.5000000000000013,
+          "expected": -1.5000000000000013
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=-2.5980762113533156, expected=-2.59807621135",
+          "actual": -2.5980762113533156,
+          "expected": -2.598076211353315
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=4.1666666666666705, expected=4.16666666667",
+          "actual": 4.1666666666666705,
+          "expected": 4.1666666666666705
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=7.216878364870321, expected=7.21687836487",
+          "actual": 7.216878364870321,
+          "expected": 7.21687836487032
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_x_geometry",
+          "passed": true,
+          "message": "state_7_x_geometry: actual=0.5209445330007899, expected=0.520944533001",
+          "actual": 0.5209445330007899,
+          "expected": 0.5209445330007899
+        },
+        {
+          "name": "state_7_y_geometry",
+          "passed": true,
+          "message": "state_7_y_geometry: actual=-2.9544232590366244, expected=-2.95442325904",
+          "actual": -2.9544232590366244,
+          "expected": -2.9544232590366244
+        },
+        {
+          "name": "state_7_speed",
+          "passed": true,
+          "message": "state_7_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_7_ax_inward",
+          "passed": true,
+          "message": "state_7_ax_inward: actual=-1.4470681472244165, expected=-1.44706814722",
+          "actual": -1.4470681472244165,
+          "expected": -1.4470681472244165
+        },
+        {
+          "name": "state_7_ay_inward",
+          "passed": true,
+          "message": "state_7_ay_inward: actual=8.206731275101735, expected=8.2067312751",
+          "actual": 8.206731275101735,
+          "expected": 8.206731275101735
+        },
+        {
+          "name": "state_7_radial_force",
+          "passed": true,
+          "message": "state_7_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_7_tension",
+          "passed": true,
+          "message": "state_7_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_x_geometry",
+          "passed": true,
+          "message": "state_8_x_geometry: actual=2.2981333293569333, expected=2.29813332936",
+          "actual": 2.2981333293569333,
+          "expected": 2.2981333293569333
+        },
+        {
+          "name": "state_8_y_geometry",
+          "passed": true,
+          "message": "state_8_y_geometry: actual=-1.9283628290596186, expected=-1.92836282906",
+          "actual": -1.9283628290596186,
+          "expected": -1.9283628290596186
+        },
+        {
+          "name": "state_8_speed",
+          "passed": true,
+          "message": "state_8_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_8_ax_inward",
+          "passed": true,
+          "message": "state_8_ax_inward: actual=-6.383703692658148, expected=-6.38370369266",
+          "actual": -6.383703692658148,
+          "expected": -6.383703692658148
+        },
+        {
+          "name": "state_8_ay_inward",
+          "passed": true,
+          "message": "state_8_ay_inward: actual=5.356563414054497, expected=5.35656341405",
+          "actual": 5.356563414054497,
+          "expected": 5.356563414054497
+        },
+        {
+          "name": "state_8_radial_force",
+          "passed": true,
+          "message": "state_8_radial_force: actual=333.33333333333337, expected=333.333333333",
+          "actual": 333.33333333333337,
+          "expected": 333.33333333333337
+        },
+        {
+          "name": "state_8_tension",
+          "passed": true,
+          "message": "state_8_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=3.7699111843077517, expected=3.76991118431",
+          "actual": 3.7699111843077517,
+          "expected": 3.7699111843077517
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=8.333333333333334, expected=8.33333333333",
+          "actual": 8.333333333333334,
+          "expected": 8.333333333333334
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 1,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 88,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.7853981633974483, expected=0.785398163397",
+          "actual": 0.7853981633974483,
+          "expected": 0.7853981633974483
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.5707963267948966, expected=1.57079632679",
+          "actual": 1.5707963267948966,
+          "expected": 1.5707963267948966
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=2.356194490192345, expected=2.35619449019",
+          "actual": 2.356194490192345,
+          "expected": 2.356194490192345
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=3.141592653589793, expected=3.14159265359",
+          "actual": 3.141592653589793,
+          "expected": 3.141592653589793
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=3.9269908169872414, expected=3.92699081699",
+          "actual": 3.9269908169872414,
+          "expected": 3.9269908169872414
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=4.71238898038469, expected=4.71238898038",
+          "actual": 4.71238898038469,
+          "expected": 4.71238898038469
+        },
+        {
+          "name": "state_7_angle_matches_input",
+          "passed": true,
+          "message": "state_7_angle_matches_input: actual=5.497787143782138, expected=5.49778714378",
+          "actual": 5.497787143782138,
+          "expected": 5.497787143782138
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=2.4000000000000004, expected=2.4",
+          "actual": 2.4000000000000004,
+          "expected": 2.4000000000000004
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-10.416666666666664, expected=-10.4166666667",
+          "actual": -10.416666666666664,
+          "expected": -10.416666666666664
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=1.6970562748477145, expected=1.69705627485",
+          "actual": 1.6970562748477145,
+          "expected": 1.6970562748477145
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=1.6970562748477143, expected=1.69705627485",
+          "actual": 1.6970562748477143,
+          "expected": 1.6970562748477143
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-7.3656956373598685, expected=-7.36569563736",
+          "actual": -7.3656956373598685,
+          "expected": -7.3656956373598685
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-7.365695637359868, expected=-7.36569563736",
+          "actual": -7.365695637359868,
+          "expected": -7.365695637359868
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=1.469576158976824e-16, expected=1.46957615898e-16",
+          "actual": 1.469576158976824e-16,
+          "expected": 1.469576158976824e-16
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=2.4000000000000004, expected=2.4",
+          "actual": 2.4000000000000004,
+          "expected": 2.4000000000000004
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=-6.37836874555913e-16, expected=-6.37836874556e-16",
+          "actual": -6.37836874555913e-16,
+          "expected": -6.37836874555913e-16
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-10.416666666666664, expected=-10.4166666667",
+          "actual": -10.416666666666664,
+          "expected": -10.416666666666664
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=-1.6970562748477143, expected=-1.69705627485",
+          "actual": -1.6970562748477143,
+          "expected": -1.6970562748477143
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=1.6970562748477145, expected=1.69705627485",
+          "actual": 1.6970562748477145,
+          "expected": 1.6970562748477145
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=7.365695637359868, expected=7.36569563736",
+          "actual": 7.365695637359868,
+          "expected": 7.365695637359868
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-7.3656956373598685, expected=-7.36569563736",
+          "actual": -7.3656956373598685,
+          "expected": -7.3656956373598685
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-2.4000000000000004, expected=-2.4",
+          "actual": -2.4000000000000004,
+          "expected": -2.4000000000000004
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=2.939152317953648e-16, expected=2.93915231795e-16",
+          "actual": 2.939152317953648e-16,
+          "expected": 2.939152317953648e-16
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=10.416666666666664, expected=10.4166666667",
+          "actual": 10.416666666666664,
+          "expected": 10.416666666666664
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=-1.275673749111826e-15, expected=-1.27567374911e-15",
+          "actual": -1.275673749111826e-15,
+          "expected": -1.275673749111826e-15
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-1.6970562748477147, expected=-1.69705627485",
+          "actual": -1.6970562748477147,
+          "expected": -1.6970562748477147
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=-1.6970562748477143, expected=-1.69705627485",
+          "actual": -1.6970562748477143,
+          "expected": -1.6970562748477143
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=7.36569563735987, expected=7.36569563736",
+          "actual": 7.36569563735987,
+          "expected": 7.36569563735987
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=7.365695637359868, expected=7.36569563736",
+          "actual": 7.365695637359868,
+          "expected": 7.365695637359868
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=-4.408728476930472e-16, expected=-4.40872847693e-16",
+          "actual": -4.408728476930472e-16,
+          "expected": -4.408728476930472e-16
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=-2.4000000000000004, expected=-2.4",
+          "actual": -2.4000000000000004,
+          "expected": -2.4000000000000004
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=1.9135106236677387e-15, expected=1.91351062367e-15",
+          "actual": 1.9135106236677387e-15,
+          "expected": 1.9135106236677387e-15
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=10.416666666666664, expected=10.4166666667",
+          "actual": 10.416666666666664,
+          "expected": 10.416666666666664
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_x_geometry",
+          "passed": true,
+          "message": "state_7_x_geometry: actual=1.6970562748477138, expected=1.69705627485",
+          "actual": 1.6970562748477138,
+          "expected": 1.6970562748477138
+        },
+        {
+          "name": "state_7_y_geometry",
+          "passed": true,
+          "message": "state_7_y_geometry: actual=-1.6970562748477147, expected=-1.69705627485",
+          "actual": -1.6970562748477147,
+          "expected": -1.6970562748477147
+        },
+        {
+          "name": "state_7_speed",
+          "passed": true,
+          "message": "state_7_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_7_ax_inward",
+          "passed": true,
+          "message": "state_7_ax_inward: actual=-7.365695637359867, expected=-7.36569563736",
+          "actual": -7.365695637359867,
+          "expected": -7.365695637359867
+        },
+        {
+          "name": "state_7_ay_inward",
+          "passed": true,
+          "message": "state_7_ay_inward: actual=7.36569563735987, expected=7.36569563736",
+          "actual": 7.36569563735987,
+          "expected": 7.36569563735987
+        },
+        {
+          "name": "state_7_radial_force",
+          "passed": true,
+          "message": "state_7_radial_force: actual=416.6666666666666, expected=416.666666667",
+          "actual": 416.6666666666666,
+          "expected": 416.6666666666666
+        },
+        {
+          "name": "state_7_tension",
+          "passed": true,
+          "message": "state_7_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=3.0159289474462017, expected=3.01592894745",
+          "actual": 3.0159289474462017,
+          "expected": 3.0159289474462017
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=10.416666666666664, expected=10.4166666667",
+          "actual": 10.416666666666664,
+          "expected": 10.416666666666664
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 2,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 121,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.5711986642890533, expected=0.571198664289",
+          "actual": 0.5711986642890533,
+          "expected": 0.5711986642890533
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.1423973285781066, expected=1.14239732858",
+          "actual": 1.1423973285781066,
+          "expected": 1.1423973285781066
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=1.7135959928671598, expected=1.71359599287",
+          "actual": 1.7135959928671598,
+          "expected": 1.7135959928671598
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=2.284794657156213, expected=2.28479465716",
+          "actual": 2.284794657156213,
+          "expected": 2.284794657156213
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=2.8559933214452666, expected=2.85599332145",
+          "actual": 2.8559933214452666,
+          "expected": 2.8559933214452666
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=3.4271919857343196, expected=3.42719198573",
+          "actual": 3.4271919857343196,
+          "expected": 3.4271919857343196
+        },
+        {
+          "name": "state_7_angle_matches_input",
+          "passed": true,
+          "message": "state_7_angle_matches_input: actual=3.998390650023373, expected=3.99839065002",
+          "actual": 3.998390650023373,
+          "expected": 3.998390650023373
+        },
+        {
+          "name": "state_8_angle_matches_input",
+          "passed": true,
+          "message": "state_8_angle_matches_input: actual=4.569589314312426, expected=4.56958931431",
+          "actual": 4.569589314312426,
+          "expected": 4.569589314312426
+        },
+        {
+          "name": "state_9_angle_matches_input",
+          "passed": true,
+          "message": "state_9_angle_matches_input: actual=5.140787978601479, expected=5.1407879786",
+          "actual": 5.140787978601479,
+          "expected": 5.140787978601479
+        },
+        {
+          "name": "state_10_angle_matches_input",
+          "passed": true,
+          "message": "state_10_angle_matches_input: actual=5.711986642890533, expected=5.71198664289",
+          "actual": 5.711986642890533,
+          "expected": 5.711986642890533
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=3.5999999999999996, expected=3.6",
+          "actual": 3.5999999999999996,
+          "expected": 3.5999999999999996
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-6.9444444444444455, expected=-6.94444444444",
+          "actual": -6.9444444444444455,
+          "expected": -6.9444444444444455
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=3.028512718192252, expected=3.02851271819",
+          "actual": 3.028512718192252,
+          "expected": 3.028512718192252
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=1.946306942840151, expected=1.94630694284",
+          "actual": 1.946306942840151,
+          "expected": 1.946306942840151
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-5.842038422438759, expected=-5.84203842244",
+          "actual": -5.842038422438759,
+          "expected": -5.842038422438759
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-3.754450121219428, expected=-3.75445012122",
+          "actual": -3.754450121219428,
+          "expected": -3.754450121219428
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=1.495494046806791, expected=1.49549404681",
+          "actual": 1.495494046806791,
+          "expected": 1.495494046806791
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=3.2746751832762655, expected=3.27467518328",
+          "actual": 3.2746751832762655,
+          "expected": 3.2746751832762655
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=-2.8848264791797673, expected=-2.88482647918",
+          "actual": -2.8848264791797673,
+          "expected": -2.8848264791797673
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-6.316888856628601, expected=-6.31688885663",
+          "actual": -6.316888856628601,
+          "expected": -6.316888856628601
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=-0.512333417783826, expected=-0.512333417784",
+          "actual": -0.512333417783826,
+          "expected": -0.512333417783826
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=3.5633571907713577, expected=3.56335719077",
+          "actual": 3.5633571907713577,
+          "expected": 3.5633571907713577
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=0.9882974880089238, expected=0.988297488009",
+          "actual": 0.9882974880089238,
+          "expected": 0.9882974880089238
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-6.873760013062034, expected=-6.87376001306",
+          "actual": -6.873760013062034,
+          "expected": -6.873760013062034
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-2.3574986422030255, expected=-2.3574986422",
+          "actual": -2.3574986422030255,
+          "expected": -2.357498642203026
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=2.72069846767533, expected=2.72069846768",
+          "actual": 2.72069846767533,
+          "expected": 2.7206984676753296
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=4.547643985731146, expected=4.54764398573",
+          "actual": 4.547643985731146,
+          "expected": 4.547643985731147
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=-5.248260933015684, expected=-5.24826093302",
+          "actual": -5.248260933015684,
+          "expected": -5.2482609330156835
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-3.45417470501219, expected=-3.45417470501",
+          "actual": -3.45417470501219,
+          "expected": -3.45417470501219
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=1.0142372046291468, expected=1.01423720463",
+          "actual": 1.0142372046291468,
+          "expected": 1.0142372046291468
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=6.663145650100677, expected=6.6631456501",
+          "actual": 6.663145650100677,
+          "expected": 6.663145650100677
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=-1.9564760891765953, expected=-1.95647608918",
+          "actual": -1.9564760891765953,
+          "expected": -1.9564760891765953
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=-3.4541747050121905, expected=-3.45417470501",
+          "actual": -3.4541747050121905,
+          "expected": -3.4541747050121905
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=-1.0142372046291457, expected=-1.01423720463",
+          "actual": -1.0142372046291457,
+          "expected": -1.0142372046291457
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=6.663145650100678, expected=6.6631456501",
+          "actual": 6.663145650100678,
+          "expected": 6.663145650100678
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=1.9564760891765933, expected=1.95647608918",
+          "actual": 1.9564760891765933,
+          "expected": 1.9564760891765933
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_x_geometry",
+          "passed": true,
+          "message": "state_7_x_geometry: actual=-2.3574986422030264, expected=-2.3574986422",
+          "actual": -2.3574986422030264,
+          "expected": -2.3574986422030264
+        },
+        {
+          "name": "state_7_y_geometry",
+          "passed": true,
+          "message": "state_7_y_geometry: actual=-2.720698467675329, expected=-2.72069846768",
+          "actual": -2.720698467675329,
+          "expected": -2.720698467675329
+        },
+        {
+          "name": "state_7_speed",
+          "passed": true,
+          "message": "state_7_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_7_ax_inward",
+          "passed": true,
+          "message": "state_7_ax_inward: actual=4.547643985731148, expected=4.54764398573",
+          "actual": 4.547643985731148,
+          "expected": 4.547643985731148
+        },
+        {
+          "name": "state_7_ay_inward",
+          "passed": true,
+          "message": "state_7_ay_inward: actual=5.248260933015683, expected=5.24826093302",
+          "actual": 5.248260933015683,
+          "expected": 5.248260933015683
+        },
+        {
+          "name": "state_7_radial_force",
+          "passed": true,
+          "message": "state_7_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_7_tension",
+          "passed": true,
+          "message": "state_7_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_x_geometry",
+          "passed": true,
+          "message": "state_8_x_geometry: actual=-0.5123334177838268, expected=-0.512333417784",
+          "actual": -0.5123334177838268,
+          "expected": -0.5123334177838268
+        },
+        {
+          "name": "state_8_y_geometry",
+          "passed": true,
+          "message": "state_8_y_geometry: actual=-3.5633571907713573, expected=-3.56335719077",
+          "actual": -3.5633571907713573,
+          "expected": -3.5633571907713573
+        },
+        {
+          "name": "state_8_speed",
+          "passed": true,
+          "message": "state_8_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_8_ax_inward",
+          "passed": true,
+          "message": "state_8_ax_inward: actual=0.9882974880089254, expected=0.988297488009",
+          "actual": 0.9882974880089254,
+          "expected": 0.9882974880089254
+        },
+        {
+          "name": "state_8_ay_inward",
+          "passed": true,
+          "message": "state_8_ay_inward: actual=6.873760013062034, expected=6.87376001306",
+          "actual": 6.873760013062034,
+          "expected": 6.873760013062034
+        },
+        {
+          "name": "state_8_radial_force",
+          "passed": true,
+          "message": "state_8_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_8_tension",
+          "passed": true,
+          "message": "state_8_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_9_x_geometry",
+          "passed": true,
+          "message": "state_9_x_geometry: actual=1.4954940468067897, expected=1.49549404681",
+          "actual": 1.4954940468067897,
+          "expected": 1.4954940468067897
+        },
+        {
+          "name": "state_9_y_geometry",
+          "passed": true,
+          "message": "state_9_y_geometry: actual=-3.2746751832762664, expected=-3.27467518328",
+          "actual": -3.2746751832762664,
+          "expected": -3.2746751832762664
+        },
+        {
+          "name": "state_9_speed",
+          "passed": true,
+          "message": "state_9_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_9_ax_inward",
+          "passed": true,
+          "message": "state_9_ax_inward: actual=-2.8848264791797646, expected=-2.88482647918",
+          "actual": -2.8848264791797646,
+          "expected": -2.8848264791797646
+        },
+        {
+          "name": "state_9_ay_inward",
+          "passed": true,
+          "message": "state_9_ay_inward: actual=6.316888856628602, expected=6.31688885663",
+          "actual": 6.316888856628602,
+          "expected": 6.316888856628602
+        },
+        {
+          "name": "state_9_radial_force",
+          "passed": true,
+          "message": "state_9_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_9_tension",
+          "passed": true,
+          "message": "state_9_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_kinetic",
+          "passed": true,
+          "message": "state_9_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_9_potential",
+          "passed": true,
+          "message": "state_9_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_energy_sum",
+          "passed": true,
+          "message": "state_9_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_9_energy_conserved",
+          "passed": true,
+          "message": "state_9_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_10_x_geometry",
+          "passed": true,
+          "message": "state_10_x_geometry: actual=3.028512718192252, expected=3.02851271819",
+          "actual": 3.028512718192252,
+          "expected": 3.028512718192252
+        },
+        {
+          "name": "state_10_y_geometry",
+          "passed": true,
+          "message": "state_10_y_geometry: actual=-1.9463069428401507, expected=-1.94630694284",
+          "actual": -1.9463069428401507,
+          "expected": -1.946306942840151
+        },
+        {
+          "name": "state_10_speed",
+          "passed": true,
+          "message": "state_10_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_10_ax_inward",
+          "passed": true,
+          "message": "state_10_ax_inward: actual=-5.842038422438759, expected=-5.84203842244",
+          "actual": -5.842038422438759,
+          "expected": -5.842038422438759
+        },
+        {
+          "name": "state_10_ay_inward",
+          "passed": true,
+          "message": "state_10_ay_inward: actual=3.7544501212194272, expected=3.75445012122",
+          "actual": 3.7544501212194272,
+          "expected": 3.754450121219428
+        },
+        {
+          "name": "state_10_radial_force",
+          "passed": true,
+          "message": "state_10_radial_force: actual=277.7777777777778, expected=277.777777778",
+          "actual": 277.7777777777778,
+          "expected": 277.7777777777778
+        },
+        {
+          "name": "state_10_tension",
+          "passed": true,
+          "message": "state_10_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_kinetic",
+          "passed": true,
+          "message": "state_10_kinetic: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_10_potential",
+          "passed": true,
+          "message": "state_10_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_energy_sum",
+          "passed": true,
+          "message": "state_10_energy_sum: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "state_10_energy_conserved",
+          "passed": true,
+          "message": "state_10_energy_conserved: actual=500, expected=500",
+          "actual": 500,
+          "expected": 500.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=4.523893421169301, expected=4.52389342117",
+          "actual": 4.523893421169301,
+          "expected": 4.523893421169301
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=6.9444444444444455, expected=6.94444444444",
+          "actual": 6.9444444444444455,
+          "expected": 6.9444444444444455
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 3,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 110,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.6283185307179586, expected=0.628318530718",
+          "actual": 0.6283185307179586,
+          "expected": 0.6283185307179586
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.2566370614359172, expected=1.25663706144",
+          "actual": 1.2566370614359172,
+          "expected": 1.2566370614359172
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=1.8849555921538759, expected=1.88495559215",
+          "actual": 1.8849555921538759,
+          "expected": 1.8849555921538759
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=2.5132741228718345, expected=2.51327412287",
+          "actual": 2.5132741228718345,
+          "expected": 2.5132741228718345
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=3.141592653589793, expected=3.14159265359",
+          "actual": 3.141592653589793,
+          "expected": 3.141592653589793
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=3.7699111843077517, expected=3.76991118431",
+          "actual": 3.7699111843077517,
+          "expected": 3.7699111843077517
+        },
+        {
+          "name": "state_7_angle_matches_input",
+          "passed": true,
+          "message": "state_7_angle_matches_input: actual=4.39822971502571, expected=4.39822971503",
+          "actual": 4.39822971502571,
+          "expected": 4.39822971502571
+        },
+        {
+          "name": "state_8_angle_matches_input",
+          "passed": true,
+          "message": "state_8_angle_matches_input: actual=5.026548245743669, expected=5.02654824574",
+          "actual": 5.026548245743669,
+          "expected": 5.026548245743669
+        },
+        {
+          "name": "state_9_angle_matches_input",
+          "passed": true,
+          "message": "state_9_angle_matches_input: actual=5.654866776461628, expected=5.65486677646",
+          "actual": 5.654866776461628,
+          "expected": 5.654866776461628
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=3, expected=3",
+          "actual": 3,
+          "expected": 3.0
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-8.333333333333334, expected=-8.33333333333",
+          "actual": -8.333333333333334,
+          "expected": -8.333333333333334
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=2.4270509831248424, expected=2.42705098312",
+          "actual": 2.4270509831248424,
+          "expected": 2.4270509831248424
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=1.7633557568774194, expected=1.76335575688",
+          "actual": 1.7633557568774194,
+          "expected": 1.7633557568774194
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-6.741808286457896, expected=-6.74180828646",
+          "actual": -6.741808286457896,
+          "expected": -6.741808286457896
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-4.8982104357706095, expected=-4.89821043577",
+          "actual": -4.8982104357706095,
+          "expected": -4.8982104357706095
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=0.9270509831248424, expected=0.927050983125",
+          "actual": 0.9270509831248424,
+          "expected": 0.9270509831248424
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=2.8531695488854605, expected=2.85316954889",
+          "actual": 2.8531695488854605,
+          "expected": 2.8531695488854605
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=-2.575141619791229, expected=-2.57514161979",
+          "actual": -2.575141619791229,
+          "expected": -2.575141619791229
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-7.92547096912628, expected=-7.92547096913",
+          "actual": -7.92547096912628,
+          "expected": -7.92547096912628
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=-0.927050983124842, expected=-0.927050983125",
+          "actual": -0.927050983124842,
+          "expected": -0.927050983124842
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=2.853169548885461, expected=2.85316954889",
+          "actual": 2.853169548885461,
+          "expected": 2.853169548885461
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=2.575141619791228, expected=2.57514161979",
+          "actual": 2.575141619791228,
+          "expected": 2.575141619791228
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-7.925470969126281, expected=-7.92547096913",
+          "actual": -7.925470969126281,
+          "expected": -7.925470969126281
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-2.427050983124842, expected=-2.42705098312",
+          "actual": -2.427050983124842,
+          "expected": -2.427050983124842
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=1.7633557568774196, expected=1.76335575688",
+          "actual": 1.7633557568774196,
+          "expected": 1.7633557568774196
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=6.7418082864578945, expected=6.74180828646",
+          "actual": 6.7418082864578945,
+          "expected": 6.7418082864578945
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=-4.89821043577061, expected=-4.89821043577",
+          "actual": -4.89821043577061,
+          "expected": -4.89821043577061
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-3, expected=-3",
+          "actual": -3,
+          "expected": -3.0
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=3.6739403974420594e-16, expected=3.67394039744e-16",
+          "actual": 3.6739403974420594e-16,
+          "expected": 3.6739403974420594e-16
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=8.333333333333334, expected=8.33333333333",
+          "actual": 8.333333333333334,
+          "expected": 8.333333333333334
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=-1.0205389992894611e-15, expected=-1.02053899929e-15",
+          "actual": -1.0205389992894611e-15,
+          "expected": -1.0205389992894611e-15
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=-2.4270509831248424, expected=-2.42705098312",
+          "actual": -2.4270509831248424,
+          "expected": -2.4270509831248424
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=-1.7633557568774192, expected=-1.76335575688",
+          "actual": -1.7633557568774192,
+          "expected": -1.7633557568774192
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=6.741808286457896, expected=6.74180828646",
+          "actual": 6.741808286457896,
+          "expected": 6.741808286457896
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=4.898210435770609, expected=4.89821043577",
+          "actual": 4.898210435770609,
+          "expected": 4.898210435770609
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_7_x_geometry",
+          "passed": true,
+          "message": "state_7_x_geometry: actual=-0.9270509831248427, expected=-0.927050983125",
+          "actual": -0.9270509831248427,
+          "expected": -0.9270509831248427
+        },
+        {
+          "name": "state_7_y_geometry",
+          "passed": true,
+          "message": "state_7_y_geometry: actual=-2.8531695488854605, expected=-2.85316954889",
+          "actual": -2.8531695488854605,
+          "expected": -2.8531695488854605
+        },
+        {
+          "name": "state_7_speed",
+          "passed": true,
+          "message": "state_7_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_7_ax_inward",
+          "passed": true,
+          "message": "state_7_ax_inward: actual=2.57514161979123, expected=2.57514161979",
+          "actual": 2.57514161979123,
+          "expected": 2.57514161979123
+        },
+        {
+          "name": "state_7_ay_inward",
+          "passed": true,
+          "message": "state_7_ay_inward: actual=7.92547096912628, expected=7.92547096913",
+          "actual": 7.92547096912628,
+          "expected": 7.92547096912628
+        },
+        {
+          "name": "state_7_radial_force",
+          "passed": true,
+          "message": "state_7_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_7_tension",
+          "passed": true,
+          "message": "state_7_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_8_x_geometry",
+          "passed": true,
+          "message": "state_8_x_geometry: actual=0.9270509831248417, expected=0.927050983125",
+          "actual": 0.9270509831248417,
+          "expected": 0.9270509831248417
+        },
+        {
+          "name": "state_8_y_geometry",
+          "passed": true,
+          "message": "state_8_y_geometry: actual=-2.853169548885461, expected=-2.85316954889",
+          "actual": -2.853169548885461,
+          "expected": -2.853169548885461
+        },
+        {
+          "name": "state_8_speed",
+          "passed": true,
+          "message": "state_8_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_8_ax_inward",
+          "passed": true,
+          "message": "state_8_ax_inward: actual=-2.575141619791227, expected=-2.57514161979",
+          "actual": -2.575141619791227,
+          "expected": -2.575141619791227
+        },
+        {
+          "name": "state_8_ay_inward",
+          "passed": true,
+          "message": "state_8_ay_inward: actual=7.925470969126281, expected=7.92547096913",
+          "actual": 7.925470969126281,
+          "expected": 7.925470969126281
+        },
+        {
+          "name": "state_8_radial_force",
+          "passed": true,
+          "message": "state_8_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_8_tension",
+          "passed": true,
+          "message": "state_8_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_9_x_geometry",
+          "passed": true,
+          "message": "state_9_x_geometry: actual=2.427050983124842, expected=2.42705098312",
+          "actual": 2.427050983124842,
+          "expected": 2.427050983124842
+        },
+        {
+          "name": "state_9_y_geometry",
+          "passed": true,
+          "message": "state_9_y_geometry: actual=-1.76335575687742, expected=-1.76335575688",
+          "actual": -1.76335575687742,
+          "expected": -1.76335575687742
+        },
+        {
+          "name": "state_9_speed",
+          "passed": true,
+          "message": "state_9_speed: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_9_ax_inward",
+          "passed": true,
+          "message": "state_9_ax_inward: actual=-6.7418082864578945, expected=-6.74180828646",
+          "actual": -6.7418082864578945,
+          "expected": -6.7418082864578945
+        },
+        {
+          "name": "state_9_ay_inward",
+          "passed": true,
+          "message": "state_9_ay_inward: actual=4.898210435770611, expected=4.89821043577",
+          "actual": 4.898210435770611,
+          "expected": 4.898210435770611
+        },
+        {
+          "name": "state_9_radial_force",
+          "passed": true,
+          "message": "state_9_radial_force: actual=433.33333333333337, expected=433.333333333",
+          "actual": 433.33333333333337,
+          "expected": 433.33333333333337
+        },
+        {
+          "name": "state_9_tension",
+          "passed": true,
+          "message": "state_9_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_kinetic",
+          "passed": true,
+          "message": "state_9_kinetic: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_9_potential",
+          "passed": true,
+          "message": "state_9_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_energy_sum",
+          "passed": true,
+          "message": "state_9_energy_sum: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "state_9_energy_conserved",
+          "passed": true,
+          "message": "state_9_energy_conserved: actual=650, expected=650",
+          "actual": 650,
+          "expected": 650.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=3.7699111843077517, expected=3.76991118431",
+          "actual": 3.7699111843077517,
+          "expected": 3.7699111843077517
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=8.333333333333334, expected=8.33333333333",
+          "actual": 8.333333333333334,
+          "expected": 8.333333333333334
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 4,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 132,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.5235987755982988, expected=0.523598775598",
+          "actual": 0.5235987755982988,
+          "expected": 0.5235987755982988
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.0471975511965976, expected=1.0471975512",
+          "actual": 1.0471975511965976,
+          "expected": 1.0471975511965976
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=1.5707963267948966, expected=1.57079632679",
+          "actual": 1.5707963267948966,
+          "expected": 1.5707963267948966
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=2.0943951023931953, expected=2.09439510239",
+          "actual": 2.0943951023931953,
+          "expected": 2.0943951023931953
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=2.6179938779914944, expected=2.61799387799",
+          "actual": 2.6179938779914944,
+          "expected": 2.6179938779914944
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=3.141592653589793, expected=3.14159265359",
+          "actual": 3.141592653589793,
+          "expected": 3.141592653589793
+        },
+        {
+          "name": "state_7_angle_matches_input",
+          "passed": true,
+          "message": "state_7_angle_matches_input: actual=3.665191429188092, expected=3.66519142919",
+          "actual": 3.665191429188092,
+          "expected": 3.665191429188092
+        },
+        {
+          "name": "state_8_angle_matches_input",
+          "passed": true,
+          "message": "state_8_angle_matches_input: actual=4.1887902047863905, expected=4.18879020479",
+          "actual": 4.1887902047863905,
+          "expected": 4.1887902047863905
+        },
+        {
+          "name": "state_9_angle_matches_input",
+          "passed": true,
+          "message": "state_9_angle_matches_input: actual=4.71238898038469, expected=4.71238898038",
+          "actual": 4.71238898038469,
+          "expected": 4.71238898038469
+        },
+        {
+          "name": "state_10_angle_matches_input",
+          "passed": true,
+          "message": "state_10_angle_matches_input: actual=5.235987755982989, expected=5.23598775598",
+          "actual": 5.235987755982989,
+          "expected": 5.235987755982989
+        },
+        {
+          "name": "state_11_angle_matches_input",
+          "passed": true,
+          "message": "state_11_angle_matches_input: actual=5.759586531581287, expected=5.75958653158",
+          "actual": 5.759586531581287,
+          "expected": 5.759586531581287
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=3, expected=3",
+          "actual": 3,
+          "expected": 3.0
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-6.75, expected=-6.75",
+          "actual": -6.75,
+          "expected": -6.75
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=2.598076211353316, expected=2.59807621135",
+          "actual": 2.598076211353316,
+          "expected": 2.598076211353316
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=1.4999999999999998, expected=1.5",
+          "actual": 1.4999999999999998,
+          "expected": 1.4999999999999998
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-5.845671475544961, expected=-5.84567147554",
+          "actual": -5.845671475544961,
+          "expected": -5.845671475544961
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-3.3749999999999996, expected=-3.375",
+          "actual": -3.3749999999999996,
+          "expected": -3.3749999999999996
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=1.5000000000000004, expected=1.5",
+          "actual": 1.5000000000000004,
+          "expected": 1.5000000000000004
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=2.598076211353316, expected=2.59807621135",
+          "actual": 2.598076211353316,
+          "expected": 2.598076211353316
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=-3.375000000000001, expected=-3.375",
+          "actual": -3.375000000000001,
+          "expected": -3.375000000000001
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-5.84567147554496, expected=-5.84567147554",
+          "actual": -5.84567147554496,
+          "expected": -5.84567147554496
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=1.8369701987210297e-16, expected=1.83697019872e-16",
+          "actual": 1.8369701987210297e-16,
+          "expected": 1.8369701987210297e-16
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=3, expected=3",
+          "actual": 3,
+          "expected": 3.0
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=-4.133182947122317e-16, expected=-4.13318294712e-16",
+          "actual": -4.133182947122317e-16,
+          "expected": -4.133182947122317e-16
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-6.75, expected=-6.75",
+          "actual": -6.75,
+          "expected": -6.75
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-1.4999999999999993, expected=-1.5",
+          "actual": -1.4999999999999993,
+          "expected": -1.4999999999999996
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=2.598076211353316, expected=2.59807621135",
+          "actual": 2.598076211353316,
+          "expected": 2.598076211353316
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=3.3749999999999987, expected=3.375",
+          "actual": 3.3749999999999987,
+          "expected": 3.3749999999999987
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=-5.845671475544961, expected=-5.84567147554",
+          "actual": -5.845671475544961,
+          "expected": -5.845671475544961
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-2.598076211353316, expected=-2.59807621135",
+          "actual": -2.598076211353316,
+          "expected": -2.598076211353316
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=1.4999999999999998, expected=1.5",
+          "actual": 1.4999999999999998,
+          "expected": 1.4999999999999998
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=5.845671475544961, expected=5.84567147554",
+          "actual": 5.845671475544961,
+          "expected": 5.845671475544961
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=-3.3749999999999996, expected=-3.375",
+          "actual": -3.3749999999999996,
+          "expected": -3.3749999999999996
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=-3, expected=-3",
+          "actual": -3,
+          "expected": -3.0
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=3.6739403974420594e-16, expected=3.67394039744e-16",
+          "actual": 3.6739403974420594e-16,
+          "expected": 3.6739403974420594e-16
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=6.75, expected=6.75",
+          "actual": 6.75,
+          "expected": 6.75
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=-8.266365894244634e-16, expected=-8.26636589424e-16",
+          "actual": -8.266365894244634e-16,
+          "expected": -8.266365894244634e-16
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_7_x_geometry",
+          "passed": true,
+          "message": "state_7_x_geometry: actual=-2.5980762113533165, expected=-2.59807621135",
+          "actual": -2.5980762113533165,
+          "expected": -2.5980762113533165
+        },
+        {
+          "name": "state_7_y_geometry",
+          "passed": true,
+          "message": "state_7_y_geometry: actual=-1.4999999999999991, expected=-1.5",
+          "actual": -1.4999999999999991,
+          "expected": -1.4999999999999993
+        },
+        {
+          "name": "state_7_speed",
+          "passed": true,
+          "message": "state_7_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_7_ax_inward",
+          "passed": true,
+          "message": "state_7_ax_inward: actual=5.845671475544962, expected=5.84567147554",
+          "actual": 5.845671475544962,
+          "expected": 5.845671475544962
+        },
+        {
+          "name": "state_7_ay_inward",
+          "passed": true,
+          "message": "state_7_ay_inward: actual=3.3749999999999982, expected=3.375",
+          "actual": 3.3749999999999982,
+          "expected": 3.3749999999999987
+        },
+        {
+          "name": "state_7_radial_force",
+          "passed": true,
+          "message": "state_7_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_7_tension",
+          "passed": true,
+          "message": "state_7_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_8_x_geometry",
+          "passed": true,
+          "message": "state_8_x_geometry: actual=-1.5000000000000013, expected=-1.5",
+          "actual": -1.5000000000000013,
+          "expected": -1.5000000000000013
+        },
+        {
+          "name": "state_8_y_geometry",
+          "passed": true,
+          "message": "state_8_y_geometry: actual=-2.5980762113533156, expected=-2.59807621135",
+          "actual": -2.5980762113533156,
+          "expected": -2.598076211353315
+        },
+        {
+          "name": "state_8_speed",
+          "passed": true,
+          "message": "state_8_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_8_ax_inward",
+          "passed": true,
+          "message": "state_8_ax_inward: actual=3.375000000000003, expected=3.375",
+          "actual": 3.375000000000003,
+          "expected": 3.375000000000003
+        },
+        {
+          "name": "state_8_ay_inward",
+          "passed": true,
+          "message": "state_8_ay_inward: actual=5.84567147554496, expected=5.84567147554",
+          "actual": 5.84567147554496,
+          "expected": 5.845671475544959
+        },
+        {
+          "name": "state_8_radial_force",
+          "passed": true,
+          "message": "state_8_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_8_tension",
+          "passed": true,
+          "message": "state_8_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_9_x_geometry",
+          "passed": true,
+          "message": "state_9_x_geometry: actual=-5.51091059616309e-16, expected=-5.51091059616e-16",
+          "actual": -5.51091059616309e-16,
+          "expected": -5.51091059616309e-16
+        },
+        {
+          "name": "state_9_y_geometry",
+          "passed": true,
+          "message": "state_9_y_geometry: actual=-3, expected=-3",
+          "actual": -3,
+          "expected": -3.0
+        },
+        {
+          "name": "state_9_speed",
+          "passed": true,
+          "message": "state_9_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_9_ax_inward",
+          "passed": true,
+          "message": "state_9_ax_inward: actual=1.239954884136695e-15, expected=1.23995488414e-15",
+          "actual": 1.239954884136695e-15,
+          "expected": 1.239954884136695e-15
+        },
+        {
+          "name": "state_9_ay_inward",
+          "passed": true,
+          "message": "state_9_ay_inward: actual=6.75, expected=6.75",
+          "actual": 6.75,
+          "expected": 6.75
+        },
+        {
+          "name": "state_9_radial_force",
+          "passed": true,
+          "message": "state_9_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_9_tension",
+          "passed": true,
+          "message": "state_9_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_kinetic",
+          "passed": true,
+          "message": "state_9_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_9_potential",
+          "passed": true,
+          "message": "state_9_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_energy_sum",
+          "passed": true,
+          "message": "state_9_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_9_energy_conserved",
+          "passed": true,
+          "message": "state_9_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_10_x_geometry",
+          "passed": true,
+          "message": "state_10_x_geometry: actual=1.5000000000000004, expected=1.5",
+          "actual": 1.5000000000000004,
+          "expected": 1.5000000000000004
+        },
+        {
+          "name": "state_10_y_geometry",
+          "passed": true,
+          "message": "state_10_y_geometry: actual=-2.598076211353316, expected=-2.59807621135",
+          "actual": -2.598076211353316,
+          "expected": -2.598076211353316
+        },
+        {
+          "name": "state_10_speed",
+          "passed": true,
+          "message": "state_10_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_10_ax_inward",
+          "passed": true,
+          "message": "state_10_ax_inward: actual=-3.375000000000001, expected=-3.375",
+          "actual": -3.375000000000001,
+          "expected": -3.375000000000001
+        },
+        {
+          "name": "state_10_ay_inward",
+          "passed": true,
+          "message": "state_10_ay_inward: actual=5.84567147554496, expected=5.84567147554",
+          "actual": 5.84567147554496,
+          "expected": 5.84567147554496
+        },
+        {
+          "name": "state_10_radial_force",
+          "passed": true,
+          "message": "state_10_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_10_tension",
+          "passed": true,
+          "message": "state_10_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_kinetic",
+          "passed": true,
+          "message": "state_10_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_10_potential",
+          "passed": true,
+          "message": "state_10_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_energy_sum",
+          "passed": true,
+          "message": "state_10_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_10_energy_conserved",
+          "passed": true,
+          "message": "state_10_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_11_x_geometry",
+          "passed": true,
+          "message": "state_11_x_geometry: actual=2.598076211353315, expected=2.59807621135",
+          "actual": 2.598076211353315,
+          "expected": 2.598076211353315
+        },
+        {
+          "name": "state_11_y_geometry",
+          "passed": true,
+          "message": "state_11_y_geometry: actual=-1.5000000000000013, expected=-1.5",
+          "actual": -1.5000000000000013,
+          "expected": -1.5000000000000013
+        },
+        {
+          "name": "state_11_speed",
+          "passed": true,
+          "message": "state_11_speed: actual=4.5, expected=4.5",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "state_11_ax_inward",
+          "passed": true,
+          "message": "state_11_ax_inward: actual=-5.845671475544959, expected=-5.84567147554",
+          "actual": -5.845671475544959,
+          "expected": -5.845671475544959
+        },
+        {
+          "name": "state_11_ay_inward",
+          "passed": true,
+          "message": "state_11_ay_inward: actual=3.375000000000003, expected=3.375",
+          "actual": 3.375000000000003,
+          "expected": 3.375000000000003
+        },
+        {
+          "name": "state_11_radial_force",
+          "passed": true,
+          "message": "state_11_radial_force: actual=270, expected=270",
+          "actual": 270,
+          "expected": 270.0
+        },
+        {
+          "name": "state_11_tension",
+          "passed": true,
+          "message": "state_11_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_11_kinetic",
+          "passed": true,
+          "message": "state_11_kinetic: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_11_potential",
+          "passed": true,
+          "message": "state_11_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_11_energy_sum",
+          "passed": true,
+          "message": "state_11_energy_sum: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "state_11_energy_conserved",
+          "passed": true,
+          "message": "state_11_energy_conserved: actual=405, expected=405",
+          "actual": 405,
+          "expected": 405.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=4.1887902047863905, expected=4.18879020479",
+          "actual": 4.1887902047863905,
+          "expected": 4.1887902047863905
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=6.75, expected=6.75",
+          "actual": 6.75,
+          "expected": 6.75
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 5,
+      "domain": "circular",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_centripetal_acceleration",
+          "passed": true,
+          "message": "dimension_centripetal_acceleration: left=Dimension(mass=0, length=1, time=-2), right=Dimension(mass=0, length=1, time=-2)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_centripetal_force",
+          "passed": true,
+          "message": "dimension_centripetal_force: left=Dimension(mass=1, length=1, time=-2), right=Dimension(mass=1, length=1, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 1,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_period",
+          "passed": true,
+          "message": "dimension_period: left=Dimension(mass=0, length=0, time=1), right=Dimension(mass=0, length=0, time=1)",
+          "actual": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 0,
+            "time": 1
+          }
+        },
+        {
+          "name": "dimension_energy",
+          "passed": true,
+          "message": "dimension_energy: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 77,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 angles_rad 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_angle_matches_input",
+          "passed": true,
+          "message": "state_0_angle_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_angle_matches_input",
+          "passed": true,
+          "message": "state_1_angle_matches_input: actual=0.8975979010256552, expected=0.897597901026",
+          "actual": 0.8975979010256552,
+          "expected": 0.8975979010256552
+        },
+        {
+          "name": "state_2_angle_matches_input",
+          "passed": true,
+          "message": "state_2_angle_matches_input: actual=1.7951958020513104, expected=1.79519580205",
+          "actual": 1.7951958020513104,
+          "expected": 1.7951958020513104
+        },
+        {
+          "name": "state_3_angle_matches_input",
+          "passed": true,
+          "message": "state_3_angle_matches_input: actual=2.6927937030769655, expected=2.69279370308",
+          "actual": 2.6927937030769655,
+          "expected": 2.6927937030769655
+        },
+        {
+          "name": "state_4_angle_matches_input",
+          "passed": true,
+          "message": "state_4_angle_matches_input: actual=3.5903916041026207, expected=3.5903916041",
+          "actual": 3.5903916041026207,
+          "expected": 3.5903916041026207
+        },
+        {
+          "name": "state_5_angle_matches_input",
+          "passed": true,
+          "message": "state_5_angle_matches_input: actual=4.487989505128276, expected=4.48798950513",
+          "actual": 4.487989505128276,
+          "expected": 4.487989505128276
+        },
+        {
+          "name": "state_6_angle_matches_input",
+          "passed": true,
+          "message": "state_6_angle_matches_input: actual=5.385587406153931, expected=5.38558740615",
+          "actual": 5.385587406153931,
+          "expected": 5.385587406153931
+        },
+        {
+          "name": "state_0_x_geometry",
+          "passed": true,
+          "message": "state_0_x_geometry: actual=3, expected=3",
+          "actual": 3,
+          "expected": 3.0
+        },
+        {
+          "name": "state_0_y_geometry",
+          "passed": true,
+          "message": "state_0_y_geometry: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_speed",
+          "passed": true,
+          "message": "state_0_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_0_ax_inward",
+          "passed": true,
+          "message": "state_0_ax_inward: actual=-10.083333333333334, expected=-10.0833333333",
+          "actual": -10.083333333333334,
+          "expected": -10.083333333333334
+        },
+        {
+          "name": "state_0_ay_inward",
+          "passed": true,
+          "message": "state_0_ay_inward: actual=0, expected=-0",
+          "actual": 0,
+          "expected": -0.0
+        },
+        {
+          "name": "state_0_radial_force",
+          "passed": true,
+          "message": "state_0_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_0_tension",
+          "passed": true,
+          "message": "state_0_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_1_x_geometry",
+          "passed": true,
+          "message": "state_1_x_geometry: actual=1.8704694055762008, expected=1.87046940558",
+          "actual": 1.8704694055762008,
+          "expected": 1.8704694055762008
+        },
+        {
+          "name": "state_1_y_geometry",
+          "passed": true,
+          "message": "state_1_y_geometry: actual=2.3454944474040893, expected=2.3454944474",
+          "actual": 2.3454944474040893,
+          "expected": 2.3454944474040893
+        },
+        {
+          "name": "state_1_speed",
+          "passed": true,
+          "message": "state_1_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_1_ax_inward",
+          "passed": true,
+          "message": "state_1_ax_inward: actual=-6.286855502075564, expected=-6.28685550208",
+          "actual": -6.286855502075564,
+          "expected": -6.286855502075564
+        },
+        {
+          "name": "state_1_ay_inward",
+          "passed": true,
+          "message": "state_1_ay_inward: actual=-7.883467448219301, expected=-7.88346744822",
+          "actual": -7.883467448219301,
+          "expected": -7.883467448219301
+        },
+        {
+          "name": "state_1_radial_force",
+          "passed": true,
+          "message": "state_1_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_1_tension",
+          "passed": true,
+          "message": "state_1_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_2_x_geometry",
+          "passed": true,
+          "message": "state_2_x_geometry: actual=-0.667562801868943, expected=-0.667562801869",
+          "actual": -0.667562801868943,
+          "expected": -0.667562801868943
+        },
+        {
+          "name": "state_2_y_geometry",
+          "passed": true,
+          "message": "state_2_y_geometry: actual=2.924783736545471, expected=2.92478373655",
+          "actual": 2.924783736545471,
+          "expected": 2.924783736545471
+        },
+        {
+          "name": "state_2_speed",
+          "passed": true,
+          "message": "state_2_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_2_ax_inward",
+          "passed": true,
+          "message": "state_2_ax_inward: actual=2.24375275072617, expected=2.24375275073",
+          "actual": 2.24375275072617,
+          "expected": 2.24375275072617
+        },
+        {
+          "name": "state_2_ay_inward",
+          "passed": true,
+          "message": "state_2_ay_inward: actual=-9.830523114500055, expected=-9.8305231145",
+          "actual": -9.830523114500055,
+          "expected": -9.830523114500055
+        },
+        {
+          "name": "state_2_radial_force",
+          "passed": true,
+          "message": "state_2_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_2_tension",
+          "passed": true,
+          "message": "state_2_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_3_x_geometry",
+          "passed": true,
+          "message": "state_3_x_geometry: actual=-2.702906603707257, expected=-2.70290660371",
+          "actual": -2.702906603707257,
+          "expected": -2.702906603707257
+        },
+        {
+          "name": "state_3_y_geometry",
+          "passed": true,
+          "message": "state_3_y_geometry: actual=1.3016512173526746, expected=1.30165121735",
+          "actual": 1.3016512173526746,
+          "expected": 1.3016512173526746
+        },
+        {
+          "name": "state_3_speed",
+          "passed": true,
+          "message": "state_3_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_3_ax_inward",
+          "passed": true,
+          "message": "state_3_ax_inward: actual=9.084769418016059, expected=9.08476941802",
+          "actual": 9.084769418016059,
+          "expected": 9.084769418016059
+        },
+        {
+          "name": "state_3_ay_inward",
+          "passed": true,
+          "message": "state_3_ay_inward: actual=-4.374994369435379, expected=-4.37499436944",
+          "actual": -4.374994369435379,
+          "expected": -4.374994369435379
+        },
+        {
+          "name": "state_3_radial_force",
+          "passed": true,
+          "message": "state_3_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_3_tension",
+          "passed": true,
+          "message": "state_3_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_4_x_geometry",
+          "passed": true,
+          "message": "state_4_x_geometry: actual=-2.7029066037072575, expected=-2.70290660371",
+          "actual": -2.7029066037072575,
+          "expected": -2.7029066037072575
+        },
+        {
+          "name": "state_4_y_geometry",
+          "passed": true,
+          "message": "state_4_y_geometry: actual=-1.301651217352674, expected=-1.30165121735",
+          "actual": -1.301651217352674,
+          "expected": -1.301651217352674
+        },
+        {
+          "name": "state_4_speed",
+          "passed": true,
+          "message": "state_4_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_4_ax_inward",
+          "passed": true,
+          "message": "state_4_ax_inward: actual=9.08476941801606, expected=9.08476941802",
+          "actual": 9.08476941801606,
+          "expected": 9.08476941801606
+        },
+        {
+          "name": "state_4_ay_inward",
+          "passed": true,
+          "message": "state_4_ay_inward: actual=4.374994369435377, expected=4.37499436944",
+          "actual": 4.374994369435377,
+          "expected": 4.374994369435377
+        },
+        {
+          "name": "state_4_radial_force",
+          "passed": true,
+          "message": "state_4_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_4_tension",
+          "passed": true,
+          "message": "state_4_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_5_x_geometry",
+          "passed": true,
+          "message": "state_5_x_geometry: actual=-0.6675628018689438, expected=-0.667562801869",
+          "actual": -0.6675628018689438,
+          "expected": -0.6675628018689438
+        },
+        {
+          "name": "state_5_y_geometry",
+          "passed": true,
+          "message": "state_5_y_geometry: actual=-2.924783736545471, expected=-2.92478373655",
+          "actual": -2.924783736545471,
+          "expected": -2.924783736545471
+        },
+        {
+          "name": "state_5_speed",
+          "passed": true,
+          "message": "state_5_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_5_ax_inward",
+          "passed": true,
+          "message": "state_5_ax_inward: actual=2.243752750726172, expected=2.24375275073",
+          "actual": 2.243752750726172,
+          "expected": 2.243752750726172
+        },
+        {
+          "name": "state_5_ay_inward",
+          "passed": true,
+          "message": "state_5_ay_inward: actual=9.830523114500055, expected=9.8305231145",
+          "actual": 9.830523114500055,
+          "expected": 9.830523114500055
+        },
+        {
+          "name": "state_5_radial_force",
+          "passed": true,
+          "message": "state_5_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_5_tension",
+          "passed": true,
+          "message": "state_5_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_6_x_geometry",
+          "passed": true,
+          "message": "state_6_x_geometry: actual=1.8704694055762001, expected=1.87046940558",
+          "actual": 1.8704694055762001,
+          "expected": 1.8704694055762001
+        },
+        {
+          "name": "state_6_y_geometry",
+          "passed": true,
+          "message": "state_6_y_geometry: actual=-2.3454944474040897, expected=-2.3454944474",
+          "actual": -2.3454944474040897,
+          "expected": -2.3454944474040897
+        },
+        {
+          "name": "state_6_speed",
+          "passed": true,
+          "message": "state_6_speed: actual=5.5, expected=5.5",
+          "actual": 5.5,
+          "expected": 5.5
+        },
+        {
+          "name": "state_6_ax_inward",
+          "passed": true,
+          "message": "state_6_ax_inward: actual=-6.286855502075562, expected=-6.28685550208",
+          "actual": -6.286855502075562,
+          "expected": -6.286855502075562
+        },
+        {
+          "name": "state_6_ay_inward",
+          "passed": true,
+          "message": "state_6_ay_inward: actual=7.883467448219302, expected=7.88346744822",
+          "actual": 7.883467448219302,
+          "expected": 7.883467448219302
+        },
+        {
+          "name": "state_6_radial_force",
+          "passed": true,
+          "message": "state_6_radial_force: actual=403.33333333333337, expected=403.333333333",
+          "actual": 403.33333333333337,
+          "expected": 403.33333333333337
+        },
+        {
+          "name": "state_6_tension",
+          "passed": true,
+          "message": "state_6_tension: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=605, expected=605",
+          "actual": 605,
+          "expected": 605.0
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "period_relation",
+          "passed": true,
+          "message": "period_relation: actual=3.4271919857343196, expected=3.42719198573",
+          "actual": 3.4271919857343196,
+          "expected": 3.4271919857343196
+        },
+        {
+          "name": "centripetal_acceleration_relation",
+          "passed": true,
+          "message": "centripetal_acceleration_relation: actual=10.083333333333334, expected=10.0833333333",
+          "actual": 10.083333333333334,
+          "expected": 10.083333333333334
+        }
+      ],
+      "failed": []
+    }
+  ]
+}

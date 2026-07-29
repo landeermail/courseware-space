@@ -1,0 +1,32 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v2-split",
+  "ran_at": "2026-07-29T10:45:16.615379+00:00",
+  "raw": "{\"title\":\"斜抛与平抛运动状态比较模型\",\"domain\":\"projectile\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample:function(input){var sc=(input&&input.scenario)||{};var times=(input&&input.times_s)||[];var g=Number(sc.g_m_s2);var m=Number(sc.mass_kg);var v0=Number(sc.speed_m_s);var x0=Number(sc.x0_m)||0;var y0=Number(sc.y0_m)||0;var deg=Number(sc.angle_deg);var rad=deg*Math.PI/180;var vx0=v0*Math.cos(rad);var vy0=v0*Math.sin(rad);var T=0;if(g>0){var root=Math.sqrt(Math.max(0,vy0*vy0+2*g*y0));T=(vy0+root)/g;if(!(T>0))T=0;}var R=x0+vx0*T;var tApex=(g>0&&vy0>0)?vy0/g:0;if(tApex>T)tApex=T;var hApex=y0+vy0*tApex-0.5*g*tApex*tApex;if(vy0<=0)hApex=y0;var opt=(Math.asin(1)*180/Math.PI)/2;function st(t){t=Number(t)||0;var landed=(g>0&&t>T);var tt=landed?T:t;var x=x0+vx0*tt;var y=y0+vy0*tt-0.5*g*tt*tt;var vx=vx0;var vy=vy0-g*tt;var ax=0;var ay=-g;if(landed){x=R;y=0;vx=0;vy=0;ax=0;ay=0;}else if(y<0){y=0;}var ke=0.5*m*(vx*vx+vy*vy);var pe=m*g*y;return {t_s:t,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:ax,ay_m_s2:ay,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe};}var states=times.map(st);return {states:states,events:{flight_time_s:T,range_m:R,apex_time_s:tApex,max_height_m:hApex,optimal_equal_height_angle_deg:opt}};}});\"}",
+  "provider": {
+    "phase": "physics_model",
+    "requested_model": "k3-256k",
+    "reasoning_effort": "high",
+    "max_completion_tokens": 32768,
+    "response_format": "json_object",
+    "temperature": "provider_default",
+    "top_p": "provider_default",
+    "stream": true,
+    "prompt_cache_key": "7e967421cee7e270e807f69ab3fbbda040ffd107993e39f786a3aee0e0fa327f",
+    "response_id": "chatcmpl-i3OwYkDB2pTkvjphvqOW5sHk",
+    "actual_model": "k3-256k",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 554,
+      "completion_tokens": 1916,
+      "total_tokens": 2470,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1374
+      }
+    },
+    "attempt": 1,
+    "latency_ms": 45337
+  },
+  "status": "rejected",
+  "failure": "state_7_vx_constant: actual=0, expected=12.7279220614\nstate_7_vy_linear: actual=0, expected=-15.8177115918\nstate_7_ay_gravity: actual=0, expected=-8.82\nstate_7_kinetic: actual=0, expected=103.05\nstate_7_energy_conserved: actual=0, expected=103.05"
+}

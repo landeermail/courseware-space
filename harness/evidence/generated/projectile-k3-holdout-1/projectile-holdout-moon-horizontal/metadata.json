@@ -1,0 +1,4132 @@
+{
+  "id": "projectile-holdout-moon-horizontal",
+  "domain": "projectile",
+  "status": "succeeded",
+  "attempts": 3,
+  "output_path": "/Users/lizhi/Desktop/codex_workspace/courseware_space/harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-moon-horizontal/index.html",
+  "reports": [
+    {
+      "probe": 0,
+      "domain": "projectile",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_x_equals_vt",
+          "passed": true,
+          "message": "dimension_x_equals_vt: left=Dimension(mass=0, length=1, time=0), right=Dimension(mass=0, length=1, time=0)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          }
+        },
+        {
+          "name": "dimension_v_equals_at",
+          "passed": true,
+          "message": "dimension_v_equals_at: left=Dimension(mass=0, length=1, time=-1), right=Dimension(mass=0, length=1, time=-1)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          }
+        },
+        {
+          "name": "dimension_energy_is_force_length",
+          "passed": true,
+          "message": "dimension_energy_is_force_length: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_kinetic_is_mass_v2",
+          "passed": true,
+          "message": "dimension_kinetic_is_mass_v2: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 90,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 times_s 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_time_matches_input",
+          "passed": true,
+          "message": "state_0_time_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_time_matches_input",
+          "passed": true,
+          "message": "state_1_time_matches_input: actual=0.3105649968749708, expected=0.310564996875",
+          "actual": 0.3105649968749708,
+          "expected": 0.3105649968749708
+        },
+        {
+          "name": "state_2_time_matches_input",
+          "passed": true,
+          "message": "state_2_time_matches_input: actual=0.6211299937499416, expected=0.62112999375",
+          "actual": 0.6211299937499416,
+          "expected": 0.6211299937499416
+        },
+        {
+          "name": "state_3_time_matches_input",
+          "passed": true,
+          "message": "state_3_time_matches_input: actual=0.9316949906249123, expected=0.931694990625",
+          "actual": 0.9316949906249123,
+          "expected": 0.9316949906249123
+        },
+        {
+          "name": "state_4_time_matches_input",
+          "passed": true,
+          "message": "state_4_time_matches_input: actual=1.2422599874998832, expected=1.2422599875",
+          "actual": 1.2422599874998832,
+          "expected": 1.2422599874998832
+        },
+        {
+          "name": "state_5_time_matches_input",
+          "passed": true,
+          "message": "state_5_time_matches_input: actual=1.552824984374854, expected=1.55282498437",
+          "actual": 1.552824984374854,
+          "expected": 1.552824984374854
+        },
+        {
+          "name": "state_6_time_matches_input",
+          "passed": true,
+          "message": "state_6_time_matches_input: actual=1.8633899812498247, expected=1.86338998125",
+          "actual": 1.8633899812498247,
+          "expected": 1.8633899812498247
+        },
+        {
+          "name": "state_7_time_matches_input",
+          "passed": true,
+          "message": "state_7_time_matches_input: actual=2.1739549781247955, expected=2.17395497812",
+          "actual": 2.1739549781247955,
+          "expected": 2.1739549781247955
+        },
+        {
+          "name": "state_8_time_matches_input",
+          "passed": true,
+          "message": "state_8_time_matches_input: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "state_0_x_kinematics",
+          "passed": true,
+          "message": "state_0_x_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_y_kinematics",
+          "passed": true,
+          "message": "state_0_y_kinematics: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_vx_constant",
+          "passed": true,
+          "message": "state_0_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_0_vy_linear",
+          "passed": true,
+          "message": "state_0_vy_linear: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ax_zero",
+          "passed": true,
+          "message": "state_0_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ay_gravity",
+          "passed": true,
+          "message": "state_0_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=1.6, expected=1.6",
+          "actual": 1.6,
+          "expected": 1.6
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=1.6200000000000003, expected=1.62",
+          "actual": 1.6200000000000003,
+          "expected": 1.6200000000000003
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_1_x_kinematics",
+          "passed": true,
+          "message": "state_1_x_kinematics: actual=1.2422599874998832, expected=1.2422599875",
+          "actual": 1.2422599874998832,
+          "expected": 1.2422599874998832
+        },
+        {
+          "name": "state_1_y_kinematics",
+          "passed": true,
+          "message": "state_1_y_kinematics: actual=4.921875, expected=4.921875",
+          "actual": 4.921875,
+          "expected": 4.921875
+        },
+        {
+          "name": "state_1_vx_constant",
+          "passed": true,
+          "message": "state_1_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_1_vy_linear",
+          "passed": true,
+          "message": "state_1_vy_linear: actual=-0.5031152949374528, expected=-0.503115294937",
+          "actual": -0.5031152949374528,
+          "expected": -0.5031152949374528
+        },
+        {
+          "name": "state_1_ax_zero",
+          "passed": true,
+          "message": "state_1_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_ay_gravity",
+          "passed": true,
+          "message": "state_1_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=1.6253125000000002, expected=1.6253125",
+          "actual": 1.6253125000000002,
+          "expected": 1.6253125000000002
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=1.5946875000000003, expected=1.5946875",
+          "actual": 1.5946875000000003,
+          "expected": 1.5946875000000003
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_2_x_kinematics",
+          "passed": true,
+          "message": "state_2_x_kinematics: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "state_2_y_kinematics",
+          "passed": true,
+          "message": "state_2_y_kinematics: actual=4.6875, expected=4.6875",
+          "actual": 4.6875,
+          "expected": 4.6875
+        },
+        {
+          "name": "state_2_vx_constant",
+          "passed": true,
+          "message": "state_2_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_2_vy_linear",
+          "passed": true,
+          "message": "state_2_vy_linear: actual=-1.0062305898749055, expected=-1.00623058987",
+          "actual": -1.0062305898749055,
+          "expected": -1.0062305898749055
+        },
+        {
+          "name": "state_2_ax_zero",
+          "passed": true,
+          "message": "state_2_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_ay_gravity",
+          "passed": true,
+          "message": "state_2_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=1.70125, expected=1.70125",
+          "actual": 1.70125,
+          "expected": 1.70125
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=1.5187500000000003, expected=1.51875",
+          "actual": 1.5187500000000003,
+          "expected": 1.5187500000000003
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=3.22, expected=3.22",
+          "actual": 3.22,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=3.22, expected=3.22",
+          "actual": 3.22,
+          "expected": 3.22
+        },
+        {
+          "name": "state_3_x_kinematics",
+          "passed": true,
+          "message": "state_3_x_kinematics: actual=3.7267799624996494, expected=3.7267799625",
+          "actual": 3.7267799624996494,
+          "expected": 3.7267799624996494
+        },
+        {
+          "name": "state_3_y_kinematics",
+          "passed": true,
+          "message": "state_3_y_kinematics: actual=4.296875, expected=4.296875",
+          "actual": 4.296875,
+          "expected": 4.296875
+        },
+        {
+          "name": "state_3_vx_constant",
+          "passed": true,
+          "message": "state_3_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_3_vy_linear",
+          "passed": true,
+          "message": "state_3_vy_linear: actual=-1.5093458848123582, expected=-1.50934588481",
+          "actual": -1.5093458848123582,
+          "expected": -1.5093458848123582
+        },
+        {
+          "name": "state_3_ax_zero",
+          "passed": true,
+          "message": "state_3_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_ay_gravity",
+          "passed": true,
+          "message": "state_3_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=1.8278125, expected=1.8278125",
+          "actual": 1.8278125,
+          "expected": 1.8278125
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=1.3921875000000004, expected=1.3921875",
+          "actual": 1.3921875000000004,
+          "expected": 1.3921875000000004
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_4_x_kinematics",
+          "passed": true,
+          "message": "state_4_x_kinematics: actual=4.969039949999533, expected=4.96903995",
+          "actual": 4.969039949999533,
+          "expected": 4.969039949999533
+        },
+        {
+          "name": "state_4_y_kinematics",
+          "passed": true,
+          "message": "state_4_y_kinematics: actual=3.75, expected=3.75",
+          "actual": 3.75,
+          "expected": 3.75
+        },
+        {
+          "name": "state_4_vx_constant",
+          "passed": true,
+          "message": "state_4_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_4_vy_linear",
+          "passed": true,
+          "message": "state_4_vy_linear: actual=-2.012461179749811, expected=-2.01246117975",
+          "actual": -2.012461179749811,
+          "expected": -2.012461179749811
+        },
+        {
+          "name": "state_4_ax_zero",
+          "passed": true,
+          "message": "state_4_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_ay_gravity",
+          "passed": true,
+          "message": "state_4_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=2.0050000000000003, expected=2.005",
+          "actual": 2.0050000000000003,
+          "expected": 2.0050000000000003
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=1.2150000000000003, expected=1.215",
+          "actual": 1.2150000000000003,
+          "expected": 1.2150000000000003
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_5_x_kinematics",
+          "passed": true,
+          "message": "state_5_x_kinematics: actual=6.211299937499416, expected=6.2112999375",
+          "actual": 6.211299937499416,
+          "expected": 6.211299937499416
+        },
+        {
+          "name": "state_5_y_kinematics",
+          "passed": true,
+          "message": "state_5_y_kinematics: actual=3.046875, expected=3.046875",
+          "actual": 3.046875,
+          "expected": 3.046875
+        },
+        {
+          "name": "state_5_vx_constant",
+          "passed": true,
+          "message": "state_5_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_5_vy_linear",
+          "passed": true,
+          "message": "state_5_vy_linear: actual=-2.5155764746872635, expected=-2.51557647469",
+          "actual": -2.5155764746872635,
+          "expected": -2.5155764746872635
+        },
+        {
+          "name": "state_5_ax_zero",
+          "passed": true,
+          "message": "state_5_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_ay_gravity",
+          "passed": true,
+          "message": "state_5_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=2.2328125, expected=2.2328125",
+          "actual": 2.2328125,
+          "expected": 2.2328125
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0.9871875000000002, expected=0.9871875",
+          "actual": 0.9871875000000002,
+          "expected": 0.9871875000000002
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=3.22, expected=3.22",
+          "actual": 3.22,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=3.22, expected=3.22",
+          "actual": 3.22,
+          "expected": 3.22
+        },
+        {
+          "name": "state_6_x_kinematics",
+          "passed": true,
+          "message": "state_6_x_kinematics: actual=7.453559924999299, expected=7.453559925",
+          "actual": 7.453559924999299,
+          "expected": 7.453559924999299
+        },
+        {
+          "name": "state_6_y_kinematics",
+          "passed": true,
+          "message": "state_6_y_kinematics: actual=2.1875, expected=2.1875",
+          "actual": 2.1875,
+          "expected": 2.1875
+        },
+        {
+          "name": "state_6_vx_constant",
+          "passed": true,
+          "message": "state_6_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_6_vy_linear",
+          "passed": true,
+          "message": "state_6_vy_linear: actual=-3.0186917696247164, expected=-3.01869176962",
+          "actual": -3.0186917696247164,
+          "expected": -3.0186917696247164
+        },
+        {
+          "name": "state_6_ax_zero",
+          "passed": true,
+          "message": "state_6_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_ay_gravity",
+          "passed": true,
+          "message": "state_6_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=2.5112500000000004, expected=2.51125",
+          "actual": 2.5112500000000004,
+          "expected": 2.5112500000000004
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0.7087500000000001, expected=0.70875",
+          "actual": 0.7087500000000001,
+          "expected": 0.7087500000000001
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_7_x_kinematics",
+          "passed": true,
+          "message": "state_7_x_kinematics: actual=8.695819912499182, expected=8.6958199125",
+          "actual": 8.695819912499182,
+          "expected": 8.695819912499182
+        },
+        {
+          "name": "state_7_y_kinematics",
+          "passed": true,
+          "message": "state_7_y_kinematics: actual=1.171875, expected=1.171875",
+          "actual": 1.171875,
+          "expected": 1.171875
+        },
+        {
+          "name": "state_7_vx_constant",
+          "passed": true,
+          "message": "state_7_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_7_vy_linear",
+          "passed": true,
+          "message": "state_7_vy_linear: actual=-3.521807064562169, expected=-3.52180706456",
+          "actual": -3.521807064562169,
+          "expected": -3.521807064562169
+        },
+        {
+          "name": "state_7_ax_zero",
+          "passed": true,
+          "message": "state_7_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_ay_gravity",
+          "passed": true,
+          "message": "state_7_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=2.8403125000000005, expected=2.8403125",
+          "actual": 2.8403125000000005,
+          "expected": 2.8403125000000005
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0.37968750000000007, expected=0.3796875",
+          "actual": 0.37968750000000007,
+          "expected": 0.37968750000000007
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_8_x_kinematics",
+          "passed": true,
+          "message": "state_8_x_kinematics: actual=9.938079899999066, expected=9.9380799",
+          "actual": 9.938079899999066,
+          "expected": 9.938079899999066
+        },
+        {
+          "name": "state_8_y_kinematics",
+          "passed": true,
+          "message": "state_8_y_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_vx_constant",
+          "passed": true,
+          "message": "state_8_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_8_vy_linear",
+          "passed": true,
+          "message": "state_8_vy_linear: actual=-4.024922359499622, expected=-4.0249223595",
+          "actual": -4.024922359499622,
+          "expected": -4.024922359499622
+        },
+        {
+          "name": "state_8_ax_zero",
+          "passed": true,
+          "message": "state_8_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_ay_gravity",
+          "passed": true,
+          "message": "state_8_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=3.2200000000000006, expected=3.22",
+          "actual": 3.2200000000000006,
+          "expected": 3.2200000000000006
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "flight_time_boundary",
+          "passed": true,
+          "message": "flight_time_boundary: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "range_boundary",
+          "passed": true,
+          "message": "range_boundary: actual=9.938079899999066, expected=9.9380799",
+          "actual": 9.938079899999066,
+          "expected": 9.938079899999066
+        },
+        {
+          "name": "apex_vy_zero_time",
+          "passed": true,
+          "message": "apex_vy_zero_time: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "max_height_boundary",
+          "passed": true,
+          "message": "max_height_boundary: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "equal_height_range_optimum",
+          "passed": true,
+          "message": "equal_height_range_optimum: actual=45, expected=45",
+          "actual": 45,
+          "expected": 45.0
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 1,
+      "domain": "projectile",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_x_equals_vt",
+          "passed": true,
+          "message": "dimension_x_equals_vt: left=Dimension(mass=0, length=1, time=0), right=Dimension(mass=0, length=1, time=0)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          }
+        },
+        {
+          "name": "dimension_v_equals_at",
+          "passed": true,
+          "message": "dimension_v_equals_at: left=Dimension(mass=0, length=1, time=-1), right=Dimension(mass=0, length=1, time=-1)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          }
+        },
+        {
+          "name": "dimension_energy_is_force_length",
+          "passed": true,
+          "message": "dimension_energy_is_force_length: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_kinetic_is_mass_v2",
+          "passed": true,
+          "message": "dimension_kinetic_is_mass_v2: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 70,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 times_s 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_time_matches_input",
+          "passed": true,
+          "message": "state_0_time_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_time_matches_input",
+          "passed": true,
+          "message": "state_1_time_matches_input: actual=0.41408666249996107, expected=0.4140866625",
+          "actual": 0.41408666249996107,
+          "expected": 0.41408666249996107
+        },
+        {
+          "name": "state_2_time_matches_input",
+          "passed": true,
+          "message": "state_2_time_matches_input: actual=0.8281733249999221, expected=0.828173325",
+          "actual": 0.8281733249999221,
+          "expected": 0.8281733249999221
+        },
+        {
+          "name": "state_3_time_matches_input",
+          "passed": true,
+          "message": "state_3_time_matches_input: actual=1.2422599874998832, expected=1.2422599875",
+          "actual": 1.2422599874998832,
+          "expected": 1.2422599874998832
+        },
+        {
+          "name": "state_4_time_matches_input",
+          "passed": true,
+          "message": "state_4_time_matches_input: actual=1.6563466499998443, expected=1.65634665",
+          "actual": 1.6563466499998443,
+          "expected": 1.6563466499998443
+        },
+        {
+          "name": "state_5_time_matches_input",
+          "passed": true,
+          "message": "state_5_time_matches_input: actual=2.0704333124998056, expected=2.0704333125",
+          "actual": 2.0704333124998056,
+          "expected": 2.0704333124998056
+        },
+        {
+          "name": "state_6_time_matches_input",
+          "passed": true,
+          "message": "state_6_time_matches_input: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "state_0_x_kinematics",
+          "passed": true,
+          "message": "state_0_x_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_y_kinematics",
+          "passed": true,
+          "message": "state_0_y_kinematics: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_vx_constant",
+          "passed": true,
+          "message": "state_0_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_0_vy_linear",
+          "passed": true,
+          "message": "state_0_vy_linear: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ax_zero",
+          "passed": true,
+          "message": "state_0_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ay_gravity",
+          "passed": true,
+          "message": "state_0_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=1.0240000000000002, expected=1.024",
+          "actual": 1.0240000000000002,
+          "expected": 1.0240000000000002
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=1.6200000000000003, expected=1.62",
+          "actual": 1.6200000000000003,
+          "expected": 1.6200000000000003
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=2.6440000000000006, expected=2.644",
+          "actual": 2.6440000000000006,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=2.6440000000000006, expected=2.644",
+          "actual": 2.6440000000000006,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_1_x_kinematics",
+          "passed": true,
+          "message": "state_1_x_kinematics: actual=1.3250773199998755, expected=1.32507732",
+          "actual": 1.3250773199998755,
+          "expected": 1.3250773199998755
+        },
+        {
+          "name": "state_1_y_kinematics",
+          "passed": true,
+          "message": "state_1_y_kinematics: actual=4.861111111111111, expected=4.86111111111",
+          "actual": 4.861111111111111,
+          "expected": 4.861111111111111
+        },
+        {
+          "name": "state_1_vx_constant",
+          "passed": true,
+          "message": "state_1_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_1_vy_linear",
+          "passed": true,
+          "message": "state_1_vy_linear: actual=-0.6708203932499369, expected=-0.67082039325",
+          "actual": -0.6708203932499369,
+          "expected": -0.6708203932499369
+        },
+        {
+          "name": "state_1_ax_zero",
+          "passed": true,
+          "message": "state_1_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_ay_gravity",
+          "passed": true,
+          "message": "state_1_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=1.0690000000000002, expected=1.069",
+          "actual": 1.0690000000000002,
+          "expected": 1.0690000000000002
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=1.5750000000000002, expected=1.575",
+          "actual": 1.5750000000000002,
+          "expected": 1.5750000000000002
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.644
+        },
+        {
+          "name": "state_2_x_kinematics",
+          "passed": true,
+          "message": "state_2_x_kinematics: actual=2.650154639999751, expected=2.65015464",
+          "actual": 2.650154639999751,
+          "expected": 2.650154639999751
+        },
+        {
+          "name": "state_2_y_kinematics",
+          "passed": true,
+          "message": "state_2_y_kinematics: actual=4.444444444444445, expected=4.44444444444",
+          "actual": 4.444444444444445,
+          "expected": 4.444444444444445
+        },
+        {
+          "name": "state_2_vx_constant",
+          "passed": true,
+          "message": "state_2_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_2_vy_linear",
+          "passed": true,
+          "message": "state_2_vy_linear: actual=-1.3416407864998738, expected=-1.3416407865",
+          "actual": -1.3416407864998738,
+          "expected": -1.3416407864998738
+        },
+        {
+          "name": "state_2_ax_zero",
+          "passed": true,
+          "message": "state_2_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_ay_gravity",
+          "passed": true,
+          "message": "state_2_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=1.2040000000000004, expected=1.204",
+          "actual": 1.2040000000000004,
+          "expected": 1.2040000000000004
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=1.4400000000000004, expected=1.44",
+          "actual": 1.4400000000000004,
+          "expected": 1.4400000000000004
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=2.644000000000001, expected=2.644",
+          "actual": 2.644000000000001,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=2.644000000000001, expected=2.644",
+          "actual": 2.644000000000001,
+          "expected": 2.644000000000001
+        },
+        {
+          "name": "state_3_x_kinematics",
+          "passed": true,
+          "message": "state_3_x_kinematics: actual=3.9752319599996264, expected=3.97523196",
+          "actual": 3.9752319599996264,
+          "expected": 3.9752319599996264
+        },
+        {
+          "name": "state_3_y_kinematics",
+          "passed": true,
+          "message": "state_3_y_kinematics: actual=3.75, expected=3.75",
+          "actual": 3.75,
+          "expected": 3.75
+        },
+        {
+          "name": "state_3_vx_constant",
+          "passed": true,
+          "message": "state_3_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_3_vy_linear",
+          "passed": true,
+          "message": "state_3_vy_linear: actual=-2.012461179749811, expected=-2.01246117975",
+          "actual": -2.012461179749811,
+          "expected": -2.012461179749811
+        },
+        {
+          "name": "state_3_ax_zero",
+          "passed": true,
+          "message": "state_3_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_ay_gravity",
+          "passed": true,
+          "message": "state_3_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=1.4290000000000003, expected=1.429",
+          "actual": 1.4290000000000003,
+          "expected": 1.4290000000000003
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=1.2150000000000003, expected=1.215",
+          "actual": 1.2150000000000003,
+          "expected": 1.2150000000000003
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=2.6440000000000006, expected=2.644",
+          "actual": 2.6440000000000006,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=2.6440000000000006, expected=2.644",
+          "actual": 2.6440000000000006,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_4_x_kinematics",
+          "passed": true,
+          "message": "state_4_x_kinematics: actual=5.300309279999502, expected=5.30030928",
+          "actual": 5.300309279999502,
+          "expected": 5.300309279999502
+        },
+        {
+          "name": "state_4_y_kinematics",
+          "passed": true,
+          "message": "state_4_y_kinematics: actual=2.7777777777777777, expected=2.77777777778",
+          "actual": 2.7777777777777777,
+          "expected": 2.7777777777777777
+        },
+        {
+          "name": "state_4_vx_constant",
+          "passed": true,
+          "message": "state_4_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_4_vy_linear",
+          "passed": true,
+          "message": "state_4_vy_linear: actual=-2.6832815729997477, expected=-2.683281573",
+          "actual": -2.6832815729997477,
+          "expected": -2.6832815729997477
+        },
+        {
+          "name": "state_4_ax_zero",
+          "passed": true,
+          "message": "state_4_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_ay_gravity",
+          "passed": true,
+          "message": "state_4_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=1.7440000000000002, expected=1.744",
+          "actual": 1.7440000000000002,
+          "expected": 1.7440000000000002
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0.9000000000000001, expected=0.9",
+          "actual": 0.9000000000000001,
+          "expected": 0.9000000000000001
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.644
+        },
+        {
+          "name": "state_5_x_kinematics",
+          "passed": true,
+          "message": "state_5_x_kinematics: actual=6.625386599999378, expected=6.6253866",
+          "actual": 6.625386599999378,
+          "expected": 6.625386599999378
+        },
+        {
+          "name": "state_5_y_kinematics",
+          "passed": true,
+          "message": "state_5_y_kinematics: actual=1.5277777777777768, expected=1.52777777778",
+          "actual": 1.5277777777777768,
+          "expected": 1.5277777777777768
+        },
+        {
+          "name": "state_5_vx_constant",
+          "passed": true,
+          "message": "state_5_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_5_vy_linear",
+          "passed": true,
+          "message": "state_5_vy_linear: actual=-3.354101966249685, expected=-3.35410196625",
+          "actual": -3.354101966249685,
+          "expected": -3.354101966249685
+        },
+        {
+          "name": "state_5_ax_zero",
+          "passed": true,
+          "message": "state_5_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_ay_gravity",
+          "passed": true,
+          "message": "state_5_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=2.1490000000000005, expected=2.149",
+          "actual": 2.1490000000000005,
+          "expected": 2.1490000000000005
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0.4949999999999998, expected=0.495",
+          "actual": 0.4949999999999998,
+          "expected": 0.4949999999999998
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=2.644, expected=2.644",
+          "actual": 2.644,
+          "expected": 2.644
+        },
+        {
+          "name": "state_6_x_kinematics",
+          "passed": true,
+          "message": "state_6_x_kinematics: actual=7.950463919999253, expected=7.95046392",
+          "actual": 7.950463919999253,
+          "expected": 7.950463919999253
+        },
+        {
+          "name": "state_6_y_kinematics",
+          "passed": true,
+          "message": "state_6_y_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_vx_constant",
+          "passed": true,
+          "message": "state_6_vx_constant: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_6_vy_linear",
+          "passed": true,
+          "message": "state_6_vy_linear: actual=-4.024922359499622, expected=-4.0249223595",
+          "actual": -4.024922359499622,
+          "expected": -4.024922359499622
+        },
+        {
+          "name": "state_6_ax_zero",
+          "passed": true,
+          "message": "state_6_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_ay_gravity",
+          "passed": true,
+          "message": "state_6_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=2.644000000000001, expected=2.644",
+          "actual": 2.644000000000001,
+          "expected": 2.644000000000001
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=2.644000000000001, expected=2.644",
+          "actual": 2.644000000000001,
+          "expected": 2.6440000000000006
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=2.644000000000001, expected=2.644",
+          "actual": 2.644000000000001,
+          "expected": 2.644000000000001
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "flight_time_boundary",
+          "passed": true,
+          "message": "flight_time_boundary: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "range_boundary",
+          "passed": true,
+          "message": "range_boundary: actual=7.950463919999253, expected=7.95046392",
+          "actual": 7.950463919999253,
+          "expected": 7.950463919999253
+        },
+        {
+          "name": "apex_vy_zero_time",
+          "passed": true,
+          "message": "apex_vy_zero_time: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "max_height_boundary",
+          "passed": true,
+          "message": "max_height_boundary: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "equal_height_range_optimum",
+          "passed": true,
+          "message": "equal_height_range_optimum: actual=45, expected=45",
+          "actual": 45,
+          "expected": 45.0
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 2,
+      "domain": "projectile",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_x_equals_vt",
+          "passed": true,
+          "message": "dimension_x_equals_vt: left=Dimension(mass=0, length=1, time=0), right=Dimension(mass=0, length=1, time=0)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          }
+        },
+        {
+          "name": "dimension_v_equals_at",
+          "passed": true,
+          "message": "dimension_v_equals_at: left=Dimension(mass=0, length=1, time=-1), right=Dimension(mass=0, length=1, time=-1)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          }
+        },
+        {
+          "name": "dimension_energy_is_force_length",
+          "passed": true,
+          "message": "dimension_energy_is_force_length: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_kinetic_is_mass_v2",
+          "passed": true,
+          "message": "dimension_kinetic_is_mass_v2: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 110,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 times_s 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_time_matches_input",
+          "passed": true,
+          "message": "state_0_time_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_time_matches_input",
+          "passed": true,
+          "message": "state_1_time_matches_input: actual=0.24845199749997665, expected=0.2484519975",
+          "actual": 0.24845199749997665,
+          "expected": 0.24845199749997665
+        },
+        {
+          "name": "state_2_time_matches_input",
+          "passed": true,
+          "message": "state_2_time_matches_input: actual=0.4969039949999533, expected=0.496903995",
+          "actual": 0.4969039949999533,
+          "expected": 0.4969039949999533
+        },
+        {
+          "name": "state_3_time_matches_input",
+          "passed": true,
+          "message": "state_3_time_matches_input: actual=0.7453559924999299, expected=0.7453559925",
+          "actual": 0.7453559924999299,
+          "expected": 0.7453559924999299
+        },
+        {
+          "name": "state_4_time_matches_input",
+          "passed": true,
+          "message": "state_4_time_matches_input: actual=0.9938079899999066, expected=0.99380799",
+          "actual": 0.9938079899999066,
+          "expected": 0.9938079899999066
+        },
+        {
+          "name": "state_5_time_matches_input",
+          "passed": true,
+          "message": "state_5_time_matches_input: actual=1.2422599874998832, expected=1.2422599875",
+          "actual": 1.2422599874998832,
+          "expected": 1.2422599874998832
+        },
+        {
+          "name": "state_6_time_matches_input",
+          "passed": true,
+          "message": "state_6_time_matches_input: actual=1.4907119849998598, expected=1.490711985",
+          "actual": 1.4907119849998598,
+          "expected": 1.4907119849998598
+        },
+        {
+          "name": "state_7_time_matches_input",
+          "passed": true,
+          "message": "state_7_time_matches_input: actual=1.7391639824998364, expected=1.7391639825",
+          "actual": 1.7391639824998364,
+          "expected": 1.7391639824998364
+        },
+        {
+          "name": "state_8_time_matches_input",
+          "passed": true,
+          "message": "state_8_time_matches_input: actual=1.9876159799998132, expected=1.98761598",
+          "actual": 1.9876159799998132,
+          "expected": 1.9876159799998132
+        },
+        {
+          "name": "state_9_time_matches_input",
+          "passed": true,
+          "message": "state_9_time_matches_input: actual=2.23606797749979, expected=2.2360679775",
+          "actual": 2.23606797749979,
+          "expected": 2.23606797749979
+        },
+        {
+          "name": "state_10_time_matches_input",
+          "passed": true,
+          "message": "state_10_time_matches_input: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "state_0_x_kinematics",
+          "passed": true,
+          "message": "state_0_x_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_y_kinematics",
+          "passed": true,
+          "message": "state_0_y_kinematics: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_vx_constant",
+          "passed": true,
+          "message": "state_0_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_0_vy_linear",
+          "passed": true,
+          "message": "state_0_vy_linear: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ax_zero",
+          "passed": true,
+          "message": "state_0_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ay_gravity",
+          "passed": true,
+          "message": "state_0_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=2.304, expected=2.304",
+          "actual": 2.304,
+          "expected": 2.304
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=1.6200000000000003, expected=1.62",
+          "actual": 1.6200000000000003,
+          "expected": 1.6200000000000003
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_1_x_kinematics",
+          "passed": true,
+          "message": "state_1_x_kinematics: actual=1.1925695879998879, expected=1.192569588",
+          "actual": 1.1925695879998879,
+          "expected": 1.1925695879998879
+        },
+        {
+          "name": "state_1_y_kinematics",
+          "passed": true,
+          "message": "state_1_y_kinematics: actual=4.95, expected=4.95",
+          "actual": 4.95,
+          "expected": 4.95
+        },
+        {
+          "name": "state_1_vx_constant",
+          "passed": true,
+          "message": "state_1_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_1_vy_linear",
+          "passed": true,
+          "message": "state_1_vy_linear: actual=-0.4024922359499622, expected=-0.40249223595",
+          "actual": -0.4024922359499622,
+          "expected": -0.4024922359499622
+        },
+        {
+          "name": "state_1_ax_zero",
+          "passed": true,
+          "message": "state_1_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_ay_gravity",
+          "passed": true,
+          "message": "state_1_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=2.3202, expected=2.3202",
+          "actual": 2.3202,
+          "expected": 2.3202
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=1.6038000000000003, expected=1.6038",
+          "actual": 1.6038000000000003,
+          "expected": 1.6038000000000003
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_2_x_kinematics",
+          "passed": true,
+          "message": "state_2_x_kinematics: actual=2.3851391759997758, expected=2.385139176",
+          "actual": 2.3851391759997758,
+          "expected": 2.3851391759997758
+        },
+        {
+          "name": "state_2_y_kinematics",
+          "passed": true,
+          "message": "state_2_y_kinematics: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_2_vx_constant",
+          "passed": true,
+          "message": "state_2_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_2_vy_linear",
+          "passed": true,
+          "message": "state_2_vy_linear: actual=-0.8049844718999244, expected=-0.8049844719",
+          "actual": -0.8049844718999244,
+          "expected": -0.8049844718999244
+        },
+        {
+          "name": "state_2_ax_zero",
+          "passed": true,
+          "message": "state_2_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_ay_gravity",
+          "passed": true,
+          "message": "state_2_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=2.3688, expected=2.3688",
+          "actual": 2.3688,
+          "expected": 2.3688
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=1.5552000000000004, expected=1.5552",
+          "actual": 1.5552000000000004,
+          "expected": 1.5552000000000004
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_3_x_kinematics",
+          "passed": true,
+          "message": "state_3_x_kinematics: actual=3.5777087639996634, expected=3.577708764",
+          "actual": 3.5777087639996634,
+          "expected": 3.5777087639996634
+        },
+        {
+          "name": "state_3_y_kinematics",
+          "passed": true,
+          "message": "state_3_y_kinematics: actual=4.55, expected=4.55",
+          "actual": 4.55,
+          "expected": 4.55
+        },
+        {
+          "name": "state_3_vx_constant",
+          "passed": true,
+          "message": "state_3_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_3_vy_linear",
+          "passed": true,
+          "message": "state_3_vy_linear: actual=-1.2074767078498865, expected=-1.20747670785",
+          "actual": -1.2074767078498865,
+          "expected": -1.2074767078498865
+        },
+        {
+          "name": "state_3_ax_zero",
+          "passed": true,
+          "message": "state_3_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_ay_gravity",
+          "passed": true,
+          "message": "state_3_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=2.4497999999999998, expected=2.4498",
+          "actual": 2.4497999999999998,
+          "expected": 2.4497999999999998
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=1.4742000000000002, expected=1.4742",
+          "actual": 1.4742000000000002,
+          "expected": 1.4742000000000002
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=3.924, expected=3.924",
+          "actual": 3.924,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=3.924, expected=3.924",
+          "actual": 3.924,
+          "expected": 3.924
+        },
+        {
+          "name": "state_4_x_kinematics",
+          "passed": true,
+          "message": "state_4_x_kinematics: actual=4.7702783519995515, expected=4.770278352",
+          "actual": 4.7702783519995515,
+          "expected": 4.7702783519995515
+        },
+        {
+          "name": "state_4_y_kinematics",
+          "passed": true,
+          "message": "state_4_y_kinematics: actual=4.2, expected=4.2",
+          "actual": 4.2,
+          "expected": 4.2
+        },
+        {
+          "name": "state_4_vx_constant",
+          "passed": true,
+          "message": "state_4_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_4_vy_linear",
+          "passed": true,
+          "message": "state_4_vy_linear: actual=-1.6099689437998488, expected=-1.6099689438",
+          "actual": -1.6099689437998488,
+          "expected": -1.6099689437998488
+        },
+        {
+          "name": "state_4_ax_zero",
+          "passed": true,
+          "message": "state_4_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_ay_gravity",
+          "passed": true,
+          "message": "state_4_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=2.5632, expected=2.5632",
+          "actual": 2.5632,
+          "expected": 2.5632
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=1.3608000000000002, expected=1.3608",
+          "actual": 1.3608000000000002,
+          "expected": 1.3608000000000002
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_5_x_kinematics",
+          "passed": true,
+          "message": "state_5_x_kinematics: actual=5.962847939999439, expected=5.96284794",
+          "actual": 5.962847939999439,
+          "expected": 5.962847939999439
+        },
+        {
+          "name": "state_5_y_kinematics",
+          "passed": true,
+          "message": "state_5_y_kinematics: actual=3.75, expected=3.75",
+          "actual": 3.75,
+          "expected": 3.75
+        },
+        {
+          "name": "state_5_vx_constant",
+          "passed": true,
+          "message": "state_5_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_5_vy_linear",
+          "passed": true,
+          "message": "state_5_vy_linear: actual=-2.012461179749811, expected=-2.01246117975",
+          "actual": -2.012461179749811,
+          "expected": -2.012461179749811
+        },
+        {
+          "name": "state_5_ax_zero",
+          "passed": true,
+          "message": "state_5_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_ay_gravity",
+          "passed": true,
+          "message": "state_5_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=2.709, expected=2.709",
+          "actual": 2.709,
+          "expected": 2.709
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=1.2150000000000003, expected=1.215",
+          "actual": 1.2150000000000003,
+          "expected": 1.2150000000000003
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_6_x_kinematics",
+          "passed": true,
+          "message": "state_6_x_kinematics: actual=7.155417527999327, expected=7.155417528",
+          "actual": 7.155417527999327,
+          "expected": 7.155417527999327
+        },
+        {
+          "name": "state_6_y_kinematics",
+          "passed": true,
+          "message": "state_6_y_kinematics: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_6_vx_constant",
+          "passed": true,
+          "message": "state_6_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_6_vy_linear",
+          "passed": true,
+          "message": "state_6_vy_linear: actual=-2.414953415699773, expected=-2.4149534157",
+          "actual": -2.414953415699773,
+          "expected": -2.414953415699773
+        },
+        {
+          "name": "state_6_ax_zero",
+          "passed": true,
+          "message": "state_6_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_ay_gravity",
+          "passed": true,
+          "message": "state_6_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=2.8872, expected=2.8872",
+          "actual": 2.8872,
+          "expected": 2.8872
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=1.0368000000000002, expected=1.0368",
+          "actual": 1.0368000000000002,
+          "expected": 1.0368000000000002
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_7_x_kinematics",
+          "passed": true,
+          "message": "state_7_x_kinematics: actual=8.347987115999214, expected=8.347987116",
+          "actual": 8.347987115999214,
+          "expected": 8.347987115999214
+        },
+        {
+          "name": "state_7_y_kinematics",
+          "passed": true,
+          "message": "state_7_y_kinematics: actual=2.55, expected=2.55",
+          "actual": 2.55,
+          "expected": 2.55
+        },
+        {
+          "name": "state_7_vx_constant",
+          "passed": true,
+          "message": "state_7_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_7_vy_linear",
+          "passed": true,
+          "message": "state_7_vy_linear: actual=-2.8174456516497353, expected=-2.81744565165",
+          "actual": -2.8174456516497353,
+          "expected": -2.8174456516497353
+        },
+        {
+          "name": "state_7_ax_zero",
+          "passed": true,
+          "message": "state_7_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_ay_gravity",
+          "passed": true,
+          "message": "state_7_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=3.0978000000000003, expected=3.0978",
+          "actual": 3.0978000000000003,
+          "expected": 3.0978000000000003
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0.8262000000000002, expected=0.8262",
+          "actual": 0.8262000000000002,
+          "expected": 0.8262000000000002
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_8_x_kinematics",
+          "passed": true,
+          "message": "state_8_x_kinematics: actual=9.540556703999103, expected=9.540556704",
+          "actual": 9.540556703999103,
+          "expected": 9.540556703999103
+        },
+        {
+          "name": "state_8_y_kinematics",
+          "passed": true,
+          "message": "state_8_y_kinematics: actual=1.7999999999999994, expected=1.8",
+          "actual": 1.7999999999999994,
+          "expected": 1.7999999999999994
+        },
+        {
+          "name": "state_8_vx_constant",
+          "passed": true,
+          "message": "state_8_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_8_vy_linear",
+          "passed": true,
+          "message": "state_8_vy_linear: actual=-3.2199378875996976, expected=-3.2199378876",
+          "actual": -3.2199378875996976,
+          "expected": -3.2199378875996976
+        },
+        {
+          "name": "state_8_ax_zero",
+          "passed": true,
+          "message": "state_8_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_ay_gravity",
+          "passed": true,
+          "message": "state_8_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=3.3408, expected=3.3408",
+          "actual": 3.3408,
+          "expected": 3.3408
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0.5831999999999999, expected=0.5832",
+          "actual": 0.5831999999999999,
+          "expected": 0.5831999999999999
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=3.9240000000000004, expected=3.924",
+          "actual": 3.9240000000000004,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_9_x_kinematics",
+          "passed": true,
+          "message": "state_9_x_kinematics: actual=10.73312629199899, expected=10.733126292",
+          "actual": 10.73312629199899,
+          "expected": 10.73312629199899
+        },
+        {
+          "name": "state_9_y_kinematics",
+          "passed": true,
+          "message": "state_9_y_kinematics: actual=0.9499999999999993, expected=0.95",
+          "actual": 0.9499999999999993,
+          "expected": 0.9499999999999993
+        },
+        {
+          "name": "state_9_vx_constant",
+          "passed": true,
+          "message": "state_9_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_9_vy_linear",
+          "passed": true,
+          "message": "state_9_vy_linear: actual=-3.62243012354966, expected=-3.62243012355",
+          "actual": -3.62243012354966,
+          "expected": -3.62243012354966
+        },
+        {
+          "name": "state_9_ax_zero",
+          "passed": true,
+          "message": "state_9_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_ay_gravity",
+          "passed": true,
+          "message": "state_9_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_9_kinetic",
+          "passed": true,
+          "message": "state_9_kinetic: actual=3.616200000000001, expected=3.6162",
+          "actual": 3.616200000000001,
+          "expected": 3.616200000000001
+        },
+        {
+          "name": "state_9_potential",
+          "passed": true,
+          "message": "state_9_potential: actual=0.30779999999999985, expected=0.3078",
+          "actual": 0.30779999999999985,
+          "expected": 0.30779999999999985
+        },
+        {
+          "name": "state_9_energy_conserved",
+          "passed": true,
+          "message": "state_9_energy_conserved: actual=3.924000000000001, expected=3.924",
+          "actual": 3.924000000000001,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_9_energy_sum",
+          "passed": true,
+          "message": "state_9_energy_sum: actual=3.924000000000001, expected=3.924",
+          "actual": 3.924000000000001,
+          "expected": 3.924000000000001
+        },
+        {
+          "name": "state_10_x_kinematics",
+          "passed": true,
+          "message": "state_10_x_kinematics: actual=11.925695879998878, expected=11.92569588",
+          "actual": 11.925695879998878,
+          "expected": 11.925695879998878
+        },
+        {
+          "name": "state_10_y_kinematics",
+          "passed": true,
+          "message": "state_10_y_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_vx_constant",
+          "passed": true,
+          "message": "state_10_vx_constant: actual=4.8, expected=4.8",
+          "actual": 4.8,
+          "expected": 4.8
+        },
+        {
+          "name": "state_10_vy_linear",
+          "passed": true,
+          "message": "state_10_vy_linear: actual=-4.024922359499622, expected=-4.0249223595",
+          "actual": -4.024922359499622,
+          "expected": -4.024922359499622
+        },
+        {
+          "name": "state_10_ax_zero",
+          "passed": true,
+          "message": "state_10_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_ay_gravity",
+          "passed": true,
+          "message": "state_10_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_10_kinetic",
+          "passed": true,
+          "message": "state_10_kinetic: actual=3.9240000000000013, expected=3.924",
+          "actual": 3.9240000000000013,
+          "expected": 3.9240000000000013
+        },
+        {
+          "name": "state_10_potential",
+          "passed": true,
+          "message": "state_10_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_10_energy_conserved",
+          "passed": true,
+          "message": "state_10_energy_conserved: actual=3.9240000000000013, expected=3.924",
+          "actual": 3.9240000000000013,
+          "expected": 3.9240000000000004
+        },
+        {
+          "name": "state_10_energy_sum",
+          "passed": true,
+          "message": "state_10_energy_sum: actual=3.9240000000000013, expected=3.924",
+          "actual": 3.9240000000000013,
+          "expected": 3.9240000000000013
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "flight_time_boundary",
+          "passed": true,
+          "message": "flight_time_boundary: actual=2.4845199749997664, expected=2.484519975",
+          "actual": 2.4845199749997664,
+          "expected": 2.4845199749997664
+        },
+        {
+          "name": "range_boundary",
+          "passed": true,
+          "message": "range_boundary: actual=11.925695879998878, expected=11.92569588",
+          "actual": 11.925695879998878,
+          "expected": 11.925695879998878
+        },
+        {
+          "name": "apex_vy_zero_time",
+          "passed": true,
+          "message": "apex_vy_zero_time: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "max_height_boundary",
+          "passed": true,
+          "message": "max_height_boundary: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "equal_height_range_optimum",
+          "passed": true,
+          "message": "equal_height_range_optimum: actual=45, expected=45",
+          "actual": 45,
+          "expected": 45.0
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 3,
+      "domain": "projectile",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_x_equals_vt",
+          "passed": true,
+          "message": "dimension_x_equals_vt: left=Dimension(mass=0, length=1, time=0), right=Dimension(mass=0, length=1, time=0)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          }
+        },
+        {
+          "name": "dimension_v_equals_at",
+          "passed": true,
+          "message": "dimension_v_equals_at: left=Dimension(mass=0, length=1, time=-1), right=Dimension(mass=0, length=1, time=-1)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          }
+        },
+        {
+          "name": "dimension_energy_is_force_length",
+          "passed": true,
+          "message": "dimension_energy_is_force_length: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_kinetic_is_mass_v2",
+          "passed": true,
+          "message": "dimension_kinetic_is_mass_v2: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 80,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 times_s 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_time_matches_input",
+          "passed": true,
+          "message": "state_0_time_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_time_matches_input",
+          "passed": true,
+          "message": "state_1_time_matches_input: actual=0.37413057205637434, expected=0.374130572056",
+          "actual": 0.37413057205637434,
+          "expected": 0.37413057205637434
+        },
+        {
+          "name": "state_2_time_matches_input",
+          "passed": true,
+          "message": "state_2_time_matches_input: actual=0.7482611441127487, expected=0.748261144113",
+          "actual": 0.7482611441127487,
+          "expected": 0.7482611441127487
+        },
+        {
+          "name": "state_3_time_matches_input",
+          "passed": true,
+          "message": "state_3_time_matches_input: actual=1.122391716169123, expected=1.12239171617",
+          "actual": 1.122391716169123,
+          "expected": 1.122391716169123
+        },
+        {
+          "name": "state_4_time_matches_input",
+          "passed": true,
+          "message": "state_4_time_matches_input: actual=1.4965222882254974, expected=1.49652228823",
+          "actual": 1.4965222882254974,
+          "expected": 1.4965222882254974
+        },
+        {
+          "name": "state_5_time_matches_input",
+          "passed": true,
+          "message": "state_5_time_matches_input: actual=1.8706528602818717, expected=1.87065286028",
+          "actual": 1.8706528602818717,
+          "expected": 1.8706528602818717
+        },
+        {
+          "name": "state_6_time_matches_input",
+          "passed": true,
+          "message": "state_6_time_matches_input: actual=2.244783432338246, expected=2.24478343234",
+          "actual": 2.244783432338246,
+          "expected": 2.244783432338246
+        },
+        {
+          "name": "state_7_time_matches_input",
+          "passed": true,
+          "message": "state_7_time_matches_input: actual=2.6189140043946204, expected=2.61891400439",
+          "actual": 2.6189140043946204,
+          "expected": 2.6189140043946204
+        },
+        {
+          "name": "state_0_x_kinematics",
+          "passed": true,
+          "message": "state_0_x_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_y_kinematics",
+          "passed": true,
+          "message": "state_0_y_kinematics: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "state_0_vx_constant",
+          "passed": true,
+          "message": "state_0_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_0_vy_linear",
+          "passed": true,
+          "message": "state_0_vy_linear: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ax_zero",
+          "passed": true,
+          "message": "state_0_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ay_gravity",
+          "passed": true,
+          "message": "state_0_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=1.6, expected=1.6",
+          "actual": 1.6,
+          "expected": 1.6
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=1.4580000000000002, expected=1.458",
+          "actual": 1.4580000000000002,
+          "expected": 1.4580000000000002
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_1_x_kinematics",
+          "passed": true,
+          "message": "state_1_x_kinematics: actual=1.4965222882254974, expected=1.49652228823",
+          "actual": 1.4965222882254974,
+          "expected": 1.4965222882254974
+        },
+        {
+          "name": "state_1_y_kinematics",
+          "passed": true,
+          "message": "state_1_y_kinematics: actual=4.8979591836734695, expected=4.89795918367",
+          "actual": 4.8979591836734695,
+          "expected": 4.8979591836734695
+        },
+        {
+          "name": "state_1_vx_constant",
+          "passed": true,
+          "message": "state_1_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_1_vy_linear",
+          "passed": true,
+          "message": "state_1_vy_linear: actual=-0.5454823740581939, expected=-0.545482374058",
+          "actual": -0.5454823740581939,
+          "expected": -0.5454823740581939
+        },
+        {
+          "name": "state_1_ax_zero",
+          "passed": true,
+          "message": "state_1_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_ay_gravity",
+          "passed": true,
+          "message": "state_1_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=1.6297551020408165, expected=1.62975510204",
+          "actual": 1.6297551020408165,
+          "expected": 1.6297551020408165
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=1.4282448979591837, expected=1.42824489796",
+          "actual": 1.4282448979591837,
+          "expected": 1.4282448979591837
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_2_x_kinematics",
+          "passed": true,
+          "message": "state_2_x_kinematics: actual=2.9930445764509948, expected=2.99304457645",
+          "actual": 2.9930445764509948,
+          "expected": 2.9930445764509948
+        },
+        {
+          "name": "state_2_y_kinematics",
+          "passed": true,
+          "message": "state_2_y_kinematics: actual=4.591836734693877, expected=4.59183673469",
+          "actual": 4.591836734693877,
+          "expected": 4.591836734693877
+        },
+        {
+          "name": "state_2_vx_constant",
+          "passed": true,
+          "message": "state_2_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_2_vy_linear",
+          "passed": true,
+          "message": "state_2_vy_linear: actual=-1.0909647481163878, expected=-1.09096474812",
+          "actual": -1.0909647481163878,
+          "expected": -1.0909647481163878
+        },
+        {
+          "name": "state_2_ax_zero",
+          "passed": true,
+          "message": "state_2_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_ay_gravity",
+          "passed": true,
+          "message": "state_2_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=1.7190204081632654, expected=1.71902040816",
+          "actual": 1.7190204081632654,
+          "expected": 1.7190204081632654
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=1.3389795918367347, expected=1.33897959184",
+          "actual": 1.3389795918367347,
+          "expected": 1.3389795918367347
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=3.058, expected=3.058",
+          "actual": 3.058,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=3.058, expected=3.058",
+          "actual": 3.058,
+          "expected": 3.058
+        },
+        {
+          "name": "state_3_x_kinematics",
+          "passed": true,
+          "message": "state_3_x_kinematics: actual=4.489566864676492, expected=4.48956686468",
+          "actual": 4.489566864676492,
+          "expected": 4.489566864676492
+        },
+        {
+          "name": "state_3_y_kinematics",
+          "passed": true,
+          "message": "state_3_y_kinematics: actual=4.081632653061225, expected=4.08163265306",
+          "actual": 4.081632653061225,
+          "expected": 4.081632653061225
+        },
+        {
+          "name": "state_3_vx_constant",
+          "passed": true,
+          "message": "state_3_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_3_vy_linear",
+          "passed": true,
+          "message": "state_3_vy_linear: actual=-1.6364471221745815, expected=-1.63644712217",
+          "actual": -1.6364471221745815,
+          "expected": -1.6364471221745815
+        },
+        {
+          "name": "state_3_ax_zero",
+          "passed": true,
+          "message": "state_3_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_ay_gravity",
+          "passed": true,
+          "message": "state_3_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=1.867795918367347, expected=1.86779591837",
+          "actual": 1.867795918367347,
+          "expected": 1.867795918367347
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=1.1902040816326531, expected=1.19020408163",
+          "actual": 1.1902040816326531,
+          "expected": 1.1902040816326531
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=3.058, expected=3.058",
+          "actual": 3.058,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=3.058, expected=3.058",
+          "actual": 3.058,
+          "expected": 3.058
+        },
+        {
+          "name": "state_4_x_kinematics",
+          "passed": true,
+          "message": "state_4_x_kinematics: actual=5.9860891529019895, expected=5.9860891529",
+          "actual": 5.9860891529019895,
+          "expected": 5.9860891529019895
+        },
+        {
+          "name": "state_4_y_kinematics",
+          "passed": true,
+          "message": "state_4_y_kinematics: actual=3.36734693877551, expected=3.36734693878",
+          "actual": 3.36734693877551,
+          "expected": 3.36734693877551
+        },
+        {
+          "name": "state_4_vx_constant",
+          "passed": true,
+          "message": "state_4_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_4_vy_linear",
+          "passed": true,
+          "message": "state_4_vy_linear: actual=-2.1819294962327755, expected=-2.18192949623",
+          "actual": -2.1819294962327755,
+          "expected": -2.1819294962327755
+        },
+        {
+          "name": "state_4_ax_zero",
+          "passed": true,
+          "message": "state_4_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_ay_gravity",
+          "passed": true,
+          "message": "state_4_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=2.0760816326530613, expected=2.07608163265",
+          "actual": 2.0760816326530613,
+          "expected": 2.0760816326530613
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=0.9819183673469388, expected=0.981918367347",
+          "actual": 0.9819183673469388,
+          "expected": 0.9819183673469388
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_5_x_kinematics",
+          "passed": true,
+          "message": "state_5_x_kinematics: actual=7.482611441127487, expected=7.48261144113",
+          "actual": 7.482611441127487,
+          "expected": 7.482611441127487
+        },
+        {
+          "name": "state_5_y_kinematics",
+          "passed": true,
+          "message": "state_5_y_kinematics: actual=2.4489795918367347, expected=2.44897959184",
+          "actual": 2.4489795918367347,
+          "expected": 2.4489795918367347
+        },
+        {
+          "name": "state_5_vx_constant",
+          "passed": true,
+          "message": "state_5_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_5_vy_linear",
+          "passed": true,
+          "message": "state_5_vy_linear: actual=-2.727411870290969, expected=-2.72741187029",
+          "actual": -2.727411870290969,
+          "expected": -2.727411870290969
+        },
+        {
+          "name": "state_5_ax_zero",
+          "passed": true,
+          "message": "state_5_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_ay_gravity",
+          "passed": true,
+          "message": "state_5_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=2.3438775510204084, expected=2.34387755102",
+          "actual": 2.3438775510204084,
+          "expected": 2.3438775510204084
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=0.7141224489795919, expected=0.71412244898",
+          "actual": 0.7141224489795919,
+          "expected": 0.7141224489795919
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_6_x_kinematics",
+          "passed": true,
+          "message": "state_6_x_kinematics: actual=8.979133729352984, expected=8.97913372935",
+          "actual": 8.979133729352984,
+          "expected": 8.979133729352984
+        },
+        {
+          "name": "state_6_y_kinematics",
+          "passed": true,
+          "message": "state_6_y_kinematics: actual=1.3265306122448979, expected=1.32653061224",
+          "actual": 1.3265306122448979,
+          "expected": 1.3265306122448979
+        },
+        {
+          "name": "state_6_vx_constant",
+          "passed": true,
+          "message": "state_6_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_6_vy_linear",
+          "passed": true,
+          "message": "state_6_vy_linear: actual=-3.272894244349163, expected=-3.27289424435",
+          "actual": -3.272894244349163,
+          "expected": -3.272894244349163
+        },
+        {
+          "name": "state_6_ax_zero",
+          "passed": true,
+          "message": "state_6_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_ay_gravity",
+          "passed": true,
+          "message": "state_6_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=2.671183673469388, expected=2.67118367347",
+          "actual": 2.671183673469388,
+          "expected": 2.671183673469388
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=0.38681632653061226, expected=0.386816326531",
+          "actual": 0.38681632653061226,
+          "expected": 0.38681632653061226
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=3.0580000000000003, expected=3.058",
+          "actual": 3.0580000000000003,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_7_x_kinematics",
+          "passed": true,
+          "message": "state_7_x_kinematics: actual=10.475656017578482, expected=10.4756560176",
+          "actual": 10.475656017578482,
+          "expected": 10.475656017578482
+        },
+        {
+          "name": "state_7_y_kinematics",
+          "passed": true,
+          "message": "state_7_y_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_vx_constant",
+          "passed": true,
+          "message": "state_7_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_7_vy_linear",
+          "passed": true,
+          "message": "state_7_vy_linear: actual=-3.818376618407357, expected=-3.81837661841",
+          "actual": -3.818376618407357,
+          "expected": -3.818376618407357
+        },
+        {
+          "name": "state_7_ax_zero",
+          "passed": true,
+          "message": "state_7_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_ay_gravity",
+          "passed": true,
+          "message": "state_7_ay_gravity: actual=-1.4580000000000002, expected=-1.458",
+          "actual": -1.4580000000000002,
+          "expected": -1.4580000000000002
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=3.0580000000000007, expected=3.058",
+          "actual": 3.0580000000000007,
+          "expected": 3.0580000000000007
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=3.0580000000000007, expected=3.058",
+          "actual": 3.0580000000000007,
+          "expected": 3.0580000000000003
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=3.0580000000000007, expected=3.058",
+          "actual": 3.0580000000000007,
+          "expected": 3.0580000000000007
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "flight_time_boundary",
+          "passed": true,
+          "message": "flight_time_boundary: actual=2.6189140043946204, expected=2.61891400439",
+          "actual": 2.6189140043946204,
+          "expected": 2.6189140043946204
+        },
+        {
+          "name": "range_boundary",
+          "passed": true,
+          "message": "range_boundary: actual=10.475656017578482, expected=10.4756560176",
+          "actual": 10.475656017578482,
+          "expected": 10.475656017578482
+        },
+        {
+          "name": "apex_vy_zero_time",
+          "passed": true,
+          "message": "apex_vy_zero_time: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "max_height_boundary",
+          "passed": true,
+          "message": "max_height_boundary: actual=5, expected=5",
+          "actual": 5,
+          "expected": 5.0
+        },
+        {
+          "name": "equal_height_range_optimum",
+          "passed": true,
+          "message": "equal_height_range_optimum: actual=45, expected=45",
+          "actual": 45,
+          "expected": 45.0
+        }
+      ],
+      "failed": []
+    },
+    {
+      "probe": 4,
+      "domain": "projectile",
+      "passed": true,
+      "checks": [
+        {
+          "name": "dimension_x_equals_vt",
+          "passed": true,
+          "message": "dimension_x_equals_vt: left=Dimension(mass=0, length=1, time=0), right=Dimension(mass=0, length=1, time=0)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": 0
+          }
+        },
+        {
+          "name": "dimension_v_equals_at",
+          "passed": true,
+          "message": "dimension_v_equals_at: left=Dimension(mass=0, length=1, time=-1), right=Dimension(mass=0, length=1, time=-1)",
+          "actual": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          },
+          "expected": {
+            "mass": 0,
+            "length": 1,
+            "time": -1
+          }
+        },
+        {
+          "name": "dimension_energy_is_force_length",
+          "passed": true,
+          "message": "dimension_energy_is_force_length: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "dimension_kinetic_is_mass_v2",
+          "passed": true,
+          "message": "dimension_kinetic_is_mass_v2: left=Dimension(mass=1, length=2, time=-2), right=Dimension(mass=1, length=2, time=-2)",
+          "actual": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          },
+          "expected": {
+            "mass": 1,
+            "length": 2,
+            "time": -2
+          }
+        },
+        {
+          "name": "state_fields_exact",
+          "passed": true,
+          "message": "每个状态必须使用精确字段白名单",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "states_are_finite",
+          "passed": true,
+          "message": "states_are_finite: 所有状态量必须是有限数值",
+          "actual": 100,
+          "expected": "finite"
+        },
+        {
+          "name": "sample_count_matches_input",
+          "passed": true,
+          "message": "states 数量必须与 times_s 一致",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "state_0_time_matches_input",
+          "passed": true,
+          "message": "state_0_time_matches_input: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_time_matches_input",
+          "passed": true,
+          "message": "state_1_time_matches_input: actual=0.30864197530864196, expected=0.308641975309",
+          "actual": 0.30864197530864196,
+          "expected": 0.30864197530864196
+        },
+        {
+          "name": "state_2_time_matches_input",
+          "passed": true,
+          "message": "state_2_time_matches_input: actual=0.6172839506172839, expected=0.617283950617",
+          "actual": 0.6172839506172839,
+          "expected": 0.6172839506172839
+        },
+        {
+          "name": "state_3_time_matches_input",
+          "passed": true,
+          "message": "state_3_time_matches_input: actual=0.9259259259259258, expected=0.925925925926",
+          "actual": 0.9259259259259258,
+          "expected": 0.9259259259259258
+        },
+        {
+          "name": "state_4_time_matches_input",
+          "passed": true,
+          "message": "state_4_time_matches_input: actual=1.2345679012345678, expected=1.23456790123",
+          "actual": 1.2345679012345678,
+          "expected": 1.2345679012345678
+        },
+        {
+          "name": "state_5_time_matches_input",
+          "passed": true,
+          "message": "state_5_time_matches_input: actual=1.5432098765432098, expected=1.54320987654",
+          "actual": 1.5432098765432098,
+          "expected": 1.5432098765432098
+        },
+        {
+          "name": "state_6_time_matches_input",
+          "passed": true,
+          "message": "state_6_time_matches_input: actual=1.8518518518518516, expected=1.85185185185",
+          "actual": 1.8518518518518516,
+          "expected": 1.8518518518518516
+        },
+        {
+          "name": "state_7_time_matches_input",
+          "passed": true,
+          "message": "state_7_time_matches_input: actual=2.1604938271604937, expected=2.16049382716",
+          "actual": 2.1604938271604937,
+          "expected": 2.1604938271604937
+        },
+        {
+          "name": "state_8_time_matches_input",
+          "passed": true,
+          "message": "state_8_time_matches_input: actual=2.4691358024691357, expected=2.46913580247",
+          "actual": 2.4691358024691357,
+          "expected": 2.4691358024691357
+        },
+        {
+          "name": "state_9_time_matches_input",
+          "passed": true,
+          "message": "state_9_time_matches_input: actual=2.7777777777777777, expected=2.77777777778",
+          "actual": 2.7777777777777777,
+          "expected": 2.7777777777777777
+        },
+        {
+          "name": "state_0_x_kinematics",
+          "passed": true,
+          "message": "state_0_x_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_y_kinematics",
+          "passed": true,
+          "message": "state_0_y_kinematics: actual=6.25, expected=6.25",
+          "actual": 6.25,
+          "expected": 6.25
+        },
+        {
+          "name": "state_0_vx_constant",
+          "passed": true,
+          "message": "state_0_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_0_vy_linear",
+          "passed": true,
+          "message": "state_0_vy_linear: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ax_zero",
+          "passed": true,
+          "message": "state_0_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_0_ay_gravity",
+          "passed": true,
+          "message": "state_0_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_0_kinetic",
+          "passed": true,
+          "message": "state_0_kinetic: actual=1.6, expected=1.6",
+          "actual": 1.6,
+          "expected": 1.6
+        },
+        {
+          "name": "state_0_potential",
+          "passed": true,
+          "message": "state_0_potential: actual=2.0250000000000004, expected=2.025",
+          "actual": 2.0250000000000004,
+          "expected": 2.0250000000000004
+        },
+        {
+          "name": "state_0_energy_conserved",
+          "passed": true,
+          "message": "state_0_energy_conserved: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_0_energy_sum",
+          "passed": true,
+          "message": "state_0_energy_sum: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_1_x_kinematics",
+          "passed": true,
+          "message": "state_1_x_kinematics: actual=1.2345679012345678, expected=1.23456790123",
+          "actual": 1.2345679012345678,
+          "expected": 1.2345679012345678
+        },
+        {
+          "name": "state_1_y_kinematics",
+          "passed": true,
+          "message": "state_1_y_kinematics: actual=6.172839506172839, expected=6.17283950617",
+          "actual": 6.172839506172839,
+          "expected": 6.172839506172839
+        },
+        {
+          "name": "state_1_vx_constant",
+          "passed": true,
+          "message": "state_1_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_1_vy_linear",
+          "passed": true,
+          "message": "state_1_vy_linear: actual=-0.5, expected=-0.5",
+          "actual": -0.5,
+          "expected": -0.5
+        },
+        {
+          "name": "state_1_ax_zero",
+          "passed": true,
+          "message": "state_1_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_1_ay_gravity",
+          "passed": true,
+          "message": "state_1_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_1_kinetic",
+          "passed": true,
+          "message": "state_1_kinetic: actual=1.625, expected=1.625",
+          "actual": 1.625,
+          "expected": 1.625
+        },
+        {
+          "name": "state_1_potential",
+          "passed": true,
+          "message": "state_1_potential: actual=2.0000000000000004, expected=2",
+          "actual": 2.0000000000000004,
+          "expected": 2.0000000000000004
+        },
+        {
+          "name": "state_1_energy_conserved",
+          "passed": true,
+          "message": "state_1_energy_conserved: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_1_energy_sum",
+          "passed": true,
+          "message": "state_1_energy_sum: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_2_x_kinematics",
+          "passed": true,
+          "message": "state_2_x_kinematics: actual=2.4691358024691357, expected=2.46913580247",
+          "actual": 2.4691358024691357,
+          "expected": 2.4691358024691357
+        },
+        {
+          "name": "state_2_y_kinematics",
+          "passed": true,
+          "message": "state_2_y_kinematics: actual=5.941358024691358, expected=5.94135802469",
+          "actual": 5.941358024691358,
+          "expected": 5.941358024691358
+        },
+        {
+          "name": "state_2_vx_constant",
+          "passed": true,
+          "message": "state_2_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_2_vy_linear",
+          "passed": true,
+          "message": "state_2_vy_linear: actual=-1, expected=-1",
+          "actual": -1,
+          "expected": -1.0
+        },
+        {
+          "name": "state_2_ax_zero",
+          "passed": true,
+          "message": "state_2_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_2_ay_gravity",
+          "passed": true,
+          "message": "state_2_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_2_kinetic",
+          "passed": true,
+          "message": "state_2_kinetic: actual=1.7000000000000002, expected=1.7",
+          "actual": 1.7000000000000002,
+          "expected": 1.7000000000000002
+        },
+        {
+          "name": "state_2_potential",
+          "passed": true,
+          "message": "state_2_potential: actual=1.9250000000000005, expected=1.925",
+          "actual": 1.9250000000000005,
+          "expected": 1.9250000000000005
+        },
+        {
+          "name": "state_2_energy_conserved",
+          "passed": true,
+          "message": "state_2_energy_conserved: actual=3.625000000000001, expected=3.625",
+          "actual": 3.625000000000001,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_2_energy_sum",
+          "passed": true,
+          "message": "state_2_energy_sum: actual=3.625000000000001, expected=3.625",
+          "actual": 3.625000000000001,
+          "expected": 3.625000000000001
+        },
+        {
+          "name": "state_3_x_kinematics",
+          "passed": true,
+          "message": "state_3_x_kinematics: actual=3.7037037037037033, expected=3.7037037037",
+          "actual": 3.7037037037037033,
+          "expected": 3.7037037037037033
+        },
+        {
+          "name": "state_3_y_kinematics",
+          "passed": true,
+          "message": "state_3_y_kinematics: actual=5.555555555555555, expected=5.55555555556",
+          "actual": 5.555555555555555,
+          "expected": 5.555555555555555
+        },
+        {
+          "name": "state_3_vx_constant",
+          "passed": true,
+          "message": "state_3_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_3_vy_linear",
+          "passed": true,
+          "message": "state_3_vy_linear: actual=-1.5, expected=-1.5",
+          "actual": -1.5,
+          "expected": -1.5
+        },
+        {
+          "name": "state_3_ax_zero",
+          "passed": true,
+          "message": "state_3_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_3_ay_gravity",
+          "passed": true,
+          "message": "state_3_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_3_kinetic",
+          "passed": true,
+          "message": "state_3_kinetic: actual=1.8250000000000002, expected=1.825",
+          "actual": 1.8250000000000002,
+          "expected": 1.8250000000000002
+        },
+        {
+          "name": "state_3_potential",
+          "passed": true,
+          "message": "state_3_potential: actual=1.8000000000000003, expected=1.8",
+          "actual": 1.8000000000000003,
+          "expected": 1.8000000000000003
+        },
+        {
+          "name": "state_3_energy_conserved",
+          "passed": true,
+          "message": "state_3_energy_conserved: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_3_energy_sum",
+          "passed": true,
+          "message": "state_3_energy_sum: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_4_x_kinematics",
+          "passed": true,
+          "message": "state_4_x_kinematics: actual=4.938271604938271, expected=4.93827160494",
+          "actual": 4.938271604938271,
+          "expected": 4.938271604938271
+        },
+        {
+          "name": "state_4_y_kinematics",
+          "passed": true,
+          "message": "state_4_y_kinematics: actual=5.015432098765432, expected=5.01543209877",
+          "actual": 5.015432098765432,
+          "expected": 5.015432098765432
+        },
+        {
+          "name": "state_4_vx_constant",
+          "passed": true,
+          "message": "state_4_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_4_vy_linear",
+          "passed": true,
+          "message": "state_4_vy_linear: actual=-2, expected=-2",
+          "actual": -2,
+          "expected": -2.0
+        },
+        {
+          "name": "state_4_ax_zero",
+          "passed": true,
+          "message": "state_4_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_4_ay_gravity",
+          "passed": true,
+          "message": "state_4_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_4_kinetic",
+          "passed": true,
+          "message": "state_4_kinetic: actual=2, expected=2",
+          "actual": 2,
+          "expected": 2.0
+        },
+        {
+          "name": "state_4_potential",
+          "passed": true,
+          "message": "state_4_potential: actual=1.6250000000000002, expected=1.625",
+          "actual": 1.6250000000000002,
+          "expected": 1.6250000000000002
+        },
+        {
+          "name": "state_4_energy_conserved",
+          "passed": true,
+          "message": "state_4_energy_conserved: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_4_energy_sum",
+          "passed": true,
+          "message": "state_4_energy_sum: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.625
+        },
+        {
+          "name": "state_5_x_kinematics",
+          "passed": true,
+          "message": "state_5_x_kinematics: actual=6.172839506172839, expected=6.17283950617",
+          "actual": 6.172839506172839,
+          "expected": 6.172839506172839
+        },
+        {
+          "name": "state_5_y_kinematics",
+          "passed": true,
+          "message": "state_5_y_kinematics: actual=4.320987654320987, expected=4.32098765432",
+          "actual": 4.320987654320987,
+          "expected": 4.320987654320987
+        },
+        {
+          "name": "state_5_vx_constant",
+          "passed": true,
+          "message": "state_5_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_5_vy_linear",
+          "passed": true,
+          "message": "state_5_vy_linear: actual=-2.5, expected=-2.5",
+          "actual": -2.5,
+          "expected": -2.5
+        },
+        {
+          "name": "state_5_ax_zero",
+          "passed": true,
+          "message": "state_5_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_5_ay_gravity",
+          "passed": true,
+          "message": "state_5_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_5_kinetic",
+          "passed": true,
+          "message": "state_5_kinetic: actual=2.225, expected=2.225",
+          "actual": 2.225,
+          "expected": 2.225
+        },
+        {
+          "name": "state_5_potential",
+          "passed": true,
+          "message": "state_5_potential: actual=1.4000000000000001, expected=1.4",
+          "actual": 1.4000000000000001,
+          "expected": 1.4000000000000001
+        },
+        {
+          "name": "state_5_energy_conserved",
+          "passed": true,
+          "message": "state_5_energy_conserved: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_5_energy_sum",
+          "passed": true,
+          "message": "state_5_energy_sum: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.625
+        },
+        {
+          "name": "state_6_x_kinematics",
+          "passed": true,
+          "message": "state_6_x_kinematics: actual=7.4074074074074066, expected=7.40740740741",
+          "actual": 7.4074074074074066,
+          "expected": 7.4074074074074066
+        },
+        {
+          "name": "state_6_y_kinematics",
+          "passed": true,
+          "message": "state_6_y_kinematics: actual=3.4722222222222223, expected=3.47222222222",
+          "actual": 3.4722222222222223,
+          "expected": 3.4722222222222223
+        },
+        {
+          "name": "state_6_vx_constant",
+          "passed": true,
+          "message": "state_6_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_6_vy_linear",
+          "passed": true,
+          "message": "state_6_vy_linear: actual=-3, expected=-3",
+          "actual": -3,
+          "expected": -3.0
+        },
+        {
+          "name": "state_6_ax_zero",
+          "passed": true,
+          "message": "state_6_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_6_ay_gravity",
+          "passed": true,
+          "message": "state_6_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_6_kinetic",
+          "passed": true,
+          "message": "state_6_kinetic: actual=2.5, expected=2.5",
+          "actual": 2.5,
+          "expected": 2.5
+        },
+        {
+          "name": "state_6_potential",
+          "passed": true,
+          "message": "state_6_potential: actual=1.1250000000000002, expected=1.125",
+          "actual": 1.1250000000000002,
+          "expected": 1.1250000000000002
+        },
+        {
+          "name": "state_6_energy_conserved",
+          "passed": true,
+          "message": "state_6_energy_conserved: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_6_energy_sum",
+          "passed": true,
+          "message": "state_6_energy_sum: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.625
+        },
+        {
+          "name": "state_7_x_kinematics",
+          "passed": true,
+          "message": "state_7_x_kinematics: actual=8.641975308641975, expected=8.64197530864",
+          "actual": 8.641975308641975,
+          "expected": 8.641975308641975
+        },
+        {
+          "name": "state_7_y_kinematics",
+          "passed": true,
+          "message": "state_7_y_kinematics: actual=2.469135802469136, expected=2.46913580247",
+          "actual": 2.469135802469136,
+          "expected": 2.469135802469136
+        },
+        {
+          "name": "state_7_vx_constant",
+          "passed": true,
+          "message": "state_7_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_7_vy_linear",
+          "passed": true,
+          "message": "state_7_vy_linear: actual=-3.5, expected=-3.5",
+          "actual": -3.5,
+          "expected": -3.5
+        },
+        {
+          "name": "state_7_ax_zero",
+          "passed": true,
+          "message": "state_7_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_7_ay_gravity",
+          "passed": true,
+          "message": "state_7_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_7_kinetic",
+          "passed": true,
+          "message": "state_7_kinetic: actual=2.825, expected=2.825",
+          "actual": 2.825,
+          "expected": 2.825
+        },
+        {
+          "name": "state_7_potential",
+          "passed": true,
+          "message": "state_7_potential: actual=0.8000000000000003, expected=0.8",
+          "actual": 0.8000000000000003,
+          "expected": 0.8000000000000003
+        },
+        {
+          "name": "state_7_energy_conserved",
+          "passed": true,
+          "message": "state_7_energy_conserved: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_7_energy_sum",
+          "passed": true,
+          "message": "state_7_energy_sum: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_8_x_kinematics",
+          "passed": true,
+          "message": "state_8_x_kinematics: actual=9.876543209876543, expected=9.87654320988",
+          "actual": 9.876543209876543,
+          "expected": 9.876543209876543
+        },
+        {
+          "name": "state_8_y_kinematics",
+          "passed": true,
+          "message": "state_8_y_kinematics: actual=1.3117283950617287, expected=1.31172839506",
+          "actual": 1.3117283950617287,
+          "expected": 1.3117283950617287
+        },
+        {
+          "name": "state_8_vx_constant",
+          "passed": true,
+          "message": "state_8_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_8_vy_linear",
+          "passed": true,
+          "message": "state_8_vy_linear: actual=-4, expected=-4",
+          "actual": -4,
+          "expected": -4.0
+        },
+        {
+          "name": "state_8_ax_zero",
+          "passed": true,
+          "message": "state_8_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_8_ay_gravity",
+          "passed": true,
+          "message": "state_8_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_8_kinetic",
+          "passed": true,
+          "message": "state_8_kinetic: actual=3.2, expected=3.2",
+          "actual": 3.2,
+          "expected": 3.2
+        },
+        {
+          "name": "state_8_potential",
+          "passed": true,
+          "message": "state_8_potential: actual=0.42500000000000016, expected=0.425",
+          "actual": 0.42500000000000016,
+          "expected": 0.42500000000000016
+        },
+        {
+          "name": "state_8_energy_conserved",
+          "passed": true,
+          "message": "state_8_energy_conserved: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_8_energy_sum",
+          "passed": true,
+          "message": "state_8_energy_sum: actual=3.6250000000000004, expected=3.625",
+          "actual": 3.6250000000000004,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_9_x_kinematics",
+          "passed": true,
+          "message": "state_9_x_kinematics: actual=11.11111111111111, expected=11.1111111111",
+          "actual": 11.11111111111111,
+          "expected": 11.11111111111111
+        },
+        {
+          "name": "state_9_y_kinematics",
+          "passed": true,
+          "message": "state_9_y_kinematics: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_vx_constant",
+          "passed": true,
+          "message": "state_9_vx_constant: actual=4, expected=4",
+          "actual": 4,
+          "expected": 4.0
+        },
+        {
+          "name": "state_9_vy_linear",
+          "passed": true,
+          "message": "state_9_vy_linear: actual=-4.5, expected=-4.5",
+          "actual": -4.5,
+          "expected": -4.5
+        },
+        {
+          "name": "state_9_ax_zero",
+          "passed": true,
+          "message": "state_9_ax_zero: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_ay_gravity",
+          "passed": true,
+          "message": "state_9_ay_gravity: actual=-1.62, expected=-1.62",
+          "actual": -1.62,
+          "expected": -1.62
+        },
+        {
+          "name": "state_9_kinetic",
+          "passed": true,
+          "message": "state_9_kinetic: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.625
+        },
+        {
+          "name": "state_9_potential",
+          "passed": true,
+          "message": "state_9_potential: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "state_9_energy_conserved",
+          "passed": true,
+          "message": "state_9_energy_conserved: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.6250000000000004
+        },
+        {
+          "name": "state_9_energy_sum",
+          "passed": true,
+          "message": "state_9_energy_sum: actual=3.625, expected=3.625",
+          "actual": 3.625,
+          "expected": 3.625
+        },
+        {
+          "name": "event_fields_exact",
+          "passed": true,
+          "message": "事件字段必须精确匹配",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "flight_time_boundary",
+          "passed": true,
+          "message": "flight_time_boundary: actual=2.7777777777777777, expected=2.77777777778",
+          "actual": 2.7777777777777777,
+          "expected": 2.7777777777777777
+        },
+        {
+          "name": "range_boundary",
+          "passed": true,
+          "message": "range_boundary: actual=11.11111111111111, expected=11.1111111111",
+          "actual": 11.11111111111111,
+          "expected": 11.11111111111111
+        },
+        {
+          "name": "apex_vy_zero_time",
+          "passed": true,
+          "message": "apex_vy_zero_time: actual=0, expected=0",
+          "actual": 0,
+          "expected": 0.0
+        },
+        {
+          "name": "max_height_boundary",
+          "passed": true,
+          "message": "max_height_boundary: actual=6.25, expected=6.25",
+          "actual": 6.25,
+          "expected": 6.25
+        },
+        {
+          "name": "equal_height_range_optimum",
+          "passed": true,
+          "message": "equal_height_range_optimum: actual=45, expected=45",
+          "actual": 45,
+          "expected": 45.0
+        }
+      ],
+      "failed": []
+    }
+  ],
+  "teaching_intent": "让学生在月面弱重力中操控抛出方式、初速、角度、高度、重力与质量，观察同一物理时间内轨迹、速度/加速度方向与动能/势能变化的因果；比较平抛与斜抛的飞行时间、射程、最高点，并理解质量不改变轨迹但改变能量标度。通过暂停、慢放、拖动与回放区分真实物理时间和演示倍率，而不是自动给出解题步骤。",
+  "model_attempts": 1,
+  "view_attempts": 2
+}

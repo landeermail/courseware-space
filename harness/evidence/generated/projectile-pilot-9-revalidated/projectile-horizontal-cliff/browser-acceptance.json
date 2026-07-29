@@ -1,0 +1,40 @@
+{
+  "acceptance": "harness-browser-interaction-v1",
+  "verified_at": "2026-07-29T08:14:13Z",
+  "served_from": "http://127.0.0.1:8000/harness/evidence/generated/projectile-pilot-9-revalidated/projectile-horizontal-cliff/",
+  "checks": [
+    {
+      "viewport": "desktop-1280",
+      "width_px": 1280,
+      "status": "passed",
+      "physical_time_before_s": 0.0,
+      "physical_time_after_play_s": 0.47,
+      "demo_rate": "0.50×",
+      "horizontal_overflow": false,
+      "minimum_visible_control_height_px": 44,
+      "console_errors": 0
+    },
+    {
+      "viewport": "ipad-landscape",
+      "width_px": 1024,
+      "height_px": 768,
+      "status": "passed",
+      "timeline_interactive": true,
+      "physical_time_and_demo_rate_distinct": true,
+      "horizontal_overflow": false,
+      "minimum_visible_control_height_px": 44,
+      "console_errors": 0
+    },
+    {
+      "viewport": "mobile-portrait",
+      "width_px": 375,
+      "height_px": 812,
+      "status": "passed",
+      "timeline_interactive": true,
+      "physical_time_and_demo_rate_distinct": true,
+      "horizontal_overflow": false,
+      "minimum_visible_control_height_px": 44,
+      "console_errors": 0
+    }
+  ]
+}

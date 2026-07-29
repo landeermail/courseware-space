@@ -1,0 +1,45 @@
+{
+  "acceptance": "harness-circular-faults-v1",
+  "ran_at": "2026-07-29T12:59:31.147205+00:00",
+  "source_artifacts": [
+    "harness/evidence/generated/circular-k3-holdout-1/circular-holdout-racecar",
+    "harness/evidence/generated/circular-k3-holdout-1/circular-holdout-vertical-small"
+  ],
+  "records": [
+    {
+      "fault": "centripetal_direction",
+      "source_artifact": "harness/evidence/generated/circular-k3-holdout-1/circular-holdout-racecar",
+      "source_mode": "uniform",
+      "red_status": "blocked",
+      "red_failed": [
+        "state_1_ax_inward",
+        "state_1_ay_inward"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 6
+    },
+    {
+      "fault": "energy_conservation",
+      "source_artifact": "harness/evidence/generated/circular-k3-holdout-1/circular-holdout-racecar",
+      "source_mode": "uniform",
+      "red_status": "blocked",
+      "red_failed": [
+        "state_2_energy_sum",
+        "state_2_energy_conserved"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 6
+    },
+    {
+      "fault": "top_critical",
+      "source_artifact": "harness/evidence/generated/circular-k3-holdout-1/circular-holdout-vertical-small",
+      "source_mode": "vertical_string",
+      "red_status": "blocked",
+      "red_failed": [
+        "vertical_top_critical"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 6
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "view",
+  "status": "rejected",
+  "attempts": 3,
+  "max_attempts": 3,
+  "failures": [
+    "HTML 内联脚本语法无效",
+    "HTML 内联脚本语法无效",
+    "HTML 内联脚本语法无效"
+  ]
+}

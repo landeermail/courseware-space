@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; media-src 'none'; font-src 'none'; form-action 'none'; base-uri 'none'">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抛体运动纯物理模型</title>
+<style>
+:root{--accent:#2563eb;--bg:#f5f7fa;--card:#fff;--text:#1f2937;}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+header{background:#0f172a;color:#fff;padding:1rem;text-align:center}
+header h1{margin:0;font-size:1.35rem}
+header p{margin:.35rem 0 0;color:#cbd5e1;font-size:.9rem}
+main{max-width:980px;margin:0 auto;padding:1rem}
+.card{background:var(--card);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:1rem;margin-bottom:1rem}
+.row{display:flex;flex-wrap:wrap;gap:1rem}
+.control{flex:1 1 220px;min-width:220px}
+label{display:block;font-size:.8rem;color:#4b5563;margin-bottom:.25rem}
+input[type=range]{width:100%;height:44px}
+input[type=number]{width:100%;min-height:44px;padding:.45rem;border:1px solid #d1d5db;border-radius:6px}
+#stage{width:100%;height:320px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;display:block}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.85rem;margin-top:.5rem;color:#374151}
+.legend span{display:flex;align-items:center;gap:.35rem;min-height:44px}
+.dot{width:18px;height:4px;border-radius:2px}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.5rem}
+.pill{background:#eef2ff;border-radius:8px;padding:.55rem .5rem;text-align:center}
+.pill b{display:block;font-size:.75rem;color:#4b5563;font-weight:500}
+.pill span{display:block;font-size:1.05rem;color:#1d4ed8;font-weight:700}
+.buttons{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+button{min-height:44px;min-width:80px;padding:.5rem 1rem;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:1rem;cursor:pointer}
+button.secondary{background:#64748b}
+.seekwrap{flex:1 1 220px;display:flex;align-items:center;gap:.5rem;min-height:44px}
+.seekwrap input{flex:1}
+@media(max-width:375px){body{font-size:14px}#stage{height:260px}.control{min-width:100%}.buttons button{flex:1}}
+</style>
+</head>
+<body>
+<header><h1>抛体运动纯物理模型</h1><p>观察速度方向、落地时间与射程如何随过程变化</p></header>
+<main>
+<section class="card">
+<div class="row">
+<div class="control"><label>抛出高度 h₀ (m)</label><input type="range" data-control="height" min="0" max="50" step="0.5" value="20"><input type="number" data-control-num="height" min="0" max="50" step="0.5" value="20"></div>
+<div class="control"><label>初速度 v₀ (m/s)</label><input type="range" data-control="speed" min="1" max="40" step="0.5" value="10"><input type="number" data-control-num="speed" min="1" max="40" step="0.5" value="10"></div>
+<div class="control"><label>抛射角 θ (°)</label><input type="range" data-control="angle" min="-90" max="90" step="1" value="0"><input type="number" data-control-num="angle" min="-90" max="90" step="1" value="0"></div>
+<div class="control"><label>重力加速度 g (m/s²)</label><input type="range" data-control="gravity" min="1" max="25" step="0.5" value="10"><input type="number" data-control-num="gravity" min="1" max="25" step="0.5" value="10"></div>
+<div class="control"><label>小球质量 m (kg)</label><input type="range" data-control="mass" min="0.1" max="5" step="0.1" value="1"><input type="number" data-control-num="mass" min="0.1" max="5" step="0.1" value="1"></div>
+</div>
+</section>
+<section class="card">
+<svg id="stage" viewBox="-2 -2 14 24" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="ar" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6z" fill="#ef4444"/></marker>
+<marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6z" fill="#7c3aed"/></marker>
+</defs>
+<g id="grid"></g>
+<path id="traj" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-dasharray="4,4"/>
+<line id="ground" stroke="#10b981" stroke-width="4"/>
+<circle id="ball" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+<line id="vel" stroke="#ef4444" stroke-width="3" marker-end="url(#ar)"/>
+<line id="acc" stroke="#7c3aed" stroke-width="3" marker-end="url(#ab)"/>
+<line id="velx" stroke="#f87171" stroke-width="1.5" stroke-dasharray="3,3"/>
+<line id="vely" stroke="#f87171" stroke-width="1.5" stroke-dasharray="3,3"/>
+</svg>
+<div class="legend">
+<span><i class="dot" style="background:#3b82f6"></i>轨迹</span>
+<span><i class="dot" style="background:#ef4444"></i>速度 v</span>
+<span><i class="dot" style="background:#7c3aed"></i>加速度 a=g</span>
+<span><i class="dot" style="background:#10b981"></i>地面</span>
+</div>
+</section>
+<section class="card">
+<div class="readouts">
+<div class="pill"><b>物理时间</b><span data-physical-time>0.00 s</span></div>
+<div class="pill"><b>演示倍率</b><span data-demo-time>1.0×</span></div>
+<div class="pill"><b>水平位移 x</b><span data-readout="x">0.0 m</span></div>
+<div class="pill"><b>竖直高度 y</b><span data-readout="y">20.0 m</span></div>
+<div class="pill"><b>速度大小</b><span data-readout="v">10.0 m/s</span></div>
+<div class="pill"><b>速度方向</b><span data-readout="dir">0°</span></div>
+<div class="pill"><b>动能 Ek</b><span data-readout="ek">50.0 J</span></div>
+<div class="pill"><b>势能 Ep</b><span data-readout="ep">200.0 J</span></div>
+<div class="pill"><b>机械能 E</b><span data-readout="em">250.0 J</span></div>
+<div class="pill"><b>飞行时间</b><span data-readout="flight">2.00 s</span></div>
+<div class="pill"><b>射程</b><span data-readout="range">20.0 m</span></div>
+<div class="pill"><b>最大高度</b><span data-readout="apex">20.0 m</span></div>
+</div>
+</section>
+<section class="card buttons">
+<button data-play>播放</button>
+<button class="secondary" data-pause>暂停</button>
+<button data-replay>重播</button>
+<label class="seekwrap">进度<input type="range" data-seek min="0" max="100" step="0.1" value="0"></label>
+<label class="seekwrap">倍率<input type="range" data-rate min="0.1" max="4" step="0.1" value="1"></label>
+</section>
+</main>
+<style>[data-control],[data-replay],button,select,input{min-height:44px}</style><script>
+"use strict";
+
+globalThis.CoursewarePrimitives = Object.freeze({
+  createTimeline(options) {
+    const duration = Number(options.durationPhysicalS);
+    const onChange = options.onChange;
+    if (!Number.isFinite(duration) || duration <= 0 || typeof onChange !== "function") {
+      throw new Error("invalid timeline options");
+    }
+    let physicalTime = 0;
+    let demoRate = 0.5;
+    let playing = false;
+    let frame = 0;
+    let previous = 0;
+    const emit = () => onChange(Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }));
+    const tick = now => {
+      if (!playing) return;
+      if (!previous) previous = now;
+      physicalTime = Math.min(duration, physicalTime + ((now - previous) / 1000) * demoRate);
+      previous = now;
+      emit();
+      if (physicalTime >= duration) {
+        playing = false;
+        emit();
+        return;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    return Object.freeze({
+      play() {
+        if (playing || physicalTime >= duration) return;
+        playing = true;
+        previous = 0;
+        emit();
+        frame = requestAnimationFrame(tick);
+      },
+      pause() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        emit();
+      },
+      replay() {
+        playing = false;
+        cancelAnimationFrame(frame);
+        physicalTime = 0;
+        previous = 0;
+        emit();
+      },
+      seek(value) {
+        physicalTime = Math.max(0, Math.min(duration, Number(value)));
+        emit();
+      },
+      setDemoRate(value) {
+        const next = Number(value);
+        if (!Number.isFinite(next) || next < 0.1 || next > 4) throw new Error("invalid demo rate");
+        demoRate = next;
+        emit();
+      },
+      snapshot() { return Object.freeze({ physicalTimeS: physicalTime, demoRate, playing }); },
+    });
+  },
+  formatPhysicalTime(value) { return `${Number(value).toFixed(2)} s（物理时间）`; },
+  formatDemoRate(value) { return `${Number(value).toFixed(2)}×（演示倍率）`; },
+});
+
+</script>
+<script>
+globalThis.coursewareModel=Object.freeze({sample:function(input){var sc=(input&&input.scenario)||{};var mode=sc.mode;var theta=0;if(mode==='oblique') theta=(+sc.angle_deg||0)*Math.PI/180;var v0=+sc.speed_m_s||0;var g=+sc.g_m_s2||0;var m=+sc.mass_kg||0;var x0=+sc.x0_m||0;var y0=+sc.y0_m||0;var vx0=v0*Math.cos(theta);var vy0=mode==='horizontal'?0:v0*Math.sin(theta);var flightTime=0;if(g>0&&y0>=0){flightTime=(vy0+Math.sqrt(vy0*vy0+2*g*y0))/g;if(flightTime<0)flightTime=0;}var range=vx0*flightTime;var apexTime=0;var maxHeight=y0;if(g>0&&vy0>0){apexTime=vy0/g;maxHeight=y0+vy0*vy0/(2*g);}var states=[];var times=(input&&input.times_s)||[];for(var i=0;i<times.length;i++){var tReq=+times[i]||0;var t=tReq>flightTime?flightTime:tReq;var x=x0+vx0*t;var y=y0+vy0*t-0.5*g*t*t;if(y<0)y=0;var vx=vx0;var vy=vy0-g*t;var ax=0;var ay=-g;var ke=0.5*m*(vx*vx+vy*vy);var pe=m*g*y;var me=ke+pe;states.push({t_s:tReq,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:ax,ay_m_s2:ay,kinetic_j:ke,potential_j:pe,mechanical_j:me});}return{states:states,events:{flight_time_s:flightTime,range_m:range,apex_time_s:apexTime,max_height_m:maxHeight,optimal_equal_height_angle_deg:45.0}};}});
+</script>
+<script>globalThis.__HARNESS_INPUT__=Object.freeze({"scenario":{"mode":"horizontal","g_m_s2":10.0,"mass_kg":1.0,"x0_m":0.0,"y0_m":20.0,"speed_m_s":10.0,"angle_deg":0.0},"times_s":[0.0,0.25,0.5,0.75,1.0,1.25,1.5,1.75,2.0]});</script>
+<script>
+(function(){
+const root=globalThis.__HARNESS_INPUT__||{};
+const base=root.scenario||{mode:"horizontal",x0_m:0,y0_m:20,speed_m_s:10,angle_deg:0,mass_kg:1,g_m_s2:10};
+const ctrl={h:document.querySelector('[data-control="height"]'),v:document.querySelector('[data-control="speed"]'),a:document.querySelector('[data-control="angle"]'),g:document.querySelector('[data-control="gravity"]'),m:document.querySelector('[data-control="mass"]')};
+const num={h:document.querySelector('[data-control-num="height"]'),v:document.querySelector('[data-control-num="speed"]'),a:document.querySelector('[data-control-num="angle"]'),g:document.querySelector('[data-control-num="gravity"]'),m:document.querySelector('[data-control-num="mass"]')};
+const stage=document.getElementById('stage');
+const el={grid:document.getElementById('grid'),traj:document.getElementById('traj'),ground:document.getElementById('ground'),ball:document.getElementById('ball'),vel:document.getElementById('vel'),acc:document.getElementById('acc'),velx:document.getElementById('velx'),vely:document.getElementById('vely'),phys:document.querySelector('[data-physical-time]'),demo:document.querySelector('[data-demo-time]'),play:document.querySelector('[data-play]'),pause:document.querySelector('[data-pause]'),replay:document.querySelector('[data-replay]'),seek:document.querySelector('[data-seek]'),rate:document.querySelector('[data-rate]')};
+let tl,scenario,events,dur=1,states=[],vb={xmin:-2,xmax:12,ymin:-2,ymax:22};
+function setVB(){stage.setAttribute('viewBox',`${vb.xmin} ${vb.ymin} ${vb.xmax-vb.xmin} ${vb.ymax-vb.ymin}`)}
+function makeScenario(){return{mode:Math.abs(+ctrl.a.value)<0.1?"horizontal":"oblique",x0_m:0,y0_m:+ctrl.h.value,speed_m_s:+ctrl.v.value,angle_deg:+ctrl.a.value,mass_kg:+ctrl.m.value,g_m_s2:+ctrl.g.value}}
+function sync(k){num[k].value=ctrl[k].value}
+function syncR(k){ctrl[k].value=num[k].value}
+function ro(k,v){const e=document.querySelector('[data-readout="'+k+'"]');if(e)e.textContent=v}
+function getEvents(s){return coursewareModel.sample({scenario:s,times_s:[0]}).events}
+function sampleStates(s,T){const n=400,dt=T/n,t=[];for(let i=0;i<=n;i++)t.push(i*dt);return coursewareModel.sample({scenario:s,times_s:t}).states}
+function drawGrid(mx,my){let d='';const sx=Math.ceil(mx/10)||1,sy=Math.ceil(my/10)||1;for(let x=0;x<=mx;x+=sx)d+=`M${x},0 L${x},${my} `;for(let y=0;y<=my;y+=sy)d+=`M0,${y} L${mx},${y} `;el.grid.innerHTML=`<path d="${d}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`;const gy=vb.ymax;el.ground.setAttribute('x1',vb.xmin);el.ground.setAttribute('y1',gy);el.ground.setAttribute('x2',vb.xmax);el.ground.setAttribute('y2',gy)}
+function drawTraj(){if(!states.length)return;let d='';for(let i=0;i<states.length;i++){const s=states[i],cx=s.x_m,cy=vb.ymax-s.y_m;d+=(i?'L':'M')+`${cx.toFixed(2)},${cy.toFixed(2)} `}el.traj.setAttribute('d',d)}
+function stateAt(t){if(!states.length)return null;const n=states.length-1,f=Math.max(0,Math.min(1,t/dur))*n,i=Math.floor(f),j=Math.min(n,i+1),r=f-i;const mix=k=>states[i][k]*(1-r)+states[j][k]*r;return{t_s:mix('t_s'),x_m:mix('x_m'),y_m:mix('y_m'),vx_m_s:mix('vx_m_s'),vy_m_s:mix('vy_m_s'),ax_m_s2:mix('ax_m_s2'),ay_m_s2:mix('ay_m_s2'),kinetic_j:mix('kinetic_j'),potential_j:mix('potential_j'),mechanical_j:mix('mechanical_j')}}
+function updateScene(t){const s=stateAt(t);if(!s)return;const cx=s.x_m,cy=vb.ymax-s.y_m;el.ball.setAttribute('cx',cx);el.ball.setAttribute('cy',cy);const vs=0.8;el.vel.setAttribute('x1',cx);el.vel.setAttribute('y1',cy);el.vel.setAttribute('x2',cx+s.vx_m_s*vs);el.vel.setAttribute('y2',cy-s.vy_m_s*vs);el.acc.setAttribute('x1',cx);el.acc.setAttribute('y1',cy);el.acc.setAttribute('x2',cx+s.ax_m_s2*vs);el.acc.setAttribute('y2',cy-s.ay_m_s2*vs);el.velx.setAttribute('x1',cx);el.velx.setAttribute('y1',cy);el.velx.setAttribute('x2',cx+s.vx_m_s*vs);el.velx.setAttribute('y2',cy);el.vely.setAttribute('x1',cx);el.vely.setAttribute('y1',cy);el.vely.setAttribute('x2',cx);el.vely.setAttribute('y2',cy-s.vy_m_s*vs)}
+function updateReadouts(s){ro('x',s.x_m.toFixed(1)+' m');ro('y',s.y_m.toFixed(1)+' m');const v=Math.hypot(s.vx_m_s,s.vy_m_s);ro('v',v.toFixed(1)+' m/s');ro('dir',(Math.atan2(s.vy_m_s,s.vx_m_s)*180/Math.PI).toFixed(0)+'°');ro('ek',s.kinetic_j.toFixed(1)+' J');ro('ep',s.potential_j.toFixed(1)+' J');ro('em',s.mechanical_j.toFixed(1)+' J');ro('flight',(events.flight_time_s||0).toFixed(2)+' s');ro('range',(events.range_m||0).toFixed(2)+' m');ro('apex',(events.max_height_m||0).toFixed(2)+' m')}
+function rebuild(){scenario=makeScenario();events=getEvents(scenario);dur=events.flight_time_s>0.001?events.flight_time_s:1;states=sampleStates(scenario,dur);const mx=Math.max(events.range_m||0,10),my=Math.max(events.max_height_m||0,scenario.y0_m,5);vb={xmin:-2,xmax:mx+4,ymin:-2,ymax:my+4};setVB();drawGrid(mx,my);drawTraj();updateScene(0);updateReadouts(stateAt(0))}
+function makeTL(){if(tl)tl.pause();tl=CoursewarePrimitives.createTimeline({durationPhysicalS:dur,onChange(st){el.phys.textContent=CoursewarePrimitives.formatPhysicalTime(st.physicalTimeS);el.demo.textContent=CoursewarePrimitives.formatDemoRate(st.demoRate);el.seek.value=(st.physicalTimeS/dur*100)||0;const s=stateAt(st.physicalTimeS);if(s){updateScene(st.physicalTimeS);updateReadouts(s)}}});tl.pause()}
+Object.keys(ctrl).forEach(k=>{ctrl[k].addEventListener('input',()=>{sync(k);rebuild();makeTL()});num[k].addEventListener('change',()=>{syncR(k);rebuild();makeTL()})});
+el.play.addEventListener('click',()=>tl&&tl.play());el.pause.addEventListener('click',()=>tl&&tl.pause());el.replay.addEventListener('click',()=>tl&&tl.replay());el.seek.addEventListener('input',()=>{if(!tl)return;tl.pause();tl.pause();tl.seek(el.seek.value/100*dur)});el.rate.addEventListener('input',()=>{if(!tl)return;tl.setDemoRate(+el.rate.value)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&tl)tl.pause()});
+ctrl.h.value=base.y0_m;ctrl.v.value=base.speed_m_s;ctrl.a.value=base.angle_deg;ctrl.g.value=base.g_m_s2;ctrl.m.value=base.mass_kg;Object.keys(ctrl).forEach(sync);rebuild();makeTL();
+})();
+</script>
+</body>
+</html>

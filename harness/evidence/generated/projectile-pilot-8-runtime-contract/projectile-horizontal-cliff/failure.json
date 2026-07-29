@@ -1,0 +1,11 @@
+{
+  "phase": "view",
+  "status": "rejected",
+  "attempts": 3,
+  "failures": [
+    "equal_height_range_optimum: actual=24.094842552110702, expected=45",
+    "HTML 包含外部资源、网络或动态执行能力",
+    "HTML 缺少 harness 原语标记：CoursewarePrimitives.createTimeline, CoursewarePrimitives.formatDemoRate, CoursewarePrimitives.formatPhysicalTime, coursewareModel.sample",
+    "HTML 缺少 harness 原语标记：CoursewarePrimitives.createTimeline, CoursewarePrimitives.formatDemoRate, CoursewarePrimitives.formatPhysicalTime, coursewareModel.sample"
+  ]
+}

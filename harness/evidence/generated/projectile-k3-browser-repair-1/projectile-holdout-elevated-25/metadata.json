@@ -1,0 +1,17 @@
+{
+  "id": "projectile-holdout-elevated-25",
+  "domain": "projectile",
+  "status": "succeeded",
+  "attempts": 4,
+  "model_attempts": 1,
+  "view_attempts": 3,
+  "repair_attempts": 1,
+  "output_path": "harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-elevated-25/index.html",
+  "teaching_intent": "让学生操控初速度、仰角、初始高度与重力加速度，观察斜抛轨迹、最高点与落地点如何由初始条件决定：最高点处竖直分速度为零而水平分速度不变，落地点由飞行时间与水平速度共同决定；同时通过动能、势能、机械能的实时读数理解能量转化与守恒，并明确区分物理时间与演示倍率（可慢放、暂停、拖动时间轴）。",
+  "source_artifact": "harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-elevated-25",
+  "browser_finding": {
+    "id": "projectile-holdout-elevated-25",
+    "status": "rejected",
+    "reason": "首屏停在等待采样；三个 harness 占位符被写在 script 标签内部，渲染后形成嵌套脚本并阻断初始化。"
+  }
+}

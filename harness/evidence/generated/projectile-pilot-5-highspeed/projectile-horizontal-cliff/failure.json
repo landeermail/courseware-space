@@ -1,0 +1,10 @@
+{
+  "phase": "model",
+  "status": "rejected",
+  "attempts": 3,
+  "failures": [
+    "model_js 包含沙箱禁止能力",
+    "model_js 包含沙箱禁止能力",
+    "model_js 包含沙箱禁止能力"
+  ]
+}

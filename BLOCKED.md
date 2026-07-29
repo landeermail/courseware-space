@@ -1,5 +1,12 @@
 # 待裁决清单
 
+## 已解除：2026-07-29 Kimi 频限曾达到 100%
+
+- 证据：抛体 5 题正式批次的 15/15 个模型请求在产生输出前返回 HTTP 403；领导随后提供的 Kimi 控制台截图显示周用量 23%、频限明细 100%，并显示约 2 小时 19 分钟后的重置倒计时。
+- 归因：这是可恢复的 provider unavailable，不是 API Key 失效，也不是抛体物理模型被 harness 判错；原始 0/5 结果保持不改，诊断另见 `harness/evidence/generated/projectile/provider-diagnosis.json`。
+- 解除证据：频限恢复后 K3＋JSON Mode 探针成功；新的不可覆盖证据完成抛体 5/5、圆周 5/5、两领域各 3 类故障红→绿和逐件浏览器验收，`harness/audit_acceptance.py` 返回 `passed`。
+- 保留措施：quota/authentication/permission/configuration/read-timeout/output-limit 仍在首次出现时停止单题和批次；Extra Usage 保持关闭，不以自动付费续跑。
+
 ## 已裁决：本轮取消 API Gateway，采用 Pages 直连 FC JSON API
 
 - 证据：FC 默认域名健康检查为 HTTP 200，但响应强制 `Content-Disposition: attachment`。阿里云 2026-07-17 官方公告明确：传统 API 网关将于 2026-08-23 停止新购、2027-03-21 停止续订和版本更新、2027-09-21 全面停止服务，并建议迁移至云原生 API 网关。
@@ -35,6 +42,6 @@
 
 ## 已生效裁决
 
-- **Kimi 通道**：Kimi Code 通道（`api.kimi.com/coding/v1`，模型 `kimi-for-coding`）为领导认可的正式通道，开放平台（`api.moonshot.cn`）已确认不可用。此前"Kimi 产品集成许可"的顾虑由领导拍板解除，无需再迁移。
+- **Kimi 通道**：Kimi Code 通道用于当前私人研发与演示，模型策略由 ADR 0004 固定为 `k3-256k`。2026-07-29 重新核对官方平台边界后，领导确认：产品对公众开放或收费前必须迁移 Kimi Platform，或取得 Kimi 对产品后端用途的明确书面许可；此前“无需迁移”的内部判断不再作为商业上线依据。
 - **key 注入方式**：从 macOS 钥匙串临时读取为领导认可的安全方式，不算越权；key 仍不得写入仓库或日志。
 - **后端托管**：本轮采用阿里云函数计算 FC + 对象存储 OSS；AccessKey 已从钥匙串完成只读 STS 验证。

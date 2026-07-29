@@ -1,0 +1,17 @@
+{
+  "id": "projectile-holdout-oblique-37",
+  "domain": "projectile",
+  "status": "succeeded",
+  "attempts": 2,
+  "model_attempts": 1,
+  "view_attempts": 1,
+  "repair_attempts": 0,
+  "output_path": "harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-oblique-37/index.html",
+  "teaching_intent": "让学生在同一时间轴上观察斜抛上升与下降阶段：位置轨迹如何由采样状态驱动，速度矢量中水平分量近似不变而竖直分量先减后反向，加速度始终向下；动能、势能此消彼长而机械能保持稳定。学生可改变初速度、仰角、高度与演示倍率，通过暂停、慢放、拖动与回放比较顶点、落点、等高点附近的速度方向和能量分配，验证因果而非观看自动解题。",
+  "source_artifact": "harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-oblique-37",
+  "browser_finding": {
+    "id": "projectile-holdout-oblique-37",
+    "status": "passed_initial_state",
+    "reason": "首屏暂停在 0.00 s，速度、角度、高度与确认场景一致。"
+  }
+}

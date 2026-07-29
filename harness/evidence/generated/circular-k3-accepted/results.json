@@ -1,0 +1,12 @@
+{
+  "acceptance": "circular-k3-accepted-v1",
+  "classification": "model_generated_acceptance_manifest",
+  "model": "k3-256k",
+  "records": [
+    {"id":"circular-holdout-carousel","status":"succeeded","artifact_path":"harness/evidence/generated/circular-k3-carousel-normalized/circular-holdout-carousel"},
+    {"id":"circular-holdout-racecar","status":"succeeded","artifact_path":"harness/evidence/generated/circular-k3-holdout-1/circular-holdout-racecar"},
+    {"id":"circular-holdout-orbit-moon","status":"succeeded","artifact_path":"harness/evidence/generated/circular-k3-holdout-1/circular-holdout-orbit-moon"},
+    {"id":"circular-holdout-vertical-small","status":"succeeded","artifact_path":"harness/evidence/generated/circular-k3-holdout-1/circular-holdout-vertical-small"},
+    {"id":"circular-holdout-vertical-large","status":"succeeded","artifact_path":"harness/evidence/generated/circular-k3-holdout-1/circular-holdout-vertical-large"}
+  ]
+}
