@@ -1,0 +1,160 @@
+{
+  "acceptance": "media-image-five-v1",
+  "run_at": "2026-07-28T09:24:15.650427+00:00",
+  "model": "kimi-for-coding",
+  "count": 5,
+  "generated_count": 5,
+  "all_physics_match_teacher_confirmation": true,
+  "records": [
+    {
+      "sample_id": "image-01",
+      "source_path": "server/evidence/media-inputs/image-01.png",
+      "parse_status": "awaiting_confirmation",
+      "confidence": 0.95,
+      "ai_parameters": {
+        "magnetic_field_t": 0.5,
+        "rod_length_m": 1.0,
+        "rod_speed_m_s": 2.0,
+        "resistance_ohm": 0.4,
+        "field_direction": "into_page",
+        "motion_direction": "right"
+      },
+      "ai_current_direction": "d_to_c",
+      "ai_matches_expected": true,
+      "teacher_parameters": {
+        "magnetic_field_t": 0.5,
+        "rod_length_m": 1.0,
+        "rod_speed_m_s": 2.0,
+        "resistance_ohm": 0.4,
+        "field_direction": "into_page",
+        "motion_direction": "right"
+      },
+      "teacher_current_direction": "d_to_c",
+      "corrections_applied": false,
+      "job_id": "4f8a9b052d46",
+      "job_status": "succeeded",
+      "output_url": "/generated/4f8a9b052d46/",
+      "output_path": "server/evidence/media-runtime/generated/4f8a9b052d46/index.html"
+    },
+    {
+      "sample_id": "image-02",
+      "source_path": "server/evidence/media-inputs/image-02.png",
+      "parse_status": "awaiting_confirmation",
+      "confidence": 0.98,
+      "ai_parameters": {
+        "magnetic_field_t": 0.8,
+        "rod_length_m": 0.6,
+        "rod_speed_m_s": 3.0,
+        "resistance_ohm": 1.2,
+        "field_direction": "out_of_page",
+        "motion_direction": "right"
+      },
+      "ai_current_direction": "d_to_c",
+      "ai_matches_expected": true,
+      "teacher_parameters": {
+        "magnetic_field_t": 0.8,
+        "rod_length_m": 0.6,
+        "rod_speed_m_s": 3.0,
+        "resistance_ohm": 1.2,
+        "field_direction": "out_of_page",
+        "motion_direction": "right"
+      },
+      "teacher_current_direction": "c_to_d",
+      "corrections_applied": false,
+      "job_id": "1f7b42fd78bb",
+      "job_status": "succeeded",
+      "output_url": "/generated/1f7b42fd78bb/",
+      "output_path": "server/evidence/media-runtime/generated/1f7b42fd78bb/index.html"
+    },
+    {
+      "sample_id": "image-03",
+      "source_path": "server/evidence/media-inputs/image-03.png",
+      "parse_status": "awaiting_confirmation",
+      "confidence": 0.98,
+      "ai_parameters": {
+        "magnetic_field_t": 0.25,
+        "rod_length_m": 1.2,
+        "rod_speed_m_s": 4.0,
+        "resistance_ohm": 0.5,
+        "field_direction": "into_page",
+        "motion_direction": "left"
+      },
+      "ai_current_direction": "c_to_d",
+      "ai_matches_expected": true,
+      "teacher_parameters": {
+        "magnetic_field_t": 0.25,
+        "rod_length_m": 1.2,
+        "rod_speed_m_s": 4.0,
+        "resistance_ohm": 0.5,
+        "field_direction": "into_page",
+        "motion_direction": "left"
+      },
+      "teacher_current_direction": "c_to_d",
+      "corrections_applied": false,
+      "job_id": "37072a7246b1",
+      "job_status": "succeeded",
+      "output_url": "/generated/37072a7246b1/",
+      "output_path": "server/evidence/media-runtime/generated/37072a7246b1/index.html"
+    },
+    {
+      "sample_id": "image-04",
+      "source_path": "server/evidence/media-inputs/image-04.png",
+      "parse_status": "awaiting_confirmation",
+      "confidence": 0.98,
+      "ai_parameters": {
+        "magnetic_field_t": 1.2,
+        "rod_length_m": 0.8,
+        "rod_speed_m_s": 1.5,
+        "resistance_ohm": 0.6,
+        "field_direction": "out_of_page",
+        "motion_direction": "left"
+      },
+      "ai_current_direction": "d_to_c",
+      "ai_matches_expected": true,
+      "teacher_parameters": {
+        "magnetic_field_t": 1.2,
+        "rod_length_m": 0.8,
+        "rod_speed_m_s": 1.5,
+        "resistance_ohm": 0.6,
+        "field_direction": "out_of_page",
+        "motion_direction": "left"
+      },
+      "teacher_current_direction": "d_to_c",
+      "corrections_applied": false,
+      "job_id": "23ba32d45ed2",
+      "job_status": "succeeded",
+      "output_url": "/generated/23ba32d45ed2/",
+      "output_path": "server/evidence/media-runtime/generated/23ba32d45ed2/index.html"
+    },
+    {
+      "sample_id": "image-05",
+      "source_path": "server/evidence/media-inputs/image-05.png",
+      "parse_status": "awaiting_confirmation",
+      "confidence": 0.99,
+      "ai_parameters": {
+        "magnetic_field_t": 0.35,
+        "rod_length_m": 1.5,
+        "rod_speed_m_s": 5.0,
+        "resistance_ohm": 0.75,
+        "field_direction": "into_page",
+        "motion_direction": "right"
+      },
+      "ai_current_direction": "d_to_c",
+      "ai_matches_expected": true,
+      "teacher_parameters": {
+        "magnetic_field_t": 0.35,
+        "rod_length_m": 1.5,
+        "rod_speed_m_s": 5.0,
+        "resistance_ohm": 0.75,
+        "field_direction": "into_page",
+        "motion_direction": "right"
+      },
+      "teacher_current_direction": "d_to_c",
+      "corrections_applied": false,
+      "job_id": "f88d7a711396",
+      "job_status": "succeeded",
+      "output_url": "/generated/f88d7a711396/",
+      "output_path": "server/evidence/media-runtime/generated/f88d7a711396/index.html"
+    }
+  ]
+}

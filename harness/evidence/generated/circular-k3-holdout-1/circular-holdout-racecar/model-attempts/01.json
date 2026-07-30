@@ -1,0 +1,32 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v4-runtime-state",
+  "ran_at": "2026-07-29T12:20:05.127111+00:00",
+  "raw": "{\"title\":\"赛车水平圆弯道向心力探究\",\"domain\":\"circular\",\"model_js\":\"'use strict';\\n(function () {\\n  var TAU = Math.PI * 2;\\n\\n  function num(v, d) { return (typeof v === 'number' && isFinite(v)) ? v : d; }\\n\\n  function sample(input) {\\n    input = input || {};\\n    var sc = input.scenario || {};\\n    var mode = typeof sc.mode === 'string' ? sc.mode : 'uniform';\\n    var G = num(sc.G_n_m2_kg2, 6.6743e-11);\\n    var M = num(sc.central_mass_kg, 0);\\n    var g = num(sc.g_m_s2, 9.8);\\n    var m = Math.max(num(sc.mass_kg, 1), 0);\\n    var r = Math.max(num(sc.radius_m, 1), 1e-12);\\n    var vIn = Math.max(num(sc.speed_m_s, 0), 0);\\n\\n    var angles = input.angles_rad;\\n    if (!Array.isArray(angles) || angles.length === 0) {\\n      angles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];\\n    }\\n\\n    var i;\\n    var isOrbit = (mode === 'orbit');\\n    var isVertical = (mode === 'vertical_string');\\n\\n    var vOrbit = isOrbit ? Math.sqrt(Math.max(G * M / r, 0)) : 0;\\n    var vBase = isOrbit ? vOrbit : vIn;\\n\\n    // vertical_string: angle 0 = lowest point, vBase is speed at the bottom\\n    function v2At(th) {\\n      var c = Math.cos(th);\\n      var s = Math.sin(th);\\n      if (!isVertical) return vBase * vBase;\\n      return vBase * vBase - 2 * g * r * (1 - c);\\n    }\\n\\n    var states = [];\\n    for (i = 0; i < angles.length; i++) {\\n      var th = num(angles[i], 0);\\n      var c = Math.cos(th);\\n      var s = Math.sin(th);\\n      var v2 = v2At(th);\\n      var blocked = isVertical && v2 < 0;\\n      var v = Math.sqrt(Math.max(v2, 0));\\n      var aR = v * v / r; // inward centripetal acceleration\\n      var aT = isVertical ? -g * s : 0; // tangential acceleration along +theta\\n\\n      var x, y, ux, uy, tx, ty;\\n      if (isVertical) {\\n        x = r * s; y = -r * c;\\n        ux = s; uy = -c;   // outward radial unit vector\\n        tx = c; ty = s;    // unit vector along +theta\\n      } else {\\n        x = r * c; y = r * s;\\n        ux = c; uy = s;\\n        tx = -s; ty = c;\\n      }\\n      var ax = -aR * ux + aT * tx;\\n      var ay = -aR * uy + aT * ty;\\n\\n      var radialForce = m * aR;\\n      var tension;\\n      if (isOrbit) tension = 0;\\n      else if (isVertical) tension = m * aR + m * g * c;\\n      else tension = radialForce;\\n      if (blocked) { tension = 0; }\\n\\n      var ke = 0.5 * m * v * v;\\n      var pe = isVertical ? m * g * r * (1 - c) : 0;\\n\\n      states.push({\\n        angle_rad: th,\\n        x_m: x,\\n        y_m: y,\\n        speed_m_s: v,\\n        ax_m_s2: ax,\\n        ay_m_s2: ay,\\n        radial_force_n: radialForce,\\n        tension_n: tension,\\n        kinetic_j: ke,\\n        potential_j: pe,\\n        mechanical_j: ke + pe\\n      });\\n    }\\n\\n    var period;\\n    if (!isVertical) {\\n      period = (vBase > 0) ? TAU * r / vBase : null;\\n    } else {\\n      var N = 200000;\\n      var dth = TAU / N;\\n      var ok = true;\\n      var sum = 0;\\n      for (i = 0; i < N; i++) {\\n        var tm = (i + 0.5) * dth;\\n        var vv2 = v2At(tm);\\n        if (vv2 <= 0) { ok = false; break; }\\n        sum += r * dth / Math.sqrt(vv2);\\n      }\\n      period = ok ? sum : null;\\n    }\\n\\n    var events = {\\n      period_s: period,\\n      centripetal_acceleration_m_s2: (vBase * vBase) / r\\n    };\\n    if (isVertical) {\\n      events.critical_top_speed_m_s = Math.sqrt(g * r);\\n      events.critical_bottom_speed_m_s = Math.sqrt(5 * g * r);\\n    }\\n\\n    return { states: states, events: events };\\n  }\\n\\n  globalThis.coursewareModel = Object.freeze({ sample: sample });\\n})();\"}",
+  "provider": {
+    "phase": "physics_model",
+    "requested_model": "k3-256k",
+    "reasoning_effort": "high",
+    "max_completion_tokens": 32768,
+    "response_format": "json_object",
+    "temperature": "provider_default",
+    "top_p": "provider_default",
+    "stream": true,
+    "prompt_cache_key": "15d6d336ce4a18b3cee66215958dc53cfd40e8ee95c543b2c970f26c0d305526",
+    "response_id": "chatcmpl-2qEzpeschiZllcGjGUhG7v6J",
+    "actual_model": "k3-256k",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 616,
+      "completion_tokens": 2258,
+      "total_tokens": 2874,
+      "completion_tokens_details": {
+        "reasoning_tokens": 999
+      }
+    },
+    "attempt": 1,
+    "latency_ms": 46877
+  },
+  "status": "rejected",
+  "failure": "state_0_tension: actual=4080, expected=0\nstate_1_tension: actual=4080, expected=0\nstate_2_tension: actual=4080, expected=0\nstate_3_tension: actual=4080, expected=0\nstate_4_tension: actual=4080, expected=0\nstate_5_tension: actual=4080, expected=0\nstate_6_tension: actual=4080, expected=0\nstate_7_tension: actual=4080, expected=0\nstate_8_tension: actual=4080, expected=0"
+}

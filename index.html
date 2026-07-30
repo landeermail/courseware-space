@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>物理3D交互课件库</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='.9em' font-size='56'%3E📐%3C/text%3E%3C/svg%3E">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#fff;padding:20px}
@@ -49,6 +50,24 @@ footer{text-align:center;padding:40px 0 20px;color:#606070;font-size:13px}
 // 课件数据 — 现在手写，以后可以改为 fetch('courseware.json')
 const coursewareData = {
   "categories": [
+    {
+      "id": "generator",
+      "name": "✨ 自助生成",
+      "lessons": [
+        {
+          "emoji": "🪄",
+          "title": "老师互动课件生成器",
+          "desc": "输入匀强磁场中滑动导体杆题目，自动识别参数并生成经过物理校验的互动模型。",
+          "tags": ["题目生成", "物理校验", "导体杆"],
+          "entries": [
+            {
+              "title": "输入题目，生成互动课件",
+              "path": "generator/"
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "electromagnetism",
       "name": "⚡ 电磁感应",

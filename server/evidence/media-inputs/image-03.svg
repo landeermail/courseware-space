@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" refX="16" refY="9" orient="auto"><path d="M0,0 L18,9 L0,18 Z" fill="#1769aa"/></marker>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#22324d" flood-opacity=".12"/></filter>
+  </defs>
+  <style>
+    .cn { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; fill:#182236; }
+    .field { font-family: Arial, sans-serif; font-size:54px; font-weight:700; fill:#6a7990; text-anchor:middle; dominant-baseline:middle; }
+    .label { font-family: Arial, sans-serif; font-size:34px; font-weight:700; fill:#25334c; }
+  </style>
+  <rect width="1400" height="900" fill="#f5f8fc"/>
+  <rect x="50" y="45" width="1300" height="810" rx="26" fill="white" filter="url(#shadow)"/>
+  <text x="95" y="115" class="cn" font-size="30" font-weight="800">高中物理 · 电磁感应</text>
+  <text x="95" y="158" class="cn" font-size="25">两根平行光滑金属导轨间距 L=1.20 m，左端接 R=0.50 Ω 的电阻，其余电阻不计。</text>
+  <text x="95" y="196" class="cn" font-size="25">装置处在 B=0.25 T、垂直纸面向里的匀强磁场中，导体杆 cd 始终与导轨垂直，</text>
+  <text x="95" y="234" class="cn" font-size="25">以 v=4.00 m/s 向左做匀速直线运动。</text>
+  <text x="95" y="274" class="cn" font-size="25" font-weight="700">判断 c、d 两端电势高低，并求安培力大小。</text>
+  <rect x="310" y="270" width="590" height="430" rx="18" fill="#edf3ff"/>
+  <text x="360" y="330" class="field">×</text><text x="480" y="330" class="field">×</text><text x="600" y="330" class="field">×</text><text x="720" y="330" class="field">×</text><text x="840" y="330" class="field">×</text><text x="360" y="430" class="field">×</text><text x="480" y="430" class="field">×</text><text x="600" y="430" class="field">×</text><text x="720" y="430" class="field">×</text><text x="840" y="430" class="field">×</text><text x="360" y="530" class="field">×</text><text x="480" y="530" class="field">×</text><text x="600" y="530" class="field">×</text><text x="720" y="530" class="field">×</text><text x="840" y="530" class="field">×</text><text x="360" y="630" class="field">×</text><text x="480" y="630" class="field">×</text><text x="600" y="630" class="field">×</text><text x="720" y="630" class="field">×</text><text x="840" y="630" class="field">×</text>
+  <line x1="260" y1="300" x2="950" y2="300" stroke="#26364f" stroke-width="16" stroke-linecap="round"/>
+  <line x1="260" y1="680" x2="950" y2="680" stroke="#26364f" stroke-width="16" stroke-linecap="round"/>
+  <line x1="260" y1="300" x2="260" y2="390" stroke="#26364f" stroke-width="16"/>
+  <rect x="225" y="390" width="70" height="190" rx="18" fill="white" stroke="#26364f" stroke-width="12"/>
+  <line x1="260" y1="580" x2="260" y2="680" stroke="#26364f" stroke-width="16"/>
+  <line x1="640" y1="300" x2="640" y2="680" stroke="#111827" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="640" cy="300" r="19" fill="#111827"/><circle cx="640" cy="680" r="19" fill="#111827"/>
+  <text x="665" y="290" class="label">c</text><text x="665" y="735" class="label">d</text>
+  <text x="175" y="490" class="label">R</text>
+  <line x1="560" y1="278" x2="430" y2="278" stroke="#1769aa" stroke-width="9" marker-end="url(#arrow)"/>
+  <text x="985" y="350" class="cn" font-size="28" font-weight="800">图示信息</text>
+  <text x="985" y="410" class="cn" font-size="27">B = 0.25 T</text>
+  <text x="985" y="458" class="cn" font-size="27">L = 1.20 m</text>
+  <text x="985" y="506" class="cn" font-size="27">v = 4.00 m/s</text>
+  <text x="985" y="554" class="cn" font-size="27">R = 0.50 Ω</text>
+  <text x="985" y="618" class="cn" font-size="25" fill="#415a77">磁场：垂直纸面向里</text>
+  <text x="985" y="666" class="cn" font-size="25" fill="#1769aa">运动：向左</text>
+  <text x="95" y="810" class="cn" font-size="21" fill="#6a7990">样本编号：image-03　｜　所有数值均为题目直接给出</text>
+</svg>

@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>物理互动课件生成器</title>
+  <meta name="courseware-api-base" content="https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='.9em' font-size='56'%3E🪄%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d8dfeb;
+      --surface: #ffffff;
+      --soft: #f3f6fb;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #eaf1ff;
+      --green: #047857;
+      --green-soft: #ecfdf5;
+      --amber: #9a4d00;
+      --amber-soft: #fff7e6;
+      --red: #b42318;
+      --shadow: 0 14px 38px rgba(31, 45, 75, .10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% -10%, #dbeafe 0, transparent 34%),
+        linear-gradient(180deg, #f8fbff 0, #f4f6fa 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+
+    button, textarea, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, .28);
+      outline-offset: 2px;
+    }
+
+    .page {
+      width: min(1060px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 44px;
+    }
+
+    .brand { color: #24324d; font-weight: 800; }
+    .back {
+      display: inline-flex;
+      min-height: 44px;
+      padding: 8px 10px;
+      align-items: center;
+      color: #344054;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .hero {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: #e8f0ff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.16;
+      letter-spacing: -.03em;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .scope {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .scope span {
+      padding: 5px 9px;
+      border: 1px solid #cdd8ec;
+      border-radius: 8px;
+      color: #344054;
+      background: rgba(255,255,255,.68);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .input-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: 540px;
+      margin: 0 auto 16px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.72);
+    }
+
+    .input-tab {
+      min-height: 46px;
+      border: 0;
+      border-radius: 10px;
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .input-tab[aria-selected="true"] {
+      color: var(--blue-dark);
+      background: var(--blue-soft);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, .10);
+    }
+
+    .composer { max-width: 820px; margin: 0 auto; padding: 22px; }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #344054;
+      font-weight: 800;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid #bfc9da;
+      border-radius: 12px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 168px;
+      padding: 14px 15px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    input, select { min-height: 46px; padding: 10px 12px; }
+
+    .media-workflow { max-width: 920px; margin: 0 auto; }
+    .media-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .media-step { padding: 10px 12px; border-radius: 10px; color: var(--muted); background: rgba(255,255,255,.72); font-size: 13px; font-weight: 750; }
+    .media-step.active { color: var(--blue-dark); background: var(--blue-soft); }
+    .media-step.done { color: var(--green); background: var(--green-soft); }
+    .media-panel { padding: 22px; }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .panel-head h2 { margin: 0; font-size: 22px; }
+    .panel-head p { margin: 4px 0 0; color: var(--muted); }
+    .dropzone { display: grid; place-items: center; min-height: 210px; padding: 26px; border: 2px dashed #b8c5d9; border-radius: 16px; background: #f8faff; text-align: center; cursor: pointer; }
+    .dropzone.drag { border-color: var(--blue); background: var(--blue-soft); }
+    .dropzone strong { display: block; margin-bottom: 6px; font-size: 18px; }
+    .dropzone span { color: var(--muted); }
+    .file-name { margin-top: 10px; color: var(--blue-dark) !important; font-weight: 750; }
+    .notice { margin: 14px 0 0; padding: 11px 13px; border-radius: 11px; color: var(--amber); background: var(--amber-soft); }
+    .actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+    .question-list { display: grid; gap: 10px; margin-bottom: 18px; }
+    .question-option { display: grid; grid-template-columns: auto 1fr auto; gap: 11px; align-items: start; padding: 13px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+    .question-option:has(input:checked) { border-color: #8eb2fb; background: var(--blue-soft); }
+    .question-option input { width: auto; min-height: auto; margin-top: 5px; }
+    .question-option strong { display: block; }
+    .question-option small { display: block; color: var(--muted); }
+    .confidence { white-space: nowrap; padding: 3px 8px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 850; }
+    .confidence.low { color: var(--amber); background: var(--amber-soft); }
+    .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .wide { grid-column: 1 / -1; }
+    .half { grid-column: span 2; }
+    .confirm-box { display: flex; gap: 10px; align-items: flex-start; padding: 13px; border: 1px solid #bfd2f7; border-radius: 12px; background: var(--blue-soft); }
+    .confirm-box input { width: 22px; min-height: 22px; margin: 2px 0 0; }
+    .confirm-box label { margin: 0; cursor: pointer; }
+    .media-status { display: flex; gap: 13px; align-items: center; }
+    .media-status h2, .media-status p { margin: 0; }
+    .media-status p { color: var(--muted); }
+
+    .composer-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .hint { margin: 0; color: var(--muted); font-size: 13px; }
+
+    button, .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 10px 18px;
+      border: 1px solid #c7d0df;
+      border-radius: 12px;
+      color: #344054;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    button:hover, .button-link:hover { background: #f8fafc; }
+    button:disabled { cursor: wait; opacity: .65; }
+
+    .primary {
+      min-width: 190px;
+      border-color: var(--blue);
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .primary:hover { background: var(--blue-dark); }
+    .secondary-small { min-height: 44px; padding: 7px 12px; font-size: 13px; }
+
+    .status-panel, .result-panel, .manual-panel {
+      max-width: 920px;
+      margin: 20px auto 0;
+      padding: 22px;
+    }
+
+    [hidden] { display: none !important; }
+
+    .status-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      border: 3px solid #cbd8ef;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-head strong { display: block; }
+    .status-head span { color: var(--muted); font-size: 13px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .step {
+      padding: 11px;
+      border-radius: 10px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .step.active { color: #1d4ed8; background: var(--blue-soft); }
+    .step.done { color: var(--green); background: var(--green-soft); }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .result-head h2, .manual-panel h2 { margin: 0; font-size: 22px; }
+    .result-head p, .manual-panel > p { margin: 4px 0 0; color: var(--muted); }
+
+    .preview {
+      width: 100%;
+      min-height: 640px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--soft);
+    }
+
+    .manual-panel {
+      border-color: #ead3a8;
+      background: #fffdf8;
+    }
+
+    .manual-reason {
+      margin: 14px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--amber);
+      background: var(--amber-soft);
+      font-size: 14px;
+    }
+
+    .manual-form {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 13px;
+    }
+
+    .manual-form .wide { grid-column: 1 / -1; }
+    .manual-form textarea { min-height: 92px; }
+
+    .feedback {
+      margin-top: 12px;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .error { color: var(--red); }
+
+    @media (max-width: 680px) {
+      .page { width: min(100% - 20px, 1060px); padding-top: 14px; }
+      .topbar { margin-bottom: 28px; }
+      .brand { font-size: 14px; }
+      .back { font-size: 14px; }
+      .hero { text-align: left; }
+      .hero p { font-size: 15px; }
+      .scope { justify-content: flex-start; }
+      .composer, .status-panel, .result-panel, .manual-panel { padding: 16px; }
+      .media-panel { padding: 16px; }
+      .composer-foot { align-items: stretch; flex-direction: column; }
+      .primary { width: 100%; }
+      .steps { grid-template-columns: 1fr; }
+      .media-steps { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .half { grid-column: span 1; }
+      .actions, .panel-head { align-items: stretch; flex-direction: column; }
+      .question-option { grid-template-columns: auto 1fr; }
+      .confidence { grid-column: 2; justify-self: start; }
+      .result-head { align-items: stretch; flex-direction: column; }
+      .button-link { width: 100%; }
+      .preview { min-height: 560px; }
+      .manual-form { grid-template-columns: 1fr; }
+      .manual-form .wide { grid-column: auto; }
+    }
+
+    @media (max-width: 430px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .wide, .half { grid-column: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { animation-duration: 1.8s; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="topbar" aria-label="页面导航">
+      <span class="brand">物理互动课件库</span>
+      <a class="back" href="../">返回课件首页</a>
+    </nav>
+
+    <header class="hero">
+      <span class="eyebrow">老师课件生成器</span>
+      <h1>把一道题，变成可操作的物理模型</h1>
+      <p>粘贴题目，或上传题目图片与 PDF。系统会识别参数、校验物理关系，并生成可直接讲解的互动课件。</p>
+      <div class="scope" aria-label="当前支持范围">
+        <span>匀强磁场</span><span>闭合平行导轨</span><span>导体杆匀速平动</span><span>定值总电阻</span>
+      </div>
+    </header>
+
+    <div class="input-tabs" role="tablist" aria-label="题目输入方式">
+      <button class="input-tab" id="textTab" type="button" role="tab" aria-selected="true" aria-controls="generateForm">粘贴文字</button>
+      <button class="input-tab" id="mediaTab" type="button" role="tab" aria-selected="false" aria-controls="mediaWorkflow">图片 / PDF</button>
+    </div>
+
+    <form class="panel composer" id="generateForm" role="tabpanel" aria-labelledby="textTab">
+      <label for="question">输入物理题目</label>
+      <textarea id="question" name="question" required minlength="12" maxlength="2000" placeholder="请粘贴包含 B、L、v、R 以及磁场和运动方向的完整题目……"></textarea>
+      <div class="composer-foot">
+        <div>
+          <p class="hint">当前模板外的题目会自动进入人工处理，24 小时内交付。</p>
+          <button class="secondary-small" id="exampleButton" type="button">填入一题试试</button>
+        </div>
+        <button class="primary" id="generateButton" type="submit">生成互动课件</button>
+      </div>
+    </form>
+
+    <section class="media-workflow" id="mediaWorkflow" role="tabpanel" aria-labelledby="mediaTab" hidden>
+      <div class="media-steps" aria-label="图片识别步骤">
+        <div class="media-step active" data-media-step="1">1　上传并识别</div>
+        <div class="media-step" data-media-step="2">2　老师核对参数</div>
+        <div class="media-step" data-media-step="3">3　生成互动课件</div>
+      </div>
+
+      <section class="panel media-panel" id="mediaUploadPanel">
+        <div class="panel-head"><div><h2>上传题目</h2><p>支持 PNG、JPEG、WebP 和不超过 6 页的 PDF；一页多题会分别列出。</p></div></div>
+        <label class="dropzone" id="mediaDropzone" for="mediaFileInput">
+          <input id="mediaFileInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" hidden>
+          <span><strong>点按选择或把文件拖到这里</strong>图片不超过 8 MB，PDF 不超过 20 MB</span>
+          <span class="file-name" id="mediaFileName"></span>
+        </label>
+        <p class="notice">AI 只负责初步读取。识别置信不足时不会直接生成，所有数值和方向都需要老师核对。</p>
+        <div class="actions"><button class="primary" id="mediaParseButton" type="button" disabled>识别题目</button></div>
+        <p class="error" id="mediaUploadError" role="alert"></p>
+      </section>
+
+      <section class="panel media-panel" id="mediaLoadingPanel" hidden aria-live="polite">
+        <div class="media-status"><span class="spinner" aria-hidden="true"></span><div><h2>正在读取题目</h2><p>图片越清晰，参数识别越可靠；PDF 会逐页处理。</p></div></div>
+      </section>
+
+      <section class="panel media-panel" id="mediaConfirmPanel" hidden>
+        <div class="panel-head"><div><h2>核对识别结果</h2><p id="mediaParseMessage"></p></div><button id="mediaChangeFile" type="button">更换文件</button></div>
+        <div class="question-list" id="mediaQuestionList" role="radiogroup" aria-label="识别到的题目"></div>
+        <form id="mediaConfirmForm">
+          <div class="form-grid">
+            <div class="wide"><label for="mediaQuestionText">完整题意</label><textarea id="mediaQuestionText" required minlength="12" maxlength="2000"></textarea></div>
+            <div><label for="mediaFieldValue">磁感应强度 B / T</label><input id="mediaFieldValue" type="number" min="0.01" max="5" step="any" required></div>
+            <div><label for="mediaRodLength">杆长/导轨间距 L / m</label><input id="mediaRodLength" type="number" min="0.1" max="5" step="any" required></div>
+            <div><label for="mediaRodSpeed">杆速 v / (m·s⁻¹)</label><input id="mediaRodSpeed" type="number" min="0.01" max="50" step="any" required></div>
+            <div><label for="mediaResistance">总电阻 R / Ω</label><input id="mediaResistance" type="number" min="0.001" max="100" step="any" required></div>
+            <div class="half"><label for="mediaFieldDirection">磁场方向</label><select id="mediaFieldDirection" required><option value="">请选择</option><option value="into_page">垂直纸面向里（×）</option><option value="out_of_page">垂直纸面向外（•）</option></select></div>
+            <div class="half"><label for="mediaMotionDirection">运动方向</label><select id="mediaMotionDirection" required><option value="">请选择</option><option value="right">向右</option><option value="left">向左</option></select></div>
+            <div class="half"><label for="mediaCurrentDirection">杆中电流方向</label><select id="mediaCurrentDirection" required><option value="">请选择</option><option value="d_to_c">d → c（沿棒向上）</option><option value="c_to_d">c → d（沿棒向下）</option></select></div>
+            <div class="half"><label for="mediaAsks">所求量（每行一项）</label><textarea id="mediaAsks" required></textarea></div>
+            <div class="wide confirm-box"><input id="mediaTeacherConfirmed" type="checkbox" required><label for="mediaTeacherConfirmed">我已逐项核对以上题意、数值和三个方向，并确认以修正后的参数生成。未经勾选，后端不会创建生成任务。</label></div>
+          </div>
+          <p class="error" id="mediaConfirmError" role="alert"></p>
+          <div class="actions"><button class="primary" id="mediaConfirmButton" type="submit">确认参数并生成</button></div>
+        </form>
+      </section>
+    </section>
+
+    <section class="panel status-panel" id="statusPanel" aria-live="polite" hidden>
+      <div class="status-head">
+        <span class="spinner" aria-hidden="true"></span>
+        <div><strong id="statusTitle">正在识别题目</strong><span id="statusCopy">通常约一分钟，请保持页面打开。</span></div>
+      </div>
+      <div class="steps">
+        <div class="step active" data-step="1">1　识别题型与参数</div>
+        <div class="step" data-step="2">2　校验方向与公式</div>
+        <div class="step" data-step="3">3　构建互动模型</div>
+      </div>
+    </section>
+
+    <section class="panel result-panel" id="resultPanel" hidden>
+      <div class="result-head">
+        <div><h2>课件已经生成</h2><p>可以直接操作模型，也可以在新页面中打开讲解。</p></div>
+        <a class="button-link" id="openResult" target="_blank" rel="noopener">在新页面打开</a>
+      </div>
+      <iframe class="preview" id="resultFrame" title="生成的互动课件预览"></iframe>
+    </section>
+
+    <section class="panel manual-panel" id="manualPanel" hidden>
+      <h2>这道题将转由人工制作</h2>
+      <p>当前自动模板还不能可靠覆盖它。留下联系方式后，我们将在 24 小时内交付。</p>
+      <div class="manual-reason" id="manualReason"></div>
+      <form class="manual-form" id="manualForm">
+        <div><label for="teacherName">称呼</label><input id="teacherName" required maxlength="50" autocomplete="name"></div>
+        <div><label for="teacherContact">联系方式</label><input id="teacherContact" required maxlength="120" placeholder="手机号、微信或邮箱" autocomplete="email"></div>
+        <div class="wide"><label for="teacherNote">补充说明（选填）</label><textarea id="teacherNote" maxlength="500" placeholder="例如上课时间、希望重点呈现的过程"></textarea></div>
+        <div class="wide"><button class="primary" id="manualSubmit" type="submit">提交人工制作</button><p class="feedback" id="manualFeedback" aria-live="polite"></p></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const $ = id => document.getElementById(id);
+      const configuredApiBase = document.querySelector('meta[name="courseware-api-base"]').content.replace(/\/$/, '');
+      const isLocalPreview = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
+      const apiBase = isLocalPreview ? '' : configuredApiBase;
+      const apiUrl = path => `${apiBase}${path}`;
+      const example = '两根平行光滑金属导轨间距为1.0 m，左端接0.40 Ω电阻形成闭合回路，其余电阻不计。整个装置处于垂直纸面向里的0.50 T匀强磁场中，导体杆以2.0 m/s向右做匀速直线运动。求感应电动势、电流方向和安培力大小。';
+      const outputPanels = ['statusPanel', 'resultPanel', 'manualPanel'];
+      const mediaPanels = ['mediaUploadPanel', 'mediaLoadingPanel', 'mediaConfirmPanel'];
+      let activeJobId = '';
+      let pollTimer = 0;
+      let pollCount = 0;
+      let inputMode = 'text';
+      let mediaFile = null;
+      let mediaParse = null;
+      let selectedQuestion = null;
+
+      function setVisible(id) {
+        for (const panelId of outputPanels) {
+          $(panelId).hidden = panelId !== id;
+        }
+      }
+
+      function setTabsDisabled(disabled) {
+        $('textTab').disabled = disabled;
+        $('mediaTab').disabled = disabled;
+      }
+
+      function selectInputMode(mode) {
+        if (mode === inputMode && !outputPanels.some(id => !$(id).hidden)) return;
+        inputMode = mode;
+        clearTimeout(pollTimer);
+        outputPanels.forEach(id => { $(id).hidden = true; });
+        $('generateForm').hidden = mode !== 'text';
+        $('mediaWorkflow').hidden = mode !== 'media';
+        $('textTab').setAttribute('aria-selected', String(mode === 'text'));
+        $('mediaTab').setAttribute('aria-selected', String(mode === 'media'));
+        if (mode === 'media') showMediaPanel(mediaParse ? 'mediaConfirmPanel' : 'mediaUploadPanel', mediaParse ? 2 : 1);
+      }
+
+      function showMediaPanel(panelId, step) {
+        mediaPanels.forEach(id => { $(id).hidden = id !== panelId; });
+        document.querySelectorAll('[data-media-step]').forEach(node => {
+          const number = Number(node.dataset.mediaStep);
+          node.classList.toggle('done', number < step);
+          node.classList.toggle('active', number === step);
+        });
+      }
+
+      function resetSubmitControls(label = '再生成一题') {
+        setTabsDisabled(false);
+        $('generateButton').disabled = false;
+        $('generateButton').textContent = label;
+        $('mediaConfirmButton').disabled = false;
+        $('mediaConfirmButton').textContent = '确认参数并生成';
+      }
+
+      function updateSteps(status) {
+        const active = status === 'queued' ? 1 : status === 'running' ? Math.min(3, 2 + Math.floor(pollCount / 4)) : 3;
+        document.querySelectorAll('.step').forEach(step => {
+          const number = Number(step.dataset.step);
+          step.classList.toggle('done', number < active || status === 'succeeded');
+          step.classList.toggle('active', number === active && status !== 'succeeded');
+        });
+        $('statusTitle').textContent = active === 1 ? '正在识别题目' : active === 2 ? '正在校验物理关系' : '正在构建互动模型';
+      }
+
+      async function requestJson(url, options = {}) {
+        const response = await fetch(apiUrl(url), {
+          ...options,
+          headers: {'Content-Type': 'application/json', ...(options.headers || {})}
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || `请求失败（${response.status}）`);
+        return payload;
+      }
+
+      async function pollJob() {
+        try {
+          const {job} = await requestJson(`/api/jobs/${activeJobId}`);
+          pollCount += 1;
+          updateSteps(job.status);
+          if (job.status === 'succeeded') {
+            clearTimeout(pollTimer);
+            resetSubmitControls();
+            $('openResult').href = job.output_url;
+            $('resultFrame').src = job.output_url;
+            setVisible('resultPanel');
+            return;
+          }
+          if (job.status === 'manual_required') {
+            clearTimeout(pollTimer);
+            resetSubmitControls('再试一题');
+            $('manualReason').textContent = job.reason || '题目超出当前自动模板范围。';
+            setVisible('manualPanel');
+            return;
+          }
+          if (pollCount >= 120) throw new Error('生成时间超过预期，请稍后重试。');
+          pollTimer = window.setTimeout(pollJob, 1000);
+        } catch (error) {
+          resetSubmitControls('重新生成');
+          $('manualReason').textContent = error instanceof Error ? error.message : '生成服务暂时不可用。';
+          setVisible('manualPanel');
+        }
+      }
+
+      function toBase64(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('文件读取失败'));
+          reader.onload = () => resolve(String(reader.result).split(',')[1]);
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      function setMediaFile(nextFile) {
+        mediaFile = nextFile || null;
+        $('mediaFileName').textContent = mediaFile ? `${mediaFile.name} · ${(mediaFile.size / 1024 / 1024).toFixed(2)} MB` : '';
+        $('mediaParseButton').disabled = !mediaFile;
+        $('mediaUploadError').textContent = '';
+      }
+
+      function chooseMediaQuestion(question) {
+        selectedQuestion = question;
+        const parameters = question.parameters;
+        $('mediaQuestionText').value = question.question_text || '';
+        $('mediaFieldValue').value = parameters.magnetic_field_t ?? '';
+        $('mediaRodLength').value = parameters.rod_length_m ?? '';
+        $('mediaRodSpeed').value = parameters.rod_speed_m_s ?? '';
+        $('mediaResistance').value = parameters.resistance_ohm ?? '';
+        $('mediaFieldDirection').value = parameters.field_direction ?? '';
+        $('mediaMotionDirection').value = parameters.motion_direction ?? '';
+        $('mediaCurrentDirection').value = question.current_direction ?? '';
+        $('mediaAsks').value = question.asks.join('\n');
+        $('mediaTeacherConfirmed').checked = false;
+        $('mediaConfirmError').textContent = question.ready_for_confirmation ? '' : (question.reason || '置信不足或参数不完整，请人工核对并补全。');
+      }
+
+      function renderMediaQuestions() {
+        $('mediaQuestionList').replaceChildren();
+        mediaParse.questions.forEach((question, index) => {
+          const label = document.createElement('label');
+          label.className = 'question-option';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'mediaParsedQuestion';
+          radio.value = question.id;
+          radio.checked = index === 0;
+          const copy = document.createElement('span');
+          const title = document.createElement('strong');
+          title.textContent = `第 ${question.page} 页 · 第 ${index + 1} 条`;
+          const detail = document.createElement('small');
+          detail.textContent = question.question_text;
+          copy.append(title, detail);
+          const confidence = document.createElement('span');
+          confidence.className = `confidence${question.ready_for_confirmation ? '' : ' low'}`;
+          confidence.textContent = `置信度 ${Math.round(question.confidence * 100)}%`;
+          label.append(radio, copy, confidence);
+          radio.addEventListener('change', () => chooseMediaQuestion(question));
+          $('mediaQuestionList').append(label);
+        });
+        chooseMediaQuestion(mediaParse.questions[0]);
+      }
+
+      $('textTab').addEventListener('click', () => selectInputMode('text'));
+      $('mediaTab').addEventListener('click', () => selectInputMode('media'));
+
+      $('exampleButton').addEventListener('click', () => {
+        $('question').value = example;
+        $('question').focus();
+      });
+
+      $('generateForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        clearTimeout(pollTimer);
+        pollCount = 0;
+        activeJobId = '';
+        $('generateButton').disabled = true;
+        $('generateButton').textContent = '正在生成…';
+        setTabsDisabled(true);
+        $('resultFrame').removeAttribute('src');
+        setVisible('statusPanel');
+        updateSteps('queued');
+        try {
+          const {job} = await requestJson('/api/generate', {
+            method: 'POST',
+            body: JSON.stringify({question: $('question').value})
+          });
+          activeJobId = job.id;
+          pollJob();
+        } catch (error) {
+          resetSubmitControls('重新生成');
+          $('manualReason').textContent = error instanceof Error ? error.message : '生成服务暂时不可用。';
+          setVisible('manualPanel');
+        }
+      });
+
+      $('mediaFileInput').addEventListener('change', event => setMediaFile(event.target.files[0]));
+      const mediaDropzone = $('mediaDropzone');
+      ['dragenter', 'dragover'].forEach(type => mediaDropzone.addEventListener(type, event => {
+        event.preventDefault();
+        mediaDropzone.classList.add('drag');
+      }));
+      ['dragleave', 'drop'].forEach(type => mediaDropzone.addEventListener(type, event => {
+        event.preventDefault();
+        mediaDropzone.classList.remove('drag');
+      }));
+      mediaDropzone.addEventListener('drop', event => setMediaFile(event.dataTransfer.files[0]));
+
+      $('mediaParseButton').addEventListener('click', async () => {
+        if (!mediaFile) return;
+        showMediaPanel('mediaLoadingPanel', 1);
+        setTabsDisabled(true);
+        try {
+          const dataBase64 = await toBase64(mediaFile);
+          const {parse} = await requestJson('/api/media/parse', {
+            method: 'POST',
+            body: JSON.stringify({filename: mediaFile.name, mime_type: mediaFile.type, data_base64: dataBase64})
+          });
+          mediaParse = parse;
+          $('mediaParseMessage').textContent = `${mediaParse.message} 共识别 ${mediaParse.questions.length} 道候选题。`;
+          renderMediaQuestions();
+          showMediaPanel('mediaConfirmPanel', 2);
+        } catch (error) {
+          showMediaPanel('mediaUploadPanel', 1);
+          $('mediaUploadError').textContent = error instanceof Error ? error.message : '识别失败';
+        } finally {
+          setTabsDisabled(false);
+        }
+      });
+
+      $('mediaChangeFile').addEventListener('click', () => {
+        clearTimeout(pollTimer);
+        mediaParse = null;
+        selectedQuestion = null;
+        $('mediaFileInput').value = '';
+        setMediaFile(null);
+        showMediaPanel('mediaUploadPanel', 1);
+      });
+
+      $('mediaConfirmForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!selectedQuestion || !$('mediaTeacherConfirmed').checked) return;
+        $('mediaConfirmButton').disabled = true;
+        $('mediaConfirmButton').textContent = '正在提交…';
+        $('mediaConfirmError').textContent = '';
+        setTabsDisabled(true);
+        try {
+          const {job} = await requestJson('/api/media/confirm', {
+            method: 'POST',
+            body: JSON.stringify({
+              parse_id: mediaParse.id,
+              question_id: selectedQuestion.id,
+              teacher_confirmed: true,
+              question_text: $('mediaQuestionText').value,
+              parameters: {
+                magnetic_field_t: Number($('mediaFieldValue').value),
+                rod_length_m: Number($('mediaRodLength').value),
+                rod_speed_m_s: Number($('mediaRodSpeed').value),
+                resistance_ohm: Number($('mediaResistance').value),
+                field_direction: $('mediaFieldDirection').value,
+                motion_direction: $('mediaMotionDirection').value
+              },
+              current_direction: $('mediaCurrentDirection').value,
+              asks: $('mediaAsks').value.split('\n').map(item => item.trim()).filter(Boolean)
+            })
+          });
+          activeJobId = job.id;
+          pollCount = 0;
+          $('mediaWorkflow').hidden = true;
+          setVisible('statusPanel');
+          updateSteps('running');
+          pollJob();
+        } catch (error) {
+          $('mediaConfirmButton').disabled = false;
+          $('mediaConfirmButton').textContent = '确认参数并生成';
+          $('mediaTeacherConfirmed').checked = false;
+          $('mediaConfirmError').textContent = error instanceof Error ? error.message : '确认失败';
+          setTabsDisabled(false);
+        }
+      });
+
+      $('manualForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!activeJobId) {
+          $('manualFeedback').textContent = '生成服务未连接，请稍后重试。';
+          $('manualFeedback').classList.add('error');
+          return;
+        }
+        $('manualSubmit').disabled = true;
+        $('manualFeedback').textContent = '';
+        try {
+          const payload = await requestJson('/api/manual-requests', {
+            method: 'POST',
+            body: JSON.stringify({
+              job_id: activeJobId,
+              name: $('teacherName').value,
+              contact: $('teacherContact').value,
+              note: $('teacherNote').value
+            })
+          });
+          $('manualFeedback').classList.remove('error');
+          $('manualFeedback').textContent = `提交成功，${payload.delivery}。`;
+        } catch (error) {
+          $('manualFeedback').classList.add('error');
+          $('manualFeedback').textContent = error instanceof Error ? error.message : '提交失败，请稍后重试。';
+          $('manualSubmit').disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

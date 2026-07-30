@@ -1,0 +1,17 @@
+{
+  "id": "projectile-holdout-horizontal-warehouse",
+  "domain": "projectile",
+  "status": "succeeded",
+  "attempts": 5,
+  "model_attempts": 3,
+  "view_attempts": 2,
+  "repair_attempts": 1,
+  "output_path": "harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-horizontal-warehouse/index.html",
+  "teaching_intent": "让学生把平抛看成水平匀速与竖直自由落体在同一物理时间中叠加：先以老师确认的 v0=12 m/s、y0=30 m、g=9.8 m/s² 暂停在 t=0，再拖动时间观察 x、y、vx、vy、加速度与动能/势能/机械能如何同步变化；随后只通过控件改变初速度、抛出方式/角度、高度、重力或质量，重新采样验证射程、飞行时间、最高点与能量守恒，而不在页面内手算公式。",
+  "source_artifact": "harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-horizontal-warehouse",
+  "browser_finding": {
+    "id": "projectile-holdout-horizontal-warehouse",
+    "status": "rejected",
+    "reason": "首屏控件和首次采样使用 v0=14 m/s、y0=31 m、g=14.3 m/s²，覆盖了老师确认的 12、30、9.8。"
+  }
+}

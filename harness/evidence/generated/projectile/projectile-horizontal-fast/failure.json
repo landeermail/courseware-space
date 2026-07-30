@@ -1,0 +1,10 @@
+{
+  "phase": "model",
+  "status": "rejected",
+  "attempts": 3,
+  "failures": [
+    "模型传输失败：Kimi 鉴权或权限失败（HTTP 403）。请重新输出完整 JSON。",
+    "模型传输失败：Kimi 鉴权或权限失败（HTTP 403）。请重新输出完整 JSON。",
+    "模型传输失败：Kimi 鉴权或权限失败（HTTP 403）。请重新输出完整 JSON。"
+  ]
+}

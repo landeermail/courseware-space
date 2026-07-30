@@ -1,0 +1,35 @@
+{
+  "acceptance": "harness-projectile-faults-v1",
+  "ran_at": "2026-07-29T08:27:54.536639+00:00",
+  "source_artifact": "harness/evidence/generated/projectile-pilot-10-security-contract/projectile-horizontal-cliff",
+  "records": [
+    {
+      "fault": "velocity_direction",
+      "red_status": "blocked",
+      "red_failed": [
+        "state_1_vy_linear"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 5
+    },
+    {
+      "fault": "energy_conservation",
+      "red_status": "blocked",
+      "red_failed": [
+        "state_2_energy_conserved",
+        "state_2_energy_sum"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 5
+    },
+    {
+      "fault": "range_critical",
+      "red_status": "blocked",
+      "red_failed": [
+        "range_boundary"
+      ],
+      "green_status": "passed",
+      "green_probe_count": 5
+    }
+  ]
+}

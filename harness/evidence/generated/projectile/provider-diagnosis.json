@@ -1,0 +1,12 @@
+{
+  "diagnosed_at": "2026-07-29T08:14:13Z",
+  "run": "harness/evidence/generated/projectile/results.json",
+  "status": "provider_unavailable",
+  "entered_physics_validation": false,
+  "evidence": [
+    "15/15 model attempts returned HTTP 403 before producing model output",
+    "the teacher-provided Kimi account console showed frequency usage at 100%",
+    "the same console showed weekly usage at 23% and a frequency reset countdown"
+  ],
+  "interpretation": "The fixed 0/5 run records provider unavailability, not five physics assertion failures. Existing evidence files are preserved unchanged."
+}

@@ -1,0 +1,32 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v4-runtime-state",
+  "ran_at": "2026-07-29T12:32:59.785943+00:00",
+  "raw": "{\"title\":\"竖直圆周与绳张力余量\",\"domain\":\"circular\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample(input){const s=(input&&input.scenario)||{};const A=(input&&input.angles_rad);const angles=Array.isArray(A)&&A.length?A:[0];const num=(v,d)=>{const n=Number(v);return Number.isFinite(n)?n:d;};const fin=x=>Number.isFinite(x)?x:0;const G=num(s.G_n_m2_kg2,0),M=num(s.central_mass_kg,0),g=num(s.g_m_s2,0),m=num(s.mass_kg,0),r=num(s.radius_m,0),v0=num(s.speed_m_s,0),mode=String(s.mode||'uniform');const pi=Math.PI,twoPi=2*pi;let v=0,aC=0,period=0,potential=()=>0,tension=()=>0;const v2vertical=th=>v0*v0-2*g*r*(1-Math.cos(th));if(mode==='orbit'){const gm=G*M;v=(gm>0&&r>0)?Math.sqrt(gm/r):0;aC=(r>0)?v*v/r:0;period=(v>0)?twoPi*r/v:0;potential=()=>-(gm*m)/r;tension=()=>0;}else if(mode==='vertical_string'){aC=(r>0)?v0*v0/r:0;const minV2=v0*v0-4*g*r;if(r>0&&minV2>0){const n=4096,h=twoPi/n;let sum=0;for(let i=0;i<=n;i++){const th=i*h;const vv=Math.sqrt(Math.max(v2vertical(th),1e-18));const f=r/vv;sum+=f*(i===0||i===n?1:(i%2?4:2));}period=sum*h/3;}else{period=0;}potential=th=>m*g*r*(1-Math.cos(th));tension=th=>{const v2=Math.max(v2vertical(th),0);return (r>0)?m*v2/r+m*g*Math.cos(th):0;};}else{v=v0;aC=(r>0)?v*v/r:0;period=(v>0)?twoPi*r/v:0;potential=()=>0;tension=()=>m*aC;}const states=angles.map(an=>{const th=num(an,0),c=Math.cos(th),si=Math.sin(th);let x,y,speed,ax,ay,rad,tens,k,pot,mech;if(mode==='vertical_string'){const v2=Math.max(v2vertical(th),0);speed=Math.sqrt(v2);x=r*si;y=-r*c;const cent=(r>0)?v2/r:0;ax=-cent*si-g*si*c;ay=cent*c-g*si*si;rad=m*cent;tens=tension(th);pot=potential(th);k=0.5*m*v2;mech=k+pot;}else{speed=v;x=r*c;y=r*si;ax=-aC*c;ay=-aC*si;rad=m*aC;tens=tension(th);k=0.5*m*v*v;pot=potential(th);mech=k+pot;}return {angle_rad:fin(th),x_m:fin(x),y_m:fin(y),speed_m_s:fin(speed),ax_m_s2:fin(ax),ay_m_s2:fin(ay),radial_force_n:fin(rad),tension_n:fin(tens),kinetic_j:fin(k),potential_j:fin(pot),mechanical_j:fin(mech)};});const events={period_s:fin(period),centripetal_acceleration_m_s2:fin(aC)};if(mode==='vertical_string'){events.critical_top_speed_m_s=fin(Math.sqrt(Math.max(g*r,0)));events.critical_bottom_speed_m_s=fin(Math.sqrt(Math.max(5*g*r,0)));}return {states:states,events:events};}})\"}",
+  "provider": {
+    "phase": "physics_model",
+    "requested_model": "k3-256k",
+    "reasoning_effort": "high",
+    "max_completion_tokens": 32768,
+    "response_format": "json_object",
+    "temperature": "provider_default",
+    "top_p": "provider_default",
+    "stream": true,
+    "prompt_cache_key": "6a03f9694c5bada71491766706941933c374d20719ecba81c1e5e6f1136335da",
+    "response_id": "chatcmpl-gF5as8QfcM5WI5W2qJOTD2rl",
+    "actual_model": "k3-256k",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 635,
+      "completion_tokens": 7027,
+      "total_tokens": 7662,
+      "completion_tokens_details": {
+        "reasoning_tokens": 6088
+      }
+    },
+    "attempt": 1,
+    "latency_ms": 145012
+  },
+  "status": "rejected",
+  "failure": "state_0_y_geometry: actual=-1.2, expected=0\nstate_1_y_geometry: actual=-0.848528137423857, expected=0.351471862576\nstate_1_ax_inward: actual=-48.587572106361, expected=-43.5875721064\nstate_1_ay_inward: actual=38.58757210636101, expected=43.5875721064\nstate_2_y_geometry: actual=-7.347880794884119e-17, expected=1.2\nstate_2_ay_inward: actual=-9.999999999999996, expected=2.90853614797e-15\nstate_3_y_geometry: actual=0.8485281374238569, expected=2.04852813742\nstate_3_ax_inward: actual=-18.587572106361012, expected=-23.5875721064\nstate_3_ay_inward: actual=-28.58757210636101, expected=-23.5875721064\nstate_4_y_geometry: actual=1.2, expected=2.4\nstate_5_y_geometry: actual=0.8485281374238572, expected=2.04852813742\nstate_5_ax_inward: actual=18.587572106361005, expected=23.5875721064"
+}

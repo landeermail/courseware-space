@@ -1,0 +1,7 @@
+[
+  {"id":"projectile-holdout-horizontal-warehouse","question":"从30 m高的仓库平台以12 m/s水平抛出质量0.8 kg的小球，取g=9.8 m/s²。观察水平与竖直运动如何同时发生。","scenario":{"mode":"horizontal","g_m_s2":9.8,"mass_kg":0.8,"x0_m":-3,"y0_m":30,"speed_m_s":12,"angle_deg":0}},
+  {"id":"projectile-holdout-oblique-37","question":"从水平地面以22 m/s、仰角37°抛出质量1.2 kg的小球，取g=10 m/s²。比较上升与下降阶段的速度和能量。","scenario":{"mode":"oblique","g_m_s2":10,"mass_kg":1.2,"x0_m":5,"y0_m":0,"speed_m_s":22,"angle_deg":37}},
+  {"id":"projectile-holdout-elevated-25","question":"从12 m高处以16 m/s、仰角25°抛出质量0.6 kg的小球，取g=9.8 m/s²。观察最高点与落地点怎样由初始条件决定。","scenario":{"mode":"oblique","g_m_s2":9.8,"mass_kg":0.6,"x0_m":-2,"y0_m":12,"speed_m_s":16,"angle_deg":25}},
+  {"id":"projectile-holdout-moon-horizontal","question":"在月面5 m高处以4 m/s水平抛出质量0.2 kg的小球，取月面重力加速度1.62 m/s²。比较弱重力下的轨迹与飞行时间。","scenario":{"mode":"horizontal","g_m_s2":1.62,"mass_kg":0.2,"x0_m":0,"y0_m":5,"speed_m_s":4,"angle_deg":0}},
+  {"id":"projectile-holdout-steep-55","question":"从3 m高处以24 m/s、仰角55°抛出质量2 kg的小球，取g=9.8 m/s²。操控角度观察最高点、射程与速度方向。","scenario":{"mode":"oblique","g_m_s2":9.8,"mass_kg":2,"x0_m":1,"y0_m":3,"speed_m_s":24,"angle_deg":55}}
+]

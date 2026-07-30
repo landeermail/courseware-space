@@ -1,0 +1,9 @@
+{
+  "acceptance": "harness-browser-identical-artifact-v1",
+  "verified_at": "2026-07-29T08:28:06Z",
+  "status": "passed-by-identical-artifact",
+  "sha256": "43ba8c559abb16b0cb79e4db6422deb9ab60710fe56a2df3b36a72c23374765d",
+  "identical_to": "harness/evidence/generated/projectile-pilot-10-security-contract/projectile-horizontal-cliff/index.html",
+  "browser_evidence": "harness/evidence/generated/projectile-pilot-10-security-contract/projectile-horizontal-cliff/browser-acceptance.json",
+  "reason": "pilot-11 changes the independent probe axes and assertion report; its rendered index.html is byte-identical to the browser-tested pilot-10 artifact"
+}

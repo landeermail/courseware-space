@@ -1,0 +1,11 @@
+{
+  "id": "projectile-holdout-horizontal-warehouse",
+  "domain": "projectile",
+  "status": "succeeded",
+  "revalidated": true,
+  "source_model_attempt": "harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-horizontal-warehouse/model-attempts/03.json",
+  "source_view_attempt": "harness/evidence/generated/projectile-k3-holdout-1/projectile-holdout-horizontal-warehouse/view-attempts/01.json",
+  "probe_count": 5,
+  "output_path": "harness/evidence/generated/projectile-runtime-guard-scenario-red/projectile-holdout-horizontal-warehouse/index.html",
+  "teaching_intent": "让学生把平抛看成水平匀速与竖直自由落体同时进行：拖时间轴看位置轨迹、速度分量、加速度方向与重力一致，调初速度和平台高度比较飞行时间与落点，并用能量条观察动能、势能此消彼长而机械能保持不变。"
+}

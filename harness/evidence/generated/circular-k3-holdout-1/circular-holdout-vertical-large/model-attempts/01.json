@@ -1,0 +1,32 @@
+{
+  "attempt": 1,
+  "prompt_version": "harness-free-code-v4-runtime-state",
+  "ran_at": "2026-07-29T12:45:58.951988+00:00",
+  "raw": "{\"title\":\"竖直圆周运动：最低点与最高点速度、张力、能量比较\",\"domain\":\"circular\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample(input){const sc=(input&&input.scenario)||{};const angles=Array.isArray(input&&input.angles_rad)?input.angles_rad:[0];const mode=sc.mode;const m=+sc.mass_kg;const r=+sc.radius_m;const g=+sc.g_m_s2;const G=+sc.G_n_m2_kg2;const M=+sc.central_mass_kg;const v0=+sc.speed_m_s;const TAU=Math.PI*2;function num(x){return Number.isFinite(x)?x:0;}function stateUniform(th,v){const c=Math.cos(th),s=Math.sin(th);const ac=v*v/r;const ke=0.5*m*v*v;return{angle_rad:th,x_m:r*c,y_m:r*s,speed_m_s:v,ax_m_s2:-ac*c,ay_m_s2:-ac*s,radial_force_n:m*ac,tension_n:m*ac,kinetic_j:ke,potential_j:0,mechanical_j:ke};}function stateOrbit(th,v){const c=Math.cos(th),s=Math.sin(th);const ag=G*M/(r*r);const ke=0.5*m*v*v;const pe=-G*M*m/r;return{angle_rad:th,x_m:r*c,y_m:r*s,speed_m_s:v,ax_m_s2:-ag*c,ay_m_s2:-ag*s,radial_force_n:G*M*m/(r*r),tension_n:0,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe};}function vVert(th){const val=v0*v0-2*g*r*(1-Math.cos(th));return Math.sqrt(Math.max(val,1e-12));}function stateVertical(th){const c=Math.cos(th),s=Math.sin(th);const v=vVert(th);const ac=v*v/r;const at=-g*s;const x=r*s,y=-r*c;const ke=0.5*m*v*v;const pe=m*g*r*(1-c);return{angle_rad:th,x_m:x,y_m:y,speed_m_s:v,ax_m_s2:-ac*s+at*c,ay_m_s2:ac*c+at*s,radial_force_n:m*ac,tension_n:m*ac+m*g*c,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe};}let states=[],events={};if(mode===\\\"vertical_string\\\"){states=angles.map(stateVertical);const N=8192,h=TAU/N;let sum=h? (r/vVert(0)+r/vVert(TAU)):0;for(let i=1;i<N;i++){const th=i*h;sum+=(i%2?4:2)*(r/vVert(th));}const period=sum*h/3;events={period_s:num(period),centripetal_acceleration_m_s2:num(v0*v0/r),critical_top_speed_m_s:num(Math.sqrt(g*r)),critical_bottom_speed_m_s:num(Math.sqrt(5*g*r))};}else if(mode===\\\"orbit\\\"){const v=Math.sqrt(G*M/r);states=angles.map(function(th){return stateOrbit(th,v);});events={period_s:num(TAU*r/v),centripetal_acceleration_m_s2:num(G*M/(r*r))};}else{states=angles.map(function(th){return stateUniform(th,v0);});events={period_s:num(TAU*r/v0),centripetal_acceleration_m_s2:num(v0*v0/r)};}return{states:states,events:events};}});\"}",
+  "provider": {
+    "phase": "physics_model",
+    "requested_model": "k3-256k",
+    "reasoning_effort": "high",
+    "max_completion_tokens": 32768,
+    "response_format": "json_object",
+    "temperature": "provider_default",
+    "top_p": "provider_default",
+    "stream": true,
+    "prompt_cache_key": "96768460a00f4e715f34319e07c4d97f3bcf5b4ab118203cd914b2af93837da1",
+    "response_id": "chatcmpl-x3imBP5o2LFseZnTwc7PWPHX",
+    "actual_model": "k3-256k",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 636,
+      "completion_tokens": 4896,
+      "total_tokens": 5532,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4044
+      }
+    },
+    "attempt": 1,
+    "latency_ms": 154363
+  },
+  "status": "rejected",
+  "failure": "state_0_y_geometry: actual=-2.5, expected=0\nstate_1_y_geometry: actual=-1.7677669529663689, expected=0.732233047034\nstate_1_ax_inward: actual=-41.570057685088805, expected=-36.6700576851\nstate_1_ay_inward: actual=31.77005768508881, expected=36.6700576851\nstate_2_y_geometry: actual=-1.5308084989341916e-16, expected=2.5\nstate_2_ay_inward: actual=-9.799999999999999, expected=2.32682891838e-15\nstate_3_y_geometry: actual=1.7677669529663687, expected=4.26776695297\nstate_3_ax_inward: actual=-12.170057685088805, expected=-17.0700576851\nstate_3_ay_inward: actual=-21.970057685088804, expected=-17.0700576851\nstate_4_y_geometry: actual=2.5, expected=5\nstate_5_y_geometry: actual=1.7677669529663693, expected=4.26776695297\nstate_5_ax_inward: actual=12.170057685088796, expected=17.0700576851"
+}

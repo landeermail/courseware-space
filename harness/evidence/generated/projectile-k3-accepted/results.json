@@ -1,0 +1,12 @@
+{
+  "acceptance": "projectile-k3-accepted-v1",
+  "classification": "model_generated_acceptance_manifest",
+  "model": "k3-256k",
+  "records": [
+    {"id":"projectile-holdout-horizontal-warehouse","status":"succeeded","artifact_path":"harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-horizontal-warehouse"},
+    {"id":"projectile-holdout-oblique-37","status":"succeeded","artifact_path":"harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-oblique-37"},
+    {"id":"projectile-holdout-moon-horizontal","status":"succeeded","artifact_path":"harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-moon-horizontal"},
+    {"id":"projectile-holdout-steep-55","status":"succeeded","artifact_path":"harness/evidence/generated/projectile-k3-browser-repair-1/projectile-holdout-steep-55"},
+    {"id":"projectile-oblique-platform","status":"succeeded","artifact_path":"harness/evidence/generated/projectile-k3-platform-current-guard/projectile-oblique-platform"}
+  ]
+}
