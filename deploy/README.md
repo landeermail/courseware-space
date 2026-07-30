@@ -18,7 +18,7 @@
 - Python 3、`jq`、`zip`；
 - Docker 可选；`auto` 模式在 Apple Silicon 上默认使用 manylinux x86_64 wheels，避免慢速架构仿真；x86_64 主机有 Docker 时使用目标 Linux 容器；
 - 阿里云 OSS 服务已启用；
-- 三个 key 只通过环境变量临时注入。
+- AccessKey、Kimi key 与预览访问码只通过环境变量临时注入；访问码推荐保存于 macOS 钥匙串服务 `courseware-space-preview-access-code`。
 
 当前演示资源已经创建；实际资源名和最近部署状态只保存在忽略版本控制的 `deploy/dist/cloud-state.json`。历史阻塞与裁决见根目录 `BLOCKED.md`。
 
@@ -28,13 +28,17 @@
 export ALIBABA_CLOUD_ACCESS_KEY_ID="$(security find-generic-password -a "$USER" -s courseware-space-aliyun-access-key-id -w)"
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET="$(security find-generic-password -a "$USER" -s courseware-space-aliyun-access-key-secret -w)"
 export KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)"
+export COURSEWARE_ACCESS_CODE="$(security find-generic-password -a "$USER" -s courseware-space-preview-access-code -w)"
 export ALIYUN_CLI=/absolute/path/to/aliyun
 export COURSEWARE_OSS_BUCKET=courseware-space-demo-unique-suffix
+export COURSEWARE_FEEDBACK_OSS_BUCKET=courseware-space-private-unique-suffix
 # 可省略：默认 auto；发布前兼容性复核可显式设为 docker
 export COURSEWARE_BUILD_MODE=auto
 
 ./deploy/deploy.sh
 ```
+
+本机钥匙串服务名采用仓库约定时，也可以直接运行 `./deploy/deploy_from_keychain.sh`。脚本只把访问码注入 FC 环境变量，不打印其值；运行角色只允许写 demo bucket 的 `staging/*` 与 private bucket 的 `feedback/*`。
 
 部署状态写入忽略版本控制的 `deploy/dist/cloud-state.json`。部署脚本不会打印 key；出现错误时也只输出云服务错误码和脱敏资源名。
 

@@ -499,6 +499,13 @@
       const isLocalPreview = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
       const apiBase = isLocalPreview ? '' : configuredApiBase;
       const apiUrl = path => `${apiBase}${path}`;
+      const accessStorageKey = 'coursewareAccessCode';
+      const fragment = new URLSearchParams(window.location.hash.slice(1));
+      const fragmentAccessCode = fragment.get('access');
+      if (fragmentAccessCode) {
+        sessionStorage.setItem(accessStorageKey, fragmentAccessCode);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
       const example = '两根平行光滑金属导轨间距为1.0 m，左端接0.40 Ω电阻形成闭合回路，其余电阻不计。整个装置处于垂直纸面向里的0.50 T匀强磁场中，导体杆以2.0 m/s向右做匀速直线运动。求感应电动势、电流方向和安培力大小。';
       const outputPanels = ['statusPanel', 'resultPanel', 'manualPanel'];
       const mediaPanels = ['mediaUploadPanel', 'mediaLoadingPanel', 'mediaConfirmPanel'];
@@ -561,9 +568,14 @@
       }
 
       async function requestJson(url, options = {}) {
+        const accessCode = sessionStorage.getItem(accessStorageKey) || '';
         const response = await fetch(apiUrl(url), {
           ...options,
-          headers: {'Content-Type': 'application/json', ...(options.headers || {})}
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Courseware-Access-Code': accessCode,
+            ...(options.headers || {})
+          }
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(payload.error || `请求失败（${response.status}）`);

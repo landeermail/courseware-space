@@ -1,5 +1,16 @@
 # 待裁决清单
 
+## 已解除：2026-07-30 老师首次线上体验的 FC 控制面 endpoint
+
+- 任务 0 的只读 `GetFunction` 连续三次未抵达 FC：系统 Python SDK 与工作区 OpenSSL Python SDK 均对推测的 `<account>.fcv3.cn-hangzhou.aliyuncs.com` 返回 TLS EOF，无签名 curl 随后确认该 hostname DNS 不解析。凭证未打印，函数配置未读取，云资源未修改。
+- 解除证据：从阿里云官方分发地址取得 CLI 3.4.11，二进制签名链为 Alibaba Cloud Computing Ltd. → Developer ID Certification Authority → Apple Root CA；通过 CLI 插件的 FC 通道成功只读 `GetFunction`。脱敏输出只列环境变量名，并确认访问码与 feedback bucket 变量当前均不存在。
+- 后续处理：部署继续使用同一 CLI 通道；此前错误猜测的 SDK endpoint 不再作为本轮路径。
+
+## 2026-07-30：GitHub Pages 过渡入口何时撤下
+
+- 任务书接受随机路径处于公开仓库/Pages 的过渡代价，但备案切换完成后是否撤下仍需届时裁决。
+- 当前处理：切换脚本只 dry-run；真实域名、DNS、SSL 均未操作。备案后先完成新域名真实浏览器验收，再决定是否删除过渡入口，不阻塞本轮交付。
+
 ## 2026-07-30：私有课件长期链接交付（路线 A）
 
 - 无。目标 bucket、前缀权限、一行交付、长期链接与匿名验收均已成立；未新增或触碰 FC、RAM、demo bucket、域名、CDN及其他云资源。
