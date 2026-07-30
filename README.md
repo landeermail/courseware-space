@@ -27,7 +27,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 物理正确性通过后，课件按[好课件六维标准](docs/quality/standard.md)评价：因果呈现、过程可见、有效交互、任务驱动、可验证性、与解题的衔接。老师可在 <http://localhost:8000/trial/> 逐维记录反馈并导出 JSON；反馈格式和本地校验命令见 `feedback/README.md`，第一次试用流程见 `trial/protocol.md`。
 
-老师提供的内部试题不进入公开仓库或 GitHub Pages。完整题页只生成在被 Git 忽略的 `trial/private/`，需要在两台电脑之间通过私有渠道单独同步。
+老师提供的内部试题不进入公开仓库或 GitHub Pages。完整题页只生成在被 Git 忽略的 `trial/private/`，需要在两台电脑之间通过私有渠道单独同步；验收后可按 `deploy/README.md` 的一行命令交付不可列举的 OSS 长期链接。
 
 ## 目录结构
 

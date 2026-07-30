@@ -48,3 +48,27 @@ export COURSEWARE_FC_CODE_OBJECT=deploy/code/<sha256>.zip
 ```
 
 回滚只更新函数代码指针，不修改环境变量、角色、触发器或 OSS 对象。
+
+## 私有课件长期链接
+
+内部试题课件使用独立的 `courseware-space-private-10794778` bucket，与生成器 demo bucket、FC 和 RAM 完全分离。bucket ACL 保持 `private`；Bucket Policy 只允许匿名读取 `private/*` 对象，并显式拒绝 bucket 和前缀列举。完整链接包含 48 位密码学随机路径，不进入 Git。
+
+首次创建或复核 bucket：
+
+```bash
+./deploy/setup_private_bucket.sh
+```
+
+交付一个课件只需一行：
+
+```bash
+./deploy/deliver.sh trial/private/courseware/q01-vertical-circle
+```
+
+同一课件默认复用首次随机路径，以保持老师手中的链接长期稳定。映射和历次交付摘要写入被忽略的 `trial/private/deliveries.json`。如果链接泄露，使用 `--rotate`：脚本先上传到新随机路径，成功后删除旧前缀并停用旧记录。
+
+```bash
+./deploy/deliver.sh --rotate trial/private/courseware/q01-vertical-circle
+```
+
+脚本只接受 `trial/private/courseware/` 下的目录，只允许操作固定 private bucket 和杭州区域。AccessKey 每次从 macOS 钥匙串读取，只注入临时进程；SDK 安装在系统临时目录，不写入仓库。不要把输出链接或 `deliveries.json` 提交到公开仓库。
