@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import os
 import sys
 import time
 from datetime import datetime, timezone
@@ -27,16 +28,22 @@ from run_media_acceptance import EXPECTED as MEDIA_EXPECTED  # noqa: E402
 
 
 class PublicApi:
-    def __init__(self, base_url: str, origin: str) -> None:
+    def __init__(self, base_url: str, origin: str, access_code: str) -> None:
         self.base_url = base_url.rstrip("/")
         self.origin = origin
+        self.access_code = access_code
 
     def json(self, path: str, payload: dict[str, Any] | None = None, timeout: int = 190) -> dict[str, Any]:
         body = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
         request = Request(
             f"{self.base_url}{path}",
             data=body,
-            headers={"Accept": "application/json", "Content-Type": "application/json", "Origin": self.origin},
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Origin": self.origin,
+                "X-Courseware-Access-Code": self.access_code,
+            },
             method="GET" if payload is None else "POST",
         )
         try:
@@ -253,11 +260,15 @@ def main() -> int:
     parser.add_argument("--base-url", required=True)
     parser.add_argument("--origin", default=DEFAULT_ORIGIN)
     args = parser.parse_args()
+    access_code = os.environ.get("COURSEWARE_ACCESS_CODE", "")
+    if not access_code:
+        print("缺少 COURSEWARE_ACCESS_CODE；请从钥匙串临时注入。", file=sys.stderr)
+        return 2
     if RESULTS_PATH.exists():
         print(f"拒绝重跑：公网验收结果已存在 {RESULTS_PATH.relative_to(ROOT)}", file=sys.stderr)
         return 2
 
-    api = PublicApi(args.base_url, args.origin)
+    api = PublicApi(args.base_url, args.origin, access_code)
     health = api.json("/api/health")
     task2_in = run_text_cases(api, load_fixture("task2-in-scope.json"), True)
     task2_out = run_text_cases(api, load_fixture("task2-out-of-scope.json"), False)

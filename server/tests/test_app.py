@@ -10,7 +10,13 @@ from unittest.mock import patch
 SERVER_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVER_DIR))
 
-from app import DEFAULT_CORS_ORIGINS, RequestRateLimiter, cors_origins_from_environment  # noqa: E402
+from access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
+from app import (  # noqa: E402
+    DEFAULT_CORS_ORIGINS,
+    GeneratorHandler,
+    RequestRateLimiter,
+    cors_origins_from_environment,
+)
 
 
 class RequestRateLimiterTests(unittest.TestCase):
@@ -48,6 +54,37 @@ class CorsConfigurationTests(unittest.TestCase):
         with patch.dict(os.environ, {"COURSEWARE_CORS_ORIGINS": "javascript:alert(1)"}, clear=True):
             with self.assertRaisesRegex(RuntimeError, "HTTP"):
                 cors_origins_from_environment()
+
+
+class AccessOrderingTests(unittest.TestCase):
+    def test_wrong_code_is_rejected_before_rate_limit_body_or_manager(self) -> None:
+        handler = object.__new__(GeneratorHandler)
+        handler.path = "/api/generate"
+        handler.headers = {ACCESS_HEADER: "wrong"}
+        handler.access_gate = AccessCodeGate("right")
+        events: list[str] = []
+        handler._json = lambda status, payload: events.append(f"response:{status}")  # type: ignore[method-assign]
+        handler._rate_limit_ok = lambda path: events.append("rate-limit") or True  # type: ignore[method-assign]
+        handler._read_json = lambda max_bytes=65536: events.append("read-body") or {"question": "x"}  # type: ignore[method-assign]
+
+        GeneratorHandler.do_POST(handler)
+
+        self.assertEqual(events, ["response:403"])
+
+    def test_correct_code_reaches_request_body(self) -> None:
+        handler = object.__new__(GeneratorHandler)
+        handler.path = "/api/generate"
+        handler.headers = {ACCESS_HEADER: "right"}
+        handler.access_gate = AccessCodeGate("right")
+        handler.manager = type("Manager", (), {"submit": lambda self, question: {"id": "job"}})()
+        events: list[str] = []
+        handler._json = lambda status, payload: events.append(f"response:{status}")  # type: ignore[method-assign]
+        handler._rate_limit_ok = lambda path: events.append("rate-limit") or True  # type: ignore[method-assign]
+        handler._read_json = lambda max_bytes=65536: events.append("read-body") or {"question": "x"}  # type: ignore[method-assign]
+
+        GeneratorHandler.do_POST(handler)
+
+        self.assertEqual(events, ["rate-limit", "read-body", "response:202"])
 
 
 if __name__ == "__main__":

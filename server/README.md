@@ -8,6 +8,7 @@ API Key 推荐保存在 macOS 钥匙串，服务启动时临时注入环境变�
 
 ```bash
 KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
+COURSEWARE_ACCESS_CODE="$(security find-generic-password -a "$USER" -s courseware-space-preview-access-code -w)" \
   python3 server/app.py
 ```
 
@@ -30,7 +31,10 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 - `POST /api/media/confirm`：提交老师确认后的题意、B/L/v/R、磁场/运动/电流方向与所求量；未经服务端解析记录和显式确认会被拒绝；
 - `GET /api/jobs/<job-id>`：查询生成状态；
 - `POST /api/manual-requests`：为已转人工的任务补充称呼和联系方式；
+- `POST /api/feedback`：校验六维反馈后追加写入本地运行目录或 private OSS 的 `feedback/` 前缀；
 - `GET /generated/<job-id>/`：打开生成页面。
+
+除公开的 `GET /api/health` 与生成结果外，以上生成、媒体、人工请求、反馈提交和任务轮询接口都必须携带 `X-Courseware-Access-Code`。云端若未设置 `COURSEWARE_ACCESS_CODE` 会拒绝启动；本地开发未设置时可保持关闭。访问码不写入前端文件，老师专属入口通过 URL fragment 写入同源 `sessionStorage` 后立即清除地址栏。
 
 图片最大 8 MB，PDF 最大 20 MB、6 页。PDF 使用 `pdfinfo` + `pdftoppm` 逐页转成图片，每页要求视觉模型返回 `questions[]`，因此一页多题可以作为多条候选供老师选择。这是当前最简单且可审查的切分方案：不尝试不可靠的自动坐标裁图，也不让模型直接读取整份 PDF。无法解析、置信不足、模板范围外或关键参数缺失时返回补述/人工提示，不会直接生成。
 
@@ -61,8 +65,8 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
   python3 server/run_media_edge_acceptance.py
 ```
 
-云端一次性回归使用 `server/run_cloud_acceptance.py --base-url <FC URL>`，结果写入 `server/evidence/cloud-v2/results.json`。它会真实验证 5+3 道文字题、20 题基准、5+3 张图片、PDF 多题和确认闸红→绿，并逐个打开 OSS 产物；证据存在时同样拒绝重跑。
+云端一次性回归先从钥匙串注入 `COURSEWARE_ACCESS_CODE`，再使用 `server/run_cloud_acceptance.py --base-url <FC URL>`。结果写入 `server/evidence/cloud-v2/results.json`；访问码不进入结果。它会真实验证 5+3 道文字题、20 题基准、5+3 张图片、PDF 多题和确认闸红→绿，并逐个打开 OSS 产物；证据存在时同样拒绝重跑。
 
 ## 部署边界
 
-GitHub Pages 只发布静态前端；公开生成 API 运行在阿里云 FC，产物写入 OSS。Pages 前端只向配置的 FC 地址发送 JSON `fetch`，服务端以精确 Origin 白名单和限流保护演示接口。该匿名接口不等于生产鉴权，生产化前仍需身份系统、持久化任务状态与持久化限流。
+GitHub Pages 只发布静态前端；生成 API 运行在阿里云 FC，产物写入 OSS。Pages 前端只向配置的 FC 地址发送 JSON `fetch`，服务端以共享访问码、精确 Origin 白名单和限流保护演示接口。共享访问码是备案等待期的演示闸门，不等于生产身份系统；生产化前仍需用户鉴权、持久化任务状态与持久化限流。

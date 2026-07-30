@@ -4,10 +4,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REGION="${COURSEWARE_OSS_REGION:-cn-hangzhou}"
 BUCKET="${COURSEWARE_OSS_BUCKET:-}"
+FEEDBACK_BUCKET="${COURSEWARE_FEEDBACK_OSS_BUCKET:-}"
 FUNCTION="${COURSEWARE_FC_FUNCTION:-courseware-space-generator}"
 TRIGGER="${COURSEWARE_FC_TRIGGER:-courseware-space-http}"
 ROLE="${COURSEWARE_FC_ROLE:-courseware-space-fc-role}"
-POLICY="${COURSEWARE_FC_POLICY:-courseware-space-oss-staging-write}"
+POLICY="${COURSEWARE_FC_POLICY:-courseware-space-fc-runtime-write-v2}"
 CPU="${COURSEWARE_FC_CPU:-0.5}"
 CORS_ORIGINS="${COURSEWARE_CORS_ORIGINS:-https://landeermail.github.io}"
 RATE_PER_CLIENT="${COURSEWARE_RATE_LIMIT_PER_CLIENT:-30}"
@@ -15,7 +16,7 @@ RATE_GLOBAL="${COURSEWARE_RATE_LIMIT_GLOBAL:-80}"
 RATE_WINDOW="${COURSEWARE_RATE_LIMIT_WINDOW:-600}"
 CLI="${ALIYUN_CLI:-$(command -v aliyun || printf '')}"
 
-for variable in ALIBABA_CLOUD_ACCESS_KEY_ID ALIBABA_CLOUD_ACCESS_KEY_SECRET KIMI_API_KEY; do
+for variable in ALIBABA_CLOUD_ACCESS_KEY_ID ALIBABA_CLOUD_ACCESS_KEY_SECRET KIMI_API_KEY COURSEWARE_ACCESS_CODE; do
   if [[ -z "${!variable:-}" ]]; then
     printf '缺少环境变量：%s\n' "$variable" >&2
     exit 1
@@ -25,7 +26,7 @@ if [[ -z "$CLI" || ! -x "$CLI" ]]; then
   printf '未找到阿里云 CLI 3.3.0+；请设置 ALIYUN_CLI。\n' >&2
   exit 1
 fi
-if [[ "$BUCKET" != courseware-space-* || "$FUNCTION" != courseware-space-* || "$TRIGGER" != courseware-space-* || "$ROLE" != courseware-space-* || "$POLICY" != courseware-space-* ]]; then
+if [[ "$BUCKET" != courseware-space-* || "$FEEDBACK_BUCKET" != courseware-space-private-* || "$FUNCTION" != courseware-space-* || "$TRIGGER" != courseware-space-* || "$ROLE" != courseware-space-* || "$POLICY" != courseware-space-* ]]; then
   printf '所有云资源名称必须使用 courseware-space-* 前缀。\n' >&2
   exit 1
 fi
@@ -58,7 +59,7 @@ code_sha="$(shasum -a 256 "$ROOT/deploy/dist/courseware-space-fc.zip" | awk '{pr
 code_object="deploy/code/$code_sha.zip"
 
 trust_policy='{"Version":"1","Statement":[{"Effect":"Allow","Principal":{"Service":["fc.aliyuncs.com"]},"Action":"sts:AssumeRole"}]}'
-runtime_policy="$(jq -nc --arg bucket "$BUCKET" '{Version:"1",Statement:[{Effect:"Allow",Action:["oss:PutObject","oss:PutObjectAcl"],Resource:[("acs:oss:*:*:"+$bucket+"/staging/*")]}]}')"
+runtime_policy="$(jq -nc --arg bucket "$BUCKET" --arg feedback_bucket "$FEEDBACK_BUCKET" '{Version:"1",Statement:[{Effect:"Allow",Action:["oss:PutObject","oss:PutObjectAcl"],Resource:[("acs:oss:*:*:"+$bucket+"/staging/*")]},{Effect:"Allow",Action:["oss:PutObject"],Resource:[("acs:oss:*:*:"+$feedback_bucket+"/feedback/*")]}]}')"
 
 if role_result="$("$CLI" ram get-role --role-name "$ROLE" 2>&1)"; then
   printf 'ram_role=existing\n'
@@ -79,7 +80,7 @@ fi
 if policy_result="$("$CLI" ram get-policy --policy-name "$POLICY" --policy-type Custom 2>&1)"; then
   printf 'ram_policy=existing\n'
 elif [[ "$policy_result" == *"EntityNotExist.Policy"* ]]; then
-  "$CLI" ram create-policy --policy-name "$POLICY" --policy-document "$runtime_policy" --description 'Write only Courseware Space OSS staging objects' >/dev/null
+  "$CLI" ram create-policy --policy-name "$POLICY" --policy-document "$runtime_policy" --description 'Write Courseware staging and private feedback prefixes' >/dev/null
   printf 'ram_policy=created\n'
 else
   printf '读取 RAM policy 失败：%s\n' "$policy_result" >&2
@@ -99,6 +100,7 @@ function_env=(
   "KIMI_API_KEY=$KIMI_API_KEY"
   "COURSEWARE_CLOUD_MODE=1"
   "COURSEWARE_OSS_BUCKET=$BUCKET"
+  "COURSEWARE_FEEDBACK_OSS_BUCKET=$FEEDBACK_BUCKET"
   "COURSEWARE_OSS_REGION=$REGION"
   "COURSEWARE_OSS_ENDPOINT=https://oss-$REGION-internal.aliyuncs.com"
   "COURSEWARE_MAX_WORKERS=1"
@@ -106,6 +108,7 @@ function_env=(
   "COURSEWARE_RATE_LIMIT_PER_CLIENT=$RATE_PER_CLIENT"
   "COURSEWARE_RATE_LIMIT_GLOBAL=$RATE_GLOBAL"
   "COURSEWARE_RATE_LIMIT_WINDOW=$RATE_WINDOW"
+  "COURSEWARE_ACCESS_CODE=$COURSEWARE_ACCESS_CODE"
 )
 code_config=("ossBucketName=$BUCKET" "ossObjectName=$code_object")
 

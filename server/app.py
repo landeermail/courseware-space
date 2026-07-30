@@ -28,6 +28,13 @@ from generator_service import GenerationManager, GenerationService, ManualReques
 from kimi_client import KimiCodeClient, ProviderError  # noqa: E402
 from media_service import MediaConfirmationWorkflow, MediaError, MediaParser  # noqa: E402
 from artifact_store import artifact_store_from_environment  # noqa: E402
+from access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
+from feedback_service import (  # noqa: E402
+    FeedbackService,
+    FeedbackStoreError,
+    FeedbackValidationError,
+    feedback_service_from_environment,
+)
 
 
 DEFAULT_CORS_ORIGINS = frozenset(
@@ -43,8 +50,10 @@ RATE_LIMITED_PATHS = frozenset(
         "/api/manual-requests",
         "/api/media/parse",
         "/api/media/confirm",
+        "/api/feedback",
     }
 )
+PROTECTED_POST_PATHS = RATE_LIMITED_PATHS
 
 
 def cors_origins_from_environment() -> frozenset[str]:
@@ -125,6 +134,8 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
     runtime_dir: Path
     cors_origins: frozenset[str]
     rate_limiter: RequestRateLimiter
+    access_gate: AccessCodeGate
+    feedback_service: FeedbackService
 
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -162,6 +173,12 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
         self._json(HTTPStatus.TOO_MANY_REQUESTS, {"error": "请求过于频繁，请十分钟后再试。"})
         return False
 
+    def _access_ok(self) -> bool:
+        if self.access_gate.allows(self.headers.get(ACCESS_HEADER)):
+            return True
+        self._json(HTTPStatus.FORBIDDEN, {"error": "访问码无效"})
+        return False
+
     def _read_json(self, max_bytes: int = 65536) -> dict[str, object]:
         try:
             length = int(self.headers.get("Content-Length", "0"))
@@ -193,6 +210,8 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
+        if path in PROTECTED_POST_PATHS and not self._access_ok():
+            return
         if not self._rate_limit_ok(path):
             return
         try:
@@ -228,11 +247,17 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
                 result = self.media_workflow.confirm_and_submit(data)
                 self._json(HTTPStatus.ACCEPTED, result)
                 return
+            if path == "/api/feedback":
+                key = self.feedback_service.submit(data)
+                self._json(HTTPStatus.CREATED, {"status": "accepted", "feedback_id": data["feedback_id"], "object_key": key})
+                return
             self._json(HTTPStatus.NOT_FOUND, {"error": "接口不存在"})
-        except (ValueError, MediaError) as error:
+        except (ValueError, MediaError, FeedbackValidationError) as error:
             self._json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
         except ProviderError as error:
             self._json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": str(error)})
+        except FeedbackStoreError:
+            self._json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "反馈暂时无法保存，请稍后再试。"})
 
     def do_OPTIONS(self) -> None:
         path = urlparse(self.path).path
@@ -247,7 +272,7 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.send_header("Access-Control-Allow-Origin", origin)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", f"Content-Type, {ACCESS_HEADER}")
         self.send_header("Access-Control-Max-Age", "3600")
         self.send_header("Vary", "Origin")
         self.end_headers()
@@ -272,6 +297,8 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
                         importlib.util.find_spec("pypdfium2") or shutil.which("pdftoppm")
                     ),
                     "artifact_store": self.manager.artifact_store.backend,
+                    "feedback_store": self.feedback_service.store.backend,
+                    "access_code_required": self.access_gate.required,
                 },
             )
             return
@@ -279,6 +306,8 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
             self._serve_media_demo()
             return
         if path.startswith("/api/jobs/"):
+            if not self._access_ok():
+                return
             job_id = path.removeprefix("/api/jobs/").strip("/")
             if not job_id or "/" in job_id:
                 self._json(HTTPStatus.NOT_FOUND, {"error": "任务不存在"})
@@ -347,6 +376,8 @@ def main() -> int:
     GeneratorHandler.runtime_dir = args.runtime_dir
     GeneratorHandler.cors_origins = cors_origins_from_environment()
     GeneratorHandler.rate_limiter = rate_limiter_from_environment()
+    GeneratorHandler.access_gate = AccessCodeGate.from_environment()
+    GeneratorHandler.feedback_service = feedback_service_from_environment(args.runtime_dir)
     server = ThreadingHTTPServer((args.host, args.port), GeneratorHandler)
     print(f"Courseware generator: http://{args.host}:{args.port}/generator/")
     try:

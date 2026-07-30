@@ -1,5 +1,25 @@
 # 自助生成平台 MVP 进度
 
+## v7：老师首次线上体验（备案等待期双线并进）
+
+- 2026-07-30 任务 0 基线：从连续前置分支创建 `feat/online-first-experience`；站点 9/64/6/14，scripts 4/4、harness 41/41、server 40/40、private-delivery 6/6，skipped 0。
+- `preview/` 确认不存在；最新 `Validate static site` 工作流为 `success`。
+- FC 环境变量只读核验完成：改走官方签名的阿里云 CLI 3.4.11，通过此前验证过的 FC 通道读取固定函数；脱敏结果显示 `custom.debian12`，现有环境变量名中无 `COURSEWARE_ACCESS_CODE` 与 `COURSEWARE_FEEDBACK_OSS_BUCKET`，未输出任何变量值。
+- 目标：本周交付一个无身份标识的随机 Pages 链接，让老师从专属题库完成“看课件→六维评价→提交→自动返回→已评”的产品终局动线。
+- 顺序：随机入口与页面闭环 → 访问码前置闸与反馈落库 → 真实云部署/红绿验证 → 桌面和手机浏览器证据 → 备案切换干跑件。
+- 最大风险：访问码既要让老师无感携带，又不能进入 Git、Pages 文件或日志；采用入口 URL 的 `#access=` fragment，仅在老师浏览器写入 `sessionStorage` 后立刻清除地址栏。fragment 不随 HTTP 请求发送给 Pages，静态部署产物不含口令。
+- 随机入口已固定为 32 位路径；题库列出 8 个公开课件与同前缀 Q1。校准口径明确为 q20 与 `q21-variable-field-rod-3d`，旧版 q21 独立保持待评。
+- 本地实现进度：Q1 底部评价入口、评价参数自动带入、匿名一键提交/自动返回/localStorage 状态流转已接通；生成器所有 API 请求统一携带访问码。
+- 服务端闸门与反馈落盘已完成首轮：错码在限流、读请求体和 manager/Kimi 之前 403；反馈复用六维 validator，合法数据追加写入 private bucket 的 `feedback/YYYY/MM/DD/`，本地 server 50/50 全绿。
+- 备案切换件已完成：只读 `domain_cutover.py --dry-run` 输出 OSS/CNAME/SSL/FC/备案页脚/真实浏览器九步并明确 `cloud_changes=0`；未修改 DNS 或绑定域名。
+- FC 部署完成：manylinux x86_64 包含 access gate、feedback service 与原 validator；新 RAM policy 仅允许 demo `staging/*` 的 PutObject/PutObjectAcl 和 private `feedback/*` 的 PutObject，函数更新后健康检查为 200、`access_code_required=true`、`feedback_store=oss`，保留并发仍为 1。
+- 云端红→绿：错码 feedback 403，private OSS 对象 0→0；错码 generate 403。正码 feedback 201 后对象 0→1，回读 665 B JSON 并经 validator 判定合法；正码标准样题提交 202，最终 `succeeded`，公网生成 HTML 200（26,008 B）。
+- 真实浏览器桌面动线通过：随机入口 fragment 进入后地址栏 hash 已清除，Q1→去评价→六维全过→提交→约 1.4 秒自动返回，优先卡 1→0，Q1 落入力学并显示“已评 ✓”；1280px 无横向溢出，console warning/error 0。
+- 真实浏览器手机动线通过：独立 375×812 origin 从待评重新走完整链路，入口、Q1、评价和回程均 `scrollWidth=viewportWidth=375`，可见主控件最小 44px，提交后优先卡 1→0、Q1 已评，console warning/error 0。分步截图保存于被忽略的 `trial/private/evidence/online-first/`。
+- 最终本地回归：站点 9/67/6/14，scripts 4/4、feedback 7/7、harness 41/41、server 50/50、deploy 8/8、trial 3/3、Q1 物理基准 5/5；生成管线 5/5、3/3、20/20、25/25，JavaScript 4/4、shell 3/3，skipped 0。
+- 安全与范围自查：钥匙串中的真实访问码、阿里云 ID/Secret、Kimi key 在工作树与 Git 历史精确匹配均为 0；高置信 key 模式与本地浏览器测试码均为 0；根首页随机入口链接 0，三张过渡页 noindex 3/3，允许路径外修改 0。
+- 分支关系：本轮暂时堆叠在 `feat/private-delivery`（PR #17）上，前置合并顺序为 #16 → #17 → 本轮 PR。
+
 ## v6：私有课件长期链接交付（路线 A）
 
 - 2026-07-30 任务 0 基线：从第 1 题已验收提交创建 `feat/private-delivery`；`validate_site` 为 9/64/6/14，scripts 4/4、harness 41/41、server 40/40，skipped 0。
