@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "feedback_id": "calibration-q20-20260730",
+  "session_id": "teacher-calibration-20260730",
+  "courseware_id": "q20-rotating-rod",
+  "reviewer_role": "teacher",
+  "reviewed_at": "2026-07-30T10:30:00+08:00",
+  "dimensions": {
+    "causal_presentation": {"verdict": "pass", "note": "校准结论：本维通过；未补写老师未提供的逐条原话。"},
+    "process_visibility": {"verdict": "pass", "note": "校准结论：本维通过；未补写老师未提供的逐条原话。"},
+    "effective_interaction": {"verdict": "pass", "note": "校准结论：本维通过；未补写老师未提供的逐条原话。"},
+    "task_driven": {"verdict": "pass", "note": "校准结论：本维通过；未补写老师未提供的逐条原话。"},
+    "verifiability": {"verdict": "pass", "note": "校准结论：本维通过；未补写老师未提供的逐条原话。"},
+    "exam_connection": {"verdict": "fail", "note": "老师校准认为课件仍未把直观观察充分翻译为识别条件、选择规律、建立方程和解释选项的纸笔解题链。"}
+  },
+  "overall": {
+    "verdict": "reject",
+    "rejection_reasons": ["exam_connection"],
+    "note": "前五维通过；本次因“与解题的衔接”未通过而打回，作为第1题迭代的校准基线。"
+  }
+}
