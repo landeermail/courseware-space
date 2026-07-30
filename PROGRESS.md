@@ -1,5 +1,22 @@
 # 自助生成平台 MVP 进度
 
+## v6：私有课件长期链接交付（路线 A）
+
+- 2026-07-30 任务 0 基线：从第 1 题已验收提交创建 `feat/private-delivery`；`validate_site` 为 9/64/6/14，scripts 4/4、harness 41/41、server 40/40，skipped 0。
+- STS 只读核验：凭证仅由 macOS 钥匙串注入临时进程；身份为 `Account`，脱敏 account `1079********4778`、ARN `acs:ram::1079********4778:root`。
+- OSS 只读盘点：以 `courseware-space-private-` 为前缀查询，匹配数为 0；目标 bucket 尚不存在，没有覆盖既有资源的风险。
+- 目标：用一行命令把本地私有课件发布到独立 OSS bucket 的高熵路径，只让知道完整地址的人读取对象，拒绝任何匿名列举。
+- 顺序：固定资源边界与 bucket policy → 本地测试 → 创建 bucket → 上传第 1 题 → 无凭证匿名验收 → 密钥与回归自查。
+- 随机路径策略：同一课件默认复用首次生成的路径，保证老师长期链接稳定；若链接泄露，按交付说明删除旧前缀并显式生成新路径。
+- 最大风险：`Principal:["*"]` 的显式 Deny 若附加条件会同时约束 bucket owner；本轮 Deny `ListObjects` 不附条件，使其只作用于 owner 之外的用户（含匿名），并用真实匿名 403 验证。
+- 云资源硬边界：只允许 `courseware-space-private-10794778` 及其 bucket policy；不读取或修改现有 demo bucket、FC、RAM、域名、CDN或其他服务。
+- 交付面清理：开发底稿、原图、Python 基准、单测和红→绿证据移至被忽略的 `trial/private/development/q01-vertical-circle/`；可上传课件目录只保留运行必需的 `index.html` 与 `reference-data.json`，避免把原解析随链接交付。
+- 任务 1 完成：创建 `courseware-space-private-10794778`（杭州、Standard LRS、ACL `private`）；Bucket Policy 仅 `Allow oss:GetObject` 于 `private/*`，并无条件显式 `Deny oss:ListObjects/oss:ListObjectVersions` 给 owner 之外的主体。策略回读一致；匿名根目录与 `?prefix=private/` 均为 HTTP 403。
+- 任务 2 完成：`./deploy/deliver.sh trial/private/courseware/q01-vertical-circle` 上传 2 个运行文件，生成 48 位 `secrets.token_urlsafe` 路径并写入忽略的 `trial/private/deliveries.json`；第二次执行显示 `path=reused` 且 URL 不变。首轮 wrapper 被 Bash 3.2 空数组拦截于上传前，修正为标量分支后离线 6/6 与真实交付均通过。
+- 任务 3 完成：完全无 Authorization/Header 的 curl 实测课件 `200 text/html; charset=utf-8`、相对数值数据 `200 application/json; charset=utf-8`、48 位随机猜测 `404`、根列举 `403`、`private/` 前缀列举 `403`。Codex 内置浏览器自身以 `ERR_BLOCKED_BY_CLIENT` 拦截 OSS 长地址，故不把该客户端限制当作匿名验收；任务书允许且本轮采用无签名 curl 作为证据。
+- 安全自查：以钥匙串真实 ID/Secret 做不回显的精确扫描，工作树 0、Git 全历史 0；`LTAI…` 与 `sk-kimi-…` 高置信模式在工作树和历史也均为 0。`deliveries.json` 经 `git check-ignore` 命中 `trial/private/.gitignore:1:*`，且 `git ls-files` 为空。
+- 最终回归：站点 9/64/6/14，scripts 4/4、harness 41/41、server 40/40、feedback 7/7、trial 3/3、private-delivery 6/6、第 1 题物理基准 5/5，skipped 0；shell 语法、Python 编译、课件 JavaScript 语法均通过。末次可复跑 bucket 核验与匿名 200/404/403/403 再次通过。
+
 ## v5：第 1 题六维全过课件
 
 - 2026-07-30 任务 0 基线：PR #15 检查全绿后已合并；从最新 `main` 创建 `feat/q01-six-dim-courseware`。`validate_site` 为 9/64/6/14，scripts 4/4、harness 41/41、server 40/40，skipped 0。
@@ -26,7 +43,7 @@
 
 ### 任务 2：独立数值基准
 
-- `trial/private/courseware/q01-vertical-circle/physics_reference.py` 仅用 Python 标准库，逐位置求 b 的切向平衡，并输出 3 档电量 × 61 个准静态节点、3 档电量 × 6 个撤力位置 × 201 个动力学节点；页面只读取生成的 `reference-data.json`。
+- `trial/private/development/q01-vertical-circle/physics_reference.py` 仅用 Python 标准库，逐位置求 b 的切向平衡，并输出 3 档电量 × 61 个准静态节点、3 档电量 × 6 个撤力位置 × 201 个动力学节点；交付页面只读取生成到 courseware 目录的 `reference-data.json`。
 - 核心输出覆盖 `N_b(α)`、`W_ext(α)`、`ΔU_g(α)/ΔU_e(α)` 以及撤力后的 `α(t)/β(t)/K(t)/U_g(t)/U_e(t)/E(t)`；5 项单测检查初始几何、支持力趋势、能量账本、撤力守恒和错误库仑力方向。
 - 红→绿：把撤力后的库仑力切向方向反转，断言报 `post-release energy drift too large: 1.46638e+08` 与 `Coulomb direction is reversed after release`；恢复正确方向后 `physics reference self-check passed`。结构化证据保存在私有 `evidence/red-green.json`。
 
