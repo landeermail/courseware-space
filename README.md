@@ -23,6 +23,12 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 文字、图片和 PDF 三种输入已经合并在 <http://localhost:8000/generator/>。图片/PDF 必须经过老师逐项确认后才会生成。阿里云 FC + OSS 的部署结构、可复跑命令和安全边界见 `deploy/README.md` 与 `docs/deploy/`；当前云端状态以 `PROGRESS.md` 与 `BLOCKED.md` 为准，不能用本地结果代替公网验收。
 
+## 课件质量与老师试用
+
+物理正确性通过后，课件按[好课件六维标准](docs/quality/standard.md)评价：因果呈现、过程可见、有效交互、任务驱动、可验证性、与解题的衔接。老师可在 <http://localhost:8000/trial/> 逐维记录反馈并导出 JSON；反馈格式和本地校验命令见 `feedback/README.md`，第一次试用流程见 `trial/protocol.md`。
+
+老师提供的内部试题不进入公开仓库或 GitHub Pages。完整题页只生成在被 Git 忽略的 `trial/private/`，需要在两台电脑之间通过私有渠道单独同步。
+
 ## 目录结构
 
 ```text
@@ -31,6 +37,8 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ├── generator/                 # 老师生成页面和已验证生成产物
 ├── templates/                 # 锁定物理关系的参数化课件模板
 ├── server/                    # 本地异步生成服务与真实验收证据
+├── trial/                     # 六维打分工具、试用协议与私有材料模板
+├── feedback/                  # 结构化反馈 schema 与本地校验器
 ├── electromagnetism/          # 电磁学课件
 ├── helicopter-dynamics/       # 直升机动力学课件
 ├── mh370-physics/             # MH370 物理分析课件

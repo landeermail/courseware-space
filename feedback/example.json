@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "feedback_id": "feedback-example-001",
+  "session_id": "trial-example-001",
+  "courseware_id": "q20-rotating-rod",
+  "reviewer_role": "teacher",
+  "reviewed_at": "2026-07-30T09:00:00+08:00",
+  "dimensions": {
+    "causal_presentation": {"verdict": "pass", "note": "因果链与模型状态同步。"},
+    "process_visibility": {"verdict": "pass", "note": ""},
+    "effective_interaction": {"verdict": "pass", "note": ""},
+    "task_driven": {"verdict": "pass", "note": ""},
+    "verifiability": {"verdict": "pass", "note": ""},
+    "exam_connection": {"verdict": "pass", "note": "能从受力状态衔接到列式。"}
+  },
+  "overall": {
+    "verdict": "satisfied",
+    "rejection_reasons": [],
+    "note": "可作为校准样例。"
+  }
+}

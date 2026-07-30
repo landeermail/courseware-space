@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landeermail.github.io/courseware-space/feedback/schema.json",
+  "title": "课件六维反馈",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "feedback_id",
+    "session_id",
+    "courseware_id",
+    "reviewer_role",
+    "reviewed_at",
+    "dimensions",
+    "overall"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "feedback_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{7,79}$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{3,79}$"
+    },
+    "courseware_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "reviewer_role": {"enum": ["leader", "teacher"]},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "causal_presentation",
+        "process_visibility",
+        "effective_interaction",
+        "task_driven",
+        "verifiability",
+        "exam_connection"
+      ],
+      "properties": {
+        "causal_presentation": {"$ref": "#/$defs/dimension"},
+        "process_visibility": {"$ref": "#/$defs/dimension"},
+        "effective_interaction": {"$ref": "#/$defs/dimension"},
+        "task_driven": {"$ref": "#/$defs/dimension"},
+        "verifiability": {"$ref": "#/$defs/dimension"},
+        "exam_connection": {"$ref": "#/$defs/dimension"}
+      }
+    },
+    "overall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "rejection_reasons", "note"],
+      "properties": {
+        "verdict": {"enum": ["satisfied", "reject"]},
+        "rejection_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "causal_presentation",
+              "process_visibility",
+              "effective_interaction",
+              "task_driven",
+              "verifiability",
+              "exam_connection",
+              "usability",
+              "information_overload",
+              "other"
+            ]
+          }
+        },
+        "note": {"type": "string", "maxLength": 2000}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "satisfied"}}},
+          "then": {"properties": {"rejection_reasons": {"maxItems": 0}}}
+        },
+        {
+          "if": {"properties": {"verdict": {"const": "reject"}}},
+          "then": {"properties": {"rejection_reasons": {"minItems": 1}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "rejection_reasons": {"contains": {"const": "other"}}
+            }
+          },
+          "then": {"properties": {"note": {"minLength": 1}}}
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "note"],
+      "properties": {
+        "verdict": {"enum": ["pass", "fail"]},
+        "note": {"type": "string", "maxLength": 2000}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "fail"}}},
+          "then": {"properties": {"note": {"minLength": 1}}}
+        }
+      ]
+    }
+  }
+}
