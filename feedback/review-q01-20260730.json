@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "feedback_id": "feedback-7d414bc2-eb02-4159-bdc9-2f9fec6e956e",
+  "session_id": "trial-20260730-1le43w",
+  "courseware_id": "q01-vertical-circle",
+  "reviewer_role": "teacher",
+  "reviewed_at": "2026-07-30T16:00:01.442Z",
+  "dimensions": {
+    "causal_presentation": {
+      "verdict": "pass",
+      "note": ""
+    },
+    "process_visibility": {
+      "verdict": "fail",
+      "note": "代表力的大小的箭头，在运动过程中是不可见的。通过呈现箭头长短的变化来表现力的大小变化，学生能够更直观"
+    },
+    "effective_interaction": {
+      "verdict": "pass",
+      "note": ""
+    },
+    "task_driven": {
+      "verdict": "pass",
+      "note": ""
+    },
+    "verifiability": {
+      "verdict": "pass",
+      "note": ""
+    },
+    "exam_connection": {
+      "verdict": "fail",
+      "note": "1.能量守恒的思想不够直观，学生不能从这个过程中建立起思维习惯。换了一题还是不会。\n2.模型中用了大量精确到小数点后3位的数字，但却没有展示其计算来源的三角函数，也没有解释展现这些数字的用途（没有用力的关系式去串联这些数字之间的关系）。大量的数字反倒会让学生迷茫。"
+    }
+  },
+  "overall": {
+    "verdict": "reject",
+    "rejection_reasons": [
+      "exam_connection",
+      "information_overload"
+    ],
+    "note": "信息不是越多越好，有逻辑的信息才是有效信息。课件存在的目的是为了让学生建立起分析逻辑，视觉效果也是为了更好的体现数学逻辑关系。"
+  }
+}

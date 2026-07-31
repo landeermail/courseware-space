@@ -244,6 +244,17 @@ def active_delivery(payload: dict[str, Any], courseware_id: str) -> dict[str, An
     return matches[-1] if matches else None
 
 
+def deactivate_deliveries(payload: dict[str, Any], courseware_id: str) -> int:
+    """Keep history while ensuring a newly appended delivery is the sole active one."""
+
+    changed = 0
+    for item in payload["deliveries"]:
+        if item.get("courseware_id") == courseware_id and item.get("active") is True:
+            item["active"] = False
+            changed += 1
+    return changed
+
+
 def random_token() -> str:
     token = secrets.token_urlsafe(36)
     if not TOKEN_RE.fullmatch(token):
@@ -317,9 +328,8 @@ def deliver(api: Any, source: Path, bucket: str, region: str, *, rotate: bool) -
             raise ValueError("既有交付记录的对象前缀无效")
         if old_prefix != object_prefix:
             rotated_deleted = delete_prefix(api, bucket, old_prefix)
-        for item in payload["deliveries"]:
-            if item.get("courseware_id") == courseware_id and item.get("active") is True:
-                item["active"] = False
+
+    deactivate_deliveries(payload, courseware_id)
 
     index_key = object_prefix + "index.html"
     url = public_url(bucket, region, index_key)

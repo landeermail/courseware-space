@@ -22,6 +22,10 @@ for variable in ALIBABA_CLOUD_ACCESS_KEY_ID ALIBABA_CLOUD_ACCESS_KEY_SECRET KIMI
     exit 1
   fi
 done
+if [[ ! "$COURSEWARE_ACCESS_CODE" =~ ^[0-9a-f]{48}$ ]]; then
+  printf 'COURSEWARE_ACCESS_CODE 必须由 openssl rand -hex 24 生成（48 位小写十六进制）。\n' >&2
+  exit 1
+fi
 if [[ -z "$CLI" || ! -x "$CLI" ]]; then
   printf '未找到阿里云 CLI 3.3.0+；请设置 ALIYUN_CLI。\n' >&2
   exit 1

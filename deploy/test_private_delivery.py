@@ -66,6 +66,24 @@ class PrivateDeliveryTests(unittest.TestCase):
             "a" * 48,
         )
 
+    def test_new_delivery_deactivates_all_existing_active_records(self) -> None:
+        payload = {
+            "schema_version": 1,
+            "deliveries": [
+                {"courseware_id": "q01-vertical-circle", "active": True},
+                {"courseware_id": "q01-vertical-circle", "active": True},
+                {"courseware_id": "scoring-tool", "active": True},
+            ],
+        }
+
+        self.assertEqual(
+            delivery.deactivate_deliveries(payload, "q01-vertical-circle"), 2
+        )
+        self.assertEqual(
+            [item["active"] for item in payload["deliveries"]],
+            [False, False, True],
+        )
+
     def test_delivery_record_file_must_have_expected_schema(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "deliveries.json"
