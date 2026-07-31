@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
-  <link rel="icon" href="data:,">
   <title>竖直圆环双带电小球｜因果与解题实验室</title>
   <style>
     :root {
@@ -31,6 +30,7 @@
     button { min-height: 44px; }
     .app { max-width: 1440px; margin: 0 auto; min-height: 100vh; background: #fff; }
     header { padding: 18px 24px 14px; border-bottom: 1px solid var(--line); }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
     h1 { margin: 0 0 6px; font-size: clamp(22px, 2.4vw, 34px); line-height: 1.2; }
     h2 { margin: 0 0 12px; font-size: 19px; }
     h3 { margin: 0 0 8px; font-size: 16px; }
@@ -50,10 +50,24 @@
     .scene-caption { position: absolute; left: 14px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; }
     .tag { border-radius: 999px; background: rgba(255,255,255,.92); border: 1px solid var(--line); color: var(--muted); padding: 5px 9px; font-size: 12px; }
     .tag.original { color: var(--green); border-color: #9ed8c7; background: rgba(233,248,242,.95); }
+    .force-legend { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin-top: 10px; }
+    .force-chip, .traceable { border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+    .force-chip { min-height: 44px; border-radius: 10px; padding: 7px 10px; text-align: left; }
+    .force-chip b { display: block; font-size: 13px; }
+    .force-chip span { color: var(--muted); font-size: 12px; }
+    .force-scale { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 10px; border: 1px dashed #9aa9bd; border-radius: 10px; color: var(--muted); background:#fff; font-size: 12px; cursor:pointer; text-align:left; }
+    .force-scale i { display: inline-block; width: 52px; height: 3px; border-radius: 3px; background: var(--ink); }
     .causal { margin-top: 12px; display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); align-items: center; gap: 18px; }
-    .cause-node { position: relative; min-height: 62px; padding: 9px 8px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); text-align: center; font-size: 13px; line-height: 1.35; }
+    .cause-node { position: relative; min-height: 62px; padding: 9px 8px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); text-align: center; font-size: 13px; line-height: 1.35; cursor: pointer; }
     .cause-node:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 18px; color: var(--muted); font-size: 18px; }
     .cause-node b { display: block; color: var(--blue); font-size: 15px; margin-bottom: 2px; }
+    .cause-node:hover, .cause-node:focus-visible, .traceable:hover, .traceable:focus-visible, .force-chip:hover, .force-chip:focus-visible { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.16); outline-offset: 1px; }
+    .traceable { display: inline-flex; align-items: center; min-height: 30px; padding: 2px 6px; border-radius: 7px; vertical-align: middle; }
+    .trace-panel { margin-top: 10px; padding: 12px 14px; border: 1px solid #b9c9e6; border-radius: 12px; background: var(--blue-soft); }
+    .trace-panel[hidden] { display: none; }
+    .trace-panel h3 { color: var(--blue); }
+    .trace-grid { display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; font-size: 13px; line-height: 1.55; }
+    .trace-grid b { color: var(--muted); }
     .panel { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; background: #fff; }
     .panel.soft { background: var(--soft); }
     .question { font-size: 15px; line-height: 1.65; }
@@ -73,6 +87,7 @@
     .btn:disabled { opacity: .5; cursor: not-allowed; }
     .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .metric { padding: 10px; background: var(--soft); border-radius: 10px; }
+    button.metric { width: 100%; text-align: left; }
     .metric span { display: block; color: var(--muted); font-size: 12px; }
     .metric b { display: block; margin-top: 3px; font-size: 18px; }
     .metric small { color: var(--muted); }
@@ -92,6 +107,35 @@
     .bridge-list { display: grid; gap: 8px; }
     .bridge-step { padding: 10px 12px; border-left: 3px solid #aebbd0; background: var(--soft); }
     .bridge-step b { color: var(--blue); }
+    .thinking-path { display: grid; gap: 10px; }
+    .thinking-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(140px,.8fr); gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
+    .thinking-row strong { display: block; margin-bottom: 3px; }
+    .thinking-result { margin-top: 10px; padding: 11px 12px; border-radius: 10px; background: var(--green-soft); color: var(--green); line-height: 1.6; }
+    .thinking-result[hidden] { display: none; }
+    .energy-bars { display: grid; gap: 8px; margin-top: 10px; }
+    .energy-bar { display: grid; grid-template-columns: 42px 1fr auto; gap: 8px; align-items: center; }
+    .energy-track { position: relative; height: 18px; border-radius: 999px; background: #e8edf4; overflow: hidden; }
+    .energy-fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--blue); transition: width .16s linear; }
+    .energy-bar:nth-child(2) .energy-fill { background: var(--amber); }
+    .energy-bar:nth-child(3) .energy-fill { background: var(--green); }
+    .energy-state { color: var(--muted); font-size: 12px; }
+    .analysis-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .analysis-tabs button[aria-pressed="true"] { color: #fff; border-color: var(--blue); background: var(--blue); }
+    .analysis-skeleton { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+    .skeleton-step { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); line-height: 1.5; }
+    .skeleton-step b { display: block; color: var(--blue); margin-bottom: 4px; }
+    .audit-view { margin: 0 24px 28px; padding: 18px; border: 2px solid #27364d; border-radius: 16px; background: #f8fafc; }
+    .audit-view[hidden] { display: none; }
+    .audit-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+    .audit-table-wrap { overflow-x: auto; }
+    .audit-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .audit-table th, .audit-table td { padding: 9px 10px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .audit-table th { background: #edf2f7; }
+    .audit-table code { white-space: normal; overflow-wrap: anywhere; }
+    .review-next { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; padding: 20px 24px 28px; border-top: 1px solid var(--line); background: #fff; }
+    .review-next p { margin: 0; color: var(--muted); }
+    .review-next a { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 10px 16px; border: 1px solid var(--blue); border-radius: 10px; color: #fff; background: var(--blue); font-weight: 700; text-decoration: none; }
+    .review-next a:focus-visible { outline: 3px solid rgba(37,99,235,.24); outline-offset: 3px; }
     .choices { display: grid; gap: 8px; }
     .choice { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
     .choice input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--blue); }
@@ -106,12 +150,6 @@
     .stage-panel { display: none; }
     .stage-panel.active { display: block; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-    .review-next { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; max-width: 1440px; margin: 0 auto; padding: 20px 24px 28px; border-top: 1px solid var(--line); background: #fff; }
-    .review-next p { margin: 0; color: var(--muted); }
-    .review-next-links { display: flex; flex-wrap: wrap; gap: 10px; }
-    .review-next a { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 10px 16px; border: 1px solid #aebbd0; border-radius: 10px; color: var(--ink); background: #fff; font-weight: 700; text-decoration: none; }
-    .review-next a.primary { border-color: var(--blue); color: #fff; background: var(--blue); }
-    .review-next a:focus-visible { outline: 3px solid rgba(37,99,235,.24); outline-offset: 3px; }
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1.25fr .75fr; padding: 14px; gap: 12px; }
       header { padding-inline: 14px; }
@@ -120,6 +158,7 @@
       .cause-node:not(:last-child)::after { right: -11px; }
     }
     @media (max-width: 680px) {
+      .header-row { flex-direction: column; }
       .stage-nav { grid-template-columns: repeat(2, 1fr); }
       .stage-nav button:nth-child(2) { border-right: 0; }
       .stage-nav button:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
@@ -130,14 +169,18 @@
       .cause-node { min-height: 48px; text-align: left; padding-left: 12px; }
       .cause-node:not(:last-child)::after { content: "↓"; right: 14px; top: 30px; z-index: 2; }
       .control-row { grid-template-columns: 1fr; }
+      .thinking-row, .analysis-skeleton { grid-template-columns: 1fr; }
+      .audit-view { margin: 0 14px 20px; padding: 14px; }
     }
   </style>
 </head>
 <body>
 <main class="app">
   <header>
-    <h1>两个球不是各走各的：推动一个，另一个如何重建平衡？</h1>
-    <p class="subtitle">竖直圆环双带电小球 · 从耦合运动回到支持力、做功与能量方程</p>
+    <div class="header-row">
+      <div><h1>两个球不是各走各的：推动一个，另一个如何重建平衡？</h1><p class="subtitle">竖直圆环双带电小球 · 从耦合运动回到支持力、做功与能量方程</p></div>
+      <button class="btn" id="openAudit" type="button" aria-controls="teacherAudit" aria-expanded="false">老师验算入口</button>
+    </div>
   </header>
 
   <nav class="stage-nav" aria-label="学习阶段">
@@ -191,13 +234,25 @@
         <div class="scene-caption"><span class="tag" id="phaseTag">准静态：b 每一刻切向合力为 0</span><span class="tag original" id="conditionTag">原题电量 q₀</span></div>
       </div>
 
-      <div class="causal" aria-label="当前因果链">
-        <div class="cause-node"><b id="causeAlpha">α = 30°</b>a 的位置</div>
-        <div class="cause-node"><b id="causeDistance">d = 1.000R</b>两球距离</div>
-        <div class="cause-node"><b id="causeCoulomb">Fₑ = 0.577mg</b>库仑力</div>
-        <div class="cause-node"><b id="causeBeta">β = 30.00°</b>b 重建平衡</div>
-        <div class="cause-node"><b id="causeOutcome">Nᵦ = 1.155mg</b>支持力 / 能量</div>
+      <div class="force-legend" aria-label="力矢量比例与当前大小">
+        <button class="force-chip" type="button" data-trace="external"><b id="externalLegend">F外 = 0</b><span>作用于 a · 蓝色</span></button>
+        <button class="force-chip" type="button" data-trace="gravity"><b id="gravityLegend">G = 1.00mg</b><span>作用于 b · 橙色</span></button>
+        <button class="force-chip" type="button" data-trace="coulomb"><b id="coulombLegend">Fₑ = 0.58mg</b><span>作用于 b · 橙色</span></button>
+        <button class="force-chip" type="button" data-trace="support"><b id="supportLegend">Nᵦ = 1.15mg</b><span>作用于 b · 绿色</span></button>
+        <button class="force-scale" type="button" data-trace="force-scale"><i aria-hidden="true"></i><span>统一比例尺：线长 52 px 表示 1mg；F=0 时箭头消失</span></button>
       </div>
+
+      <div class="causal" aria-label="当前因果链">
+        <button class="cause-node" type="button" data-trace="alpha"><b id="causeAlpha">α = 30°</b>a 的位置</button>
+        <button class="cause-node" type="button" data-trace="distance"><b id="causeDistance">d = 1.00R</b>两球距离</button>
+        <button class="cause-node" type="button" data-trace="coulomb"><b id="causeCoulomb">Fₑ = 0.58mg</b>库仑力</button>
+        <button class="cause-node" type="button" data-trace="beta"><b id="causeBeta">β = 30.0°</b>b 重建平衡</button>
+        <button class="cause-node" type="button" data-trace="support"><b id="causeOutcome">Nᵦ = 1.15mg</b><span id="causeOutcomeLabel">支持力</span></button>
+      </div>
+      <section class="trace-panel" id="tracePanel" aria-live="polite" hidden>
+        <h3 id="traceTitle">读数从哪里来？</h3>
+        <div class="trace-grid"><b>关系式</b><span id="traceFormula"></span><b>当前代入</b><span id="traceSubstitution"></span><b>为什么保留</b><span id="tracePurpose"></span></div>
+      </section>
     </section>
 
     <aside class="work-column">
@@ -232,22 +287,20 @@
           <p class="status">准静态过程没有题设时长；慢放只逐节点展示 b 如何重建平衡，可随时暂停或拖动定位。</p>
         </div>
         <div class="panel">
-          <h3>同一状态的四个证据</h3>
-          <div class="metrics">
-            <div class="metric"><span>球间距 d</span><b id="metricDistance">1.000 R</b></div>
-            <div class="metric"><span>b 的位置 β</span><b id="metricBeta">30.00°</b></div>
-            <div class="metric"><span>b 的支持力 Nᵦ</span><b id="metricSupport">1.155 mg</b></div>
-            <div class="metric"><span>外力累计做功 W</span><b id="metricWork">0.000 mgR</b></div>
+          <h3>先完成能量账本，再看代入</h3>
+          <p>把 a 缓慢推向 c 时，先根据高度与距离判断两种势能；数字只在关系成立后出现。</p>
+          <div class="thinking-path">
+            <label class="thinking-row"><span><strong>重力势能 ΔU<sub>g</sub></strong>a 下移、b 上移，比较两球总高度变化</span><select id="gravityTrend"><option value="">请选择</option><option value="increase">增加</option><option value="decrease">减少</option><option value="same">不变</option></select></label>
+            <label class="thinking-row"><span><strong>电势能 ΔU<sub>e</sub></strong>同号电荷距离 d 变小</span><select id="electricTrend"><option value="">请选择</option><option value="increase">增加</option><option value="decrease">减少</option><option value="same">不变</option></select></label>
+            <label class="thinking-row"><span><strong>外力功 W<sub>ext</sub></strong>准静态过程 ΔK≈0，应该如何列式？</span><select id="workRelation"><option value="">请选择</option><option value="sum">ΔUᵍ + ΔUₑ</option><option value="gravity">只等于 ΔUᵍ</option><option value="electric">只等于 ΔUₑ</option></select></label>
           </div>
+          <button class="btn primary" id="checkLedger" type="button" style="margin-top:12px">检查账本并组成方程</button>
+          <p class="status" id="ledgerStatus" role="status">先完成三项判断；不需要猜小数。</p>
+          <div class="thinking-result" id="ledgerResult" role="status" hidden>账本闭合：<button class="traceable" type="button" data-trace="gravity-energy">ΔU<sub>g</sub>=<b id="ledgerUg">—</b></button> + <button class="traceable" type="button" data-trace="electric-energy">ΔU<sub>e</sub>=<b id="ledgerUe">—</b></button> = <button class="traceable" type="button" data-trace="work">W<sub>ext</sub>=<b id="ledgerWork">—</b></button></div>
         </div>
         <div class="panel">
-          <h3>支持力随推动位置变化</h3>
+          <h3>只看任务需要的趋势：Nᵦ 随推动如何变？</h3>
           <svg id="supportPlot" class="plot" viewBox="0 0 360 150" role="img" aria-label="b 的支持力随 a 位置的变化曲线"></svg>
-        </div>
-        <div class="panel">
-          <h3>能量账本（相对本次初态）</h3>
-          <div class="ledger"><span>重力势能变化 ΔU<sub>g</sub></span><b id="deltaUg">0.000 mgR</b><span>电势能变化 ΔU<sub>e</sub></span><b id="deltaUe">0.000 mgR</b><span class="total">外力做功 W<sub>ext</sub></span><b class="total" id="workLedger">0.000 mgR</b></div>
-          <div class="equation">缓慢推动：ΔK ≈ 0，所以 W<sub>ext</sub> = ΔU<sub>g</sub> + ΔU<sub>e</sub></div>
         </div>
       </section>
 
@@ -255,41 +308,44 @@
         <div class="panel">
           <h2>撤力后的物理过程</h2>
           <p id="releaseOrigin">从 α=0°、原题电量撤力，初速度为 0。</p>
-          <div class="timeline-row"><button class="btn primary" id="playButton" type="button">播放</button><input id="timeRange" type="range" min="0" max="200" step="1" value="0" aria-label="撤力后的物理时间"><b id="timeValue">t=0.00 s</b></div>
+          <div class="timeline-row"><button class="btn primary" id="playButton" type="button">播放</button><input id="timeRange" type="range" min="0" max="200" step="1" value="0" aria-label="撤力后的物理时间"><button class="traceable" id="timeValue" type="button" data-trace="time">t=0.0 s</button></div>
           <div class="control-row" style="margin-top:12px"><label>演示速度<select id="speedSelect"><option value="0.5" selected>0.5×（默认慢放）</option><option value="1">1.0×</option></select></label><label>说明<span class="status">时间轴显示物理时间；慢放只改变观看速度。</span></label></div>
           <div class="button-row"><button class="btn" id="replayButton" type="button">回到撤力瞬间</button><button class="btn" type="button" data-go="push">更换撤力位置</button></div>
         </div>
         <div class="panel">
-          <h3>守恒量不是“画面看起来一样”</h3>
-          <div class="metrics">
-            <div class="metric"><span>动能 K</span><b id="motionK">0.000 mgR</b></div>
-            <div class="metric"><span>重力势能 U<sub>g</sub></span><b id="motionUg">0.000 mgR</b></div>
-            <div class="metric"><span>电势能 U<sub>e</sub></span><b id="motionUe">0.000 mgR</b></div>
-            <div class="metric"><span>总能量 E</span><b id="motionE">0.000 mgR</b><small id="energyDrift">漂移 0.000%</small></div>
+          <h3>先找守恒量：单项在变，哪一组始终不变？</h3>
+          <label>选择你的判断<select id="conservedSelect"><option value="">请选择</option><option value="kinetic">只有 K</option><option value="gravity">只有 Uᵍ</option><option value="electric">只有 Uₑ</option><option value="total">K + Uᵍ + Uₑ</option></select></label>
+          <button class="btn primary" id="checkConserved" type="button" style="margin-top:10px">检查守恒结构</button>
+          <div class="energy-bars" aria-label="三类能量相对大小">
+            <div class="energy-bar"><b>K</b><div class="energy-track"><i class="energy-fill" id="kineticBar"></i></div><span class="energy-state" id="kineticState">当前为零</span></div>
+            <div class="energy-bar"><b>Uᵍ</b><div class="energy-track"><i class="energy-fill" id="gravityBar"></i></div><span class="energy-state" id="gravityState">随位置变化</span></div>
+            <div class="energy-bar"><b>Uₑ</b><div class="energy-track"><i class="energy-fill" id="electricBar"></i></div><span class="energy-state" id="electricState">随距离变化</span></div>
           </div>
           <svg id="energyPlot" class="plot" viewBox="0 0 360 140" role="img" aria-label="撤力后各类能量和总能量随时间变化"></svg>
-          <div class="equation">E = ½mR²(α̇²+β̇²) + U<sub>g</sub> + U<sub>e</sub> = 常量</div>
+          <div class="equation">结构先于数字：<button class="traceable" type="button" data-trace="kinetic">K</button> + <button class="traceable" type="button" data-trace="gravity-energy">U<sub>g</sub></button> + <button class="traceable" type="button" data-trace="electric-energy">U<sub>e</sub></button> = <button class="traceable" type="button" data-trace="total-energy">E（不变）</button><br><span id="conservedResult">拖动时间轴观察三项互相转化，再作判断。</span></div>
         </div>
       </section>
 
       <section class="stage-panel" data-panel="solve">
         <div class="panel">
-          <h2>把观察翻译成方程</h2>
-          <div class="bridge-list">
-            <div class="bridge-step"><b>支持力：</b>先用 b 的切向平衡求 β，再用径向分量求 Nᵦ；不能只看库仑力大小。</div>
-            <div class="bridge-step"><b>推动做功：</b>准静态 ΔK≈0，把外力功写成两种势能的总变化。</div>
-            <div class="bridge-step"><b>撤力运动：</b>不再有外力做功，支持力不做功，重力势能、电势能和动能相互转化。</div>
+          <h2>把观察交接到列式：四步分析骨架</h2>
+          <div class="analysis-tabs" aria-label="选择要分析的过程"><button class="btn" type="button" data-analysis="push" aria-pressed="true">缓慢推动</button><button class="btn" type="button" data-analysis="release" aria-pressed="false">撤力运动</button></div>
+          <div class="analysis-skeleton" id="analysisSkeleton">
+            <div class="skeleton-step"><b>1 研究对象</b><span id="skeletonObject">单独研究 b；能量研究 a+b 系统</span></div>
+            <div class="skeleton-step"><b>2 过程分段</b><span id="skeletonProcess">准静态：任一时刻 ΔK≈0</span></div>
+            <div class="skeleton-step"><b>3 选规律</b><span id="skeletonLaw">切向平衡、径向方程、功能关系</span></div>
+            <div class="skeleton-step"><b>4 写方程</b><span id="skeletonEquation">Wext=ΔUg+ΔUe</span></div>
           </div>
-          <div class="equation">b 的切向平衡：mg sinβ = (kq²/d²) cos[(α+β)/2]</div>
-          <div class="equation">b 的径向方程：Nᵦ = mg cosβ + (kq²/d²) sin[(α+β)/2]</div>
+          <div class="equation"><button class="traceable" type="button" data-trace="beta">切向平衡</button>：mg sinβ = (kq²/d²) cos[(α+β)/2]</div>
+          <div class="equation"><button class="traceable" type="button" data-trace="support">径向方程</button>：Nᵦ = mg cosβ + (kq²/d²) sin[(α+β)/2]</div>
         </div>
         <div class="panel">
           <h2>现在判断选项</h2>
           <p>先勾选你认为正确的选项，再提交。证据只在提交后展开。</p>
           <div class="choices" id="choices">
-            <label class="choice" data-option="A" data-correct="false"><input type="checkbox" value="A"><span><b>A</b>　圆环对 b 球的支持力变大</span><span class="choice-feedback">模型给出 Nᵦ：<span id="answerNStart">—</span> → <span id="answerNEnd">—</span>。错误变量是“支持力趋势”，库仑力变大不等于支持力必然变大。</span></label>
-            <label class="choice" data-option="B" data-correct="true"><input type="checkbox" value="B"><span><b>B</b>　外力做正功，电势能增加</span><span class="choice-feedback">d 变小使 ΔUₑ=<span id="answerUe">—</span>；同时 ΔU<sub>g</sub>=<span id="answerUg">—</span>，因此 W<sub>ext</sub>=<span id="answerWork">—</span>。</span></label>
-            <label class="choice" data-option="C" data-correct="false"><input type="checkbox" value="C"><span><b>C</b>　两球重力势能之和不变</span><span class="choice-feedback">a 下移与 b 上移的高度变化不相等；模型给出 ΔU<sub>g</sub>=<span id="answerUgAgain">—</span>，并非 0。</span></label>
+            <label class="choice" data-option="A" data-correct="false"><input type="checkbox" value="A"><span><b>A</b>　圆环对 b 球的支持力变大</span><span class="choice-feedback">模型给出 Nᵦ：<span class="traceable" role="button" tabindex="0" data-trace="support-start" id="answerNStart">—</span> → <span class="traceable" role="button" tabindex="0" data-trace="support-end" id="answerNEnd">—</span>。错误变量是“支持力趋势”，库仑力变大不等于支持力必然变大。</span></label>
+            <label class="choice" data-option="B" data-correct="true"><input type="checkbox" value="B"><span><b>B</b>　外力做正功，电势能增加</span><span class="choice-feedback">d 变小使 ΔUₑ=<span class="traceable" role="button" tabindex="0" data-trace="electric-energy" id="answerUe">—</span>；同时 ΔU<sub>g</sub>=<span class="traceable" role="button" tabindex="0" data-trace="gravity-energy" id="answerUg">—</span>，因此 W<sub>ext</sub>=<span class="traceable" role="button" tabindex="0" data-trace="work" id="answerWork">—</span>。</span></label>
+            <label class="choice" data-option="C" data-correct="false"><input type="checkbox" value="C"><span><b>C</b>　两球重力势能之和不变</span><span class="choice-feedback">a 下移与 b 上移的高度变化不相等；模型给出 ΔU<sub>g</sub>=<span class="traceable" role="button" tabindex="0" data-trace="gravity-energy" id="answerUgAgain">—</span>，并非 0。</span></label>
             <label class="choice" data-option="D" data-correct="true"><input type="checkbox" value="D"><span><b>D</b>　撤力后运动过程中系统能量守恒</span><span class="choice-feedback">撤力后重力和静电力为保守力，支持力不做功；数值轨迹中 E 保持恒定。</span></label>
           </div>
           <button class="btn primary" id="submitChoices" type="button" style="margin-top:12px">提交并查看证据</button>
@@ -303,18 +359,55 @@
       </section>
     </aside>
   </div>
-</main>
 
-<footer class="review-next">
-  <p>体验完成后，请用六个维度留下判断；提交成功会自动回到课件列表。</p>
-  <div class="review-next-links">
-    <a href="../">返回课件列表</a>
-    <a class="primary" href="../feedback/?courseware_id=q01-vertical-circle">去评价</a>
-  </div>
-</footer>
+  <section class="audit-view" id="teacherAudit" aria-labelledby="auditTitle" hidden>
+    <div class="audit-head"><div><h2 id="auditTitle">老师审计视图：关系式—当前代入—参考值</h2><p>本页不进入学生学习路径。所有学生页保留读数都在这里对应到题设、关系式和数值参考，便于两分钟抽查。</p></div><button class="btn" id="closeAudit" type="button">返回学生视图</button></div>
+    <div class="audit-table-wrap"><table class="audit-table">
+      <thead><tr><th>读数</th><th>来源 / 关系式</th><th>当前代入</th><th>显示用途与精度</th></tr></thead>
+      <tbody>
+        <tr><td>α</td><td>学生操控的 a 角位置</td><td id="auditAlpha">—</td><td>过程自变量，学生页到 1°</td></tr>
+        <tr><td>β</td><td><code>mg sinβ = (kq²/d²) cos[(α+β)/2]</code> 数值求根</td><td id="auditBeta">—</td><td>b 重建平衡，学生页到 0.1°</td></tr>
+        <tr><td>d/R</td><td><code>2 sin[(α+β)/2]</code></td><td id="auditDistance">—</td><td>连接位置与静电力，学生页 2 位</td></tr>
+        <tr><td>γ</td><td><code>kq₀²/(mgR²)=1/√3</code>；变式乘 <code>(q/q₀)²</code></td><td id="auditGamma">—</td><td>模型常数，只在溯源/审计显示</td></tr>
+        <tr><td>Fₑ/(mg)</td><td><code>γ(q/q₀)²/(d/R)²</code></td><td id="auditCoulomb">—</td><td>决定 β 与支持力，学生页 2 位</td></tr>
+        <tr><td>F外/(mg)</td><td>准静态 a 的切向平衡；撤力后严格为 0</td><td id="auditExternal">—</td><td>控制推动方向；过零显式 F=0</td></tr>
+        <tr><td>Nᵦ/(mg)</td><td>准静态径向方程；运动时再加 <code>Rβ̇²/g</code></td><td id="auditSupport">—</td><td>判断 A，学生页 2 位</td></tr>
+        <tr><td>ΔUᵍ/(mgR)</td><td><code>−(cosα+cosβ) − 初态</code></td><td id="auditDeltaUg">—</td><td>判断 C、组成能量账本，学生页 2 位</td></tr>
+        <tr><td>ΔUₑ/(mgR)</td><td><code>γ/(d/R) − 初态</code></td><td id="auditDeltaUe">—</td><td>判断 B、组成能量账本，学生页 2 位</td></tr>
+        <tr><td>Wext/(mgR)</td><td><code>ΔK≈0 ⇒ Wext=ΔUᵍ+ΔUₑ</code></td><td id="auditWork">—</td><td>只在账本完成后显示，学生页 2 位</td></tr>
+        <tr><td>K/(mgR)</td><td><code>R(α̇²+β̇²)/(2g)</code></td><td id="auditKinetic">—</td><td>撤力能量组成项；学生页用条形变化</td></tr>
+        <tr><td>E/(mgR)</td><td><code>K+Uᵍ+Uₑ</code></td><td id="auditEnergy">—</td><td>判断 D；学生页只强调“不变”</td></tr>
+        <tr><td>t</td><td>数值参考的物理时间；采样间隔 0.02 s</td><td id="auditTime">—</td><td>学生页到 0.1 s；0.5×/1×仅是播放倍率</td></tr>
+        <tr><td>力箭头</td><td><code>长度 = |F/(mg)| × 52 px</code>，方向取真实矢量方向</td><td id="auditForceScale">—</td><td>视觉编码；统一比例尺，不是题设长度</td></tr>
+      </tbody>
+    </table></div>
+    <h3 style="margin-top:16px">原题关键参考（q=1.0q₀，α:30°→0°）</h3>
+    <div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>量</th><th>独立参考</th><th>页面显示</th></tr></thead><tbody>
+      <tr><td>β 末态</td><td>49.207662344°</td><td>49.2°</td></tr>
+      <tr><td>Nᵦ 初态 → 末态</td><td>1.154700538 → 1.000000000 mg</td><td>1.15 → 1.00 mg</td></tr>
+      <tr><td>ΔUᵍ</td><td>+0.078731445 mgR</td><td>+0.08 mgR</td></tr>
+      <tr><td>ΔUₑ</td><td>+0.116011005 mgR</td><td>+0.12 mgR</td></tr>
+      <tr><td>Wext</td><td>+0.194742450 mgR</td><td>+0.19 mgR</td></tr>
+      <tr><td>撤力后最大能量漂移</td><td>&lt;2×10⁻⁵ mgR（硬断言）</td><td>学生页不显示伪精确百分比</td></tr>
+    </tbody></table></div>
+  </section>
+  <footer class="review-next">
+    <p>完成体验后，请按六维提交本次二次评审。</p>
+    <a id="reviewLink" href="https://landeermail.github.io/courseware-space/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/feedback/?courseware_id=q01-vertical-circle">去评价</a>
+  </footer>
+</main>
 
 <script>
 (() => {
+  const accessKey = 'coursewareAccessCode';
+  const fragment = new URLSearchParams(location.hash.slice(1));
+  const fragmentCode = fragment.get('access');
+  if (fragmentCode) {
+    sessionStorage.setItem(accessKey, fragmentCode);
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  const accessCode = sessionStorage.getItem(accessKey) || '';
+  if (accessCode) document.getElementById('reviewLink').hash = `access=${encodeURIComponent(accessCode)}`;
   const angles = [30, 24, 18, 12, 6, 0];
   const stageMissions = {
     observe: '先分清两个研究对象、两个过程阶段，并给左右两球选择一致的角坐标。',
@@ -335,7 +428,10 @@
   let lastFrameTime = 0;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = id => document.getElementById(id);
-  const fmt = (v, n=3) => Number(v).toFixed(n);
+  const fmt = (v, n=2) => Number(v).toFixed(n);
+  const FORCE_SCALE = 52;
+  const ZERO_FORCE = 0.0005;
+  const GRAVITY = 9.8;
   const keyForCharge = () => `q${String(Math.round(chargeScale * 100)).padStart(3, '0')}`;
   const quasiIndex = () => (30 - angles[angleIndex]) * 2;
   const currentQuasi = () => data.quasistatic[keyForCharge()][quasiIndex()];
@@ -345,7 +441,7 @@
     document.querySelectorAll('[data-stage]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.stage === next)));
     document.querySelectorAll('[data-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.panel === next));
     $('missionText').textContent = stageMissions[next];
-    $('forceLayer').style.display = next === 'observe' || next === 'push' ? '' : 'none';
+    $('forceLayer').style.display = '';
     if (next !== 'release') stopPlayback();
     if (next !== 'push') stopPushPlayback();
     renderAll();
@@ -387,6 +483,30 @@
     return currentQuasi();
   }
 
+  function currentForces() {
+    const s = sceneState();
+    const half = (s.alpha_deg + s.beta_deg) * Math.PI / 360;
+    const gamma = data.meta.base_gamma * chargeScale * chargeScale;
+    const coulomb = gamma / (s.distance_over_r * s.distance_over_r);
+    const betaVelocity = stage === 'release' ? (s.beta_velocity_rad_s || 0) : 0;
+    const support = Math.cos(s.beta_deg * Math.PI / 180) + coulomb * Math.sin(half) + betaVelocity * betaVelocity / GRAVITY;
+    const external = stage === 'release' ? 0 : currentQuasi().external_tangent_over_mg;
+    return {external, gravity: 1, coulomb, support, gamma};
+  }
+
+  function renderForceArrow(lineId, labelId, start, dx, dy, signedMagnitude, marker, label) {
+    const line = $(lineId);
+    const magnitude = Math.abs(signedMagnitude);
+    const zero = magnitude < ZERO_FORCE;
+    const direction = signedMagnitude < 0 ? -1 : 1;
+    const end = zero ? start : vectorEnd(start, dx * direction, dy * direction, magnitude * FORCE_SCALE);
+    setLine(lineId, start, end);
+    if (zero) line.removeAttribute('marker-end');
+    else line.setAttribute('marker-end', `url(#${marker})`);
+    line.style.opacity = zero ? '0' : '1';
+    setText(labelId, zero ? {x:start.x+8,y:start.y-18} : {x:end.x+7,y:end.y-7}, zero ? `${label}=0` : `${label}=${fmt(magnitude)}mg`);
+  }
+
   function renderScene() {
     const stateNow = sceneState();
     const alpha = stateNow.alpha_deg;
@@ -404,16 +524,20 @@
     setText('alphaLabel', polarPoint(Math.max(8, alpha/2), 78, -1));
     setText('betaLabel', polarPoint(Math.max(8, beta/2), 78, 1));
 
+    const forces = currentForces();
+    renderForceArrow('externalArrow','externalLabel',a,-Math.cos(alpha*Math.PI/180),-Math.sin(alpha*Math.PI/180),forces.external,'arrowBlue','F外');
+    renderForceArrow('gravityArrow','gravityLabel',b,0,1,forces.gravity,'arrowAmber','G');
+    renderForceArrow('coulombArrow','coulombLabel',b,b.x-a.x,b.y-a.y,forces.coulomb,'arrowAmber','Fₑ');
+    renderForceArrow('supportArrow','supportLabel',b,330-b.x,260-b.y,forces.support,'arrowGreen','Nᵦ');
+    $('externalLegend').textContent = Math.abs(forces.external) < ZERO_FORCE ? 'F外 = 0' : `F外 = ${fmt(Math.abs(forces.external))}mg`;
+    $('gravityLegend').textContent = 'G = 1.00mg';
+    $('coulombLegend').textContent = `Fₑ = ${fmt(forces.coulomb)}mg`;
+    $('supportLegend').textContent = `Nᵦ = ${fmt(forces.support)}mg`;
+
     if (stage === 'observe' || stage === 'push') {
-      const q = currentQuasi();
-      const externalEnd = vectorEnd(a, Math.cos(alpha*Math.PI/180), Math.sin(alpha*Math.PI/180), 66);
-      setLine('externalArrow', a, externalEnd); setText('externalLabel', {x:externalEnd.x+8, y:externalEnd.y+4});
-      const gravityEnd = {x:b.x, y:b.y+66}; setLine('gravityArrow', b, gravityEnd); setText('gravityLabel', {x:b.x+8, y:b.y+54});
-      const coulombEnd = vectorEnd(b, b.x-a.x, b.y-a.y, 58); setLine('coulombArrow', b, coulombEnd); setText('coulombLabel', {x:coulombEnd.x+6, y:coulombEnd.y-7});
-      const supportEnd = vectorEnd(b, 330-b.x, 260-b.y, 64); setLine('supportArrow', b, supportEnd); setText('supportLabel', {x:supportEnd.x-28, y:supportEnd.y-8});
       $('phaseTag').textContent = '准静态：b 每一刻切向合力为 0';
     } else if (stage === 'release') {
-      $('phaseTag').textContent = `撤力后：物理时间 ${fmt(stateNow.time_s || 0, 2)} s`;
+      $('phaseTag').textContent = `撤力后：物理时间 ${fmt(stateNow.time_s || 0, 1)} s；F外=0`;
     } else {
       $('phaseTag').textContent = '回到纸笔：用准静态末态与撤力条件判断';
     }
@@ -423,13 +547,20 @@
 
   function renderCausal() {
     const s = sceneState();
+    const forces = currentForces();
     $('causeAlpha').textContent = `α = ${fmt(s.alpha_deg, 1)}°`;
-    $('causeDistance').textContent = `d = ${fmt(s.distance_over_r, 3)}R`;
-    const force = (0.577350269 * chargeScale * chargeScale) / (s.distance_over_r * s.distance_over_r);
-    $('causeCoulomb').textContent = `Fₑ = ${fmt(force, 3)}mg`;
-    $('causeBeta').textContent = `β = ${fmt(s.beta_deg, 2)}°`;
-    if (stage === 'release') $('causeOutcome').textContent = `E = ${fmt(s.total_energy_over_mgr, 3)}mgR`;
-    else $('causeOutcome').textContent = `Nᵦ = ${fmt(currentQuasi().support_b_over_mg, 3)}mg`;
+    $('causeDistance').textContent = `d = ${fmt(s.distance_over_r)}R`;
+    $('causeCoulomb').textContent = `Fₑ = ${fmt(forces.coulomb)}mg`;
+    $('causeBeta').textContent = `β = ${fmt(s.beta_deg, 1)}°`;
+    if (stage === 'release') {
+      $('causeOutcome').textContent = 'E = K + Uᵍ + Uₑ';
+      $('causeOutcome').closest('button').dataset.trace = 'total-energy';
+      $('causeOutcomeLabel').textContent = '总能量结构';
+    } else {
+      $('causeOutcome').textContent = `Nᵦ = ${fmt(forces.support)}mg`;
+      $('causeOutcome').closest('button').dataset.trace = 'support';
+      $('causeOutcomeLabel').textContent = '支持力';
+    }
   }
 
   function plotSupport() {
@@ -441,19 +572,16 @@
     const y = n => 116-(n-min)/(max-min)*86;
     const points = path.map(d => `${x(d.alpha_deg)},${y(d.support_b_over_mg)}`).join(' ');
     const c = currentQuasi();
-    svg.innerHTML = `<line class="axis" x1="34" y1="116" x2="340" y2="116"/><line class="axis" x1="34" y1="24" x2="34" y2="116"/><line class="grid" x1="34" y1="70" x2="340" y2="70"/><polyline class="series" points="${points}"/><circle class="point" cx="${x(c.alpha_deg)}" cy="${y(c.support_b_over_mg)}" r="5"/><text x="28" y="18">Nᵦ / mg</text><text x="28" y="134">30°</text><text x="322" y="134">c</text><text x="292" y="148">a 的位置</text><text x="42" y="42">${fmt(max-.03,3)}</text><text x="42" y="110">${fmt(min+.03,3)}</text>`;
+    svg.innerHTML = `<line class="axis" x1="34" y1="116" x2="340" y2="116"/><line class="axis" x1="34" y1="24" x2="34" y2="116"/><line class="grid" x1="34" y1="70" x2="340" y2="70"/><polyline class="series" points="${points}"/><circle class="point" cx="${x(c.alpha_deg)}" cy="${y(c.support_b_over_mg)}" r="5"/><text x="28" y="18">Nᵦ 趋势</text><text x="28" y="134">初态</text><text x="322" y="134">c</text><text x="276" y="148">推动方向 →</text><text x="42" y="42">较大</text><text x="42" y="110">较小</text>`;
   }
 
   function renderQuasiPanel() {
     const s = currentQuasi();
+    const pathEnd = data.quasistatic[keyForCharge()][data.quasistatic[keyForCharge()].length-1];
     $('alphaValue').textContent = `${fmt(s.alpha_deg,0)}°${s.alpha_deg === 0 ? '（c）' : ''}`;
-    $('metricDistance').textContent = `${fmt(s.distance_over_r)} R`;
-    $('metricBeta').textContent = `${fmt(s.beta_deg,2)}°`;
-    $('metricSupport').textContent = `${fmt(s.support_b_over_mg)} mg`;
-    $('metricWork').textContent = `${fmt(s.external_work_over_mgr)} mgR`;
-    $('deltaUg').textContent = `${s.delta_gravity_energy_over_mgr >= 0 ? '+' : ''}${fmt(s.delta_gravity_energy_over_mgr)} mgR`;
-    $('deltaUe').textContent = `${s.delta_electric_energy_over_mgr >= 0 ? '+' : ''}${fmt(s.delta_electric_energy_over_mgr)} mgR`;
-    $('workLedger').textContent = `${s.external_work_over_mgr >= 0 ? '+' : ''}${fmt(s.external_work_over_mgr)} mgR`;
+    $('ledgerUg').textContent = `${pathEnd.delta_gravity_energy_over_mgr >= 0 ? '+' : ''}${fmt(pathEnd.delta_gravity_energy_over_mgr)}mgR`;
+    $('ledgerUe').textContent = `${pathEnd.delta_electric_energy_over_mgr >= 0 ? '+' : ''}${fmt(pathEnd.delta_electric_energy_over_mgr)}mgR`;
+    $('ledgerWork').textContent = `${pathEnd.external_work_over_mgr >= 0 ? '+' : ''}${fmt(pathEnd.external_work_over_mgr)}mgR`;
     plotSupport();
   }
 
@@ -483,21 +611,87 @@
   function renderMotionPanel() {
     if (!releaseFrames.length) return;
     const s = releaseFrames[timeIndex];
-    $('timeValue').textContent = `t=${fmt(s.time_s,2)} s`;
+    $('timeValue').textContent = `t=${fmt(s.time_s,1)} s`;
     $('timeRange').value = timeIndex;
-    $('motionK').textContent = `${fmt(s.kinetic_over_mgr)} mgR`;
-    $('motionUg').textContent = `${fmt(s.gravity_energy_over_mgr)} mgR`;
-    $('motionUe').textContent = `${fmt(s.electric_energy_over_mgr)} mgR`;
-    $('motionE').textContent = `${fmt(s.total_energy_over_mgr)} mgR`;
-    const base = releaseFrames[0].total_energy_over_mgr;
-    const drift = Math.abs((s.total_energy_over_mgr-base)/(Math.abs(base)||1))*100;
-    $('energyDrift').textContent = `相对撤力瞬间漂移 ${drift.toFixed(4)}%`;
+    const keys = ['kinetic_over_mgr','gravity_energy_over_mgr','electric_energy_over_mgr'];
+    const bars = ['kineticBar','gravityBar','electricBar'];
+    keys.forEach((key,index) => {
+      const values = releaseFrames.map(item => item[key]);
+      const min = Math.min(...values), max = Math.max(...values);
+      const percent = max-min < 1e-12 ? 50 : 12 + (s[key]-min)/(max-min)*76;
+      $(bars[index]).style.width = `${percent}%`;
+    });
+    const initial = releaseFrames[0];
+    const describe = (value, origin, zeroLabel) => Math.abs(value-origin) < .003 ? zeroLabel : value > origin ? '比撤力瞬间增加' : '比撤力瞬间减少';
+    $('kineticState').textContent = s.kinetic_over_mgr < .003 ? '当前为零' : '由势能转化而来';
+    $('gravityState').textContent = describe(s.gravity_energy_over_mgr, initial.gravity_energy_over_mgr, '与撤力瞬间相同');
+    $('electricState').textContent = describe(s.electric_energy_over_mgr, initial.electric_energy_over_mgr, '与撤力瞬间相同');
     plotEnergy();
+  }
+
+  function traceContent(key) {
+    const s = sceneState();
+    const q = currentQuasi();
+    const pathEnd = data.quasistatic[keyForCharge()][data.quasistatic[keyForCharge()].length-1];
+    const originalPath = data.quasistatic.q100;
+    const originalStart = originalPath[0], originalEnd = originalPath[originalPath.length-1];
+    const f = currentForces();
+    const half = (s.alpha_deg+s.beta_deg)/2;
+    const sign = value => `${value >= 0 ? '+' : ''}${fmt(value)}`;
+    const traces = {
+      alpha: ['α：a 的位置','由位置滑块直接给出',`α=${fmt(s.alpha_deg,1)}°`,'它是整条因果链的上游操控量。'],
+      distance: ['d：两球距离','d/R = 2sin[(α+β)/2]',`2sin[(${fmt(s.alpha_deg,1)}°+${fmt(s.beta_deg,1)}°)/2] = ${fmt(s.distance_over_r)}`,'距离决定静电力和电势能。'],
+      beta: ['β：b 重建平衡','mg sinβ = (kq²/d²)cos[(α+β)/2]',`α=${fmt(s.alpha_deg,1)}°、γ=${fmt(f.gamma,6)}，数值求根得 β=${fmt(s.beta_deg,1)}°`,'先求 β，才能继续判断支持力和高度。'],
+      coulomb: ['Fₑ：静电斥力','Fₑ/(mg)=γ(q/q₀)²/(d/R)²',`${fmt(f.gamma,6)} / ${fmt(s.distance_over_r)}² = ${fmt(f.coulomb)}`,'把距离变化连接到平衡与支持力。'],
+      gravity: ['G：重力','G=mg',`G/(mg)=1.00`,'提供切向和径向分量；统一比例尺的基准。'],
+      external: ['F外：推动或撤力条件','准静态由 a 的切向平衡确定；撤力后 F外=0',stage==='release'?'撤去外力，所以 F外=0':`F外/(mg)=${sign(f.external)}，方向由正负号决定`,'区分“缓慢推动”与“撤力运动”两个过程。'],
+      support: ['Nᵦ：圆环支持力',stage==='release'?'Nᵦ/(mg)=cosβ+[Fₑ/(mg)]sin[(α+β)/2]+Rβ̇²/g':'Nᵦ/(mg)=cosβ+[Fₑ/(mg)]sin[(α+β)/2]',stage==='release'?`cos${fmt(s.beta_deg,1)}°+${fmt(f.coulomb)}sin${fmt(half,1)}°+β̇²/g = ${fmt(f.support)}`:`cos${fmt(s.beta_deg,1)}°+${fmt(f.coulomb)}sin${fmt(half,1)}° = ${fmt(f.support)}`,'直接检验 A 的“支持力变大”。'],
+      'support-start': ['Nᵦ：原题初态','Nᵦ/(mg)=cosβ+[Fₑ/(mg)]sin[(α+β)/2]',`cos30.0°+${fmt(originalStart.coulomb_over_mg)}sin30.0°=${fmt(originalStart.support_b_over_mg)}mg`,'作为 A 项趋势比较的起点。'],
+      'support-end': ['Nᵦ：a 到 c 的末态','Nᵦ/(mg)=cosβ+[Fₑ/(mg)]sin[(α+β)/2]',`cos${fmt(originalEnd.beta_deg,1)}°+${fmt(originalEnd.coulomb_over_mg)}sin${fmt(originalEnd.beta_deg/2,1)}°=${fmt(originalEnd.support_b_over_mg)}mg`,'与初态对照，支持力下降而非上升。'],
+      'gravity-energy': [stage==='release'?'Uᵍ：重力势能':'ΔUᵍ：从初态推到 c 的变化','Uᵍ/(mgR)=−(cosα+cosβ)',stage==='release'?`Uᵍ=${fmt(s.gravity_energy_over_mgr)}mgR`:`末态−初态=${sign(pathEnd.delta_gravity_energy_over_mgr)}mgR`,'比较两球总高度，检验 C 并进入能量账本。'],
+      'electric-energy': [stage==='release'?'Uₑ：电势能':'ΔUₑ：从初态推到 c 的变化','Uₑ/(mgR)=γ/(d/R)',stage==='release'?`${fmt(f.gamma,6)}/${fmt(s.distance_over_r)}=${fmt(s.electric_energy_over_mgr)}mgR`:`末态−初态=${sign(pathEnd.delta_electric_energy_over_mgr)}mgR`,'距离变小使电势能增加，连接 B。'],
+      work: ['Wext：从初态推到 c 的外力功','准静态 ΔK≈0 ⇒ Wext=ΔUᵍ+ΔUₑ',`${sign(pathEnd.delta_gravity_energy_over_mgr)}+${sign(pathEnd.delta_electric_energy_over_mgr)}=${sign(pathEnd.external_work_over_mgr)}mgR`,'账本闭合后才显示，避免孤立数字。'],
+      kinetic: ['K：两球总动能','K/(mgR)=R(α̇²+β̇²)/(2g)',stage==='release'?`K=${fmt(s.kinetic_over_mgr)}mgR`:'准静态 K≈0','与两种势能共同组成撤力后的守恒量。'],
+      'total-energy': ['E：撤力后的总能量','E=K+Uᵍ+Uₑ',stage==='release'?`${fmt(s.kinetic_over_mgr)}+${fmt(s.gravity_energy_over_mgr)}+${fmt(s.electric_energy_over_mgr)}=${fmt(s.total_energy_over_mgr)}mgR`:'撤力后支持力不做功，E 保持不变','这是 D 的守恒结构，不要求学生记住某个小数。'],
+      time: ['t：撤力后的物理时间','来自数值参考的时间轴；采样间隔 0.02 s',stage==='release'?`当前 t=${fmt(s.time_s,1)} s；完整观察窗 0～${fmt(data.meta.physical_duration_s,1)} s`:'准静态过程没有题设时长','区分物理时间与 0.5×/1×演示倍率。'],
+      'force-scale': ['力箭头统一比例尺','线长=|F/(mg)|×52 px；方向取真实矢量方向',`当前 F外=${fmt(Math.abs(f.external))}、G=1.00、Fₑ=${fmt(f.coulomb)}、Nᵦ=${fmt(f.support)}（单位 mg）`,'让力的大小变化可见；52 px 是视觉编码，不是物理长度。']
+    };
+    return traces[key] || ['当前读数','见老师审计视图','—','只保留服务任务的关系。'];
+  }
+
+  function showTrace(key) {
+    const [title,formula,substitution,purpose] = traceContent(key);
+    $('traceTitle').textContent = title;
+    $('traceFormula').textContent = formula;
+    $('traceSubstitution').textContent = substitution;
+    $('tracePurpose').textContent = purpose;
+    $('tracePanel').hidden = false;
+  }
+
+  function updateAudit() {
+    const s = sceneState();
+    const q = currentQuasi();
+    const f = currentForces();
+    const precise = value => Number(value).toFixed(6);
+    $('auditAlpha').textContent = `${precise(s.alpha_deg)}°`;
+    $('auditBeta').textContent = `${precise(s.beta_deg)}°`;
+    $('auditDistance').textContent = `2sin[(${precise(s.alpha_deg)}°+${precise(s.beta_deg)}°)/2]=${precise(s.distance_over_r)}`;
+    $('auditGamma').textContent = `${precise(data.meta.base_gamma)}×${chargeScale.toFixed(1)}²=${precise(f.gamma)}`;
+    $('auditCoulomb').textContent = `${precise(f.gamma)}/${precise(s.distance_over_r)}²=${precise(f.coulomb)}`;
+    $('auditExternal').textContent = stage==='release'?'0（已撤力）':`${precise(f.external)} mg`;
+    $('auditSupport').textContent = `${precise(f.support)} mg`;
+    $('auditDeltaUg').textContent = `${precise(q.delta_gravity_energy_over_mgr)} mgR`;
+    $('auditDeltaUe').textContent = `${precise(q.delta_electric_energy_over_mgr)} mgR`;
+    $('auditWork').textContent = `${precise(q.external_work_over_mgr)} mgR`;
+    $('auditKinetic').textContent = stage==='release'?`${precise(s.kinetic_over_mgr)} mgR`:'≈0（准静态）';
+    $('auditEnergy').textContent = stage==='release'?`${precise(s.total_energy_over_mgr)} mgR`:`${precise(q.total_potential_over_mgr)} mgR`;
+    $('auditTime').textContent = stage==='release'?`${precise(s.time_s)} s`:'准静态无题设时长';
+    $('auditForceScale').textContent = `F外 ${precise(f.external)}，G 1.000000，Fₑ ${precise(f.coulomb)}，Nᵦ ${precise(f.support)}（单位 mg）`;
   }
 
   function renderAll() {
     if (!data) return;
-    renderScene(); renderCausal(); renderQuasiPanel(); renderMotionPanel();
+    renderScene(); renderCausal(); renderQuasiPanel(); renderMotionPanel(); updateAudit();
   }
 
   function fillAnswerEvidence() {
@@ -543,6 +737,41 @@
 
   document.querySelectorAll('[data-stage]').forEach(button => button.addEventListener('click', () => setStage(button.dataset.stage)));
   document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => setStage(button.dataset.go)));
+  document.querySelectorAll('[data-trace]').forEach(button => {
+    button.addEventListener('click', event => { event.preventDefault(); showTrace(button.dataset.trace); });
+    button.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); showTrace(button.dataset.trace); }
+    });
+  });
+  $('checkLedger').addEventListener('click', () => {
+    const complete = $('gravityTrend').value && $('electricTrend').value && $('workRelation').value;
+    const correct = $('gravityTrend').value === 'increase' && $('electricTrend').value === 'increase' && $('workRelation').value === 'sum';
+    $('ledgerResult').hidden = !correct;
+    $('ledgerStatus').textContent = !complete ? '还有空项：先根据高度、距离和 ΔK≈0 完成三项判断。' : correct ? '判断正确。现在用关系式把三项串成同一条能量逻辑。' : '暂未闭合：回到“总高度、球间距、ΔK≈0”逐项检查，不要先猜数字。';
+  });
+  $('checkConserved').addEventListener('click', () => {
+    const value = $('conservedSelect').value;
+    $('conservedResult').textContent = value === 'total' ? '判断正确：K、Uᵍ、Uₑ 各自在变，三项之和不变；换撤力位置时仍用同一结构。' : value ? '单项会随运动变化。继续拖动时间轴，寻找由三项组成的不变量。' : '请先选择一个候选守恒量。';
+  });
+  const analysisContent = {
+    push: ['单独研究 b；能量研究 a+b 系统','准静态：任一时刻 ΔK≈0','切向平衡、径向方程、功能关系','Wext=ΔUᵍ+ΔUₑ'],
+    release: ['研究 a+b 系统','撤去外力后的耦合运动','重力与静电力保守，支持力不做功','K+Uᵍ+Uₑ=常量']
+  };
+  document.querySelectorAll('[data-analysis]').forEach(button => button.addEventListener('click', () => {
+    document.querySelectorAll('[data-analysis]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    const content = analysisContent[button.dataset.analysis];
+    ['skeletonObject','skeletonProcess','skeletonLaw','skeletonEquation'].forEach((id,index) => $(id).textContent = content[index]);
+  }));
+  $('openAudit').addEventListener('click', () => {
+    $('teacherAudit').hidden = false;
+    $('openAudit').setAttribute('aria-expanded','true');
+    $('teacherAudit').scrollIntoView({behavior:reducedMotion?'auto':'smooth',block:'start'});
+  });
+  $('closeAudit').addEventListener('click', () => {
+    $('teacherAudit').hidden = true;
+    $('openAudit').setAttribute('aria-expanded','false');
+    $('openAudit').focus();
+  });
   $('chargeSelect').addEventListener('change', event => { chargeScale = Number(event.target.value); stopPlayback(); renderAll(); });
   $('pushRange').addEventListener('input', event => { stopPushPlayback(); angleIndex = Number(event.target.value); renderAll(); });
   $('pushToC').addEventListener('click', () => {
