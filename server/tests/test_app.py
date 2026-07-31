@@ -18,6 +18,9 @@ from app import (  # noqa: E402
     cors_origins_from_environment,
 )
 
+STRONG_CODE = "a1" * 24
+OTHER_STRONG_CODE = "b2" * 24
+
 
 class RequestRateLimiterTests(unittest.TestCase):
     def test_per_client_and_window_limits(self) -> None:
@@ -57,11 +60,11 @@ class CorsConfigurationTests(unittest.TestCase):
 
 
 class AccessOrderingTests(unittest.TestCase):
-    def test_wrong_code_is_rejected_before_rate_limit_body_or_manager(self) -> None:
+    def test_wrong_code_counts_toward_rate_limit_before_body_or_manager(self) -> None:
         handler = object.__new__(GeneratorHandler)
         handler.path = "/api/generate"
-        handler.headers = {ACCESS_HEADER: "wrong"}
-        handler.access_gate = AccessCodeGate("right")
+        handler.headers = {ACCESS_HEADER: OTHER_STRONG_CODE}
+        handler.access_gate = AccessCodeGate(STRONG_CODE)
         events: list[str] = []
         handler._json = lambda status, payload: events.append(f"response:{status}")  # type: ignore[method-assign]
         handler._rate_limit_ok = lambda path: events.append("rate-limit") or True  # type: ignore[method-assign]
@@ -69,13 +72,13 @@ class AccessOrderingTests(unittest.TestCase):
 
         GeneratorHandler.do_POST(handler)
 
-        self.assertEqual(events, ["response:403"])
+        self.assertEqual(events, ["rate-limit", "response:403"])
 
     def test_correct_code_reaches_request_body(self) -> None:
         handler = object.__new__(GeneratorHandler)
         handler.path = "/api/generate"
-        handler.headers = {ACCESS_HEADER: "right"}
-        handler.access_gate = AccessCodeGate("right")
+        handler.headers = {ACCESS_HEADER: STRONG_CODE}
+        handler.access_gate = AccessCodeGate(STRONG_CODE)
         handler.manager = type("Manager", (), {"submit": lambda self, question: {"id": "job"}})()
         events: list[str] = []
         handler._json = lambda status, payload: events.append(f"response:{status}")  # type: ignore[method-assign]
@@ -85,6 +88,19 @@ class AccessOrderingTests(unittest.TestCase):
         GeneratorHandler.do_POST(handler)
 
         self.assertEqual(events, ["rate-limit", "read-body", "response:202"])
+
+    def test_exhausted_rate_limit_stops_before_access_and_body(self) -> None:
+        handler = object.__new__(GeneratorHandler)
+        handler.path = "/api/generate"
+        handler.headers = {ACCESS_HEADER: OTHER_STRONG_CODE}
+        events: list[str] = []
+        handler._rate_limit_ok = lambda path: events.append("rate-limit:blocked") or False  # type: ignore[method-assign]
+        handler._access_ok = lambda: events.append("access") or False  # type: ignore[method-assign]
+        handler._read_json = lambda max_bytes=65536: events.append("read-body") or {}  # type: ignore[method-assign]
+
+        GeneratorHandler.do_POST(handler)
+
+        self.assertEqual(events, ["rate-limit:blocked"])
 
 
 if __name__ == "__main__":

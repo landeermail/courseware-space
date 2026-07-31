@@ -210,9 +210,9 @@ class GeneratorHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
-        if path in PROTECTED_POST_PATHS and not self._access_ok():
-            return
         if not self._rate_limit_ok(path):
+            return
+        if path in PROTECTED_POST_PATHS and not self._access_ok():
             return
         try:
             data = self._read_json(28 * 1024 * 1024 if path == "/api/media/parse" else 65536)

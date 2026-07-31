@@ -5,9 +5,22 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hmac
 import os
+import re
 
 
 ACCESS_HEADER = "X-Courseware-Access-Code"
+ACCESS_CODE_PATTERN = re.compile(r"^[0-9a-f]{48}$")
+
+
+def validate_access_code(value: str) -> None:
+    """Require the exact 192-bit lowercase hex form produced by openssl."""
+
+    if value != value.strip() or "\n" in value or "\r" in value:
+        raise RuntimeError("COURSEWARE_ACCESS_CODE 不能包含首尾空白或换行")
+    if value and not ACCESS_CODE_PATTERN.fullmatch(value):
+        raise RuntimeError(
+            "COURSEWARE_ACCESS_CODE 必须是 openssl rand -hex 24 生成的 48 位小写十六进制值"
+        )
 
 
 @dataclass(frozen=True)
@@ -15,6 +28,9 @@ class AccessCodeGate:
     """Compare a request code without exposing the configured value."""
 
     expected: str = ""
+
+    def __post_init__(self) -> None:
+        validate_access_code(self.expected)
 
     @property
     def required(self) -> bool:
@@ -32,8 +48,7 @@ class AccessCodeGate:
     @classmethod
     def from_environment(cls) -> "AccessCodeGate":
         expected = os.environ.get("COURSEWARE_ACCESS_CODE", "")
-        if expected != expected.strip() or "\n" in expected or "\r" in expected:
-            raise RuntimeError("COURSEWARE_ACCESS_CODE 不能包含首尾空白或换行")
+        validate_access_code(expected)
         if os.environ.get("COURSEWARE_CLOUD_MODE") == "1" and not expected:
             raise RuntimeError("云端运行必须设置 COURSEWARE_ACCESS_CODE")
         return cls(expected)
