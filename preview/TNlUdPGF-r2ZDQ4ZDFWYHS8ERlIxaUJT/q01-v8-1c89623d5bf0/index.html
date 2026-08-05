@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>q01 竖直圆环双带电小球 — v8</title>
+  <link rel="stylesheet" href="katex/katex.min.css">
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --good: #047857;
+      --good-soft: #ecfdf5;
+      --bad: #dc2626;
+      --warn: #d97706;
+      --grav: #a75400;
+      --coul: #7c3aed;
+      --norm: #087a5b;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--ink); line-height: 1.55;
+    }
+    header {
+      position: sticky; top: 0; z-index: 30; background: rgba(255,255,255,0.96); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line); padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+    nav.tabs { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; }
+    nav.tabs button {
+      flex: 0 0 auto; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted);
+      font-size: 14px; cursor: pointer; min-height: 40px; min-width: 64px; touch-action: manipulation;
+    }
+    nav.tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+    .tool-btn { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 13px; cursor: pointer; min-height: 40px; }
+    main { padding: 14px; max-width: 1220px; margin: 0 auto; }
+    .panel { display: none; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; margin-bottom: 14px; }
+    .panel.active { display: block; }
+    .panel.narrow { max-width: 860px; margin-left: auto; margin-right: auto; }
+    .panel h2 { margin: 0 0 12px; font-size: 18px; }
+    .hint { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+    .problem-img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
+    /* 粘性图文双栏：>=900px 左视觉 sticky + 右推理；<900px 视觉 sticky 紧邻当前推理 */
+    .work { display: block; }
+    .viscol { margin-bottom: 12px; }
+    .viscol svg { width: 100%; height: auto; display: block; user-select: none; }
+    @media (min-width: 900px) {
+      .work { display: grid; grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); gap: 16px; align-items: start; }
+      .viscol { position: sticky; top: 66px; align-self: start; margin-bottom: 0; }
+    }
+    @media (max-width: 899.98px) {
+      .viscol { position: sticky; top: 60px; z-index: 6; background: var(--card); border-radius: 10px; }
+    }
+    .card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 12px; background: #fff; }
+    .card h3 { margin: 0 0 8px; font-size: 15px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font-size: 14px; cursor: pointer; min-height: 40px;
+    }
+    .btn.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+    .btn:disabled { opacity: 0.55; cursor: default; }
+    .btn.plain { background: #fff; color: var(--muted); border: 1px solid var(--line); }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .ball-a { cursor: grab; touch-action: none; }
+    .ball-a:active { cursor: grabbing; }
+    .ml { font-style: italic; font-family: "Times New Roman", "STSong", serif; }
+    .leg { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+    .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .controls input[type=range] { flex: 1; min-width: 140px; }
+    .seg { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .seg button { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 14px; min-height: 40px; touch-action: manipulation; }
+    .seg button.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chips button { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 14px; min-height: 40px; }
+    .chips button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    /* 图式绑定：公式项触发器与高亮 */
+    .bind {
+      display: inline-block; padding: 1px 6px; margin: 0 1px; border-radius: 6px; border: 1px solid transparent;
+      background: transparent; font: inherit; cursor: pointer; min-height: 28px; color: inherit;
+    }
+    .bind:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .bind:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .bind.bound-active { outline: 2px solid var(--accent); outline-offset: 1px; background: var(--accent-soft); }
+    .bind-rect { fill: none; stroke: #111827; stroke-width: 2; stroke-dasharray: 5 4; rx: 6; pointer-events: none; }
+    /* 具名关系式 */
+    .reln { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--accent-soft); font-size: 14.5px; margin: 10px 0; }
+    .reln .reln-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .reln .reln-cond { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+    .reln p { margin: 4px 0; }
+    /* 判断选项 */
+    .option { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #fff; }
+    .option .text { font-size: 15px; margin-bottom: 6px; }
+    .option .judges { display: flex; gap: 8px; align-items: center; }
+    .option .judges button { flex: 1; min-height: 40px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 14px; }
+    .option .judges button.chosen { font-weight: 700; background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+    .option .recorded { font-size: 13px; color: var(--muted); display: none; }
+    .option .recorded.show { display: inline-block; }
+    .option .verdict { display: none; font-weight: 700; margin-top: 6px; font-size: 14px; }
+    .option.revealed .verdict { display: block; }
+    .option .verdict.right { color: var(--good); }
+    .option .verdict.wrong { color: var(--bad); }
+    .result { display: none; margin-top: 12px; padding: 12px; border-radius: 10px; background: var(--accent-soft); }
+    .result.show { display: block; }
+    .skel-link { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; background: #fff; font-size: 14.5px; }
+    .skel-link b { margin-right: 6px; }
+    .skel-link .go { float: right; color: var(--accent); font-size: 13px; }
+    /* 证据轨道（比关系） */
+    .evcard { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; }
+    .evcard > .ev-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; min-height: 44px; }
+    .evcard > .ev-head .ev-title { font-weight: 700; font-size: 14.5px; flex: 1; }
+    .evcard > .ev-head .ev-line { font-size: 13px; color: var(--muted); }
+    .evcard.done > .ev-head .ev-title::before { content: "✓ "; color: var(--good); }
+    .evcard.open { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+    .evcard .ev-body { display: none; padding: 0 12px 12px; font-size: 14.5px; }
+    .evcard.open .ev-body { display: block; }
+    .evcard .ev-body p { margin: 6px 0; }
+    .evcard .ev-meaning { font-size: 13px; color: var(--muted); background: #f9fafb; border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+    /* 选系统问题卡 */
+    .qcard { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; }
+    .qcard > .q-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; min-height: 44px; }
+    .qcard > .q-head .q-title { font-weight: 700; font-size: 14.5px; flex: 1; }
+    .qcard > .q-head .q-line { display: none; font-size: 13px; color: var(--muted); }
+    .qcard.answered > .q-head .q-title::before { content: "✓ "; color: var(--good); }
+    .qcard.answered:not(.open) > .q-head .q-line { display: inline; }
+    .qcard.open { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+    .qcard .q-body { display: none; padding: 0 12px 12px; font-size: 14.5px; }
+    .qcard.open .q-body { display: block; }
+    .qcard .q-body p { margin: 6px 0; }
+    .final-eq { display: none; margin-top: 10px; padding: 12px; border-radius: 10px; background: var(--good-soft); border: 1px solid var(--good); font-size: 15px; }
+    .final-eq.show { display: block; }
+    .deriv { margin: 8px 0; padding: 10px; border-radius: 8px; background: #f9fafb; border: 1px solid var(--line); font-size: 14.5px; }
+    .deriv p { margin: 6px 0; }
+    .deriv.hl { border-color: var(--accent); background: var(--accent-soft); }
+    details.ondemand { margin-top: 10px; border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; background: #fff; }
+    details.ondemand summary { cursor: pointer; font-size: 13.5px; color: var(--accent); min-height: 32px; }
+    .ref-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; border: 1px solid var(--accent); min-height: 28px; }
+    .ref-chip:hover { background: var(--accent); color: #fff; }
+    /* 能量条 */
+    .ebar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); margin: 8px 0; }
+    .ebar > div { height: 100%; transition: width 0.05s linear; }
+    .ebar .ek { background: #4b5563; }
+    .ebar .eug { background: var(--grav); }
+    .ebar .eue { background: var(--coul); }
+    .ebar-leg { display: flex; gap: 14px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+    .ebar-leg span::before { content: "■ "; }
+    .ebar-leg .lk::before { color: #4b5563; }
+    .ebar-leg .lug::before { color: var(--grav); }
+    .ebar-leg .lue::before { color: var(--coul); }
+    /* 浮层 */
+    .overlay { display: none; position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.35); }
+    .overlay.open { display: block; }
+    .overlay .sheet { position: absolute; inset: 10px; background: #fff; border-radius: var(--radius); overflow: auto; padding: 14px; }
+    .overlay .sheet h2 { margin-top: 0; }
+    .overlay .close { position: fixed; top: 18px; right: 18px; z-index: 51; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 18px; }
+    @media (max-width: 899.98px) {
+      .overlay .sheet { inset: auto 0 0 0; top: 12vh; border-radius: var(--radius) var(--radius) 0 0; }
+    }
+    .sym-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+    .sym-table th, .sym-table td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+    .sym-table th { background: #f3f4f6; }
+    .audit-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .audit-table th, .audit-table td { border: 1px solid var(--line); padding: 6px; text-align: left; vertical-align: top; }
+    .audit-table th { background: #f3f4f6; }
+    footer { padding: 14px; text-align: center; font-size: 13px; color: var(--muted); }
+    footer a { color: var(--accent); text-decoration: none; }
+    .state-hide { display: none !important; }
+    .viewport-note { display: none; margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fffbeb; color: #92400e; font-size: 13.5px; }
+    @media (max-width: 899.98px) { .viewport-note { display: block; } }
+    .snap-row { display: none; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .jump-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    @media (max-width: 560px) {
+      header h1 { font-size: 14px; }
+      header { gap: 8px; }
+      /* 窄屏：任务标签独占一行，可横向滑动，不被标题和工具钮挤没 */
+      nav.tabs { flex: 1 1 100%; order: 5; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>q01 竖直圆环 · 双带电小球</h1>
+    <nav class="tabs" role="tablist" aria-label="学习任务">
+      <button class="active" data-tab="judge" role="tab" aria-selected="true">1 读题判断</button>
+      <button data-tab="observe" role="tab">2 观察过程</button>
+      <button data-tab="direction" role="tab">3 选方向</button>
+      <button data-tab="compare" role="tab">4 比关系</button>
+      <button data-tab="system" role="tab">5 选系统</button>
+    </nav>
+    <button class="tool-btn" id="openSymbols">本题符号</button>
+    <button class="tool-btn" id="openAudit">老师验算</button>
+  </header>
+
+  <main>
+    <p class="viewport-note">本课件的交互面向桌面或 iPad 横屏设计；当前屏幕较窄，建议横屏或改用桌面 / iPad 浏览。</p>
+    <!-- ============ 任务一：读题判断（单栏） ============ -->
+    <section class="panel narrow active" id="judge" role="tabpanel">
+      <h2>读题判断</h2>
+      <p class="hint">先读题、看图，再对四个选项逐项判「对 / 错」。提交只记录你的选择，不提示对错；四项都判完后统一对照，并告诉你每项的判断在本课件哪里可以重新建立。</p>
+      <img src="q1-problem.png" alt="第1题：竖直圆环双带电小球" class="problem-img">
+      <details class="ondemand">
+        <summary>题面勘误说明（按需展开）</summary>
+        <p style="font-size:13.5px;margin:6px 0 2px">原稿 A 选项中“b求”按语义更正为“b球”，其余题意不变。</p>
+      </details>
+
+      <div class="option" data-opt="A" data-correct="no">
+        <div class="text"><b>A</b> 在左球 a 到达 c 点的过程中，圆环对 b 球的支持力变大</div>
+        <div class="judges"><button data-val="yes">对</button><button data-val="no">错</button><span class="recorded">已记录</span></div>
+        <div class="verdict"></div>
+      </div>
+      <div class="option" data-opt="B" data-correct="yes">
+        <div class="text"><b>B</b> 在左球 a 到达 c 点的过程中，外力做正功，电势能增加</div>
+        <div class="judges"><button data-val="yes">对</button><button data-val="no">错</button><span class="recorded">已记录</span></div>
+        <div class="verdict"></div>
+      </div>
+      <div class="option" data-opt="C" data-correct="no">
+        <div class="text"><b>C</b> 在左球 a 到达 c 点的过程中，a、b 两球的重力势能之和不变</div>
+        <div class="judges"><button data-val="yes">对</button><button data-val="no">错</button><span class="recorded">已记录</span></div>
+        <div class="verdict"></div>
+      </div>
+      <div class="option" data-opt="D" data-correct="yes">
+        <div class="text"><b>D</b> 撤除外力后，a、b 两球在轨道上运动过程中系统的能量守恒</div>
+        <div class="judges"><button data-val="yes">对</button><button data-val="no">错</button><span class="recorded">已记录</span></div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="btn-row"><button class="btn" id="revealAll" disabled>四项判完后统一对照</button></div>
+      <div class="result" id="judgeResult"></div>
+      <div id="skelLinks" style="display:none;margin-top:10px">
+        <div class="skel-link"><b>A</b>切向定位置 → 径向比支持力<span class="go">去「选方向」重建 →</span></div>
+        <div class="skel-link"><b>B / C</b>保持代数 → 比较距离与总高度<span class="go">去「比关系」重建 →</span></div>
+        <div class="skel-link"><b>D</b>选系统 → 查外功与非保守作用<span class="go">去「选系统」重建 →</span></div>
+      </div>
+    </section>
+
+    <!-- ============ 任务二：观察过程（动态想象层，大画布） ============ -->
+    <section class="panel" id="observe" role="tabpanel">
+      <h2>观察过程</h2>
+      <div class="seg" id="observePhaseSeg">
+        <button data-phase="push" class="active">缓慢推动</button>
+        <button data-phase="release">撤力之后</button>
+      </div>
+
+      <!-- D1 缓慢推动：控制轴是 a 的位置，不显示物理秒数 -->
+      <div id="d1">
+        <p class="hint" id="d1Task">观察任务：把 a 从初始位置慢慢拖向最低点 c。盯住三件事——<span class="ml">α(t)</span> 怎么变、<span class="ml">β(t)</span> 怎么跟着调整、<span class="ml">d(t)</span> 怎么变。题目只说“缓慢”，所以这里的位置轴不标秒数；“自动拖动”只是替你匀速拖一遍。</p>
+        <div class="viscol" style="max-width:560px;margin:0 auto">
+          <svg viewBox="0 20 340 320" id="sceneD1" aria-label="推动过程：拖动左球 a，观察 b 的耦合运动">
+            <defs>
+              <marker id="ar-d1-grav" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#a75400"/></marker>
+              <marker id="ar-d1-coul" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker>
+              <marker id="ar-d1-norm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#087a5b"/></marker>
+            </defs>
+            <g data-physics-id="ring"><circle cx="170" cy="180" r="120" fill="none" stroke="#374151" stroke-width="2"/></g>
+            <g data-physics-id="center-o"><circle cx="170" cy="180" r="2.5" fill="#374151"/><text x="158" y="172" text-anchor="middle" font-size="12" fill="#6b7280">O</text></g>
+            <g data-physics-id="point-c"><text id="d1LblC" x="170" y="318" text-anchor="middle" font-size="12" fill="#6b7280">c</text></g>
+            <g id="d1Ghost" style="display:none">
+              <line id="d1Chord0" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 4" data-physics-id="distance-initial"/>
+              <circle id="d1GhostA" r="8" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 3" data-physics-id="angle-a-initial"/>
+              <circle id="d1GhostB" r="8" fill="none" stroke="#a75400" stroke-width="1.5" stroke-dasharray="3 3" data-physics-id="angle-b-initial"/>
+              <text id="d1LblGhostA" font-size="10.5" fill="#2563eb" text-anchor="middle"><tspan class="ml">a</tspan><tspan dy="2.5" font-size="8">0</tspan></text>
+              <text id="d1LblGhostB" font-size="10.5" fill="#a75400" text-anchor="middle"><tspan class="ml">b</tspan><tspan dy="2.5" font-size="8">0</tspan></text>
+              <text id="d1LblD0" font-size="10.5" fill="#9ca3af" text-anchor="middle"><tspan>初态 </tspan><tspan class="ml">d</tspan><tspan dy="2.5" font-size="8">0</tspan><tspan dy="-2.5"> = </tspan><tspan class="ml">R</tspan></text>
+            </g>
+            <g id="d1GChord" data-physics-id="distance-ab">
+              <line id="d1Chord" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text id="d1LblD" font-size="12" fill="#6b7280" text-anchor="middle"><tspan class="ml">d</tspan><tspan>(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+            </g>
+            <g id="d1GAlpha" data-physics-id="angle-a">
+              <path id="d1ArcA" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.6"/>
+              <text id="d1LblA" font-size="12" fill="#2563eb" text-anchor="middle"><tspan class="ml">α</tspan><tspan>(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+            </g>
+            <g id="d1GBeta" data-physics-id="angle-b">
+              <path id="d1ArcB" fill="none" stroke="#a75400" stroke-width="1.5" opacity="0.6"/>
+              <text id="d1LblB" font-size="12" fill="#a75400" text-anchor="middle"><tspan class="ml">β</tspan><tspan>(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+            </g>
+            <g id="d1GForces" style="display:none">
+              <g data-physics-id="gravity-force">
+                <line id="d1GravB" stroke="#a75400" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-d1-grav)"/>
+                <text id="d1LblGrav" font-size="11.5" fill="#a75400" font-weight="600" text-anchor="middle"><tspan class="ml">mg</tspan></text>
+              </g>
+              <g data-physics-id="electric-force-current">
+                <line id="d1CoulB" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-d1-coul)"/>
+                <text id="d1LblCoul" font-size="11.5" fill="#7c3aed" font-weight="600" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5">(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+              </g>
+              <g data-physics-id="normal-force-b">
+                <line id="d1NormB" stroke="#087a5b" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-d1-norm)"/>
+                <text id="d1LblNorm" font-size="11.5" fill="#087a5b" font-weight="600" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan><tspan dy="-2.5">(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+              </g>
+            </g>
+            <g data-physics-id="ball-a"><circle id="d1BallA" r="9" fill="#2563eb" class="ball-a"/><text id="d1LblBallA" font-size="12" fill="#1f2937" font-weight="600">a</text></g>
+            <g data-physics-id="ball-b"><circle id="d1BallB" r="9" fill="#a75400"/><text id="d1LblBallB" font-size="12" fill="#1f2937" font-weight="600">b</text></g>
+            <g id="d1Flash"></g>
+          </svg>
+          <div class="seg" id="d1ModeSeg">
+            <button data-d1mode="couple" class="active">观察耦合运动</button>
+            <button data-d1mode="forces">观察 b 的受力</button>
+          </div>
+          <div class="controls">
+            <label style="font-size:13px;color:var(--muted)">a 的位置</label>
+            <input type="range" id="d1Slider" min="0" max="30" step="0.5" value="30" aria-label="a 的位置">
+            <button class="btn secondary" id="d1Auto">自动拖动</button>
+            <button class="btn plain" id="d1GhostBtn">对照初态</button>
+          </div>
+          <p class="leg" id="d1LegCouple">两种观察互斥。当前：只保留两球、弦和三个过程量；初态轮廓只在“对照初态”时淡化出现。</p>
+          <p class="leg state-hide" id="d1LegForces">当前：只显示作用于 <b>b</b> 的三个力——重力 <span class="ml">mg</span>、库仑斥力 <span class="ml">F</span><sub>e</sub>(<span class="ml">t</span>)、支持力 <span class="ml">N</span><sub>b</sub>(<span class="ml">t</span>)；方向与相对长短来自同一状态。外加推力作用在 a 上，不进 b 的受力图。</p>
+          <div class="jump-row">
+            <button class="btn" id="d1Release" disabled>撤去外力，看之后 →</button>
+          </div>
+          <p class="leg" id="d1RelHint">把 a 推到 c 之后才能撤去外力——这正是题目的设定；撤力前的最后一刻，就是释放后的第一刻。</p>
+          <div class="jump-row">
+            <span style="font-size:13px;color:var(--muted)">这些观察接到哪里：</span>
+            <button class="ref-chip" data-jump="compare:r0">半角与弦长</button>
+            <button class="ref-chip" data-jump="direction:tangent">切向关系</button>
+            <button class="ref-chip" data-jump="compare:r1">距离倍率</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- D2 撤力后运动：物理时间轴 t，三种观察互斥 -->
+      <div id="d2" class="state-hide">
+        <p class="hint">从 a 到 c 的末态释放，两球由静止开始运动。下面是<b>物理时间轴</b> <span class="ml">t</span>（单位 s），可以播放、暂停、拖动和复位；0.5× / 1× 只是<b>演示倍率</b>，不改变物理时间。</p>
+        <div class="viscol" style="max-width:560px;margin:0 auto">
+          <svg viewBox="0 10 360 300" id="sceneD2" aria-label="撤力后两球的真实运动">
+            <defs>
+              <marker id="ar-d2-grav" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#a75400"/></marker>
+              <marker id="ar-d2-coul" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker>
+              <marker id="ar-d2-norm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#087a5b"/></marker>
+            </defs>
+            <circle cx="180" cy="160" r="110" fill="none" stroke="#374151" stroke-width="2"/>
+            <circle cx="180" cy="160" r="2.5" fill="#374151"/>
+            <text x="168" y="152" text-anchor="middle" font-size="12" fill="#6b7280">O</text>
+            <text x="180" y="286" text-anchor="middle" font-size="12" fill="#6b7280">c</text>
+            <line id="d2Chord" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <g id="d2GForces" style="display:none">
+              <g data-physics-id="gravity-force">
+                <line id="d2Grav" stroke="#a75400" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-d2-grav)"/>
+                <text id="d2LblGrav" font-size="11" fill="#a75400" font-weight="600" text-anchor="middle"><tspan class="ml">mg</tspan></text>
+              </g>
+              <g data-physics-id="electric-force-current">
+                <line id="d2Coul" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-d2-coul)"/>
+                <text id="d2LblCoul" font-size="11" fill="#7c3aed" font-weight="600" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5">(</tspan><tspan class="ml">t</tspan><tspan>)</tspan></text>
+              </g>
+              <g id="d2GNormA" data-physics-id="normal-force-a" style="display:none">
+                <line id="d2NormA" stroke="#087a5b" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-d2-norm)"/>
+                <text id="d2LblNormA" font-size="11" fill="#087a5b" font-weight="600" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">a</tspan></text>
+              </g>
+              <g id="d2GNormB" data-physics-id="normal-force-b" style="display:none">
+                <line id="d2NormB" stroke="#087a5b" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-d2-norm)"/>
+                <text id="d2LblNormB" font-size="11" fill="#087a5b" font-weight="600" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              </g>
+            </g>
+            <circle id="d2BallA" r="8.5" fill="#2563eb"/>
+            <circle id="d2BallB" r="8.5" fill="#a75400"/>
+            <text id="d2LblBallA" font-size="11.5" fill="#1f2937" font-weight="600">a</text>
+            <text id="d2LblBallB" font-size="11.5" fill="#1f2937" font-weight="600">b</text>
+            <g id="d2Flash"></g>
+          </svg>
+          <div class="seg" id="d2ModeSeg">
+            <button data-d2mode="motion" class="active">观察运动</button>
+            <button data-d2mode="forces">观察受力</button>
+            <button data-d2mode="energy">观察能量</button>
+          </div>
+          <div class="seg state-hide" id="d2BallSeg">
+            <button data-d2ball="a">看 a 的受力</button>
+            <button data-d2ball="b" class="active">看 b 的受力</button>
+          </div>
+          <div class="controls">
+            <button class="btn secondary" id="d2Play">播放</button>
+            <button class="btn secondary" id="d2Pause">暂停</button>
+            <button class="btn plain" id="d2Reset">复位</button>
+            <input type="range" id="d2Time" min="0" max="200" value="0" aria-label="物理时间轴">
+            <select id="d2Rate" style="min-height:36px" aria-label="演示倍率">
+              <option value="0.5">0.5×</option><option value="1" selected>1×</option>
+            </select>
+          </div>
+          <p class="leg"><span id="d2TimeText"><tspan class="ml">t</tspan> = 0.0 s</span><span id="d2ModeLeg"> · 当前只显示两球的真实运动。</span></p>
+          <div id="d2Energy" class="state-hide">
+            <div class="ebar" aria-label="三类能量的相对份额">
+              <div class="ek" id="ebarK" data-physics-id="kinetic"></div>
+              <div class="eug" id="ebarUg" data-physics-id="gravity-potential"></div>
+              <div class="eue" id="ebarUe" data-physics-id="electric-potential"></div>
+            </div>
+            <div class="ebar-leg"><span class="lk" data-physics-id="kinetic"><tspan class="ml">K</tspan> 动能</span><span class="lug" data-physics-id="gravity-potential"><tspan class="ml">U</tspan><sub>g</sub> 重力势能</span><span class="lue" data-physics-id="electric-potential"><tspan class="ml">U</tspan><sub>e</sub> 电势能</span></div>
+            <p class="leg">三段长度随运动此消彼长，总长度保持不变——能量只在三种形式之间转化。重力势能零点取在 c 点高度。能量条用来观察和验证，判断 D 的论证在「选系统」。</p>
+          </div>
+          <div class="jump-row">
+            <button class="ref-chip" data-jump="system:q3">回到系统判断 →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 任务三：选方向（静态推理层，五子状态） ============ -->
+    <section class="panel" id="direction" role="tabpanel">
+      <h2>选方向，再谈支持力</h2>
+      <div class="work">
+        <div class="viscol">
+          <svg viewBox="0 15 330 335" id="sceneDir" aria-label="b 的受力与几何模型">
+            <defs>
+              <marker id="ar-dr-grav" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#a75400"/></marker>
+              <marker id="ar-dr-coul" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker>
+              <marker id="ar-dr-norm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#087a5b"/></marker>
+            </defs>
+            <circle cx="160" cy="180" r="120" fill="none" stroke="#374151" stroke-width="2"/>
+            <circle cx="160" cy="180" r="2.5" fill="#374151"/>
+            <text x="148" y="172" text-anchor="middle" font-size="12" fill="#6b7280">O</text>
+            <text id="dirLblC" x="160" y="318" text-anchor="middle" font-size="12" fill="#6b7280">c</text>
+            <text id="dirSnapTag" x="14" y="48" font-size="12" fill="#2563eb" font-weight="700" style="display:none"></text>
+            <g id="dirGChord" data-physics-id="distance-ab">
+              <line id="dirChord" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text id="dirLblD" font-size="12" fill="#6b7280" text-anchor="middle"><tspan class="ml">d</tspan></text>
+            </g>
+            <g id="dirGAlpha" data-physics-id="angle-a">
+              <path id="dirArcA" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.5"/>
+              <text id="dirLblA" font-size="12" fill="#2563eb" text-anchor="middle"><tspan class="ml">α</tspan></text>
+            </g>
+            <g id="dirGBeta" data-physics-id="angle-b">
+              <path id="dirArcB" fill="none" stroke="#a75400" stroke-width="1.5" opacity="0.5"/>
+              <text id="dirLblB" font-size="12" fill="#a75400" text-anchor="middle"><tspan class="ml">β</tspan></text>
+            </g>
+            <g id="dirGHalf" style="display:none">
+              <line id="dirRadOa" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="2 3"/>
+              <line id="dirRadOb" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="2 3"/>
+              <line id="dirChordSolid" stroke="#4b5563" stroke-width="1.8"/>
+              <line id="dirTanLine" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="6 4"/>
+              <g data-physics-id="central-angle">
+                <path id="dirArcCentral" fill="none" stroke="#111827" stroke-width="1.4"/>
+                <text id="dirLblCentral" font-size="11" fill="#111827" text-anchor="middle"><tspan class="ml">α</tspan><tspan>+</tspan><tspan class="ml">β</tspan></text>
+              </g>
+              <g data-physics-id="chord-tangent-angle">
+                <path id="dirArcCT" fill="none" stroke="#111827" stroke-width="1.4"/>
+                <text id="dirLblCT" font-size="11" fill="#111827" text-anchor="middle"><tspan>(</tspan><tspan class="ml">α</tspan><tspan>+</tspan><tspan class="ml">β</tspan><tspan>)/2</tspan></text>
+              </g>
+            </g>
+            <g id="dirGTang" style="display:none">
+              <g data-physics-id="tangent-axis">
+                <line id="dirTanAxis" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="6 4"/>
+                <text id="dirLblTanAxis" font-size="11" fill="#374151" text-anchor="middle">切向</text>
+              </g>
+              <g data-physics-id="tangent-component-gravity">
+                <line id="dirProjGravT" stroke="#a75400" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-dr-grav)"/>
+                <text id="dirLblProjGravT" font-size="10.5" fill="#a75400" text-anchor="middle"><tspan class="ml">mg</tspan><tspan>·sin</tspan><tspan class="ml">β</tspan></text>
+              </g>
+              <g data-physics-id="tangent-component-electric">
+                <line id="dirProjCoulT" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-dr-coul)"/>
+                <text id="dirLblProjCoulT" font-size="10.5" fill="#7c3aed" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5">·cos</tspan></text>
+                <text id="dirLblProjCoulT2" font-size="9.5" fill="#7c3aed" text-anchor="middle"><tspan>(</tspan><tspan class="ml">α</tspan><tspan>+</tspan><tspan class="ml">β</tspan><tspan>)/2</tspan></text>
+              </g>
+            </g>
+            <g id="dirGRad" style="display:none">
+              <g data-physics-id="radial-axis">
+                <line id="dirRadAxis" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="2 3"/>
+                <text id="dirLblRadAxis" font-size="11" fill="#374151" text-anchor="middle">径向</text>
+              </g>
+              <g data-physics-id="radial-component-gravity">
+                <line id="dirProjGravR" stroke="#a75400" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-dr-grav)"/>
+                <text id="dirLblProjGravR" font-size="10.5" fill="#a75400" text-anchor="middle"><tspan class="ml">mg</tspan><tspan>·cos</tspan><tspan class="ml">β</tspan></text>
+              </g>
+              <g data-physics-id="radial-component-electric">
+                <line id="dirProjCoulR" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-dr-coul)"/>
+                <text id="dirLblProjCoulR" font-size="10.5" fill="#7c3aed" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5">·sin</tspan></text>
+                <text id="dirLblProjCoulR2" font-size="9.5" fill="#7c3aed" text-anchor="middle"><tspan>(</tspan><tspan class="ml">α</tspan><tspan>+</tspan><tspan class="ml">β</tspan><tspan>)/2</tspan></text>
+              </g>
+            </g>
+            <g id="dirGGrav" data-physics-id="gravity-force">
+              <line id="dirGravB" stroke="#a75400" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-dr-grav)"/>
+              <text id="dirLblGrav" font-size="11" fill="#a75400" font-weight="600" text-anchor="middle"><tspan class="ml">mg</tspan></text>
+            </g>
+            <g id="dirGCoul" data-physics-id="electric-force-current">
+              <line id="dirCoulB" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-dr-coul)"/>
+              <text id="dirLblCoul" font-size="11" fill="#7c3aed" font-weight="600" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan></text>
+            </g>
+            <g id="dirGNorm" data-physics-id="normal-force-b">
+              <line id="dirNormB" stroke="#087a5b" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-dr-norm)"/>
+              <text id="dirLblNorm" font-size="11" fill="#087a5b" font-weight="600" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              <g data-physics-id="normal-force-b-initial"><text id="dirLblNormI" font-size="11" fill="#087a5b" font-weight="700" text-anchor="middle" style="display:none"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b0</tspan></text></g>
+              <g data-physics-id="normal-force-b-final"><text id="dirLblNormF" font-size="11" fill="#087a5b" font-weight="700" text-anchor="middle" style="display:none"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">bf</tspan></text></g>
+            </g>
+            <g data-physics-id="ball-a"><circle id="dirBallA" r="9" fill="#2563eb" class="ball-a"/><text id="dirLblBallA" font-size="12" fill="#1f2937" font-weight="600">a</text></g>
+            <g data-physics-id="ball-b"><circle id="dirBallB" r="9" fill="#a75400"/><text id="dirLblBallB" font-size="12" fill="#1f2937" font-weight="600">b</text></g>
+            <g id="dirFlash"></g>
+          </svg>
+          <div class="controls" id="dirSliderRow">
+            <label style="font-size:13px;color:var(--muted)">a 的位置</label>
+            <input type="range" id="dirSlider" min="0" max="30" step="0.5" value="30" aria-label="a 的位置">
+          </div>
+          <div class="seg snap-row" id="dirSnapSeg">
+            <button data-dirsnap="init" class="active">初态</button>
+            <button data-dirsnap="final">末态（a 在 c）</button>
+          </div>
+          <p class="leg" id="dirLegForces">α、β 均从最低点 c 起算。<b>b 只受三个力</b>：重力、库仑斥力、环的支持力（始终指向圆心）。可以拖 a 或用滑块换一个位置看。</p>
+          <p class="leg state-hide" id="dirLegHalf">只看几何：半径、弦、切线。弦 ab 对圆心张角为 α+β；弦与切线的夹角等于它所夹圆心角的一半。</p>
+          <p class="leg state-hide" id="dirLegTang">只看切向：两个虚线投影沿切向反向、等长——这正是“切向合力为零”。拖动 a，等长关系保持。</p>
+          <p class="leg state-hide" id="dirLegRad">只看径向：两个虚线分量沿径向首尾相接，其和与支持力等长；支持力始终指向圆心。</p>
+          <p class="leg state-hide" id="dirLegEnd">端点比较：左图在初态 / 末态的最小受力快照间切换，与右侧推导逐步对应；箭头长短变化只用于观察，判断依据在右侧。</p>
+        </div>
+
+        <div class="reason">
+          <div class="seg" id="dirNavSeg">
+            <button data-dir="forces" class="active">受力全貌</button>
+            <button data-dir="halfangle">半角几何</button>
+            <button data-dir="tangent">切向关系</button>
+            <button data-dir="radial">径向关系</button>
+            <button data-dir="endpoints">端点比较</button>
+          </div>
+
+          <div class="card dirsub" id="dirSubForces">
+            <h3>先想一步：分析 b 的平衡，为什么不优先沿水平 / 竖直方向分解？</h3>
+            <div class="chips" id="dirChips">
+              <button data-val="hv">水平 / 竖直就可以了</button>
+              <button data-val="tr">切向 / 径向更省事</button>
+            </div>
+            <div class="deriv state-hide" id="dirWhy">
+              <p><b>理由：</b>支持力 <button class="bind" data-physics-ref="normal-force-b"><span class="tex" data-tex="N_b"></span></button> 沿半径（径向）。沿切向 / 径向分解时，<em>切向方程不含它</em>，可以直接由重力与库仑力的切向分量定出 b 的平衡位置；<span class="tex" data-tex="N_b"></span> 留到径向方程再求。若选水平 / 竖直，两个方程都同时含有 <span class="tex" data-tex="N_b"></span> 与 <span class="tex" data-tex="F_e"></span>，必须联立，更繁。</p>
+              <p>接着按顺序看：先把弦—切线的角度关系说清楚（半角几何），再分别用切向、径向两个方向列关系，最后在两个端点精确比较支持力。</p>
+            </div>
+            <details class="ondemand">
+              <summary>对照：若选水平 / 竖直分解（按需展开）</summary>
+              <div style="font-size:13.5px;margin-top:6px">
+                <p>水平：<span class="tex" data-tex="N_b\sin\beta = F_e\cos\theta"></span>；竖直：<span class="tex" data-tex="N_b\cos\beta + F_e\sin\theta = mg"></span>（<span class="tex" data-tex="\theta"></span> 为弦与竖直方向夹角）。两个方程都含 <span class="tex" data-tex="N_b"></span> 与 <span class="tex" data-tex="F_e"></span>，须联立消元才能定 <span class="tex" data-tex="\beta"></span>——这就是不优先选它的原因。</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="card dirsub state-hide" id="dirSubHalf">
+            <h3>半角几何：弦—切线夹角从哪来</h3>
+            <p>左图只保留几何：两条半径、<button class="bind" data-physics-ref="distance-ab"><span class="tex" data-tex="d"></span></button> 弦与过 b 的切线。弦 ab 对圆心的张角是 <button class="bind" data-physics-ref="central-angle"><span class="tex" data-tex="\alpha+\beta"></span></button>（α、β 都从 c 起算）。</p>
+            <p>由“弦切角等于所夹圆心角的一半”，弦与切线的夹角为 <button class="bind" data-physics-ref="chord-tangent-angle"><span class="tex" data-tex="\dfrac{\alpha+\beta}{2}"></span></button>——这就是把库仑力投影到切向、径向时要用的角。</p>
+            <p class="hint" style="margin:6px 0 0">本状态不列方程；角度关系建立后，进入「切向关系」。</p>
+          </div>
+
+          <div class="card dirsub state-hide" id="dirSubTang">
+            <h3>切向关系：先定平衡位置</h3>
+            <div class="reln">
+              <div class="reln-name">b 的切向平衡</div>
+              <p><button class="bind" data-physics-ref="tangent-component-gravity"><span class="tex" data-tex="mg\sin\beta"></span></button> = <button class="bind" data-physics-ref="tangent-component-electric"><span class="tex" data-tex="F_e\cos\dfrac{\alpha+\beta}{2}"></span></button>，其中 <button class="bind" data-physics-ref="electric-force-current"><span class="tex" data-tex="F_e=\dfrac{kq^2}{d^2}"></span></button></p>
+              <div class="reln-cond">对象 b · 推动阶段 · 条件：题设“缓慢” ⇒ 准静态，b 的切向合力为零</div>
+            </div>
+            <p>切向不含支持力，因此先决定 b 的平衡位置。左图两个切向投影反向等长；拖动 a，等长始终保持——这就是“每个位置 b 都处于平衡”的意思。</p>
+          </div>
+
+          <div class="card dirsub state-hide" id="dirSubRad">
+            <h3>径向关系：再定支持力</h3>
+            <div class="reln">
+              <div class="reln-name">b 的径向关系</div>
+              <p><button class="bind" data-physics-ref="normal-force-b"><span class="tex" data-tex="N_b"></span></button> = <button class="bind" data-physics-ref="radial-component-gravity"><span class="tex" data-tex="mg\cos\beta"></span></button> + <button class="bind" data-physics-ref="radial-component-electric"><span class="tex" data-tex="F_e\sin\dfrac{\alpha+\beta}{2}"></span></button></p>
+              <div class="reln-cond">对象 b · 推动阶段 · 准静态条件同上 · <span class="tex" data-tex="N_b"></span> 方向指向圆心（b 压环外侧）</div>
+            </div>
+            <p>位置确定后，径向关系决定支持力。左图两个径向分量首尾相接，绿色支持力与两者之和同步长短。</p>
+          </div>
+
+          <div class="card dirsub state-hide" id="dirSubEnd">
+            <h3>端点比较：只比两端，精确算（判 A）</h3>
+            <div class="deriv" id="dirDerivI">
+              <p><b>初态</b>（<span class="tex" data-tex="\alpha_0=\beta_0=30^\circ,\ d_0=R"></span>）：由切向平衡</p>
+              <p><span class="tex" data-tex="F_{e0}\cos30^\circ = mg\sin30^\circ \;\Rightarrow\; F_{e0} = \frac{mg}{\sqrt3}"></span></p>
+              <p>再由径向关系：<button class="bind" data-physics-ref="normal-force-b-initial"><span class="tex" data-tex="N_{b0}"></span></button> <span class="tex" data-tex="= mg\cos30^\circ + F_{e0}\sin30^\circ = \dfrac{2mg}{\sqrt3}"></span></p>
+            </div>
+            <div class="deriv" id="dirDerivF">
+              <p><b>末态</b>（a 到达 c，<span class="tex" data-tex="\alpha_f=0"></span>）：由切向平衡 <span class="tex" data-tex="F_{ef}\cos\dfrac{\beta_f}{2} = mg\sin\beta_f"></span>，利用 <span class="tex" data-tex="\sin\beta_f = 2\sin\dfrac{\beta_f}{2}\cos\dfrac{\beta_f}{2}"></span>，得 <span class="tex" data-tex="F_{ef} = 2mg\sin\dfrac{\beta_f}{2}"></span></p>
+              <p>再由径向关系：<button class="bind" data-physics-ref="normal-force-b-final"><span class="tex" data-tex="N_{bf}"></span></button> <span class="tex" data-tex="= mg\cos\beta_f + F_{ef}\sin\dfrac{\beta_f}{2} = mg\left(\cos\beta_f + 2\sin^2\dfrac{\beta_f}{2}\right) = mg"></span></p>
+            </div>
+            <div class="deriv">
+              <p><b>比较：</b><span class="tex" data-tex="N_{b0} = \frac{2mg}{\sqrt3} > mg = N_{bf}"></span>（因为 <span class="tex" data-tex="2/\sqrt3 > 1"></span>）。支持力没有变大，<b>A 错误</b>。</p>
+              <p>这条路径只用题设、切向 / 径向关系和倍角公式。想再看一遍变化过程，回「观察过程」拖一次 a。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 任务四：比关系（证据轨道 R0–R11） ============ -->
+    <section class="panel" id="compare" role="tabpanel">
+      <h2>比关系，判断 B / C</h2>
+      <div class="work">
+        <div class="viscol">
+          <svg viewBox="0 10 320 330" id="sceneCmp" aria-label="初末状态几何对照">
+            <defs>
+              <marker id="ar-cp-blue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker>
+              <marker id="ar-cp-orange" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#a75400"/></marker>
+              <marker id="ar-cp-coul" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker>
+            </defs>
+            <circle cx="160" cy="180" r="120" fill="none" stroke="#374151" stroke-width="2"/>
+            <g data-physics-id="center-o"><circle cx="160" cy="180" r="2.5" fill="#374151"/><text x="148" y="172" text-anchor="middle" font-size="12" fill="#6b7280">O</text></g>
+            <g data-physics-id="point-c"><text id="cmpLblC" x="160" y="318" text-anchor="middle" font-size="12" fill="#6b7280">c</text></g>
+            <g id="cmpGInit">
+              <line id="cmpChord0" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3 4" data-physics-id="distance-initial"/>
+              <circle id="cmpA0" r="8.5" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 3" data-physics-id="angle-a-initial"/>
+              <circle id="cmpB0" r="8.5" fill="none" stroke="#a75400" stroke-width="1.5" stroke-dasharray="3 3" data-physics-id="angle-b-initial"/>
+              <text id="cmpLblA0" font-size="10.5" fill="#2563eb" text-anchor="middle"><tspan class="ml">a</tspan><tspan dy="2.5" font-size="8">0</tspan></text>
+              <text id="cmpLblB0" font-size="10.5" fill="#a75400" text-anchor="middle"><tspan class="ml">b</tspan><tspan dy="2.5" font-size="8">0</tspan></text>
+              <text id="cmpLblD0" font-size="10.5" fill="#9ca3af" text-anchor="middle"><tspan>初态 </tspan><tspan class="ml">d</tspan><tspan dy="2.5" font-size="8">0</tspan><tspan dy="-2.5"> = </tspan><tspan class="ml">R</tspan></text>
+              <path id="cmpArc30" fill="none" stroke="#6b7280" stroke-width="1.3" opacity="0.7"/>
+              <text id="cmpLbl30" font-size="10.5" fill="#6b7280" text-anchor="middle">30°</text>
+            </g>
+            <g id="cmpGFinal">
+              <g data-physics-id="distance-final">
+                <line id="cmpChord" stroke="#4b5563" stroke-width="1.8"/>
+                <text id="cmpLblD" font-size="12" fill="#4b5563" text-anchor="middle"><tspan class="ml">d</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan></text>
+              </g>
+              <g data-physics-id="angle-b-final">
+                <path id="cmpArcBf" fill="none" stroke="#a75400" stroke-width="1.5" opacity="0.6"/>
+                <text id="cmpLblBf" font-size="12" fill="#a75400" text-anchor="middle"><tspan class="ml">β</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan></text>
+              </g>
+              <circle id="cmpA" r="9" fill="#2563eb"/>
+              <circle id="cmpB" r="9" fill="#a75400"/>
+              <text id="cmpLblA" font-size="12" fill="#1f2937" font-weight="600" text-anchor="middle">a</text>
+              <text id="cmpLblB" font-size="12" fill="#1f2937" font-weight="600" text-anchor="middle">b</text>
+              <g data-physics-id="angle-a-final"><text id="cmpLblAf0" font-size="10.5" fill="#2563eb" text-anchor="middle"><tspan class="ml">α</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan><tspan dy="-2.5"> = 0</tspan></text></g>
+            </g>
+            <g id="cmpGR0" style="display:none">
+              <g data-physics-id="bisector-om">
+                <line id="cmpOM" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="2 3"/>
+                <text id="cmpLblM" font-size="10.5" fill="#6b7280" text-anchor="middle">M</text>
+              </g>
+              <g data-physics-id="half-angle">
+                <path id="cmpArcHalf" fill="none" stroke="#111827" stroke-width="1.4"/>
+                <text id="cmpLblHalf" font-size="11" fill="#111827" text-anchor="middle"><tspan class="ml">β</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan><tspan dy="-2.5">/2</tspan></text>
+              </g>
+              <g data-physics-id="half-chord">
+                <line id="cmpHalfChord" stroke="#2563eb" stroke-width="3"/>
+              </g>
+            </g>
+            <g id="cmpGR1" style="display:none">
+              <g data-physics-id="radius-r">
+                <line id="cmpRadR" stroke="#111827" stroke-width="2"/>
+                <text id="cmpLblR" font-size="11.5" fill="#111827" text-anchor="middle"><tspan class="ml">R</tspan></text>
+              </g>
+              <g data-physics-id="distance-ratio">
+                <text id="cmpLblX" font-size="12.5" fill="#2563eb" font-weight="700" text-anchor="middle"><tspan class="ml">x</tspan><tspan> = </tspan><tspan class="ml">d</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan><tspan dy="-2.5"> / </tspan><tspan class="ml">R</tspan></text>
+              </g>
+            </g>
+            <g id="cmpGTanF" style="display:none">
+              <line id="cmpTanAxisF" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="6 4"/>
+              <text id="cmpLblTanAxisF" font-size="11" fill="#374151" text-anchor="middle">切向</text>
+              <g data-physics-id="tangent-component-gravity">
+                <line id="cmpProjGravTF" stroke="#a75400" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-cp-orange)"/>
+                <text id="cmpLblPGTF" font-size="10.5" fill="#a75400" text-anchor="middle"><tspan class="ml">mg</tspan><tspan>·sin</tspan><tspan class="ml">β</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan></text>
+              </g>
+              <g data-physics-id="electric-force-final">
+                <line id="cmpProjCoulTF" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="3 3" marker-end="url(#ar-cp-coul)"/>
+                <text id="cmpLblPCTF" font-size="10.5" fill="#7c3aed" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">ef</tspan><tspan dy="-2.5">·cos(</tspan><tspan class="ml">β</tspan><tspan class="ml" dy="2.5" font-size="8">f</tspan><tspan dy="-2.5">/2)</tspan></text>
+              </g>
+            </g>
+            <g id="cmpGF0" style="display:none">
+              <g data-physics-id="electric-force-initial">
+                <line id="cmpF0Arrow" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-cp-coul)"/>
+                <text id="cmpLblF0" font-size="11.5" fill="#7c3aed" font-weight="600" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e0</tspan></text>
+              </g>
+            </g>
+            <g id="cmpGMoves" style="display:none">
+              <g data-physics-id="height-change-a">
+                <path id="cmpArcMoveA" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ar-cp-blue)"/>
+                <text id="cmpLblMoveA" font-size="11" fill="#2563eb" text-anchor="middle"><tspan>Δ</tspan><tspan class="ml">h</tspan><tspan class="ml" dy="2.5" font-size="8">a</tspan></text>
+              </g>
+              <g data-physics-id="height-change-b">
+                <path id="cmpArcMoveB" fill="none" stroke="#a75400" stroke-width="2.5" marker-end="url(#ar-cp-orange)"/>
+                <text id="cmpLblMoveB" font-size="11" fill="#a75400" text-anchor="middle"><tspan>Δ</tspan><tspan class="ml">h</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              </g>
+              <g data-physics-id="gravity-potential">
+                <text id="cmpLblUg" font-size="11.5" fill="#a75400" font-weight="700" text-anchor="middle" style="display:none"><tspan class="ml">U</tspan><tspan class="ml" dy="2.5" font-size="8">g</tspan></text>
+              </g>
+            </g>
+            <g id="cmpGUe" style="display:none" data-physics-id="electric-potential">
+              <text id="cmpLblUe" font-size="12" fill="#7c3aed" font-weight="700" text-anchor="middle"><tspan class="ml">U</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5"> 增加</tspan></text>
+            </g>
+            <g id="cmpGSys" style="display:none" data-physics-id="system-boundary">
+              <rect x="10" y="24" width="300" height="300" rx="12" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="6 5"/>
+              <text x="160" y="18" text-anchor="middle" font-size="11.5" fill="#2563eb" font-weight="700">系统：两球 + 地球 + 静电相互作用</text>
+              <g data-physics-id="external-work">
+                <line id="cmpWextArrow" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ar-cp-blue)"/>
+                <text id="cmpLblWext" font-size="11.5" fill="#2563eb" font-weight="700" text-anchor="middle"><tspan class="ml">W</tspan><tspan dy="2.5" font-size="8">外</tspan></text>
+              </g>
+              <g data-physics-id="normal-work">
+                <text id="cmpLblWn" font-size="11" fill="#087a5b" font-weight="700" text-anchor="middle"><tspan class="ml">W</tspan><tspan class="ml" dy="2.5" font-size="8">N</tspan><tspan dy="-2.5"> = 0</tspan></text>
+              </g>
+            </g>
+            <g id="cmpFlash"></g>
+          </svg>
+          <p class="leg" id="cmpLeg">证据轨道：右侧一次只展开一张证据卡，左图随之切换；点开任何一张都可以，缺前提时点卡片里的引用就地补齐。</p>
+        </div>
+
+        <div class="reason" id="evTrack">
+          <div class="evcard" data-ev="r0">
+            <button class="ev-head" type="button"><span class="ev-title">半角与弦长（末态的几何桥）</span><span class="ev-line"><span class="tex" data-tex="d_f = 2R\sin\dfrac{\beta_f}{2}"></span></span></button>
+            <div class="ev-body">
+              <p>过程里三个量一直在变：<span class="tex" data-tex="\alpha(t)"></span>、<span class="tex" data-tex="\beta(t)"></span>、<span class="tex" data-tex="d(t)"></span>（可回「观察过程」再看）。初态记 <span class="tex" data-tex="\alpha_0,\ \beta_0,\ d_0"></span>；末态 a 到 c，记 <span class="tex" data-tex="\alpha_f,\ \beta_f,\ d_f"></span>。末态 <button class="bind" data-physics-ref="angle-a-final"><span class="tex" data-tex="\alpha_f=0"></span></button>，射线 Oa 与 Oc 重合，圆心角只剩 <button class="bind" data-physics-ref="angle-b-final"><span class="tex" data-tex="\beta_f"></span></button>——这只说明末态的角度，不表示球间距离不变。</p>
+              <p>作 <button class="bind" data-physics-ref="bisector-om"><span class="tex" data-tex="OM \perp ab"></span></button>：等腰三角形 Oab 中，OM 平分圆心角，得到 <button class="bind" data-physics-ref="half-angle"><span class="tex" data-tex="\beta_f/2"></span></button>；<button class="bind" data-physics-ref="half-chord"><span class="tex" data-tex="\text{半弦} = R\sin\dfrac{\beta_f}{2}"></span></button>，于是</p>
+              <div class="reln"><div class="reln-name">末态弦长</div><p><button class="bind" data-physics-ref="distance-final"><span class="tex" data-tex="d_f = 2R\sin\dfrac{\beta_f}{2}"></span></button></p><div class="reln-cond">几何关系 · 全程成立；末态 <span class="tex" data-tex="\alpha_f=0"></span> 后的形式</div></div>
+              <div class="btn-row"><button class="ref-chip" id="r0Chain" type="button">在图中依次高亮 β<sub>f</sub> → β<sub>f</sub>/2 → d<sub>f</sub></button></div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r1">
+            <button class="ev-head" type="button"><span class="ev-title">定义距离倍率</span><span class="ev-line"><span class="tex" data-tex="x = \dfrac{d_f}{R} = 2\sin\dfrac{\beta_f}{2}"></span></span></button>
+            <div class="ev-body">
+              <p>定义 <button class="bind" data-physics-ref="distance-ratio"><span class="tex" data-tex="x = \dfrac{d_f}{R}"></span></button>。由「半角与弦长」直接得到 <span class="tex" data-tex="x = 2\sin\dfrac{\beta_f}{2}"></span>。这张卡只建立 x，不展开后面的代数。</p>
+              <div class="ev-meaning"><b>x 是什么：</b>末态球间距离相对于初始基准 R 的倍率——一个比值，不是新的长度。x &lt; 1 表示两球靠近了。</div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r2">
+            <button class="ev-head" type="button"><span class="ev-title">初态力标尺</span><span class="ev-line"><span class="tex" data-tex="F_{e0} = \dfrac{mg}{\sqrt3}"></span></span></button>
+            <div class="ev-body">
+              <p>左图只看初态：<button class="bind" data-physics-ref="distance-initial"><span class="tex" data-tex="d_0 = R"></span></button>、<button class="bind" data-physics-ref="angle-a-initial"><span class="tex" data-tex="\alpha_0 = \beta_0 = 30^\circ"></span></button>。由 <button class="ref-chip" data-jump="direction:tangent">「b 的切向平衡」</button>：</p>
+              <div class="reln"><div class="reln-name">初态力标尺</div><p><button class="bind" data-physics-ref="electric-force-initial"><span class="tex" data-tex="F_{e0}"></span></button><span class="tex" data-tex="\cos30^\circ = mg\sin30^\circ \;\Rightarrow\; F_{e0} = \frac{mg}{\sqrt3}"></span></p><div class="reln-cond">对象 b · 初态 · 准静态切向合力为零</div></div>
+              <div class="ev-meaning"><b>意义：</b>初态平衡告诉我们——距离为 R 的时候，库仑力是多大。题目没有给电荷量，后面用它把未知电荷消去。</div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r3">
+            <button class="ev-head" type="button"><span class="ev-title">距离改变后的库仑力</span><span class="ev-line"><span class="tex" data-tex="F_{ef} = \dfrac{mg}{\sqrt3\,x^2}"></span></span></button>
+            <div class="ev-body">
+              <p>左图对照 <button class="bind" data-physics-ref="distance-initial"><span class="tex" data-tex="d_0 = R"></span></button> 与 <button class="bind" data-physics-ref="distance-final"><span class="tex" data-tex="d_f = xR"></span></button>。库仑力与距离平方成反比：距离变为 <button class="bind" data-physics-ref="distance-ratio"><span class="tex" data-tex="x"></span></button> 倍，力变为 <span class="tex" data-tex="1/x^2"></span>：</p>
+              <div class="reln"><div class="reln-name">末态库仑力缩放</div><p><span class="tex" data-tex="F_{ef} = \frac{F_{e0}}{x^2} = \frac{mg}{\sqrt3\,x^2}"></span></p><div class="reln-cond">两球间库仑斥力 · 推动阶段 · 平方反比</div></div>
+              <div class="ev-meaning"><b>意义：</b>距离变为 x 倍，平方反比的力变为 1/x²。</div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r4">
+            <button class="ev-head" type="button"><span class="ev-title">末态平衡给另一表达</span><span class="ev-line"><span class="tex" data-tex="F_{ef} = mg\,x"></span></span></button>
+            <div class="ev-body">
+              <p>左图只看末态 b 的切向分解。由 <button class="ref-chip" data-jump="direction:tangent">「b 的切向平衡」</button>（末态 <span class="tex" data-tex="\alpha_f=0"></span>）：</p>
+              <div class="reln"><div class="reln-name">末态切向平衡</div><p><button class="bind" data-physics-ref="electric-force-final"><span class="tex" data-tex="F_{ef}\cos\dfrac{\beta_f}{2}"></span></button> <span class="tex" data-tex="= mg\sin\beta_f \;\Rightarrow\; F_{ef} = mg\,x"></span></p><div class="reln-cond">对象 b · 末态 · 准静态切向合力为零</div></div>
+              <details class="ondemand"><summary>为什么（三角细节）</summary>
+                <p style="font-size:13.5px;margin-top:6px"><span class="tex" data-tex="\sin\beta_f = 2\sin\dfrac{\beta_f}{2}\cos\dfrac{\beta_f}{2}"></span>，两边约去 <span class="tex" data-tex="\cos\dfrac{\beta_f}{2}"></span> 得 <span class="tex" data-tex="F_{ef} = 2mg\sin\dfrac{\beta_f}{2}"></span>；再由 <span class="tex" data-tex="x = 2\sin\dfrac{\beta_f}{2}"></span>，即 <span class="tex" data-tex="F_{ef} = mg\,x"></span>。</p>
+              </details>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r5">
+            <button class="ev-head" type="button"><span class="ev-title">同一个力，两种表达</span><span class="ev-line"><span class="tex" data-tex="x^3 = \dfrac{1}{\sqrt3}"></span></span></button>
+            <div class="ev-body">
+              <p>左图不再增加元素。把上面两张卡的结果并列：<span class="tex" data-tex="\dfrac{mg}{\sqrt3\,x^2} = mg\,x"></span>，约去 mg，得到</p>
+              <div class="reln"><div class="reln-name">末态距离约束</div><p><span class="tex" data-tex="x^3 = \frac{1}{\sqrt3}"></span></p><div class="reln-cond">由初态力标尺、平方反比、末态切向平衡共同得到</div></div>
+            </div>
+          </div>
+
+          <details class="ondemand state-hide" id="cmpRecap">
+            <summary>考场压缩：一步写出 x³ = 1/√3（复盘，按需展开）</summary>
+            <div class="deriv" id="cmpCompact">
+              <p><span class="tex" data-tex="F_{e0} = \dfrac{mg}{\sqrt3}"></span>；<span class="tex" data-tex="F_{ef} = \dfrac{F_{e0}}{x^2} = \dfrac{mg}{\sqrt3\,x^2}"></span>，同时 <span class="tex" data-tex="F_{ef} = mg\,x"></span>；所以 <span class="tex" data-tex="x^3 = \dfrac{1}{\sqrt3}"></span>。</p>
+            </div>
+          </details>
+
+          <div class="evcard" data-ev="r6">
+            <button class="ev-head" type="button"><span class="ev-title">电势能（判 B 后半句）</span><span class="ev-line"><span class="tex" data-tex="x^3<1 \Rightarrow d_f<R \Rightarrow U_e \text{ 增加}"></span></span></button>
+            <div class="ev-body">
+              <p>由 <span class="tex" data-tex="x^3 = \dfrac{1}{\sqrt3} < 1"></span> 得 <span class="tex" data-tex="x<1"></span>，即 <button class="bind" data-physics-ref="distance-final"><span class="tex" data-tex="d_f < R"></span></button>——两球靠近。引用：</p>
+              <div class="reln"><div class="reln-name">电势能与距离</div><p><button class="bind" data-physics-ref="electric-potential"><span class="tex" data-tex="U_e = \frac{kq^2}{d}"></span></button></p><div class="reln-cond">系统：两球静电相互作用 · 推动阶段 · 距离变小 ⇒ 电势能增加</div></div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r7">
+            <button class="ev-head" type="button"><span class="ev-title">重力势能账目（判 C · 一）</span><span class="ev-line">a 降造成的减少 + b 升造成的增加</span></button>
+            <div class="ev-body">
+              <p>左图只定位两球的初、末位置：<button class="bind" data-physics-ref="angle-a-initial"><span class="tex" data-tex="a_0"></span></button> 降到 c，<button class="bind" data-physics-ref="angle-b-initial"><span class="tex" data-tex="b_0"></span></button> 升到 <span class="tex" data-tex="\beta_f"></span>。</p>
+              <div class="ev-meaning"><b>物理账目：</b>两球总重力势能的变化 = a 下降造成的减少 + b 上升造成的增加。谁降得多、谁升得多，由各自的高度差决定。</div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r8">
+            <button class="ev-head" type="button"><span class="ev-title">高度代数（判 C · 二）</span><span class="ev-line"><span class="tex" data-tex="\Delta h_a = -R(1-\cos30^\circ),\ \Delta h_b = R(\cos30^\circ-\cos\beta_f)"></span></span></button>
+            <div class="ev-body">
+              <p>点公式项，左图高亮对应的那段弧：</p>
+              <div class="reln"><div class="reln-name">两球的高度变化</div>
+                <p><button class="bind" data-physics-ref="height-change-a"><span class="tex" data-tex="\Delta h_a = -R\,(1-\cos30^\circ)"></span></button>（a 从 30° 降到 c）</p>
+                <p><button class="bind" data-physics-ref="height-change-b"><span class="tex" data-tex="\Delta h_b = R\,(\cos30^\circ-\cos\beta_f)"></span></button>（b 从 30° 升到 <span class="tex" data-tex="\beta_f"></span>）</p>
+                <div class="reln-cond">系统：两球 + 地球 · 推动阶段 · 高度从 c 点高度起算</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r9">
+            <button class="ev-head" type="button"><span class="ev-title">统一成 x（判 C · 三）</span><span class="ev-line"><span class="tex" data-tex="\Delta U_g = mgR\left(\sqrt3-2+\dfrac{x^2}{2}\right)"></span></span></button>
+            <div class="ev-body">
+              <p>由 <span class="tex" data-tex="x = 2\sin\dfrac{\beta_f}{2}"></span> 得 <span class="tex" data-tex="\cos\beta_f = 1-\dfrac{x^2}{2}"></span>。把两项高度代入账目：</p>
+              <div class="reln"><div class="reln-name">两球重力势能账目</div><p><button class="bind" data-physics-ref="gravity-potential"><span class="tex" data-tex="\Delta U_g"></span></button> <span class="tex" data-tex="= mg\,(\Delta h_a + \Delta h_b) = mgR\left(\sqrt3 - 2 + \frac{x^2}{2}\right)"></span></p><div class="reln-cond">系统：两球 + 地球 · 推动阶段</div></div>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r10">
+            <button class="ev-head" type="button"><span class="ev-title">判断正负（判 C · 四）</span><span class="ev-line"><span class="tex" data-tex="x>\sqrt3-1 \Rightarrow \Delta U_g>0"></span></span></button>
+            <div class="ev-body">
+              <p><span class="tex" data-tex="\Delta U_g > 0 \;\Longleftrightarrow\; \frac{x^2}{2} > 2-\sqrt3 \;\Longleftrightarrow\; x > \sqrt3-1"></span></p>
+              <p><button class="ref-chip" id="r10Expand" type="button"><span class="tex" data-tex="x^3 = \dfrac{1}{\sqrt3} > (\sqrt3-1)^3"></span>（点开看比较）</button></p>
+              <div class="deriv state-hide" id="r10Detail">
+                <p><span class="tex" data-tex="(\sqrt3-1)^3 = 6\sqrt3-10"></span>，而 <span class="tex" data-tex="6\sqrt3-10 < \dfrac{1}{\sqrt3} \;\Longleftrightarrow\; 17 < 10\sqrt3 \;\Longleftrightarrow\; 289 < 300"></span>，成立。</p>
+              </div>
+              <p>所以 <span class="tex" data-tex="x > \sqrt3-1"></span>，<span class="tex" data-tex="\Delta U_g > 0"></span>——重力势能之和增加，不是不变，<b>C 错误</b>。</p>
+            </div>
+          </div>
+
+          <div class="evcard" data-ev="r11">
+            <button class="ev-head" type="button"><span class="ev-title">推动阶段的外力功（判 B 前半句）</span><span class="ev-line"><span class="tex" data-tex="W_{\text{外}} = \Delta U_g + \Delta U_e > 0"></span></span></button>
+            <div class="ev-body">
+              <div class="ev-meaning"><b>先摆条件：</b><button class="bind" data-physics-ref="system-boundary">系统</button> = 两球 + 地球 + 两球间静电相互作用；推动缓慢，所以 <span class="tex" data-tex="\Delta K \approx 0"></span>；圆环光滑，<button class="bind" data-physics-ref="normal-work"><span class="tex" data-tex="W_N = 0"></span></button>（支持力始终垂直于速度，不做功）。</div>
+              <div class="reln"><div class="reln-name">推动阶段能量关系</div><p><button class="bind" data-physics-ref="external-work"><span class="tex" data-tex="W_{\text{外}}"></span></button> <span class="tex" data-tex="= \Delta K + \Delta U_g + \Delta U_e = \Delta U_g + \Delta U_e > 0"></span></p><div class="reln-cond">系统同上 · 推动阶段 · 两项势能都增加（见「电势能」与「判断正负」），故外力做正功</div></div>
+              <p class="hint" style="margin:6px 0 0">完整的系统选择训练在「选系统」。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 任务五：选系统（四问语义卡，任意顺序） ============ -->
+    <section class="panel" id="system" role="tabpanel">
+      <h2>选系统，再谈守恒</h2>
+      <div class="work">
+        <div class="viscol">
+          <svg viewBox="0 0 340 332" id="sceneSys" aria-label="系统边界图">
+            <defs>
+              <marker id="ar-sy-grav" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#a75400"/></marker>
+              <marker id="ar-sy-coul" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker>
+              <marker id="ar-sy-norm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#087a5b"/></marker>
+              <marker id="ar-sy-vel" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L7,3 z" fill="#6b7280"/></marker>
+            </defs>
+            <g data-physics-id="system-boundary">
+              <rect x="6" y="28" width="328" height="296" rx="12" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="6 5"/>
+              <text x="170" y="20" text-anchor="middle" font-size="12.5" fill="#2563eb" font-weight="700">系统：两球 + 地球 + 静电相互作用</text>
+            </g>
+            <circle cx="170" cy="175" r="105" fill="none" stroke="#374151" stroke-width="2"/>
+            <circle cx="170" cy="175" r="2.5" fill="#374151"/>
+            <text x="159" y="168" text-anchor="middle" font-size="11" fill="#6b7280">O</text>
+            <text id="sysLblC" x="170" y="296" text-anchor="middle" font-size="11" fill="#6b7280">c</text>
+            <line id="sysChord" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <g id="sysGQ1" style="display:none">
+              <g data-physics-id="gravity-force">
+                <line id="sysGravA" stroke="#a75400" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-grav)"/>
+                <line id="sysGravB" stroke="#a75400" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-grav)"/>
+                <text id="sysLblGravA" font-size="10" fill="#a75400" text-anchor="middle"><tspan class="ml">mg</tspan></text>
+                <text id="sysLblGravB" font-size="10" fill="#a75400" text-anchor="middle"><tspan class="ml">mg</tspan></text>
+              </g>
+              <g data-physics-id="electric-force-current">
+                <line id="sysCoulA" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-coul)"/>
+                <line id="sysCoulB" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-coul)"/>
+                <text id="sysLblCoulA" font-size="10" fill="#7c3aed" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan></text>
+                <text id="sysLblCoulB" font-size="10" fill="#7c3aed" text-anchor="middle"><tspan class="ml">F</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan></text>
+              </g>
+              <g data-physics-id="normal-force-a">
+                <line id="sysNormA" stroke="#087a5b" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-norm)"/>
+                <text id="sysLblNormA" font-size="10" fill="#087a5b" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">a</tspan></text>
+              </g>
+              <g data-physics-id="normal-force-b">
+                <line id="sysNormB" stroke="#087a5b" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ar-sy-norm)"/>
+                <text id="sysLblNormB" font-size="10" fill="#087a5b" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              </g>
+              <g data-physics-id="external-force">
+                <line id="sysPushX" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+                <text id="sysLblPushX" font-size="10.5" fill="#9ca3af" text-anchor="middle">外力已撤 ✕</text>
+              </g>
+            </g>
+            <g id="sysGQ2" style="display:none">
+              <g data-physics-id="gravity-potential"><text id="sysLblUg" font-size="12" fill="#a75400" font-weight="700" text-anchor="middle"><tspan class="ml">U</tspan><tspan class="ml" dy="2.5" font-size="8">g</tspan><tspan dy="-2.5">（重力）</tspan></text></g>
+              <g data-physics-id="electric-potential"><text id="sysLblUe" font-size="12" fill="#7c3aed" font-weight="700" text-anchor="middle"><tspan class="ml">U</tspan><tspan class="ml" dy="2.5" font-size="8">e</tspan><tspan dy="-2.5">（库仑）</tspan></text></g>
+            </g>
+            <g id="sysGQ3" style="display:none">
+              <g id="sysGNVa" data-physics-id="normal-force-a" style="display:none">
+                <line id="sysNVnA" stroke="#087a5b" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-sy-norm)"/>
+                <text id="sysLblNVnA" font-size="11" fill="#087a5b" font-weight="700" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">a</tspan></text>
+              </g>
+              <g id="sysGNVb" data-physics-id="normal-force-b">
+                <line id="sysNVnB" stroke="#087a5b" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-sy-norm)"/>
+                <text id="sysLblNVnB" font-size="11" fill="#087a5b" font-weight="700" text-anchor="middle"><tspan class="ml">N</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              </g>
+              <g id="sysGVa" data-physics-id="velocity-a" style="display:none">
+                <line id="sysNVvA" stroke="#6b7280" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-sy-vel)"/>
+                <text id="sysLblNVvA" font-size="11" fill="#6b7280" font-weight="700" text-anchor="middle"><tspan class="ml">v</tspan><tspan class="ml" dy="2.5" font-size="8">a</tspan></text>
+              </g>
+              <g id="sysGVb" data-physics-id="velocity-b">
+                <line id="sysNVvB" stroke="#6b7280" stroke-width="3" stroke-linecap="round" marker-end="url(#ar-sy-vel)"/>
+                <text id="sysLblNVvB" font-size="11" fill="#6b7280" font-weight="700" text-anchor="middle"><tspan class="ml">v</tspan><tspan class="ml" dy="2.5" font-size="8">b</tspan></text>
+              </g>
+              <g data-physics-id="normal-work"><path id="sysNVsq" fill="none" stroke="#111827" stroke-width="1.4"/></g>
+            </g>
+            <g id="sysGQ4" style="display:none">
+              <text x="170" y="312" text-anchor="middle" font-size="11" fill="#6b7280">推力已撤 · 环光滑 · 无非保守输入</text>
+            </g>
+            <g id="sysGFin" style="display:none">
+              <g data-physics-id="kinetic"><text id="sysLblK" font-size="12" fill="#111827" font-weight="700" text-anchor="middle"><tspan class="ml">K</tspan></text></g>
+            </g>
+            <circle id="sysBallA" r="8.5" fill="#2563eb"/>
+            <circle id="sysBallB" r="8.5" fill="#a75400"/>
+            <text id="sysLblBallA" font-size="11.5" fill="#1f2937" font-weight="600" text-anchor="middle">a</text>
+            <text id="sysLblBallB" font-size="11.5" fill="#1f2937" font-weight="600" text-anchor="middle">b</text>
+            <g id="sysFlash"></g>
+          </svg>
+          <p class="leg" id="sysLeg">系统边界图始终在场。右侧四个问题可以按任意顺序打开；左图只显示当前问题的证据，不累计所有箭头。</p>
+        </div>
+
+        <div class="reason">
+          <p class="hint">判断 D 的骨架：<b>选系统 → 分类相互作用与功 → 写守恒式</b>。四个问题没有先后要求，按你想的顺序来；四问都有结论后，才写守恒式。</p>
+
+          <div class="qcard" data-qc="q1">
+            <button class="q-head" type="button"><span class="q-title">问 1：撤去外力之后，两球还受哪些力？</span><span class="q-line">重力、库仑力、支持力；推力已撤</span></button>
+            <div class="q-body">
+              <div class="btn-row"><button class="ref-chip" type="button" data-reveal="q1">揭示答案</button></div>
+              <div class="q-ans state-hide">
+                <p>每个球仍受：<b>重力</b>、两球间的<b>库仑力</b>、圆环的<b>支持力</b>。外加推力已撤去，不再存在（左图灰色删除标记）。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="qcard" data-qc="q2">
+            <button class="q-head" type="button"><span class="q-title">问 2：这些相互作用里，哪些可以写成势能？</span><span class="q-line">重力 → Ug；库仑相互作用 → Ue</span></button>
+            <div class="q-body">
+              <div class="btn-row"><button class="ref-chip" type="button" data-reveal="q2">揭示答案</button></div>
+              <div class="q-ans state-hide">
+                <p>重力 → 重力势能 <button class="bind" data-physics-ref="gravity-potential"><span class="tex" data-tex="U_g"></span></button>（系统含地球）；两球间库仑相互作用 → 电势能 <button class="bind" data-physics-ref="electric-potential"><span class="tex" data-tex="U_e"></span></button>。</p>
+                <p>提醒：保守力做功会转化为势能变化——<b>“保守力”不等于“不做功”</b>。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="qcard" data-qc="q3">
+            <button class="q-head" type="button"><span class="q-title">问 3：圆环的支持力做功吗？</span><span class="q-line">不做功：N 沿半径，v 沿切线</span></button>
+            <div class="q-body">
+              <div class="btn-row"><button class="ref-chip" type="button" data-reveal="q3">揭示答案</button></div>
+              <div class="q-ans state-hide">
+                <div class="seg" id="sysBallSeg">
+                  <button data-sysball="a">看 a</button>
+                  <button data-sysball="b" class="active">看 b</button>
+                </div>
+                <p>不做功。<button class="bind" data-physics-ref="normal-force-b"><span class="tex" data-tex="N"></span></button> 是<em>环对球</em>的支持力，始终沿半径；<button class="bind" data-physics-ref="velocity-b"><span class="tex" data-tex="v"></span></button> 是<em>该球</em>的速度，始终沿圆环切线——小球的瞬时位移沿切线，支持力沿半径，两者始终垂直。</p>
+                <p>结论：<span class="tex" data-tex="W_{Na}=0,\ W_{Nb}=0"></span>。</p>
+                <details class="ondemand"><summary>为什么垂直就不做功</summary>
+                  <p style="font-size:13.5px;margin-top:6px">元功 <span class="tex" data-tex="\mathrm{d}W = \vec{N}\cdot\mathrm{d}\vec{r} = N\,\mathrm{d}r\cos90^\circ = 0"></span>——每一段微小位移上支持力都不做功，全程自然也不做功。</p>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="qcard" data-qc="q4">
+            <button class="q-head" type="button"><span class="q-title">问 4：还有非保守的外界能量输入吗？</span><span class="q-line">没有：推力已撤，环光滑</span></button>
+            <div class="q-body">
+              <div class="btn-row"><button class="ref-chip" type="button" data-reveal="q4">揭示答案</button></div>
+              <div class="q-ans state-hide">
+                <p>没有：推力已撤，环光滑无摩擦。再注意：库仑力是系统内力，但它对两球做功之和不为零，表现为 <span class="tex" data-tex="U_e"></span> 的变化——<b>“内力”不等于“功相消”</b>。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row"><button class="btn plain" id="sysFullView" type="button">直接查看完整判断</button></div>
+          <div class="final-eq" id="sysFinalEq">
+            <div class="reln" style="background:transparent;border:0;padding:0;margin:0">
+              <div class="reln-name">撤力后系统能量守恒</div>
+              <p><button class="bind" data-physics-ref="kinetic"><span class="tex" data-tex="K"></span></button> + <button class="bind" data-physics-ref="gravity-potential"><span class="tex" data-tex="U_g"></span></button> + <button class="bind" data-physics-ref="electric-potential"><span class="tex" data-tex="U_e"></span></button> <span class="tex" data-tex="= \text{常量}"></span></p>
+              <div class="reln-cond">系统：两球 + 地球 + 两球间静电相互作用 · 撤力后阶段 · 只剩保守力做功，支持力不做功，没有非保守的外界输入</div>
+            </div>
+            <div class="deriv" id="sysFullSummary" style="display:none">
+              <p>问 1：撤力后两球只受重力、库仑力、支持力；问 2：重力 → <span class="tex" data-tex="U_g"></span>，库仑相互作用 → <span class="tex" data-tex="U_e"></span>；问 3：支持力 ⊥ 速度，<span class="tex" data-tex="W_{Na}=W_{Nb}=0"></span>；问 4：推力已撤、环光滑，无非保守输入。</p>
+              <p style="color:var(--muted);font-size:13px">这是直接查看的完整判断；上面四个问题仍保持你原来的作答状态。</p>
+            </div>
+          </div>
+          <div class="jump-row">
+            <button class="ref-chip" data-jump="observe:release">回看撤力后的运动 →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 本题符号（按需浮层） -->
+  <div class="overlay" id="symbolOverlay">
+    <button class="close" id="closeSymbols">×</button>
+    <div class="sheet">
+      <h2>本题符号</h2>
+      <p class="hint">同一个符号在图、动画、正文和公式里始终指同一个量。点“去看”跳到它第一次被定义的地方。</p>
+      <h3 style="font-size:15px;margin:12px 0 4px">对象与基本量</h3>
+      <table class="sym-table">
+        <tr><th>符号</th><th>名称与含义</th><th>图中位置</th><th></th></tr>
+        <tr><td><span class="tex" data-tex="R"></span></td><td>圆环半径；也是初态球间距离</td><td>圆环</td><td><button class="ref-chip" aria-label="去看 R 的定义" data-jump="compare:r1">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="O,\ c"></span></td><td>圆心；环的最低点</td><td>圆心 / 最低点</td><td><button class="ref-chip" aria-label="去看 O 和 c 的定义" data-jump="observe:push">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="mg"></span></td><td>单个小球所受重力的大小（两球相同）</td><td>竖直向下箭头</td><td><button class="ref-chip" aria-label="去看 mg 的定义" data-jump="direction:forces">去看</button></td></tr>
+      </table>
+      <h3 style="font-size:15px;margin:12px 0 4px">过程量与状态下标</h3>
+      <table class="sym-table">
+        <tr><th>符号</th><th>名称与含义</th><th>图中位置</th><th></th></tr>
+        <tr><td><span class="tex" data-tex="\alpha(t),\ \beta(t)"></span></td><td>a、b 各自相对最低点 c 的圆心角，随推动变化</td><td>圆心角弧</td><td><button class="ref-chip" aria-label="去看 α(t)、β(t) 的定义" data-jump="observe:push">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="d(t)"></span></td><td>两球间距（弦长），随推动变化</td><td>弦</td><td><button class="ref-chip" aria-label="去看 d(t) 的定义" data-jump="observe:push">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="\alpha_0,\ \beta_0,\ d_0"></span></td><td>下标 0 = 初态：a 未推动，<span class="tex" data-tex="\alpha_0=\beta_0=30^\circ,\ d_0=R"></span></td><td>虚线初态轮廓</td><td><button class="ref-chip" aria-label="去看初态下标的定义" data-jump="compare:r2">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="\alpha_f,\ \beta_f,\ d_f"></span></td><td>下标 f = 末态：a 到 c，<span class="tex" data-tex="\alpha_f=0"></span></td><td>末态位置与弦</td><td><button class="ref-chip" aria-label="去看末态下标的定义" data-jump="compare:r0">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="x"></span></td><td>距离倍率 <span class="tex" data-tex="x=d_f/R"></span>，一个比值，不是新长度</td><td>末态弦与半径对照</td><td><button class="ref-chip" aria-label="去看 x 的定义" data-jump="compare:r1">去看</button></td></tr>
+      </table>
+      <h3 style="font-size:15px;margin:12px 0 4px">力、速度与能量</h3>
+      <table class="sym-table">
+        <tr><th>符号</th><th>名称与含义</th><th>图中位置</th><th></th></tr>
+        <tr><td><span class="tex" data-tex="F_e(t),\ F_{e0},\ F_{ef}"></span></td><td>两球间库仑斥力的大小：当前、初态、末态</td><td>沿弦的斥力箭头</td><td><button class="ref-chip" aria-label="去看库仑力 Fe 的定义" data-jump="compare:r3">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="N_b"></span></td><td>圆环对 b 的支持力，始终指向圆心</td><td>指向圆心的箭头</td><td><button class="ref-chip" aria-label="去看支持力 Nb 的定义" data-jump="direction:radial">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="F_{\text{外}}"></span></td><td>外加推力，只作用于 a，撤力后消失</td><td>只在 a 上</td><td><button class="ref-chip" aria-label="去看外力 F外 的定义" data-jump="system:q1">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="v_a,\ v_b"></span></td><td>两球各自的速度，沿圆环切线</td><td>切向箭头</td><td><button class="ref-chip" aria-label="去看速度 va、vb 的定义" data-jump="system:q3">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="K,\ U_g,\ U_e"></span></td><td>系统的动能、重力势能、电势能</td><td>能量条 / 系统图</td><td><button class="ref-chip" aria-label="去看能量符号 K、Ug、Ue 的定义" data-jump="observe:release">去看</button></td></tr>
+        <tr><td><span class="tex" data-tex="W_N,\ W_{\text{外}}"></span></td><td>支持力的功；外力的功</td><td>系统判断</td><td><button class="ref-chip" aria-label="去看功的符号 WN、W外 的定义" data-jump="compare:r11">去看</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 老师验算（老师侧入口，不进学习者路径） -->
+  <div class="overlay" id="auditOverlay" data-audience="internal">
+    <button class="close" id="closeAudit">×</button>
+    <div class="sheet">
+      <h2>老师验算卡</h2>
+      <p class="hint">只保留关系式、关键节点值和硬断言；不进学生学习路径。</p>
+      <div class="card">
+        <h3>具名关系式</h3>
+        <p>弦长几何：<span class="tex" data-tex="d = 2R\sin\left(\frac{\alpha+\beta}{2}\right)"></span>（全程）；末态 <span class="tex" data-tex="d_f=2R\sin\frac{\beta_f}{2}"></span></p>
+        <p>b 的切向平衡：<span class="tex" data-tex="mg\sin\beta = F_e\cos\left(\frac{\alpha+\beta}{2}\right),\ F_e=\frac{kq^2}{d^2}"></span>（缓慢 ⇒ 准静态）</p>
+        <p>b 的径向关系：<span class="tex" data-tex="N_b = mg\cos\beta + F_e\sin\left(\frac{\alpha+\beta}{2}\right)"></span>（指向圆心）</p>
+        <p>电势能与距离：<span class="tex" data-tex="U_e = \frac{kq^2}{d}"></span>（系统：两球静电相互作用）</p>
+        <p>两球重力势能账目：<span class="tex" data-tex="\Delta U_g = mg\,(\Delta h_a+\Delta h_b)"></span>（系统：两球+地球）</p>
+        <p>推动阶段能量关系：<span class="tex" data-tex="W_{\text{外}} = \Delta K + \Delta U_g + \Delta U_e \;\;(\Delta K\approx 0,\ W_N=0)"></span></p>
+        <p>撤力后系统能量守恒：<span class="tex" data-tex="K + U_g + U_e = \text{常量}"></span>（支持力不做功，重力与库仑力为保守力）</p>
+      </div>
+      <div class="card">
+        <h3>关键节点值（原题电荷）</h3>
+        <table class="audit-table">
+          <tr><th>节点</th><th>用于判断的最小证据</th></tr>
+          <tr><td>初态</td><td><span class="tex" data-tex="\alpha_0=\beta_0=30^\circ,\ d_0=R,\ F_{e0}=\frac{mg}{\sqrt3},\ N_{b0}=\frac{2}{\sqrt3}mg\approx1.155\,mg"></span></td></tr>
+          <tr><td>a 到 c</td><td><span class="tex" data-tex="\alpha_f=0,\ \beta_f\approx49.2^\circ,\ d_f\approx0.833R,\ N_{bf}=mg"></span>；<span class="tex" data-tex="\Delta U_g\approx+0.079,\ \Delta U_e\approx+0.116,\ W_{\text{外}}\approx+0.195\ (mgR)"></span></td></tr>
+          <tr><td>撤力后</td><td><span class="tex" data-tex="\left|E(t)-E(0)\right|<6\times10^{-7}\,mgR"></span>（原题 4 s 数值回放，artifact 验证指标）</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>硬断言</h3>
+        <p>准静态 61 个采样点切向平衡残差受控；撤力回放 201 个采样点，原题总能量最大偏差小于 6×10⁻⁷ mgR。A 的全程严格性补充：<span class="tex" data-tex="N_b = mg\,\frac{\cos\frac{\beta-\alpha}{2}}{\cos\frac{\alpha+\beta}{2}}"></span> 与 61 点采样（严格递减、误差 &lt;10⁻⁹）仅用于验算，不作为学生判断依据。</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://landeermail.github.io/courseware-space/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/">← 返回列表</a> · <a href="https://landeermail.github.io/courseware-space/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/feedback/?courseware_id=q01-vertical-circle">去评价 →</a>
+  </footer>
+
+  <script src="katex/katex.min.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    const DEG = Math.PI/180;
+    const SCALE = 52; // px / mg
+    const D1 = {cx:170, cy:180, r:120};
+    const DR = {cx:160, cy:180, r:120};
+    const CP = {cx:160, cy:180, r:120};
+    const SY = {cx:170, cy:175, r:105};
+    const D2 = {cx:180, cy:160, r:110};
+
+    const state = {
+      task: 'judge',
+      answers: {A:null, B:null, C:null, D:null},
+      revealed: false,
+      alphaIdx: 0,                 // D1 与选方向共享同一物理状态（0..60 → α 30°..0°）
+      observe: { phase:'push', d1Mode:'couple', ghost:false, auto:false,
+                 d2Mode:'motion', d2Ball:'b', d2Idx:0, playing:false, rate:1 },
+      direction: { sub:'forces', snap:'init' },
+      compare: { active:'r0', visited:{}, r10Open:false },
+      system: { active:null, answered:{q1:false,q2:false,q3:false,q4:false}, ball:'b', fullView:false },
+    };
+    let data = null, qs = null, rel = null, betaF = 49.2, xF = 0.833, rafId = 0, lastTs = 0;
+
+    /* ---------- 基础工具 ---------- */
+    function $(id){ return document.getElementById(id); }
+    function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+    function posOnCircle(cx, cy, r, deg){ const t = deg*DEG; return [cx + r*Math.cos(t), cy - r*Math.sin(t)]; }
+    function setA(id,k,v){ $(id).setAttribute(k,v); }
+    function show(id,on){ const el = $(id); el.style.display = on ? '' : 'none'; el.classList.toggle('state-hide', !on); }
+    function describeArc(cx,cy,r,s,e){
+      const p1 = posOnCircle(cx,cy,r,s), p2 = posOnCircle(cx,cy,r,e);
+      const large = Math.abs(e-s)>180 ? 1 : 0, sweep = e>s ? 0 : 1;
+      return `M ${p1[0]} ${p1[1]} A ${r} ${r} 0 ${large} ${sweep} ${p2[0]} ${p2[1]}`;
+    }
+    function drawArrow(id,x,y,dx,dy,label,minLen){
+      const el = $(id), lab = label ? $(label) : null, len = Math.hypot(dx,dy);
+      if (len < (minLen||4)) { el.style.opacity = 0; if(lab) lab.style.opacity = 0; return false; }
+      el.setAttribute('x1',x); el.setAttribute('y1',y); el.setAttribute('x2',x+dx); el.setAttribute('y2',y+dy);
+      el.style.opacity = 1;
+      if (lab) { lab.setAttribute('x', x+dx+(dx>=0?7:-7)); lab.setAttribute('y', y+dy+(dy>=0?-7:11)); lab.style.opacity = 1; }
+      return true;
+    }
+    function drawProj(id,x,y,dx,dy){
+      const el = $(id), len = Math.hypot(dx,dy);
+      if (len < 3) { el.style.opacity = 0; return [x,y]; }
+      el.setAttribute('x1',x); el.setAttribute('y1',y); el.setAttribute('x2',x+dx); el.setAttribute('y2',y+dy);
+      el.style.opacity = 1; return [x+dx/2, y+dy/2];
+    }
+    function tex(el, s){ if (window.katex) katex.render(s, el, {throwOnError:false}); }
+    function renderAllTex(root){
+      (root||document).querySelectorAll('.tex').forEach(el=>{ if(!el.dataset.done){ tex(el, el.dataset.tex); el.dataset.done='1'; } });
+    }
+
+    /* ---------- 顶层任务切换（自由跳转） ---------- */
+    const TABS = ['judge','observe','direction','compare','system'];
+    function setTask(name){
+      if (!TABS.includes(name)) return;
+      state.task = name;
+      state.observe.playing = false; state.observe.auto = false;
+      document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===name));
+      document.querySelectorAll('.tabs button').forEach(b=>{
+        const on = b.dataset.tab===name;
+        b.classList.toggle('active', on); b.setAttribute('aria-selected', on);
+        if (on) b.scrollIntoView({block:'nearest', inline:'center'});
+      });
+      history.replaceState(null,'','#'+name);
+      renderAllTex();
+    }
+    document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTask(b.dataset.tab)));
+
+    /* ---------- 语义跳转（动态 ↔ 静态双向定位） ---------- */
+    function jump(spec){
+      const [task, a, b] = spec.split(':');
+      if (task==='observe'){ setTask('observe'); setObservePhase(a==='release'?'release':'push'); if(a==='release'&&b) setD2Mode(b); }
+      if (task==='direction'){ setTask('direction'); setDirSub(a||'forces'); }
+      if (task==='compare'){ setTask('compare'); setCompare(a||'r0'); }
+      if (task==='system'){ setTask('system'); if(a) sysOpen(a); }
+      renderAllTex();
+    }
+    document.querySelectorAll('[data-jump]').forEach(btn=>btn.addEventListener('click',()=>jump(btn.dataset.jump)));
+
+    /* ================= 任务一：读题判断 ================= */
+    document.querySelectorAll('#judge .option').forEach(opt=>{
+      const key = opt.dataset.opt, btns = opt.querySelectorAll('.judges button');
+      btns.forEach(btn=>btn.addEventListener('click',()=>{
+        if (state.revealed) return;
+        btns.forEach(b=>b.classList.remove('chosen')); btn.classList.add('chosen');
+        state.answers[key] = btn.dataset.val;
+        opt.querySelector('.recorded').classList.add('show');
+        const done = Object.values(state.answers).every(v=>v!==null);
+        const rev = $('revealAll');
+        rev.disabled = !done;
+        rev.textContent = done ? '四项已齐，统一对照' : '四项判完后统一对照';
+      }));
+    });
+    $('revealAll').addEventListener('click',()=>{
+      if (Object.values(state.answers).some(v=>v===null)) return;
+      state.revealed = true;
+      document.querySelectorAll('#judge .option').forEach(opt=>{
+        opt.classList.add('revealed');
+        const correct = opt.dataset.correct==='yes', userYes = state.answers[opt.dataset.opt]==='yes';
+        const v = opt.querySelector('.verdict'), ok = correct===userYes;
+        v.className = 'verdict ' + (ok?'right':'wrong');
+        v.textContent = ok ? `你的判断「${userYes?'对':'错'}」✓ 与答案一致` : `你的判断「${userYes?'对':'错'}」✗ 正确应为「${correct?'对':'错'}」`;
+      });
+      const marks = ['A','B','C','D'].map(k=>{
+        const correct = document.querySelector(`#judge .option[data-opt="${k}"]`).dataset.correct==='yes';
+        return `${k}${state.answers[k]===(correct?'yes':'no')?'✓':'✗'}`;
+      }).join(' ');
+      const r = $('judgeResult');
+      r.classList.add('show');
+      r.innerHTML = `<p>你的判断：${marks}　·　正确答案：BD。</p><p>下面三行是每项的最短考场骨架；点进去可以在对应任务里把依据重新建立一遍。</p>`;
+      $('skelLinks').style.display = '';
+    });
+    document.querySelectorAll('#skelLinks .skel-link').forEach((el,i)=>{
+      el.style.cursor = 'pointer';
+      el.addEventListener('click',()=>jump(['direction:endpoints','compare:r0','system:q1'][i]));
+    });
+
+    /* ================= D1 缓慢推动 ================= */
+    function drawQuasiD1(){
+      const s = qs[state.alphaIdx], a = s.alpha_deg, b = s.beta_deg;
+      const [ax,ay] = posOnCircle(D1.cx,D1.cy,D1.r,270-a);
+      const [bx,by] = posOnCircle(D1.cx,D1.cy,D1.r,270+b);
+      setA('d1BallA','cx',ax); setA('d1BallA','cy',ay);
+      setA('d1BallB','cx',bx); setA('d1BallB','cy',by);
+      setA('d1LblBallA','x',ax-18); setA('d1LblBallA','y',ay+5);
+      setA('d1LblBallB','x',bx+12); setA('d1LblBallB','y',by+5);
+      // a 到达 c 时合并为明确的 "a = c"
+      const d1aAtC = a<0.05;
+      $('d1LblC').textContent = d1aAtC ? 'a = c' : 'c';
+      $('d1LblBallA').style.display = d1aAtC ? 'none' : '';
+      setA('d1Chord','x1',ax); setA('d1Chord','y1',ay); setA('d1Chord','x2',bx); setA('d1Chord','y2',by);
+      setA('d1LblD','x',(ax+bx)/2); setA('d1LblD','y',(ay+by)/2-5);
+      setA('d1ArcA','d',describeArc(D1.cx,D1.cy,32,270-a,270));
+      setA('d1ArcB','d',describeArc(D1.cx,D1.cy,32,270,270+b));
+      const [lax,lay] = posOnCircle(D1.cx,D1.cy,48,270-a/2);
+      const [lbx,lby] = posOnCircle(D1.cx,D1.cy,48,270+b/2);
+      setA('d1LblA','x',lax); setA('d1LblA','y',lay+4);
+      setA('d1LblB','x',lbx); setA('d1LblB','y',lby+4);
+      show('d1GAlpha', a>0.05);
+      // 初态对照
+      const [gax,gay] = posOnCircle(D1.cx,D1.cy,D1.r,240);
+      const [gbx,gby] = posOnCircle(D1.cx,D1.cy,D1.r,300);
+      setA('d1Chord0','x1',gax); setA('d1Chord0','y1',gay); setA('d1Chord0','x2',gbx); setA('d1Chord0','y2',gby);
+      setA('d1GhostA','cx',gax); setA('d1GhostA','cy',gay);
+      setA('d1GhostB','cx',gbx); setA('d1GhostB','cy',gby);
+      setA('d1LblGhostA','x',gax-22); setA('d1LblGhostA','y',gay-10);
+      setA('d1LblGhostB','x',gbx+4); setA('d1LblGhostB','y',gby-16);
+      setA('d1LblD0','x',(gax+gbx)/2-4); setA('d1LblD0','y',(gay+gby)/2-12);
+      // b 的受力（方向与相对长短来自同一状态）
+      const distPx = s.distance_over_r*D1.r;
+      const dirF = [(bx-ax)/distPx,(by-ay)/distPx];
+      const thB = (270+b)*DEG, outB = [Math.cos(thB),-Math.sin(thB)], tanB = [-Math.sin(thB),-Math.cos(thB)];
+      drawArrow('d1GravB',bx,by,0,SCALE,'d1LblGrav');
+      drawArrow('d1CoulB',bx,by,dirF[0]*SCALE*s.coulomb_over_mg,dirF[1]*SCALE*s.coulomb_over_mg,'d1LblCoul');
+      drawArrow('d1NormB',bx,by,-outB[0]*SCALE*s.support_b_over_mg,-outB[1]*SCALE*s.support_b_over_mg,null);
+      const ntx = bx-outB[0]*SCALE*s.support_b_over_mg, nty = by-outB[1]*SCALE*s.support_b_over_mg;
+      setA('d1LblNorm','x',ntx+tanB[0]*13); setA('d1LblNorm','y',nty+tanB[1]*13+4);
+      $('d1LblNorm').style.opacity = 1;
+      $('d1Slider').value = 30 - state.alphaIdx*0.5;
+      $('d1Release').disabled = state.alphaIdx !== qs.length-1;
+      $('d1RelHint').style.display = state.alphaIdx === qs.length-1 ? 'none' : '';
+    }
+    function renderD1(){
+      drawQuasiD1();
+      const couple = state.observe.d1Mode==='couple';
+      show('d1GChord',couple); show('d1GBeta',couple); show('d1GAlpha',couple && qs[state.alphaIdx].alpha_deg>0.05);
+      show('d1GForces',!couple);
+      show('d1Ghost',state.observe.ghost);
+      show('d1LegCouple',couple); show('d1LegForces',!couple);
+      $('d1GhostBtn').classList.toggle('active',state.observe.ghost);
+      $('d1Auto').textContent = state.observe.auto ? '停止' : '自动拖动';
+    }
+    document.querySelectorAll('#d1ModeSeg button').forEach(btn=>btn.addEventListener('click',()=>{
+      state.observe.d1Mode = btn.dataset.d1mode;
+      document.querySelectorAll('#d1ModeSeg button').forEach(b=>b.classList.toggle('active',b===btn));
+      renderD1();
+    }));
+    $('d1GhostBtn').addEventListener('click',()=>{ state.observe.ghost = !state.observe.ghost; renderD1(); });
+    $('d1Slider').addEventListener('input',e=>{
+      state.observe.auto = false;
+      state.alphaIdx = clamp(Math.round((30-parseFloat(e.target.value))/0.5),0,60);
+      renderD1(); if (state.task==='direction') renderDir();
+    });
+    $('d1Auto').addEventListener('click',()=>{
+      state.observe.auto = !state.observe.auto;
+      if (state.observe.auto){ lastTs = performance.now(); tickAuto(); }
+      renderD1();
+    });
+    function tickAuto(){
+      if (!state.observe.auto) return;
+      const now = performance.now(), dt = (now-lastTs)/1000; lastTs = now;
+      autoAcc += dt*10; // 演示速度：每秒 10°
+      while (autoAcc >= 0.5){
+        autoAcc -= 0.5;
+        if (state.alphaIdx < qs.length-1) state.alphaIdx++;
+        else { state.observe.auto = false; break; }
+      }
+      renderD1();
+      if (state.observe.auto) requestAnimationFrame(tickAuto);
+    }
+    let autoAcc = 0;
+    $('d1Release').addEventListener('click',()=>{
+      if (state.alphaIdx !== qs.length-1) return;
+      setObservePhase('release');
+    });
+    // 拖动 a（触控与鼠标同一 pointer 路径）
+    (function(){
+      const svg = $('sceneD1'); let dragging = false;
+      function move(e){
+        if (!dragging) return;
+        const rect = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+        const x = vb.x+(e.clientX-rect.left)/rect.width*vb.width, y = vb.y+(e.clientY-rect.top)/rect.height*vb.height;
+        let ang = Math.atan2(D1.cy-y, x-D1.cx)/DEG; if (ang<0) ang += 360;
+        let alpha = 270-ang; if (alpha>180) alpha -= 360;
+        state.alphaIdx = clamp(Math.round((30-clamp(alpha,0,30))/0.5),0,60);
+        state.observe.auto = false;
+        renderD1();
+      }
+      svg.addEventListener('pointerdown',e=>{ dragging = true; e.preventDefault(); move(e); });
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',()=>dragging=false);
+    })();
+
+    /* ================= D2 撤力后运动 ================= */
+    function setObservePhase(p){
+      state.observe.phase = p; state.observe.playing = false;
+      document.querySelectorAll('#observePhaseSeg button').forEach(b=>b.classList.toggle('active',b.dataset.phase===p));
+      show('d1',p==='push'); show('d2',p==='release');
+      if (p==='release') renderD2(); else renderD1();
+    }
+    document.querySelectorAll('#observePhaseSeg button').forEach(b=>b.addEventListener('click',()=>setObservePhase(b.dataset.phase)));
+    function setD2Mode(m){
+      state.observe.d2Mode = m;
+      document.querySelectorAll('#d2ModeSeg button').forEach(b=>b.classList.toggle('active',b.dataset.d2mode===m));
+      show('d2BallSeg',m==='forces'); show('d2Energy',m==='energy');
+      show('d2GForces',m==='forces');
+      $('d2ModeLeg').textContent = {motion:' · 当前只显示两球的真实运动。',forces:' · 当前只显示所选小球的三个力。',energy:' · 力箭头已隐藏，只看三种能量的相互转化。'}[m];
+      renderD2();
+    }
+    document.querySelectorAll('#d2ModeSeg button').forEach(b=>b.addEventListener('click',()=>setD2Mode(b.dataset.d2mode)));
+    document.querySelectorAll('#d2BallSeg button').forEach(b=>b.addEventListener('click',()=>{
+      state.observe.d2Ball = b.dataset.d2ball;
+      document.querySelectorAll('#d2BallSeg button').forEach(x=>x.classList.toggle('active',x===b));
+      renderD2();
+    }));
+    function renderD2(){
+      if (!rel) return;
+      const s = rel[state.observe.d2Idx], a = s.alpha_deg, b = s.beta_deg;
+      const [ax,ay] = posOnCircle(D2.cx,D2.cy,D2.r,270-a);
+      const [bx,by] = posOnCircle(D2.cx,D2.cy,D2.r,270+b);
+      setA('d2BallA','cx',ax); setA('d2BallA','cy',ay);
+      setA('d2BallB','cx',bx); setA('d2BallB','cy',by);
+      setA('d2LblBallA','x',ax-16); setA('d2LblBallA','y',ay+5);
+      setA('d2LblBallB','x',bx+11); setA('d2LblBallB','y',by+5);
+      setA('d2Chord','x1',ax); setA('d2Chord','y1',ay); setA('d2Chord','x2',bx); setA('d2Chord','y2',by);
+      // 受力模式：所选球的重力、库仑力、支持力
+      const pickA = state.observe.d2Ball==='a';
+      const px = pickA?ax:bx, py = pickA?ay:by;
+      const outR = [(px-D2.cx)/D2.r,(py-D2.cy)/D2.r];
+      const distPx = Math.max(1e-6, Math.hypot(bx-ax,by-ay));
+      const dirAB = [(bx-ax)/distPx,(by-ay)/distPx];
+      const fe = data.meta.base_gamma/(s.distance_over_r*s.distance_over_r);
+      const radC = fe*Math.sin((a+b)*DEG/2);
+      const w2 = pickA ? s.alpha_velocity_rad_s**2/9.8 : s.beta_velocity_rad_s**2/9.8;
+      const norm = Math.cos((pickA?a:b)*DEG) + radC + w2;
+      const FS = 40;
+      drawArrow('d2Grav',px,py,0,FS*0.9,'d2LblGrav');
+      const cd = pickA ? [-dirAB[0],-dirAB[1]] : dirAB;
+      drawArrow('d2Coul',px,py,cd[0]*FS*fe,cd[1]*FS*fe,'d2LblCoul');
+      show('d2GNormA',pickA); show('d2GNormB',!pickA);
+      drawArrow(pickA?'d2NormA':'d2NormB',px,py,-outR[0]*FS*0.7*norm,-outR[1]*FS*0.7*norm,pickA?'d2LblNormA':'d2LblNormB');
+      // 能量模式：三段能量条，总长度不变（重力势能零点取在 c）
+      const K = s.kinetic_over_mgr, Ug = s.gravity_energy_over_mgr+2, Ue = s.electric_energy_over_mgr;
+      const tot = K+Ug+Ue;
+      $('ebarK').style.width = (K/tot*100)+'%';
+      $('ebarUg').style.width = (Ug/tot*100)+'%';
+      $('ebarUe').style.width = (Ue/tot*100)+'%';
+      $('d2TimeText').textContent = `t = ${s.time_s.toFixed(1)} s`;
+      $('d2Time').value = state.observe.d2Idx;
+    }
+    $('d2Play').addEventListener('click',()=>{ if(state.observe.d2Idx>=rel.length-1) state.observe.d2Idx=0; state.observe.playing = true; lastTs = performance.now(); requestAnimationFrame(tickD2); });
+    $('d2Pause').addEventListener('click',()=>state.observe.playing=false);
+    $('d2Reset').addEventListener('click',()=>{ state.observe.playing=false; state.observe.d2Idx=0; renderD2(); });
+    $('d2Time').addEventListener('input',e=>{ state.observe.playing=false; state.observe.d2Idx=parseInt(e.target.value); renderD2(); });
+    $('d2Rate').addEventListener('change',e=>state.observe.rate=parseFloat(e.target.value));
+    function tickD2(){
+      if (!state.observe.playing) return;
+      const now = performance.now(), dt = (now-lastTs)/1000; lastTs = now;
+      state.observe.d2Idx += Math.max(1,Math.round(dt*state.observe.rate/0.02));
+      if (state.observe.d2Idx >= rel.length-1){ state.observe.d2Idx = rel.length-1; state.observe.playing = false; }
+      renderD2();
+      if (state.observe.playing) requestAnimationFrame(tickD2);
+    }
+    document.addEventListener('visibilitychange',()=>{ if (document.hidden){ state.observe.playing=false; state.observe.auto=false; renderD1(); } });
+
+    /* ================= 任务三：选方向（五子状态） ================= */
+    function dirStateIdx(){ return state.direction.sub==='endpoints' ? (state.direction.snap==='init'?0:qs.length-1) : state.alphaIdx; }
+    function renderDir(){
+      const sub = state.direction.sub;
+      const s = qs[dirStateIdx()], a = s.alpha_deg, b = s.beta_deg;
+      const [ax,ay] = posOnCircle(DR.cx,DR.cy,DR.r,270-a);
+      const [bx,by] = posOnCircle(DR.cx,DR.cy,DR.r,270+b);
+      setA('dirBallA','cx',ax); setA('dirBallA','cy',ay);
+      setA('dirBallB','cx',bx); setA('dirBallB','cy',by);
+      setA('dirLblBallA','x',ax-18); setA('dirLblBallA','y',ay+5);
+      setA('dirLblBallB','x',bx+12); setA('dirLblBallB','y',by+5);
+      // a 到达 c 时合并为明确的 "a = c"，不让两个标签竞争
+      const aAtC = a<0.05;
+      $('dirLblC').textContent = aAtC ? 'a = c' : 'c';
+      $('dirLblBallA').style.display = aAtC ? 'none' : '';
+      setA('dirChord','x1',ax); setA('dirChord','y1',ay); setA('dirChord','x2',bx); setA('dirChord','y2',by);
+      setA('dirLblD','x',(ax+bx)/2); setA('dirLblD','y',(ay+by)/2-5);
+      setA('dirArcA','d',describeArc(DR.cx,DR.cy,30,270-a,270));
+      setA('dirArcB','d',describeArc(DR.cx,DR.cy,30,270,270+b));
+      const [lax,lay] = posOnCircle(DR.cx,DR.cy,46,270-a/2);
+      const [lbx,lby] = posOnCircle(DR.cx,DR.cy,46,270+b/2);
+      setA('dirLblA','x',lax); setA('dirLblA','y',lay+4);
+      setA('dirLblB','x',lbx); setA('dirLblB','y',lby+4);
+      show('dirGAlpha', a>0.05 && sub!=='halfangle');
+      show('dirGBeta', sub!=='halfangle');
+      const distPx = Math.max(1e-6,Math.hypot(bx-ax,by-ay));
+      const dirF = [(bx-ax)/distPx,(by-ay)/distPx];
+      const thB = (270+b)*DEG, outB = [Math.cos(thB),-Math.sin(thB)], tanB = [-Math.sin(thB),-Math.cos(thB)];
+      const coul = SCALE*s.coulomb_over_mg, norm = SCALE*s.support_b_over_mg;
+      // 三力实线
+      drawArrow('dirGravB',bx,by,0,SCALE,'dirLblGrav');
+      drawArrow('dirCoulB',bx,by,dirF[0]*coul,dirF[1]*coul,'dirLblCoul');
+      drawArrow('dirNormB',bx,by,-outB[0]*norm,-outB[1]*norm,null);
+      const ntx = bx-outB[0]*norm, nty = by-outB[1]*norm;
+      setA('dirLblNorm','x',ntx+tanB[0]*12); setA('dirLblNorm','y',nty+tanB[1]*12+4);
+      setA('dirLblNormI','x',ntx+tanB[0]*14); setA('dirLblNormI','y',nty+tanB[1]*14+4);
+      setA('dirLblNormF','x',ntx+tanB[0]*14); setA('dirLblNormF','y',nty+tanB[1]*14+4);
+      // 半角几何
+      setA('dirRadOa','x1',DR.cx); setA('dirRadOa','y1',DR.cy); setA('dirRadOa','x2',ax); setA('dirRadOa','y2',ay);
+      setA('dirRadOb','x1',DR.cx); setA('dirRadOb','y1',DR.cy); setA('dirRadOb','x2',bx); setA('dirRadOb','y2',by);
+      setA('dirChordSolid','x1',ax); setA('dirChordSolid','y1',ay); setA('dirChordSolid','x2',bx); setA('dirChordSolid','y2',by);
+      const T = 66;
+      setA('dirTanLine','x1',bx-tanB[0]*T); setA('dirTanLine','y1',by-tanB[1]*T);
+      setA('dirTanLine','x2',bx+tanB[0]*T); setA('dirTanLine','y2',by+tanB[1]*T);
+      setA('dirArcCentral','d',describeArc(DR.cx,DR.cy,30,270-a,270+b));
+      const [cax,cay] = posOnCircle(DR.cx,DR.cy,46,270+(b-a)/2);
+      setA('dirLblCentral','x',cax); setA('dirLblCentral','y',cay+4);
+      const phi1 = Math.atan2((ay-by),(ax-bx)), phi2 = Math.atan2(tanB[1],tanB[0]);
+      let path = '';
+      for (let i=0;i<=8;i++){ const phi = phi1+(phi2-phi1)*i/8; path += (i===0?'M':'L')+(bx+24*Math.cos(phi)).toFixed(1)+' '+(by+24*Math.sin(phi)).toFixed(1)+' '; }
+      setA('dirArcCT','d',path.trim());
+      const mid = (phi1+phi2)/2;
+      setA('dirLblCT','x',bx+40*Math.cos(mid)); setA('dirLblCT','y',by+40*Math.sin(mid)+4);
+      // 切向投影
+      const half = (a+b)*DEG/2;
+      const gt = SCALE*Math.sin(b*DEG), ct = coul*Math.cos(half);
+      setA('dirTanAxis','x1',bx-tanB[0]*T); setA('dirTanAxis','y1',by-tanB[1]*T);
+      setA('dirTanAxis','x2',bx+tanB[0]*T); setA('dirTanAxis','y2',by+tanB[1]*T);
+      setA('dirLblTanAxis','x',bx+tanB[0]*(T+8)+outB[0]*10); setA('dirLblTanAxis','y',by+tanB[1]*(T+8)+outB[1]*10+4);
+      const m1 = drawProj('dirProjGravT',bx,by,-tanB[0]*gt,-tanB[1]*gt);
+      const m2 = drawProj('dirProjCoulT',bx,by,tanB[0]*ct,tanB[1]*ct);
+      // 标签放在各自投影箭头末端：重力沿 -切向朝下，库仑沿 +切向越过箭端、抬到轴线内侧，
+      // 避开 b 球标签与 c 标签；完整公式在右侧卡片，图内只留短符号
+      setA('dirLblProjGravT','x',bx-tanB[0]*(gt+6)+outB[0]*10); setA('dirLblProjGravT','y',by-tanB[1]*(gt+6)+outB[1]*10+3);
+      const clx = bx+tanB[0]*(ct+8)-outB[0]*7, cly = by+tanB[1]*(ct+8)-outB[1]*7;
+      setA('dirLblProjCoulT','x',clx); setA('dirLblProjCoulT','y',cly+3);
+      setA('dirLblProjCoulT2','x',clx); setA('dirLblProjCoulT2','y',cly+14);
+      // 径向分量
+      const grr = SCALE*Math.cos(b*DEG), crr = coul*Math.sin(half);
+      setA('dirRadAxis','x1',DR.cx); setA('dirRadAxis','y1',DR.cy);
+      setA('dirRadAxis','x2',bx+outB[0]*24); setA('dirRadAxis','y2',by+outB[1]*24);
+      setA('dirLblRadAxis','x',DR.cx+(bx-DR.cx)*0.28+tanB[0]*10); setA('dirLblRadAxis','y',DR.cy+(by-DR.cy)*0.28+tanB[1]*10+4);
+      drawProj('dirProjGravR',bx,by,outB[0]*grr,outB[1]*grr);
+      const cStart = [bx+outB[0]*grr, by+outB[1]*grr];
+      drawProj('dirProjCoulR',cStart[0],cStart[1],outB[0]*crr,outB[1]*crr);
+      // 径向：mg·cosβ 标在第一段中点的 -切向侧（左下空区），Fe·sin 标在第二段中点的 +切向侧，
+      // 短符号进图、完整公式在右侧；两标签分居轴线两侧，互不接近 b 球标签
+      setA('dirLblProjGravR','x',bx+outB[0]*grr*0.5-tanB[0]*20); setA('dirLblProjGravR','y',by+outB[1]*grr*0.5-tanB[1]*20+3);
+      setA('dirLblProjCoulR','x',bx+outB[0]*(grr+crr*0.5+10)+tanB[0]*10); setA('dirLblProjCoulR','y',by+outB[1]*(grr+crr*0.5+10)+tanB[1]*10+3);
+      setA('dirLblProjCoulR2','x',bx+outB[0]*(grr+crr*0.5+10)+tanB[0]*10); setA('dirLblProjCoulR2','y',by+outB[1]*(grr+crr*0.5+10)+tanB[1]*10+14);
+      // 子状态显隐（语义驱动）
+      show('dirGHalf',sub==='halfangle');
+      show('dirGTang',sub==='tangent');
+      show('dirGRad',sub==='radial');
+      show('dirGChord',sub!=='halfangle');
+      show('dirGGrav',sub==='forces'||sub==='endpoints');
+      show('dirGCoul',sub==='forces'||sub==='endpoints');
+      show('dirGNorm',sub!=='halfangle'&&sub!=='tangent');
+      show('dirSliderRow',sub!=='endpoints');
+      show('dirSnapSeg',sub==='endpoints');
+      $('dirSnapSeg').style.display = sub==='endpoints' ? 'flex' : 'none';
+      const tag = $('dirSnapTag');
+      if (sub==='endpoints'){
+        tag.style.display = 'block';
+        tag.textContent = state.direction.snap==='init' ? '初态' : '末态：a 在 c';
+      } else tag.style.display = 'none';
+      show('dirLblNorm',sub!=='endpoints');
+      $('dirLblNormI').style.display = (sub==='endpoints'&&state.direction.snap==='init') ? '' : 'none';
+      $('dirLblNormF').style.display = (sub==='endpoints'&&state.direction.snap==='final') ? '' : 'none';
+      ['Forces','Half','Tang','Rad','End'].forEach(k=>show('dirLeg'+k,false));
+      show({forces:'dirLegForces',halfangle:'dirLegHalf',tangent:'dirLegTang',radial:'dirLegRad',endpoints:'dirLegEnd'}[sub],true);
+      ['Forces','Half','Tang','Rad','End'].forEach(k=>show('dirSub'+k,false));
+      show({forces:'dirSubForces',halfangle:'dirSubHalf',tangent:'dirSubTang',radial:'dirSubRad',endpoints:'dirSubEnd'}[sub],true);
+      document.querySelectorAll('#dirNavSeg button').forEach(btn=>btn.classList.toggle('active',btn.dataset.dir===sub));
+      document.querySelectorAll('#dirSnapSeg button').forEach(btn=>btn.classList.toggle('active',btn.dataset.dirsnap===state.direction.snap));
+      $('dirDerivI').classList.toggle('hl',sub==='endpoints'&&state.direction.snap==='init');
+      $('dirDerivF').classList.toggle('hl',sub==='endpoints'&&state.direction.snap==='final');
+      if (sub!=='endpoints') $('dirSlider').value = 30-state.alphaIdx*0.5;
+    }
+    function setDirSub(sub){ state.direction.sub = sub; renderDir(); renderAllTex(); }
+    document.querySelectorAll('#dirNavSeg button').forEach(btn=>btn.addEventListener('click',()=>setDirSub(btn.dataset.dir)));
+    document.querySelectorAll('#dirSnapSeg button').forEach(btn=>btn.addEventListener('click',()=>{ state.direction.snap = btn.dataset.dirsnap; renderDir(); }));
+    $('dirSlider').addEventListener('input',e=>{
+      state.alphaIdx = clamp(Math.round((30-parseFloat(e.target.value))/0.5),0,60);
+      renderDir();
+    });
+    document.querySelectorAll('#dirChips button').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('#dirChips button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      show('dirWhy',true); renderAllTex();
+    }));
+    (function(){
+      const svg = $('sceneDir'); let dragging = false;
+      function move(e){
+        if (!dragging || state.direction.sub==='endpoints') return;
+        const rect = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+        const x = vb.x+(e.clientX-rect.left)/rect.width*vb.width, y = vb.y+(e.clientY-rect.top)/rect.height*vb.height;
+        let ang = Math.atan2(DR.cy-y, x-DR.cx)/DEG; if (ang<0) ang += 360;
+        let alpha = 270-ang; if (alpha>180) alpha -= 360;
+        state.alphaIdx = clamp(Math.round((30-clamp(alpha,0,30))/0.5),0,60);
+        renderDir();
+      }
+      svg.addEventListener('pointerdown',e=>{ if(state.direction.sub==='endpoints') return; dragging = true; e.preventDefault(); move(e); });
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',()=>dragging=false);
+    })();
+
+    /* ================= 任务四：比关系（证据轨道） ================= */
+    function cmpPos(){
+      return {
+        a0: posOnCircle(CP.cx,CP.cy,CP.r,240), b0: posOnCircle(CP.cx,CP.cy,CP.r,300),
+        af: posOnCircle(CP.cx,CP.cy,CP.r,270), bf: posOnCircle(CP.cx,CP.cy,CP.r,270+betaF),
+      };
+    }
+    function renderCmp(){
+      const st = state.compare.active, P = cmpPos();
+      const [ax,ay] = P.af, [bx,by] = P.bf, [gax,gay] = P.a0, [gbx,gby] = P.b0;
+      // 初态组
+      setA('cmpChord0','x1',gax); setA('cmpChord0','y1',gay); setA('cmpChord0','x2',gbx); setA('cmpChord0','y2',gby);
+      setA('cmpA0','cx',gax); setA('cmpA0','cy',gay);
+      setA('cmpB0','cx',gbx); setA('cmpB0','cy',gby);
+      setA('cmpLblA0','x',gax-24); setA('cmpLblA0','y',gay-10);
+      setA('cmpLblB0','x',gbx-2); setA('cmpLblB0','y',gby-18);
+      setA('cmpLblD0','x',(gax+gbx)/2-8); setA('cmpLblD0','y',(gay+gby)/2-12);
+      setA('cmpArc30','d',describeArc(CP.cx,CP.cy,30,240,300));
+      const [t3x,t3y] = posOnCircle(CP.cx,CP.cy,44,270);
+      setA('cmpLbl30','x',t3x); setA('cmpLbl30','y',t3y+4);
+      // 末态组
+      setA('cmpChord','x1',ax); setA('cmpChord','y1',ay); setA('cmpChord','x2',bx); setA('cmpChord','y2',by);
+      let mx = (ax+bx)/2, my = (ay+by)/2, ox = mx-CP.cx, oy = my-CP.cy;
+      const ol = Math.hypot(ox,oy); ox/=ol; oy/=ol;
+      setA('cmpLblD','x',mx+ox*16); setA('cmpLblD','y',my+oy*16+4);
+      setA('cmpArcBf','d',describeArc(CP.cx,CP.cy,34,270,270+betaF));
+      const [btx,bty] = posOnCircle(CP.cx,CP.cy,50,270+betaF/2);
+      setA('cmpLblBf','x',btx+10); setA('cmpLblBf','y',bty+4);
+      setA('cmpA','cx',ax); setA('cmpA','cy',ay);
+      setA('cmpB','cx',bx); setA('cmpB','cy',by);
+      setA('cmpLblA','x',ax-22); setA('cmpLblA','y',ay+8);
+      setA('cmpLblB','x',bx+16); setA('cmpLblB','y',by+4);
+      // 末态组里 a 恒在 c：合并为 "a = c"，单独的 a 标签不再出现
+      const hasFinalNow = ['r0','r1','r3','r4','r5','r6','r7','r8','r9','r10'].includes(st);
+      $('cmpLblC').textContent = hasFinalNow ? 'a = c' : 'c';
+      $('cmpLblA').style.display = 'none';
+      setA('cmpLblAf0','x',ax+26); setA('cmpLblAf0','y',ay+6);
+      // R0：OM、半角、半弦
+      setA('cmpOM','x1',CP.cx); setA('cmpOM','y1',CP.cy); setA('cmpOM','x2',mx); setA('cmpOM','y2',my);
+      setA('cmpLblM','x',mx+ox*12); setA('cmpLblM','y',my+oy*12+12);
+      setA('cmpArcHalf','d',describeArc(CP.cx,CP.cy,42,270,270+betaF/2));
+      const [hhx,hhy] = posOnCircle(CP.cx,CP.cy,56,270+betaF/4);
+      setA('cmpLblHalf','x',hhx); setA('cmpLblHalf','y',hhy+4);
+      setA('cmpHalfChord','x1',mx); setA('cmpHalfChord','y1',my); setA('cmpHalfChord','x2',bx); setA('cmpHalfChord','y2',by);
+      // R1：半径 R 与 x
+      setA('cmpRadR','x1',CP.cx); setA('cmpRadR','y1',CP.cy); setA('cmpRadR','x2',CP.cx); setA('cmpRadR','y2',CP.cy+CP.r);
+      setA('cmpLblR','x',CP.cx-14); setA('cmpLblR','y',CP.cy+CP.r/2);
+      setA('cmpLblX','x',CP.cx); setA('cmpLblX','y',30);
+      // R2：初态 F_e0 箭头（沿弦背向 a0）
+      const d0 = Math.hypot(gbx-gax,gby-gay);
+      const dir0 = [(gbx-gax)/d0,(gby-gay)/d0];
+      const F0LEN = SCALE*0.7/Math.sqrt(3)*2;
+      drawArrow('cmpF0Arrow',gbx,gby,dir0[0]*F0LEN,dir0[1]*F0LEN,'cmpLblF0');
+      // R4：末态切向分解
+      const thB = (270+betaF)*DEG, outB = [Math.cos(thB),-Math.sin(thB)], tanB = [-Math.sin(thB),-Math.cos(thB)];
+      const TF = 62;
+      setA('cmpTanAxisF','x1',bx-tanB[0]*TF); setA('cmpTanAxisF','y1',by-tanB[1]*TF);
+      setA('cmpTanAxisF','x2',bx+tanB[0]*TF); setA('cmpTanAxisF','y2',by+tanB[1]*TF);
+      setA('cmpLblTanAxisF','x',bx+tanB[0]*(TF+8)+outB[0]*10); setA('cmpLblTanAxisF','y',by+tanB[1]*(TF+8)+outB[1]*10+4);
+      const gtf = SCALE*Math.sin(betaF*DEG), ctf = SCALE*xF*Math.cos(betaF*DEG/2);
+      const mf1 = drawProj('cmpProjGravTF',bx,by,-tanB[0]*gtf,-tanB[1]*gtf);
+      const mf2 = drawProj('cmpProjCoulTF',bx,by,tanB[0]*ctf,tanB[1]*ctf);
+      setA('cmpLblPGTF','x',mf1[0]+outB[0]*12-tanB[0]*4); setA('cmpLblPGTF','y',mf1[1]+outB[1]*12-tanB[1]*4+3);
+      setA('cmpLblPCTF','x',mf2[0]+outB[0]*22); setA('cmpLblPCTF','y',mf2[1]+outB[1]*22+3);
+      // R7/R8：移动弧
+      setA('cmpArcMoveA','d',describeArc(CP.cx,CP.cy,CP.r,240,270));
+      setA('cmpArcMoveB','d',describeArc(CP.cx,CP.cy,CP.r,300,270+betaF));
+      setA('cmpLblMoveA','x',72); setA('cmpLblMoveA','y',300);
+      setA('cmpLblMoveB','x',262); setA('cmpLblMoveB','y',300);
+      setA('cmpLblUg','x',CP.cx); setA('cmpLblUg','y',CP.cy-CP.r+18);
+      // R6：U_e 标签
+      setA('cmpLblUe','x',bx+ox*30); setA('cmpLblUe','y',by+oy*30-10);
+      // R11：系统边界与 W 标注
+      setA('cmpWextArrow','x1',20); setA('cmpWextArrow','y1',60); setA('cmpWextArrow','x2',64); setA('cmpWextArrow','y2',110);
+      setA('cmpLblWext','x',30); setA('cmpLblWext','y',52);
+      setA('cmpLblWn','x',CP.cx+88); setA('cmpLblWn','y',CP.cy+CP.r-6);
+      // 语义显隐
+      const hasInit = ['r2','r3','r5','r6','r7','r8','r9','r10'].includes(st);
+      const hasFinal = ['r0','r1','r3','r4','r5','r6','r7','r8','r9','r10'].includes(st);
+      show('cmpGInit',hasInit); show('cmpGFinal',hasFinal);
+      $('cmpGInit').style.opacity = st==='r2' ? 1 : (st==='r5' ? 0.35 : 1);
+      show('cmpGR0',st==='r0');
+      show('cmpGR1',st==='r1');
+      show('cmpGF0',st==='r2');
+      show('cmpGTanF',st==='r4');
+      show('cmpGMoves',['r7','r8'].includes(st));
+      $('cmpGMoves').style.opacity = st==='r8' ? 1 : 0.45;
+      show('cmpLblUg',st==='r9'||st==='r10');
+      if (st==='r9'||st==='r10'){ show('cmpGMoves',true); $('cmpGMoves').style.opacity = 0.3; show('cmpLblMoveA',false); show('cmpLblMoveB',false); }
+      else { show('cmpLblMoveA',true); show('cmpLblMoveB',true); }
+      show('cmpGUe',st==='r6');
+      show('cmpGSys',st==='r11');
+      show('cmpArc30',st==='r2'); show('cmpLbl30',st==='r2');
+      // 轨道卡片
+      document.querySelectorAll('#evTrack .evcard').forEach(card=>{
+        const id = card.dataset.ev;
+        card.classList.toggle('open',id===st);
+        card.classList.toggle('done',!!state.compare.visited[id]&&id!==st);
+      });
+      $('r10Detail').classList.toggle('state-hide',!state.compare.r10Open);
+      // 考场压缩只在 R2–R5 四张证据卡都打开过（闭环形成）后按需提供
+      show('cmpRecap', ['r2','r3','r4','r5'].every(r=>state.compare.visited[r]));
+      renderAllTex();
+    }
+    function setCompare(id){
+      state.compare.active = id;
+      state.compare.visited[id] = true;
+      renderCmp();
+    }
+    document.querySelectorAll('#evTrack .evcard .ev-head').forEach(head=>head.addEventListener('click',()=>{
+      const id = head.closest('.evcard').dataset.ev;
+      setCompare(id);
+    }));
+    $('r10Expand').addEventListener('click',()=>{ state.compare.r10Open = !state.compare.r10Open; renderCmp(); });
+    $('r0Chain').addEventListener('click',()=>{
+      const seq = ['angle-b-final','half-angle','distance-final'];
+      seq.forEach((ref,i)=>setTimeout(()=>flashRefs(ref,false), i*700));
+    });
+
+    /* ================= 任务五：选系统（四问语义卡） ================= */
+    function sysAllAnswered(){ return Object.values(state.system.answered).every(Boolean); }
+    function renderSys(){
+      const act = state.system.active, fin = sysAllAnswered() || state.system.fullView;
+      const [ax,ay] = posOnCircle(SY.cx,SY.cy,SY.r,270);
+      const [bx,by] = posOnCircle(SY.cx,SY.cy,SY.r,270+betaF);
+      setA('sysBallA','cx',ax); setA('sysBallA','cy',ay);
+      setA('sysBallB','cx',bx); setA('sysBallB','cy',by);
+      setA('sysLblBallA','x',ax-18); setA('sysLblBallA','y',ay+6);
+      setA('sysLblBallB','x',bx+14); setA('sysLblBallB','y',by+2);
+      // 撤力后快照中 a 恒在 c：合并为 "a = c"
+      $('sysLblC').textContent = 'a = c';
+      $('sysLblBallA').style.display = 'none';
+      setA('sysChord','x1',ax); setA('sysChord','y1',ay); setA('sysChord','x2',bx); setA('sysChord','y2',by);
+      const thB = (270+betaF)*DEG, outB = [Math.cos(thB),-Math.sin(thB)], tanB = [-Math.sin(thB),-Math.cos(thB)];
+      const distPx = Math.max(1e-6,Math.hypot(bx-ax,by-ay));
+      const dirAB = [(bx-ax)/distPx,(by-ay)/distPx];
+      // 问 1：两球各自三力 + 推力删除标记
+      drawArrow('sysGravA',ax,ay,0,34,'sysLblGravA'); drawArrow('sysGravB',bx,by,0,34,'sysLblGravB');
+      drawArrow('sysCoulA',ax,ay,-dirAB[0]*30,-dirAB[1]*30,'sysLblCoulA');
+      drawArrow('sysCoulB',bx,by,dirAB[0]*30,dirAB[1]*30,'sysLblCoulB');
+      drawArrow('sysNormA',ax,ay,0,-30,'sysLblNormA');
+      drawArrow('sysNormB',bx,by,-outB[0]*30,-outB[1]*30,'sysLblNormB');
+      setA('sysPushX','x1',ax); setA('sysPushX','y1',ay); setA('sysPushX','x2',ax-34); setA('sysPushX','y2',ay);
+      setA('sysLblPushX','x',ax-80); setA('sysLblPushX','y',ay+4);
+      // 问 2：势能归类标签
+      setA('sysLblUg','x',120); setA('sysLblUg','y',225);
+      setA('sysLblUe','x',262); setA('sysLblUe','y',150);
+      // 问 3：所选球 N⊥v + 直角标记
+      const pickA = state.system.ball==='a';
+      const px = pickA?ax:bx, py = pickA?ay:by;
+      const outR = pickA ? [0,-1] : outB;
+      const tanR = pickA ? [-1,0] : tanB;
+      drawArrow('sysNVnA',ax,ay,0,-40,'sysLblNVnA'); drawArrow('sysNVnB',bx,by,-outB[0]*40,-outB[1]*40,'sysLblNVnB');
+      drawArrow('sysNVvA',ax,ay,-40,0,'sysLblNVvA'); drawArrow('sysNVvB',bx,by,tanB[0]*40,tanB[1]*40,'sysLblNVvB');
+      const s1x = px-outR[0]*12, s1y = py-outR[1]*12, s2x = s1x+tanR[0]*12, s2y = s1y+tanR[1]*12, s3x = px+tanR[0]*12, s3y = py+tanR[1]*12;
+      setA('sysNVsq','d',`M ${s1x} ${s1y} L ${s2x} ${s2y} L ${s3x} ${s3y}`);
+      // 守恒构成
+      setA('sysLblK','x',bx+26); setA('sysLblK','y',by+22);
+      // 语义显隐：当前视觉只由 active_question 决定；完成态单独合成
+      show('sysGQ1',!fin && act==='q1');
+      show('sysGQ2',(!fin && act==='q2') || fin);
+      show('sysGQ3',!fin && act==='q3');
+      show('sysGQ4',(!fin && act==='q4') || fin);
+      show('sysGFin',fin);
+      if (!fin && act==='q3'){
+        show('sysGNVa',pickA); show('sysGVa',pickA);
+        show('sysGNVb',!pickA); show('sysGVb',!pickA);
+      }
+      // 卡片状态
+      document.querySelectorAll('#system .qcard').forEach(card=>{
+        const id = card.dataset.qc;
+        card.classList.toggle('open',act===id);
+        card.classList.toggle('answered',!!state.system.answered[id]);
+        card.querySelector('.q-ans').classList.toggle('state-hide',!state.system.answered[id]);
+      });
+      $('sysFinalEq').classList.toggle('show',fin);
+      $('sysFullSummary').style.display = state.system.fullView && !sysAllAnswered() ? '' : 'none';
+      renderAllTex();
+    }
+    function sysOpen(id){
+      state.system.active = state.system.active===id ? null : id;
+      renderSys();
+    }
+    document.querySelectorAll('#system .qcard .q-head').forEach(head=>head.addEventListener('click',()=>sysOpen(head.closest('.qcard').dataset.qc)));
+    document.querySelectorAll('[data-reveal]').forEach(btn=>btn.addEventListener('click',()=>{
+      const id = btn.dataset.reveal;
+      state.system.answered[id] = true;
+      state.system.active = id;
+      renderSys();
+    }));
+    document.querySelectorAll('#sysBallSeg button').forEach(b=>b.addEventListener('click',()=>{
+      state.system.ball = b.dataset.sysball;
+      document.querySelectorAll('#sysBallSeg button').forEach(x=>x.classList.toggle('active',x===b));
+      renderSys();
+    }));
+    $('sysFullView').addEventListener('click',()=>{
+      state.system.fullView = !state.system.fullView;
+      $('sysFullView').textContent = state.system.fullView ? '收起完整判断' : '直接查看完整判断';
+      renderSys();
+    });
+
+    /* ================= 图式绑定：公式项 → 视觉目标 ================= */
+    const BIND_DEFAULT = {
+      'angle-a':['observe','push'],'angle-b':['observe','push'],'distance-ab':['observe','push'],
+      'ball-a':['observe','push'],'ball-b':['observe','push'],'point-c':['observe','push'],'ring':['observe','push'],'center-o':['compare','r0'],
+      'angle-a-initial':['compare','r2'],'angle-b-initial':['compare','r7'],'angle-a-final':['compare','r0'],'angle-b-final':['compare','r0'],
+      'distance-initial':['compare','r3'],'distance-final':['compare','r0'],'distance-ratio':['compare','r1'],'radius-r':['compare','r1'],
+      'electric-force-current':['direction','forces'],'electric-force-initial':['compare','r2'],'electric-force-final':['compare','r4'],
+      'normal-force-b':['direction','radial'],'normal-force-a':['system','q3'],
+      'normal-force-b-initial':['direction','endpoints','init'],'normal-force-b-final':['direction','endpoints','final'],
+      'gravity-force':['direction','forces'],'external-force':['system','q1'],
+      'kinetic':['observe','release','energy'],'gravity-potential':['compare','r9'],'electric-potential':['compare','r6'],
+      'normal-work':['system','q3'],'external-work':['compare','r11'],
+      'velocity-a':['system','q3','a'],'velocity-b':['system','q3','b'],
+      'central-angle':['direction','halfangle'],'chord-tangent-angle':['direction','halfangle'],
+      'tangent-axis':['direction','tangent'],'radial-axis':['direction','radial'],
+      'tangent-component-gravity':['direction','tangent'],'tangent-component-electric':['direction','tangent'],
+      'radial-component-gravity':['direction','radial'],'radial-component-electric':['direction','radial'],
+      'half-angle':['compare','r0'],'half-chord':['compare','r0'],'bisector-om':['compare','r0'],
+      'height-change-a':['compare','r8'],'height-change-b':['compare','r8'],
+      'system-boundary':['compare','r11'],
+    };
+    function visibleTargets(ref, panelOnly){
+      return [...document.querySelectorAll(`[data-physics-id="${ref}"]`)].filter(el=>{
+        const r = el.getBoundingClientRect();
+        // SVG 水平/垂直线段的 boundingRect 有一维为 0，只要不是两维全 0（display:none）就可见
+        if (!(r.width>0 || r.height>0)) return false;
+        if (panelOnly){ const p = el.closest('.panel'); return p && p.classList.contains('active'); }
+        return true;
+      });
+    }
+    function gotoDefault(ref){
+      const spec = BIND_DEFAULT[ref]; if (!spec) return;
+      const [task,a,b] = spec;
+      if (task==='observe'){ setTask('observe'); setObservePhase(a==='release'?'release':'push'); if(a==='release'&&b) setD2Mode(b); }
+      else if (task==='direction'){ setTask('direction'); if(b) state.direction.snap = b; setDirSub(a); }
+      else if (task==='compare'){ setTask('compare'); setCompare(a); }
+      else if (task==='system'){ setTask('system'); state.system.active = a; if(b) state.system.ball = b; renderSys(); }
+    }
+    let flashNodes = [], flashTimer = 0;
+    function clearFlash(){
+      flashNodes.forEach(n=>{ if(n.tagName==='rect') n.remove(); else n.classList.remove('bound-active'); });
+      flashNodes = [];
+      document.querySelectorAll('.bind.bound-active').forEach(b=>b.classList.remove('bound-active'));
+      clearTimeout(flashTimer);
+    }
+    function flashRefs(ref, persist){
+      clearFlash();
+      visibleTargets(ref,false).forEach(el=>{
+        if (el instanceof SVGElement){
+          const svg = el.ownerSVGElement; if (!svg) return;
+          const layer = svg.querySelector('g[id$="Flash"]'); if (!layer) return;
+          try{
+            const bb = el.getBBox();
+            const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+            rect.setAttribute('x',bb.x-5); rect.setAttribute('y',bb.y-5);
+            rect.setAttribute('width',bb.width+10); rect.setAttribute('height',bb.height+10);
+            rect.setAttribute('class','bind-rect');
+            layer.appendChild(rect); flashNodes.push(rect);
+          }catch(err){/* getBBox 对隐藏元素可能失败 */}
+        } else { el.classList.add('bound-active'); flashNodes.push(el); }
+      });
+      document.querySelectorAll(`[data-physics-ref="${ref}"]`).forEach(b=>b.classList.add('bound-active'));
+      if (!persist) flashTimer = setTimeout(clearFlash,2000);
+    }
+    function activateBinding(ref, persist){
+      if (!visibleTargets(ref,true).length) gotoDefault(ref);
+      flashRefs(ref, persist);
+    }
+    let lastPointer = false;
+    document.addEventListener('pointerdown',()=>lastPointer=true,true);
+    document.addEventListener('keydown',e=>{ if(e.key==='Tab') lastPointer=false; },true);
+    document.querySelectorAll('.bind').forEach(btn=>{
+      const ref = btn.dataset.physicsRef;
+      btn.addEventListener('click',()=>{ activateBinding(ref,false); });
+      btn.addEventListener('focus',()=>{ activateBinding(ref,!lastPointer); });
+      btn.addEventListener('blur',()=>{ clearFlash(); });
+    });
+
+    /* ---------- 浮层 ---------- */
+    let lastFocus = null;
+    function openOverlay(id){
+      lastFocus = document.activeElement;
+      $(id).classList.add('open'); renderAllTex();
+      const sheet = $(id).querySelector('.close'); if (sheet) sheet.focus();
+    }
+    function closeOverlay(id){
+      $(id).classList.remove('open');
+      if (lastFocus) lastFocus.focus();
+    }
+    $('openSymbols').addEventListener('click',()=>openOverlay('symbolOverlay'));
+    $('closeSymbols').addEventListener('click',()=>closeOverlay('symbolOverlay'));
+    $('symbolOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeOverlay('symbolOverlay'); });
+    $('openAudit').addEventListener('click',()=>openOverlay('auditOverlay'));
+    $('closeAudit').addEventListener('click',()=>closeOverlay('auditOverlay'));
+    $('auditOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeOverlay('auditOverlay'); });
+    document.addEventListener('keydown',e=>{
+      if (e.key==='Escape'){ closeOverlay('symbolOverlay'); closeOverlay('auditOverlay'); }
+    });
+
+    /* ---------- 启动 ---------- */
+    fetch('reference-data.json').then(r=>r.json()).then(d=>{
+      data = d; qs = d.quasistatic.q100; rel = d.release.q100.a00;
+      const last = qs[qs.length-1];
+      betaF = last.beta_deg; xF = last.distance_over_r;
+      renderD1(); setObservePhase('push');
+      renderDir(); renderCmp(); renderSys();
+      setD2Mode('motion');
+      renderAllTex();
+      const h = location.hash.replace('#','');
+      if (h.includes(':')) jump(h);
+      else if (TABS.includes(h)) setTask(h);
+    }).catch(e=>{
+      document.body.insertAdjacentHTML('afterbegin','<p style="color:red;padding:10px">数据加载失败，请刷新页面。</p>');
+    });
+
+    /* ---------- 内部测试接口（不进入学习者界面） ---------- */
+    window.__q01 = {
+      version:'q01-v8', state,
+      setTask, jump, setCompare, setDirSub, setObservePhase, setD2Mode,
+      renderD1, renderD2, renderDir, renderCmp, renderSys,
+      sysSetActive:id=>{ state.system.active = id; renderSys(); },
+      sysReveal:id=>{ state.system.answered[id] = true; state.system.active = id; renderSys(); },
+      sysReset:()=>{ state.system = {active:null,answered:{q1:false,q2:false,q3:false,q4:false},ball:'b',fullView:false}; renderSys(); },
+      setAlpha:i=>{ state.alphaIdx = clamp(i,0,60); renderD1(); renderDir(); },
+      activateBinding, visibleTargets, clearFlash,
+      qs:()=>qs, rel:()=>rel, betaF:()=>betaF, xF:()=>xF,
+    };
+  })();
+  </script>
+</body>
+</html>
