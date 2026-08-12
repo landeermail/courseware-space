@@ -52,6 +52,7 @@
     if(!sessionStorage.getItem(ACCESS_KEY))document.getElementById('accessWarning').hidden=false;
     const lessons=[
       {id:'q01-vertical-circle',subject:'力学',title:'第1题：竖直圆环双带电小球',desc:'观察缓慢推动中的耦合平衡、支持力与能量变化，并从模型回到四个选项。',tags:['耦合运动','准静态平衡','能量'],href:'q01-v8-1c89623d5bf0/',priority:true},
+      {id:'q07-glass-rod-tir',subject:'光学',title:'第7题：实心玻璃管中的全反射计数',desc:'连续改变管内光线方向，找到全反射边界，并从动态光路回到最多反射次数的严格判定。',tags:['全反射','临界角','光路展开'],href:'q07-v4-5bb63ec7f581/',priority:true},
       {id:'q6-plane',subject:'电磁感应',title:'第6题：飞机机翼电势差',desc:'逐项比较不同飞行方向下机翼两端的电势高低。',tags:['洛伦兹力','方向判断'],href:'../../electromagnetism/q6-plane/'},
       {id:'mh370-physics',subject:'电磁感应',title:'第6题：飞机机翼空间推理',desc:'在空间模型中理解速度、磁场与洛伦兹力。',tags:['空间推理'],href:'../../mh370-physics/mh370-physics/'},
       {id:'q13-helicopter-physics',subject:'电磁感应',title:'第13题：旋翼感应电动势',desc:'分步观察旋转、受力与动生电动势积分。',tags:['旋转导体'],href:'../../electromagnetism/q13-helicopter-physics/'},
@@ -68,7 +69,7 @@
     const priority=lessons.filter(item=>item.priority&&statusOf(item)==='pending');
     document.getElementById('priorityCount').textContent=priority.length?`${priority.length} 个优先课件`:'';
     document.getElementById('priorityGrid').innerHTML=priority.length?priority.map(item=>`<article class="priority-card"><div><span class="status pending">待评审</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><a class="open" href="${item.href}">开始体验</a></article>`).join(''):'<div class="empty">最新课件已经评价完成，可在下方学科分组中继续查看。</div>';
-    const subjects=['电磁感应','力学'];
+    const subjects=['电磁感应','力学','光学'];
     document.getElementById('subjects').innerHTML=subjects.map(subject=>{
       const items=lessons.filter(item=>item.subject===subject&&!(item.priority&&statusOf(item)==='pending'));
       return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(item=>{const status=statusOf(item);return `<article class="lesson-card"><div class="lesson-top"><h3>${item.title}</h3><span class="status ${status}">${statusText(status)}</span></div><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><a class="lesson-link" href="${item.href}">打开课件</a></article>`}).join('')}</div></section>`
