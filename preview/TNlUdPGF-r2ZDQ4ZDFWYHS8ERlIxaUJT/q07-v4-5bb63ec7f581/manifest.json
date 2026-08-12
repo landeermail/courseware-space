@@ -1,0 +1,82 @@
+{
+  "blueprint_ref": "q07-blueprint-v3",
+  "canonical": [
+    {
+      "path": "app.js",
+      "sha256": "2c7996a983d1d847e7e3917f4c9a84b7beb32b7d664f8ac83a5c2f2dd965b237"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_AMS-Regular.woff2",
+      "sha256": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Main-Bold.woff2",
+      "sha256": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Main-BoldItalic.woff2",
+      "sha256": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Main-Italic.woff2",
+      "sha256": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Main-Regular.woff2",
+      "sha256": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Math-BoldItalic.woff2",
+      "sha256": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Math-Italic.woff2",
+      "sha256": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Size1-Regular.woff2",
+      "sha256": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Size2-Regular.woff2",
+      "sha256": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Size3-Regular.woff2",
+      "sha256": "73d591271b1604960cb10bb90fee021670af7297017e0e98480b332d11f51995"
+    },
+    {
+      "path": "assets/katex/fonts/KaTeX_Size4-Regular.woff2",
+      "sha256": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0"
+    },
+    {
+      "path": "assets/katex/katex.min.css",
+      "sha256": "717bc9ae7853b61f0f76455dddf0ecd4f527a783f42de2ac24684899c1c46258"
+    },
+    {
+      "path": "assets/katex/katex.min.js",
+      "sha256": "e6bfe5deebd4c7ccd272055bab63bd3ab2c73b907b6e6a22d352740a81381fd4"
+    },
+    {
+      "path": "assets/source.png",
+      "sha256": "589ce078908d72efaee5f9ee031e3efc11a449ddf2be39ba7d44d68602979ae1"
+    },
+    {
+      "path": "index.html",
+      "sha256": "5bb63ec7f581ee4923aa4b3c5a3c5623ea75f4a6f648597f1840a7350c827ead"
+    },
+    {
+      "path": "model.js",
+      "sha256": "d75b88c026a46010d49739d4950f2299df0c6afe74fef61aac8f404db625416c"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "edd600ca07fc4faf4fe6a0f444968835233b0c5871404652fe4505d040a84bfa"
+    },
+    {
+      "path": "test-model.mjs",
+      "sha256": "60eb3f3901a6be10a8fcb60084bdf58422e8ff2a4bc353cad65e8f3caa140f1d"
+    }
+  ],
+  "courseware_id": "q07-glass-rod-tir"
+}
