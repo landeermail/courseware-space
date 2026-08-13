@@ -84,7 +84,7 @@ class SiteValidator:
     def validate_homepage(self) -> None:
         homepage = self.root / "index.html"
         if not homepage.is_file():
-            self.error(homepage, "仓库根目录缺少 index.html")
+            self.error(homepage, "站点根目录缺少 index.html")
             return
 
         text = homepage.read_text(encoding="utf-8")
@@ -347,7 +347,7 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
         nargs="?",
         type=Path,
         default=Path(__file__).resolve().parent.parent,
-        help="仓库根目录（默认根据脚本位置推断）",
+        help="静态站点根目录；省略时校验由 site/ 打包出的 Pages 工件",
     )
     return parser.parse_args(argv)
 

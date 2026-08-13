@@ -203,9 +203,9 @@ def validate_product_surface() -> None:
     for fragment in ('id="generateForm"', 'id="statusPanel"', 'id="resultPanel"', 'id="manualForm"'):
         if fragment not in generator_page:
             fail(f"生成器页面缺少结构：{fragment}")
-    homepage = (ROOT / "index.html").read_text(encoding="utf-8")
-    if '"path": "generator/"' not in homepage:
-        fail("首页缺少生成器具名入口")
+    homepage = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+    if '"path": "generator/"' in homepage:
+        fail("公开首页不得包含本地生成器入口")
     for path in (ROOT / "server" / "app.py", ROOT / "server" / "generator_service.py", ROOT / "server" / "kimi_client.py"):
         if not path.is_file():
             fail(f"生成服务文件缺失：{path.relative_to(ROOT)}")

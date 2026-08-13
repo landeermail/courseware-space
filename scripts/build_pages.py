@@ -10,6 +10,8 @@ import sys
 from typing import Iterable
 
 
+SITE_SOURCE_ROOT = Path("site")
+
 PUBLIC_PATHS = (
     Path(".nojekyll"),
     Path("index.html"),
@@ -42,27 +44,31 @@ def _is_relative_to(path: Path, parent: Path) -> bool:
 def _validate_output(source_root: Path, output: Path) -> None:
     if output == source_root or _is_relative_to(source_root, output):
         raise PagesBuildError("输出目录不能是仓库根目录或其父目录")
-    if _is_relative_to(output, source_root):
-        first_part = output.relative_to(source_root).parts[0]
-        if first_part in EXPECTED_TOP_LEVEL:
-            raise PagesBuildError("输出目录不能位于白名单源目录内")
+    site_source = source_root / SITE_SOURCE_ROOT
+    if output == site_source or _is_relative_to(output, site_source):
+        raise PagesBuildError("输出目录不能位于 site 静态源目录内")
 
 
 def _source_files(source_root: Path) -> dict[Path, Path]:
     files: dict[Path, Path] = {}
     for relative in PUBLIC_PATHS:
-        source = source_root / relative
+        source = source_root / SITE_SOURCE_ROOT / relative
         if not source.exists():
-            raise PagesBuildError(f"白名单源路径不存在：{relative.as_posix()}")
+            raise PagesBuildError(
+                f"白名单源路径不存在：{(SITE_SOURCE_ROOT / relative).as_posix()}"
+            )
         if source.is_symlink():
-            raise PagesBuildError(f"白名单源路径不能是符号链接：{relative.as_posix()}")
+            raise PagesBuildError(
+                f"白名单源路径不能是符号链接："
+                f"{(SITE_SOURCE_ROOT / relative).as_posix()}"
+            )
         candidates = [source] if source.is_file() else sorted(source.rglob("*"))
         for candidate in candidates:
             if candidate.is_symlink():
                 child = candidate.relative_to(source_root).as_posix()
                 raise PagesBuildError(f"白名单内容不能包含符号链接：{child}")
             if candidate.is_file():
-                files[candidate.relative_to(source_root)] = candidate
+                files[candidate.relative_to(source_root / SITE_SOURCE_ROOT)] = candidate
     return files
 
 

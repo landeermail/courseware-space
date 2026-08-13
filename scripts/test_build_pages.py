@@ -8,6 +8,7 @@ import unittest
 from build_pages import (
     EXPECTED_TOP_LEVEL,
     PUBLIC_PATHS,
+    SITE_SOURCE_ROOT,
     PagesBuildError,
     artifact_files,
     build_pages,
@@ -80,6 +81,15 @@ class BuildPagesTests(unittest.TestCase):
         self.assertTrue((REPOSITORY_ROOT / "generator/index.html").is_file())
         self.assertNotIn("generator", allowed)
         self.assertFalse(INTERNAL_TOP_LEVEL.intersection(EXPECTED_TOP_LEVEL))
+
+    def test_site_is_the_only_physical_static_source(self) -> None:
+        site_root = REPOSITORY_ROOT / SITE_SOURCE_ROOT
+
+        self.assertTrue((site_root / "index.html").is_file())
+        self.assertTrue((site_root / TEACHER_ROOT / "index.html").is_file())
+        for public_path in PUBLIC_PATHS:
+            self.assertTrue((site_root / public_path).exists(), public_path.as_posix())
+            self.assertFalse((REPOSITORY_ROOT / public_path).exists(), public_path.as_posix())
 
     def test_pages_workflow_builds_and_uploads_only_the_artifact(self) -> None:
         workflow = (REPOSITORY_ROOT / ".github/workflows/deploy.yml").read_text(
