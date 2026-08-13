@@ -1,67 +1,73 @@
-# 阿里云部署与验收 Runbook
+# Feedback-only 部署与验收 Runbook
 
-## 1. 本地门槛
+本 Runbook 只用于当前公网评价服务。旧生成服务的验收证据保留在 `server/evidence/`，不得用 `deploy/deploy.sh` 把含 Kimi key 的生成运行时重新覆盖到生产 FC，除非重新通过产品与成本检查点。
+
+## 1. 写入前检查
+
+1. 读取根目录 `BLOCKED.md`，列出本次触发项；
+2. 确认获得部署授权；
+3. 使用最新 `main` 的隔离分支或 worktree；
+4. 确认老师原长期链接不变，`COURSEWARE_TEACHER_STORAGE_KEY` 沿用当前 FC 的既有值，不从老师链接重新计算。
+
+## 2. 本地门槛
 
 ```bash
+python3 -m unittest discover -s server/tests -p "test_*.py"
+python3 -m unittest deploy/test_feedback_only.py deploy/test_private_delivery.py
 python3 scripts/validate_site.py
-python3 -m unittest discover -s scripts -p "test_*.py" -v
-python3 -m unittest discover -s server/tests -p "test_*.py" -v
-python3 server/library_manager.py validate
-python3 scripts/validate_generator.py
-./deploy/build_package.sh
-unzip -tq deploy/dist/courseware-space-fc.zip
+./deploy/build_feedback_package.sh
+unzip -tq deploy/dist/courseware-space-feedback-fc.zip
 ```
 
-`auto` 模式在 Apple Silicon 上直接解析 manylinux x86_64 wheels，在 x86_64 主机且 Docker 可用时使用 `python:3.11-slim-bookworm`。如需发布前复核目标容器，可显式执行 `COURSEWARE_BUILD_MODE=docker ./deploy/build_package.sh`；Docker 构建不接收任何 AccessKey。
+构建脚本只复制白名单服务文件与 OSS SDK；ZIP 中出现 Kimi、生成器、媒体或模板引用会失败。Apple Silicon 默认解析 manylinux x86_64 wheels，不要求 Docker。
 
-不得重跑已经锁定结果的 `run_acceptance.py benchmark`、`run_media_acceptance.py` 或 `run_media_edge_acceptance.py`。
-
-## 2. 云端部署
-
-按 `deploy/README.md` 从钥匙串临时注入 key，执行 `deploy/deploy.sh`。每一步都使用精确 `courseware-space-*` 名称；不要改成列表后批量操作。
-
-脚本顺序：
-
-1. 构建内容寻址 ZIP；
-2. 创建/核验 private OSS bucket；
-3. 上传 private FC code object；
-4. 创建任务专属 RAM role 与仅允许 `staging/*` 写入的 policy；
-5. 创建/更新 FC function；
-6. 创建 HTTP trigger；
-7. 设置保留并发 1；
-8. 写入本地 `cloud-state.json`。
-
-## 3. 公网验收
-
-先检查：
+## 3. 环境变量
 
 ```bash
-curl --fail --silent --show-error "$PUBLIC_URL/api/health"
+export ALIYUN_CLI="$HOME/.local/bin/aliyun"
+export ALIBABA_CLOUD_ACCESS_KEY_ID="$(security find-generic-password -s courseware-space-aliyun-deployer-access-key-id -w)"
+export ALIBABA_CLOUD_ACCESS_KEY_SECRET="$(security find-generic-password -s courseware-space-aliyun-deployer-access-key-secret -w)"
+export COURSEWARE_ACCESS_CODE="$(security find-generic-password -s courseware-space-preview-access-code -w)"
+export COURSEWARE_FEEDBACK_OSS_BUCKET='courseware-space-private-replace-me'
+export COURSEWARE_OSS_BUCKET='courseware-space-demo-replace-me'
+export COURSEWARE_TEACHER_STORAGE_KEY='REPLACE_WITH_EXISTING_64_HEX_STORAGE_KEY'
 ```
 
-随后必须用真实浏览器完成：
+`COURSEWARE_ACCESS_CODE` 必须与老师已经持有的原链接完全一致。`COURSEWARE_TEACHER_STORAGE_KEY` 只用于定位已有 OSS 任务与历史；部署前从当前受控生产配置读取并在同一临时 shell 注入，不打印、不提交、不重新生成。两者混淆会导致老师原链接失效或历史不可见。
 
-- 桌面：文字、图片、PDF 三种输入；
-- 375px：三种输入至少各完成一次；
-- 5 道文字题成功、3 道范围外转人工；
-- 5 张图片经确认闸生成、3 张不确定图提示补述；
-- 1 页 2 题 PDF 能选择其中一题；
-- 反向磁场故障注入红→绿；
-- 20 题云端基准成功率不少于 60%；
-- OSS 产物 URL 可打开并交互，浏览器控制台无本次引入错误。
-- 从 GitHub Pages 页面发出的 OPTIONS/POST/GET 请求均返回精确的 `Access-Control-Allow-Origin: https://landeermail.github.io`；其他 Origin 不获得跨域授权。
+## 4. 部署
 
-完整公网套件使用独立、一次性证据文件，不覆盖本地基准：
+先执行脱敏 dry-run：
 
 ```bash
-python3 server/run_cloud_acceptance.py \
-  --base-url https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run
+./deploy/deploy_feedback_only.sh
 ```
 
-脚本会拒绝覆盖既有 `server/evidence/cloud-v2/results.json`。当前限流面向单个老师，完整套件的 POST 数超过 30；如确需从零复验，只能在受控窗口临时调整单客户端限流、保留全局 80 和 FC 并发 1，并在完成后立即恢复并只读核验。不要伪造客户端地址绕过限流。
+核对包 SHA、指定 function/role/policy、环境变量名、`kimi_env_vars=0` 和 `cloud_changes=0`。确认后才执行：
 
-FC 默认域名会对直接页面导航强制 `Content-Disposition: attachment`，因此禁止把 FC 根路径当页面入口。验收路径固定为：GitHub Pages 加载静态前端 → `fetch` FC JSON API → 打开 OSS 产物 URL。若 JSON `fetch` 也被下载策略或 CORS 阻断，立即停止验收，不得把下载行为冒充页面可用。
+```bash
+./deploy/deploy_feedback_only.sh --apply
+```
 
-## 4. 回滚
+脚本在任何写入前拒绝 root 身份，并核验运行 role 的 FC-only 信任、精确默认策略版本和唯一策略绑定；随后上传内容寻址 ZIP、原位更新 FC 并重申保留并发 1。它不创建或修改 RAM 策略。
 
-只允许用 `deploy/rollback_code.sh` 把函数指向已知 SHA-256 code object。没有销毁脚本；任何删除 bucket、function、role、policy 或对象的动作都必须另行授权。
+## 5. 生产门禁
+
+所有检查均为只读，不提交老师评价：
+
+- `GET /api/health`：200，`mode=feedback-only`、`feedback_store=oss`；
+- `POST /api/generate`：404；
+- 老师原凭证请求 `GET /api/reviews`：200；
+- 错凭证：403；
+- q01 v7 为已评价；q01 v8 与 q07 为待评价；
+- Pages 题库、`reviews/`、`feedback/` 和精确课件 revision 均为 200；
+- 全新浏览器打开老师原完整链接，fragment 被清除且显示正确待评价数量；
+- 匿名 OSS 列举仍为 403。
+
+不得只分别验证 Pages 200 和 API 200；必须证明浏览器从 Pages 带原 fragment 跨域读取生产 API 成功。
+
+## 6. 回滚
+
+代码包按 SHA-256 存放在 OSS。回滚只允许把 FC 指向已知的 feedback-only code object；不得回滚到含 Kimi key 的旧生成包，也不得通过回滚改变老师凭证、老师存储键、RAM 权限或 OSS 对象。
+
+任何删除 bucket、function、role、policy、任务或评价对象的动作都需要单独授权。

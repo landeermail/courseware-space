@@ -1,72 +1,70 @@
-# 本地课件生成服务
+# 服务端组件
 
-该服务使用 Python 标准库同时提供仓库静态文件和生成 API。生成请求进入内存线程池，Kimi Code 只负责把题目转换为受限参数；物理公式、方向与页面代码均由锁定模板提供。
+本目录包含两个用途不同的 Python 服务：
 
-## 启动
+- `app.py`：本地生成研发服务，可调用 Kimi Code；
+- `feedback_app.py`：当前公网 FC 的 feedback-only 服务，不包含模型客户端或生成路由。
 
-API Key 推荐保存在 macOS 钥匙串，服务启动时临时注入环境变量：
+不要把本地生成能力等同于当前线上产品能力。
+
+## 本地生成研发
+
+`app.py` 使用标准库提供仓库静态文件和生成 API。Kimi Code 只把题目转换为受限参数，物理公式、方向和页面代码由锁定模板与 harness 约束。
 
 ```bash
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-COURSEWARE_ACCESS_CODE="$(security find-generic-password -a "$USER" -s courseware-space-preview-access-code -w)" \
+KIMI_API_KEY="$(security find-generic-password -s courseware-space-kimi -w)" \
+COURSEWARE_ACCESS_CODE="$(security find-generic-password -s courseware-space-preview-access-code -w)" \
   python3 server/app.py
 ```
 
-然后访问 <http://localhost:8000/generator/>。
+打开 <http://localhost:8000/generator/>。主要接口为：
 
-图片/PDF 与文字输入都位于 <http://localhost:8000/generator/>；`/generator/media/` 只保留为开发期独立确认台。视觉模型的输出只会创建待确认记录；老师核对或修正全部关键参数并显式勾选后，后端才签发一次性确认令牌并创建生成任务。
+- `GET /api/health`；
+- `POST /api/generate`；
+- `POST /api/media/parse` 与 `POST /api/media/confirm`；
+- `GET /api/jobs/<job-id>`；
+- `POST /api/manual-requests`；
+- `GET /generated/<job-id>/`。
 
-默认运行数据保存在 `/tmp/courseware-space-generator/`：
+图片最大 8 MB，PDF 最大 20 MB、6 页。解析置信不足、模板范围外或关键参数缺失时转补述或人工，不直接生成。默认运行数据在 `/tmp/courseware-space-generator/`，可用 `COURSEWARE_RUNTIME_DIR` 改变；key 不得写入前端、日志、运行结果或仓库。
 
-- `generated/<job-id>/index.html`：生成结果；
-- `manual-requests.jsonl`：自动兜底和老师提交的人工请求事件。
+真实 Kimi 验收会消耗额度，且锁定证据脚本会拒绝覆盖已有结果。只有明确需要重新建立生成证据时才运行 `run_acceptance.py`、`run_media_acceptance.py` 或 `run_media_edge_acceptance.py`。
 
-可以通过 `COURSEWARE_RUNTIME_DIR` 改变运行目录。API Key 不得写入前端、运行结果、日志或仓库。
+## 当前公网评价服务
 
-## API
+`feedback_app.py` 是独立入口：
 
-- `GET /api/health`：服务和 provider 配置状态；
-- `POST /api/generate`：提交 `{ "question": "..." }`，立即返回异步任务；
-- `POST /api/media/parse`：提交图片/PDF 的文件名、MIME 与 Base64 内容，返回逐题结构化解析；
-- `POST /api/media/confirm`：提交老师确认后的题意、B/L/v/R、磁场/运动/电流方向与所求量；未经服务端解析记录和显式确认会被拒绝；
-- `GET /api/jobs/<job-id>`：查询生成状态；
-- `POST /api/manual-requests`：为已转人工的任务补充称呼和联系方式；
-- `POST /api/feedback`：校验六维反馈后追加写入本地运行目录或 private OSS 的 `feedback/` 前缀；
-- `GET /generated/<job-id>/`：打开生成页面。
+- `GET /api/health`：公开健康检查；
+- `POST /api/feedback`：保留的受凭证保护六维反馈入口；
+- `GET /api/reviews`：读取该老师的全部任务与历史；
+- `GET /api/reviews?courseware_id=<id>`：读取某课件最新任务；
+- `POST /api/reviews/<task_id>`：为精确 revision 追加新评价版本；
+- 其他接口，包括 `/api/generate`、媒体、任务和产物路由：404。
 
-除公开的 `GET /api/health` 与生成结果外，以上生成、媒体、人工请求、反馈提交和任务轮询接口都必须携带 `X-Courseware-Access-Code`。云端若未设置 `COURSEWARE_ACCESS_CODE` 会拒绝启动；本地开发未设置时可保持关闭。访问码不写入前端文件，老师专属入口通过 URL fragment 写入同源 `sessionStorage` 后立即清除地址栏。
+当前云端必须设置：
 
-图片最大 8 MB，PDF 最大 20 MB、6 页。PDF 使用 `pdfinfo` + `pdftoppm` 逐页转成图片，每页要求视觉模型返回 `questions[]`，因此一页多题可以作为多条候选供老师选择。这是当前最简单且可审查的切分方案：不尝试不可靠的自动坐标裁图，也不让模型直接读取整份 PDF。无法解析、置信不足、模板范围外或关键参数缺失时返回补述/人工提示，不会直接生成。
+- `COURSEWARE_CLOUD_MODE=1`；
+- `COURSEWARE_ACCESS_CODE`：老师原长期链接的 48 位字母数字凭证；
+- `COURSEWARE_TEACHER_STORAGE_KEY`：既有 OSS 老师目录的 64 位 SHA-256 键；
+- `COURSEWARE_FEEDBACK_OSS_BUCKET`、OSS region/endpoint；
+- 可选的 `COURSEWARE_CORS_ORIGINS` 与限流变量。
+
+老师凭证与存储键不是同一值；部署不得轮换原链接，也不得用新链接重新推导存储键。评价状态和历史由服务端不可变对象计算，浏览器 `localStorage` 不是事实源。
+
+本地可直接运行：
+
+```bash
+COURSEWARE_ACCESS_CODE=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL \
+COURSEWARE_TEACHER_STORAGE_KEY=0000000000000000000000000000000000000000000000000000000000000000 \
+  python3 server/feedback_app.py
+```
 
 ## 验证
 
 ```bash
-python3 -m unittest discover -s server/tests -p "test_*.py" -v
+python3 -m unittest discover -s server/tests -p "test_*.py"
+python3 -m unittest deploy/test_feedback_only.py deploy/test_private_delivery.py
 python3 scripts/validate_generator.py
 ```
 
-真实验收会消耗 Kimi Code 额度，任务 3 基准为保护“一次成功率”证据，存在结果文件时会拒绝重复运行：
-
-```bash
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 server/run_acceptance.py task2
-
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 server/run_acceptance.py benchmark
-```
-
-图片/PDF 验收同样会消耗 Kimi Code 额度，并在结果存在时拒绝重跑：
-
-```bash
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 server/run_media_acceptance.py
-
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 server/run_media_edge_acceptance.py
-```
-
-云端一次性回归先从钥匙串注入 `COURSEWARE_ACCESS_CODE`，再使用 `server/run_cloud_acceptance.py --base-url <FC URL>`。结果写入 `server/evidence/cloud-v2/results.json`；访问码不进入结果。它会真实验证 5+3 道文字题、20 题基准、5+3 张图片、PDF 多题和确认闸红→绿，并逐个打开 OSS 产物；证据存在时同样拒绝重跑。
-
-## 部署边界
-
-GitHub Pages 只发布静态前端；生成 API 运行在阿里云 FC，产物写入 OSS。Pages 前端只向配置的 FC 地址发送 JSON `fetch`，服务端以共享访问码、精确 Origin 白名单和限流保护演示接口。共享访问码是备案等待期的演示闸门，不等于生产身份系统；生产化前仍需用户鉴权、持久化任务状态与持久化限流。
+前两项覆盖当前 feedback-only 与评价工作区；最后一项只验证仍保留的本地生成器静态边界。生产部署与真实入口门禁见 `docs/deploy/runbook.md`。

@@ -1,17 +1,18 @@
 # GitHub Issues 协作规则
 
-GitHub Issues 是本项目重要开发任务的统一记录位置。两台开发电脑都以远端 Issue 为准，不使用某台电脑上的本地笔记作为任务事实来源。
+GitHub Issues 用于跨课件、跨模块或需要长期追踪的工程任务。单题生产的生命周期事实以精确 `production-record.md` 为准；产品负责人当前指令和生产状态单优先于历史 Issue 或本地笔记。
 
-## 何时必须创建 Issue
+## 何时建议创建 Issue
 
-以下工作应先创建 Issue，再开始实现：
+以下工作通常先创建 Issue，再开始实现：
 
-- 新增一道课件；
 - 改变教学模型、动画逻辑或交互流程；
 - 修正物理原理、公式、方向或数值关系；
 - 涉及多个文件或多个课件的重构；
 - 需要先讨论方案或明确验收标准的问题；
 - 需要长期保留决策过程的任务。
+
+一道已经获准进入生产的具体课件不要求另建 Issue；它必须使用 `$build-physics-courseware` 和 `trial/private/production-records/<courseware_id>/production-record.md`。如果该题暴露跨题型的 harness、架构或部署问题，再为那个跨域问题建 Issue。
 
 以下小型改动不强制创建 Issue：
 
@@ -42,7 +43,7 @@ GitHub Issues 是本项目重要开发任务的统一记录位置。两台开发
 
 ## Pull Request 不是需求入口
 
-本项目目前由仓库所有者独立维护，不把外部 Pull Request 当作功能请求入口。新需求以 GitHub Issue 为准，PR 用于交付已经明确的任务。
+本项目目前由仓库所有者独立维护，不把外部 Pull Request 当作功能请求入口。新需求以产品负责人当前指令、生产状态单或 GitHub Issue 为准，PR 用于交付已经明确的任务。
 
 ## 常用命令
 

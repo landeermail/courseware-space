@@ -1,36 +1,37 @@
-# 生成服务云端架构
+# 当前生产架构
 
-## 演示期数据流
+当前外部验证只提供预生成静态课件和老师评价，不开放公网模型生成。生成器与 harness 只在本地研发；正式静态课件由 GitHub Pages 发布，阿里云 FC 只运行不含 Kimi key 的 feedback-only 服务。
+
+## 数据流
 
 ```mermaid
 flowchart LR
-    T["老师浏览器"] --> P["GitHub Pages\n生成器前端"]
-    P -->|"仅 JSON API"| H["FC HTTP 触发器"]
-    H --> W["FC custom.debian12 Web 函数"]
-    W --> K["Kimi Code 文本 / 视觉解析"]
-    W --> P["锁定物理模型与确认闸"]
-    P --> O["OSS private bucket\nstaging/<job-id>/"]
-    O --> R["public-read 产物对象"]
-    R --> T
-    P -. "验收合格后" .-> L["library 题库"]
+    T["老师原长期链接\n#access=<稳定凭证>"] --> P["GitHub Pages\n稳定题库"]
+    P --> I["不可变课件 revision"]
+    P --> R["我的评价 / 六维表单"]
+    R -->|"X-Courseware-Access-Code"| F["FC feedback-only"]
+    F -->|"读取任务与历史\n追加评价版本"| O["私有 OSS\nfeedback/tasks + feedback/reviews"]
+    L["本地 server/app.py\n生成器研发"] --> K["Kimi Code"]
+    L -. "不部署到当前公网 FC" .-> F
 ```
 
-本轮不把生成器和题库强行拆成两个仓库：`generator/staging/ → 人工验收 → library/` 是当前可执行边界，未来可以在保持元数据与晋升契约不变的前提下分仓。
+## 生产组件
 
-## 关键取舍
+- **GitHub Pages**：静态课件唯一生产渠道；老师题库路径稳定，每个精确 revision 使用新的不可变目录。
+- **老师原长期链接**：当前唯一合作老师的评价身份。fragment 首次进入后写入同源 `sessionStorage` 并从地址栏清除；部署不得改变原 fragment。
+- **FC feedback-only**：仅公开 `GET /api/health`；受凭证保护的 `POST /api/feedback`、`GET /api/reviews`、`GET /api/reviews?courseware_id=...` 和 `POST /api/reviews/<task_id>`；生成、媒体、任务和产物路由均为 404。
+- **私有 OSS**：任务和评价保存为不可变 JSON。运行角色可向 `feedback/*` 追加写，只能读取 `feedback/tasks/*` 与 `feedback/reviews/*`，列举也仅限这两个前缀；没有删除或 ACL 权限。
+- **本地生成研发**：`server/app.py`、`generator/`、`templates/` 与 `harness/` 保留研发能力和历史证据，不代表公网生成入口可用。
 
-- FC 使用 Web custom runtime，复用已经验收的同源 HTTP 服务，避免重写事件适配层。
-- 演示期保留单实例内存任务表，因此部署把保留并发限制为 1、云端 worker 限为 1。实例被回收时未完成任务可能丢失，这是演示骨架的已知限制；生产化应把 job 状态迁移到持久存储或采用 FC 异步任务。
-- PDF 本地优先使用 Poppler；云端部署包使用 Apache-2.0/BSD 许可的 PDFium + Pillow，逐页渲染后由视觉模型返回 `questions[]`，支持一页多题语义切分。
-- bucket ACL 始终为 private，函数角色只能向唯一 bucket 的 `staging/*` 写入；HTML/metadata 对象单独 `public-read`。
-- GitHub Pages 承担页面入口，浏览器只用 `fetch` 调用 FC 默认域名的 JSON API；生成结果由 OSS URL 打开。FC 默认域名对页面导航强制下载不影响 JSON `fetch`，但它仍只适合本轮受控演示。
-- 本轮不创建 API Gateway：传统 API Gateway 已进入退市周期；云原生 API Gateway Serverless 除调用量外还有 0.147 元/小时的固定实例费，不适合当前低频验证。若未来需要公网生产鉴权、统一域名或更强限流，再基于实际流量重新选型。
+## 身份与存储
 
-## 运行时边界
+当前只有一位合作老师。`COURSEWARE_ACCESS_CODE` 是老师手中原链接的 48 位字母数字凭证，FC 对请求做精确比较；`COURSEWARE_TEACHER_STORAGE_KEY` 是既有 OSS 老师目录的 SHA-256 标识，用来在不复制或覆盖历史对象的前提下继续读取原数据。两者都由部署环境注入，不写入 Git 或页面源码。
 
-- AI 只能给结构化候选参数；`templates/conducting-rod/physics.py` 仍是物理真值。
-- 图片/PDF 生成必须持有服务端签发的一次性老师确认令牌。
-- FC 只允许 `https://landeermail.github.io` 跨域调用生成 API；本地预览使用同源请求。
-- 生成、上传、确认与人工请求均有 10 分钟窗口的单客户端/全局限流；FC 保留并发 1 是账号侧的第二道成本护栏。
-- Kimi、OSS、PDF 任何失败都转人工或补述，不向浏览器返回堆栈、key 或 SDK 原始响应。
-- 产物携带 `owner=演示账号`、`status=pending_review`；生成成功不等于进入题库。
+新增第二位老师前不建设多老师映射或账号系统。届时必须另行设计身份和数据迁移，不能通过轮换现有老师链接实现。
+
+## 发布与故障边界
+
+- 普通课件发布只改 Pages，不调用阿里云；发布后从老师真实入口跟随卡片验证 revision、资源和评价入口。
+- feedback-only 部署使用内容寻址 ZIP、专用最小权限 RAM deployer、FC-only 运行角色和保留并发 1。
+- GitHub Pages 短暂显示 GitHub 独角兽故障页属于托管方异常；先检查 GitHub Status 和入口恢复情况，不因一次平台故障轮换老师链接或重发 revision。
+- 自定义域名仍等待备案条件；切换与回退见 `deploy/domain-cutover-runbook.md`。
