@@ -1,6 +1,6 @@
 # Feedback-only 部署与验收 Runbook
 
-本 Runbook 只用于当前公网评价服务。旧生成服务的验收证据保留在 `server/evidence/`，不得用 `deploy/deploy.sh` 把含 Kimi key 的生成运行时重新覆盖到生产 FC，除非重新通过产品与成本检查点。
+本 Runbook 只用于当前公网评价服务。生成研发位于 `research/generation/`，不提供公网部署入口；旧生成云部署工具仅由 Git 历史保留，不得把含 Kimi key 的研发运行时重新覆盖到生产 FC。
 
 ## 1. 写入前检查
 

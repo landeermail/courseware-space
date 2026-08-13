@@ -4,7 +4,7 @@
 
 ## 项目边界
 
-- 公开前端与课件源码统一位于 `site/`，通过无编译的白名单复制接口部署到 GitHub Pages；老师评价运行时、schema、测试和 feedback-only FC 接口统一位于 `services/feedback/`。项目没有包管理器，`server/` 与 `deploy/` 仍含待后续批次收拢的本地生成实验和历史工具。
+- 公开前端与课件源码统一位于 `site/`，通过无编译的白名单复制接口部署到 GitHub Pages；老师评价运行时、schema、测试和 feedback-only FC 接口统一位于 `services/feedback/`；本地生成器、Kimi 客户端、harness、模板、library 与必要研发证据统一位于 `research/generation/`。项目没有包管理器。
 - 未经任务明确要求，不要引入 npm、前端框架、打包器或新的全站依赖。
 - 优先做范围明确的修改；不要顺带重构无关课件。
 - 保留各课件现有的资源组织方式。不要仅为统一目录而移动依赖、图片或 PWA 文件。

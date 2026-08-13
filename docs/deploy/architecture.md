@@ -11,8 +11,8 @@ flowchart LR
     P --> R["我的评价 / 六维表单"]
     R -->|"X-Courseware-Access-Code"| F["FC feedback-only"]
     F -->|"读取任务与历史\n追加评价版本"| O["私有 OSS\nfeedback/tasks + feedback/reviews"]
-    L["本地 server/app.py\n生成器研发"] --> K["Kimi Code"]
-    L -. "不部署到当前公网 FC" .-> F
+    L["本地 research/generation/app.py\n生成器研发"] --> K["Kimi Code"]
+    L -. "源码与部署均独立" .-> F
 ```
 
 ## 生产组件
@@ -21,7 +21,7 @@ flowchart LR
 - **老师原长期链接**：当前唯一合作老师的评价身份。fragment 首次进入后写入同源 `sessionStorage` 并从地址栏清除；部署不得改变原 fragment。
 - **FC feedback-only**：由 `services/feedback/` 独立拥有运行时、schema、测试和部署接口；仅公开 `GET /api/health`，受凭证保护的 `POST /api/feedback`、`GET /api/reviews`、`GET /api/reviews?courseware_id=...` 和 `POST /api/reviews/<task_id>`；生成、媒体、任务和产物路由均为 404。
 - **私有 OSS**：任务和评价保存为不可变 JSON。运行角色可向 `feedback/*` 追加写，只能读取 `feedback/tasks/*` 与 `feedback/reviews/*`，列举也仅限这两个前缀；没有删除或 ACL 权限。
-- **本地生成研发**：`server/app.py`、`generator/`、`templates/` 与 `harness/` 保留研发能力和历史证据，不代表公网生成入口可用。
+- **本地生成研发**：`research/generation/` 独立拥有本地 HTTP 入口、Kimi、媒体解析、harness、模板、library 和必要证据；不包含 feedback API 或生产部署入口。
 
 ## 身份与存储
 
