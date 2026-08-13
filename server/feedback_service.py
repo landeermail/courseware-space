@@ -42,6 +42,12 @@ class FeedbackStore(Protocol):
     def write(self, key: str, body: bytes) -> None:
         ...
 
+    def read(self, key: str) -> bytes:
+        ...
+
+    def list(self, prefix: str) -> list[str]:
+        ...
+
 
 class LocalFeedbackStore:
     backend = "local"
@@ -50,18 +56,48 @@ class LocalFeedbackStore:
         self.root = root
 
     def write(self, key: str, body: bytes) -> None:
-        target = (self.root / key).resolve()
-        root = self.root.resolve()
-        try:
-            target.relative_to(root)
-        except ValueError as error:
-            raise FeedbackStoreError("反馈存储路径无效") from error
+        target = self._target(key)
         target.parent.mkdir(parents=True, exist_ok=True)
         try:
             with target.open("xb") as stream:
                 stream.write(body)
         except FileExistsError as error:
             raise FeedbackStoreError("反馈编号已存在") from error
+
+    def read(self, key: str) -> bytes:
+        target = self._target(key)
+        try:
+            return target.read_bytes()
+        except FileNotFoundError as error:
+            raise FeedbackStoreError("反馈对象不存在") from error
+        except OSError as error:
+            raise FeedbackStoreError("反馈对象读取失败") from error
+
+    def list(self, prefix: str) -> list[str]:
+        base = self._target(prefix)
+        if not base.exists():
+            return []
+        if base.is_file():
+            return [prefix]
+        try:
+            return sorted(
+                path.relative_to(self.root.resolve()).as_posix()
+                for path in base.rglob("*")
+                if path.is_file()
+            )
+        except OSError as error:
+            raise FeedbackStoreError("反馈对象列举失败") from error
+
+    def _target(self, key: str) -> Path:
+        if not key.startswith("feedback/"):
+            raise FeedbackStoreError("反馈存储路径无效")
+        target = (self.root / key).resolve()
+        root = self.root.resolve()
+        try:
+            target.relative_to(root)
+        except ValueError as error:
+            raise FeedbackStoreError("反馈存储路径无效") from error
+        return target
 
 
 class OssFeedbackStore:
@@ -86,8 +122,7 @@ class OssFeedbackStore:
         self.client = oss.Client(config)
 
     def write(self, key: str, body: bytes) -> None:
-        if not key.startswith("feedback/"):
-            raise FeedbackStoreError("反馈 OSS 前缀无效")
+        self._feedback_key(key)
         try:
             result = self.client.put_object(
                 self.oss.PutObjectRequest(
@@ -103,6 +138,66 @@ class OssFeedbackStore:
             raise FeedbackStoreError(f"反馈写入 OSS 失败：{type(error).__name__}") from error
         if not 200 <= result.status_code < 300:
             raise FeedbackStoreError(f"反馈写入 OSS 失败（HTTP {result.status_code}）")
+
+    def read(self, key: str) -> bytes:
+        self._feedback_key(key)
+        try:
+            result = self.client.get_object(
+                self.oss.GetObjectRequest(bucket=self.bucket, key=key)
+            )
+            status = getattr(result, "status_code", 200)
+            if not 200 <= status < 300:
+                raise FeedbackStoreError(f"反馈读取 OSS 失败（HTTP {status}）")
+            body = result.body
+            if hasattr(body, "read"):
+                body = body.read()
+            if isinstance(body, str):
+                body = body.encode("utf-8")
+            if not isinstance(body, bytes):
+                raise FeedbackStoreError("反馈读取 OSS 返回无效内容")
+            return body
+        except FeedbackStoreError:
+            raise
+        except Exception as error:
+            raise FeedbackStoreError(f"反馈读取 OSS 失败：{type(error).__name__}") from error
+
+    def list(self, prefix: str) -> list[str]:
+        self._feedback_key(prefix)
+        keys: list[str] = []
+        continuation: str | None = None
+        try:
+            while True:
+                result = self.client.list_objects_v2(
+                    self.oss.ListObjectsV2Request(
+                        bucket=self.bucket,
+                        prefix=prefix,
+                        continuation_token=continuation,
+                    )
+                )
+                status = getattr(result, "status_code", 200)
+                if not 200 <= status < 300:
+                    raise FeedbackStoreError(f"反馈列举 OSS 失败（HTTP {status}）")
+                for item in getattr(result, "contents", None) or []:
+                    key = getattr(item, "key", "")
+                    if not isinstance(key, str) or not key.startswith(prefix):
+                        raise FeedbackStoreError("反馈列举 OSS 返回越界对象")
+                    keys.append(key)
+                if not getattr(result, "is_truncated", False):
+                    break
+                continuation = getattr(result, "next_continuation_token", None)
+                if not continuation:
+                    raise FeedbackStoreError("反馈列举 OSS 缺少分页游标")
+        except FeedbackStoreError:
+            raise
+        except Exception as error:
+            raise FeedbackStoreError(f"反馈列举 OSS 失败：{type(error).__name__}") from error
+        return sorted(keys)
+
+    @staticmethod
+    def _feedback_key(key: str) -> str:
+        if not isinstance(key, str) or not key.startswith("feedback/") or ".." in key.split("/"):
+            raise FeedbackStoreError("反馈 OSS 前缀无效")
+        return key
 
 
 class FeedbackService:

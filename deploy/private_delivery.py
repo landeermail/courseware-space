@@ -93,12 +93,6 @@ def policy_document(bucket: str, owner_id: str) -> dict[str, Any]:
                 "Action": ["oss:GetObject"],
                 "Resource": [f"{bucket_resource}/{PREFIX}*"],
             },
-            {
-                "Effect": "Deny",
-                "Principal": ["*"],
-                "Action": ["oss:ListObjects", "oss:ListObjectVersions"],
-                "Resource": [bucket_resource],
-            },
         ],
     }
 
@@ -184,7 +178,7 @@ def ensure_bucket(api: Any, bucket: str, region: str) -> None:
     if normalized_policy(actual) != policy_text:
         raise RuntimeError("bucket policy 回读与期望不一致")
     print(f"private_bucket={'created' if created else 'verified'} acl=private region={region}")
-    print("anonymous_policy=allow:GetObject(private/*) deny:ListObjects,ListObjectVersions")
+    print("anonymous_policy=allow:GetObject(private/*) listing=default-deny")
 
 
 def courseware_files(source: Path) -> list[tuple[Path, str]]:

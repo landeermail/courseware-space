@@ -41,10 +41,14 @@
     h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; letter-spacing: -.02em; }
     .lead { max-width: 720px; margin: 12px 0 0; color: var(--muted); }
     .hero-links { display: flex; gap: 12px; white-space: nowrap; }
+    .hero-links a { display: inline-flex; min-height: 44px; align-items: center; padding: 8px 14px; border: 1px solid #b7caf3; border-radius: 10px; background: #fff; font-weight: 700; text-decoration: none; }
     .panel { margin-top: 16px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
     .panel-title { margin: 0 0 4px; font-size: 20px; }
     .panel-help { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
-    .metadata { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; }
+    .task-info { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--soft); font-size: 14px; }
+    .task-info strong { display: block; margin-bottom: 4px; font-size: 16px; }
+    .task-info span { display: inline-block; margin-right: 16px; color: var(--muted); }
+    .task-info.error { color: #7a271a; background: var(--red-soft); }
     .field-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 700; }
     .text-input, textarea {
       width: 100%; min-height: 46px; border: 1px solid #b9c5d4; border-radius: 10px; color: var(--ink); background: #fff;
@@ -52,7 +56,7 @@
     .text-input { padding: 10px 12px; }
     textarea { min-height: 92px; padding: 11px 12px; resize: vertical; }
     .text-input:focus, textarea:focus, button:focus-visible, input:focus-visible + span { outline: 3px solid rgba(36, 89, 211, .22); outline-offset: 2px; }
-    .role-options, .verdict-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .verdict-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .choice { position: relative; display: block; min-width: 0; cursor: pointer; }
     .choice input { position: absolute; opacity: 0; pointer-events: none; }
     .choice span {
@@ -88,15 +92,12 @@
     .btn.primary { border-color: var(--blue); color: #fff; background: var(--blue); }
     .btn:disabled { cursor: not-allowed; opacity: .45; }
     .status { min-height: 26px; margin: 10px 0 0; color: var(--green); font-weight: 700; }
-    .output { margin-top: 16px; }
-    .output[hidden] { display: none; }
-    pre { max-height: 420px; overflow: auto; margin: 0; padding: 16px; border-radius: 12px; color: #d8e6ff; background: #13203a; font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
     .privacy { margin: 16px 0 0; color: var(--muted); font-size: 13px; }
     @media (max-width: 780px) {
       .page { width: min(100% - 24px, 680px); padding-top: 24px; }
       .hero { grid-template-columns: 1fr; }
       .hero-links { white-space: normal; }
-      .metadata, .dimension, .overall-grid { grid-template-columns: 1fr; }
+      .dimension, .overall-grid { grid-template-columns: 1fr; }
       .reason-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 420px) {
@@ -114,36 +115,16 @@
       <div>
         <p class="eyebrow">老师试用工具 · 匿名提交</p>
         <h1>课件六维评价</h1>
-        <p class="lead">逐维留下判断依据，再给整体结论。无需填写姓名；提交成功后会自动回到您的课件列表。</p>
+        <p class="lead">逐维留下判断依据，再给整体结论。无需填写姓名；保存成功后会自动回到“我的评价”。</p>
       </div>
-      <nav class="hero-links" aria-label="返回"><a href="../">返回课件列表</a></nav>
+      <nav class="hero-links" aria-label="返回"><a href="../reviews/">我的评价</a><a href="../">返回课件列表</a></nav>
     </header>
 
     <form id="feedbackForm" novalidate>
       <section class="panel" aria-labelledby="metaTitle">
         <h2 class="panel-title" id="metaTitle">本次评价</h2>
-        <p class="panel-help">会话编号用于把同一轮评价放在一起，不代表个人身份。</p>
-        <div class="metadata">
-          <label>
-            <span class="field-label">课件 ID</span>
-            <input class="text-input" id="coursewareId" name="courseware_id" autocomplete="off" readonly aria-readonly="true">
-            <datalist id="coursewareList">
-              <option value="q20-rotating-rod"></option>
-              <option value="q21-variable-field-rod-3d"></option>
-            </datalist>
-          </label>
-          <label>
-            <span class="field-label">匿名会话编号</span>
-            <input class="text-input" id="sessionId" name="session_id" autocomplete="off">
-          </label>
-          <fieldset style="margin:0;padding:0;border:0">
-            <legend class="field-label">评价角色</legend>
-            <div class="role-options">
-              <label class="choice"><input type="radio" name="reviewer_role" value="leader"><span>主持人</span></label>
-              <label class="choice"><input type="radio" name="reviewer_role" value="teacher" checked><span>物理老师</span></label>
-            </div>
-          </fieldset>
-        </div>
+        <p class="panel-help">评价针对服务端分派的精确 revision；再次提交会保存为新版本，历史版本保留。</p>
+        <p class="task-info" id="taskInfo">正在读取评价任务…</p>
       </section>
 
       <section class="panel" aria-labelledby="dimensionsTitle">
@@ -222,7 +203,7 @@
 
         <div class="error-summary" id="errorSummary" role="alert" tabindex="-1" hidden></div>
         <div class="actions">
-          <button class="btn primary" id="submitButton" type="submit">提交评价</button>
+          <button class="btn primary" id="submitButton" type="submit" disabled>正在读取评价任务…</button>
         </div>
         <p class="status" id="status" aria-live="polite"></p>
         <p class="privacy">隐私说明：只提交本页显示的匿名评价字段，不收集姓名、学校、联系方式或试卷来源。</p>
@@ -237,7 +218,7 @@
       ['verifiability', '可验证性'], ['exam_connection', '与解题的衔接']
     ];
     const form = document.getElementById('feedbackForm');
-    const sessionInput = document.getElementById('sessionId');
+    const taskInfo = document.getElementById('taskInfo');
     const reasonPanel = document.getElementById('reasonPanel');
     const reasonInputs = [...document.querySelectorAll('#reasonGrid input')];
     const errorSummary = document.getElementById('errorSummary');
@@ -247,7 +228,6 @@
     const isLocalPreview = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
     const API_BASE = isLocalPreview ? '' : configuredApiBase;
     const ACCESS_KEY = 'coursewareAccessCode';
-    const STATE_KEY = 'coursewareReviewStatus:TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT';
 
     const fragment = new URLSearchParams(location.hash.slice(1));
     const fragmentCode = fragment.get('access');
@@ -255,17 +235,11 @@
       sessionStorage.setItem(ACCESS_KEY, fragmentCode);
       history.replaceState(null, '', location.pathname + location.search);
     }
-    const coursewareIdFromLink = new URLSearchParams(location.search).get('courseware_id') || '';
-    document.getElementById('coursewareId').value = coursewareIdFromLink;
+    const params = new URLSearchParams(location.search);
+    const taskIdFromLink = params.get('task_id') || '';
+    const coursewareIdFromLink = params.get('courseware_id') || '';
 
-    function randomPart() {
-      if (globalThis.crypto && crypto.getRandomValues) {
-        const values = new Uint32Array(1); crypto.getRandomValues(values); return values[0].toString(36).slice(0, 6);
-      }
-      return Math.random().toString(36).slice(2, 8);
-    }
-    function dateStamp() { return new Date().toISOString().slice(0, 10).replaceAll('-', ''); }
-    sessionInput.value = `trial-${dateStamp()}-${randomPart()}`;
+    let task = null;
 
     function selected(name) {
       const input = form.querySelector(`input[name="${name}"]:checked`);
@@ -278,21 +252,75 @@
     }
     form.querySelectorAll('input[name="overall_verdict"]').forEach(input => input.addEventListener('change', setReasonVisibility));
 
+    function blockForm(message) {
+      taskInfo.textContent = message;
+      taskInfo.classList.add('error');
+      submitButton.disabled = true;
+      submitButton.textContent = '无法提交';
+    }
+
+    function prefill(feedback) {
+      dimensions.forEach(([key]) => {
+        const item = (feedback.dimensions || {})[key];
+        if (!item) return;
+        const radio = form.querySelector(`input[name="${key}"][value="${item.verdict}"]`);
+        if (radio) radio.checked = true;
+        const card = document.querySelector(`[data-dimension="${key}"]`);
+        card.querySelector('[data-note]').value = item.note || '';
+      });
+      const overall = feedback.overall || {};
+      const overallRadio = form.querySelector(`input[name="overall_verdict"][value="${overall.verdict}"]`);
+      if (overallRadio) overallRadio.checked = true;
+      setReasonVisibility();
+      (overall.rejection_reasons || []).forEach(value => {
+        const checkbox = reasonInputs.find(input => input.value === value);
+        if (checkbox) checkbox.checked = true;
+      });
+      document.getElementById('overallNote').value = overall.note || '';
+      submitButton.textContent = '保存修改';
+    }
+
+    async function loadTask() {
+      const accessCode = sessionStorage.getItem(ACCESS_KEY) || '';
+      if (!accessCode) {
+        blockForm('缺少个人凭证，请从完整的专属链接重新进入。');
+        return;
+      }
+      try {
+        let url = `${API_BASE}/api/reviews`;
+        if (!taskIdFromLink && coursewareIdFromLink) url += `?courseware_id=${encodeURIComponent(coursewareIdFromLink)}`;
+        const response = await fetch(url, {headers: {'X-Courseware-Access-Code': accessCode}});
+        if (response.status === 403) throw new Error('个人链接无效或评价任务不存在，请从完整专属链接进入。');
+        if (!response.ok) throw new Error('评价任务暂时无法读取，请稍后刷新重试。');
+        const data = await response.json();
+        const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+        task = taskIdFromLink ? tasks.find(candidate => candidate.task_id === taskIdFromLink) || null : tasks[0] || null;
+        if (!task) {
+          blockForm('未找到对应的评价任务，请从“我的评价”页面进入。');
+          return;
+        }
+        taskInfo.innerHTML = `<strong></strong><span>课件 ID：</span><span>精确 revision：</span><span>任务状态：</span>`;
+        taskInfo.querySelector('strong').textContent = task.title || task.courseware_id;
+        const spans = taskInfo.querySelectorAll('span');
+        spans[0].textContent = `课件 ID：${task.courseware_id}`;
+        spans[1].textContent = `精确 revision：${task.revision_id}`;
+        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已评价（本次为修改）' : '待评价'}`;
+        submitButton.disabled = false;
+        submitButton.textContent = task.current_feedback ? '保存修改' : '提交评价';
+        if (task.current_feedback) prefill(task.current_feedback);
+      } catch (error) {
+        blockForm(error instanceof Error ? error.message : '评价任务暂时无法读取，请稍后刷新重试。');
+      }
+    }
+
     function validateAndBuild() {
       const errors = [];
-      const coursewareId = document.getElementById('coursewareId').value.trim();
-      const sessionId = sessionInput.value.trim();
-      const reviewerRole = selected('reviewer_role');
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(coursewareId) || coursewareId.length < 3 || coursewareId.length > 100) errors.push({id: 'coursewareId', text: '课件 ID 只能使用小写字母、数字和连字符。'});
-      if (!/^[a-z0-9][a-z0-9-]{3,79}$/.test(sessionId)) errors.push({id: 'sessionId', text: '匿名会话编号格式无效。'});
-      if (!reviewerRole) errors.push({id: 'metaTitle', text: '请选择评价角色。'});
-
       const dimensionPayload = {};
       dimensions.forEach(([key, label]) => {
         const card = document.querySelector(`[data-dimension="${key}"]`);
         const verdict = selected(key);
         const note = card.querySelector('[data-note]').value.trim();
-        if (!verdict) errors.push({id: card.querySelector('h3').id || 'dimensionsTitle', element: card.querySelector(`input[name="${key}"]`), text: `${label}尚未判定。`});
+        if (!verdict) errors.push({id: 'dimensionsTitle', element: card.querySelector(`input[name="${key}"]`), text: `${label}尚未判定。`});
         if (verdict === 'fail' && !note) errors.push({element: card.querySelector('[data-note]'), text: `${label}不过时必须填写原因。`});
         dimensionPayload[key] = {verdict, note};
       });
@@ -305,14 +333,7 @@
       if (reasons.includes('other') && !overallNote) errors.push({id: 'overallNote', text: '选择“其他”时必须填写整体备注。'});
 
       if (errors.length) return {errors};
-      const unique = globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${randomPart()}`;
       return {payload: {
-        schema_version: 1,
-        feedback_id: `feedback-${unique}`,
-        session_id: sessionId,
-        courseware_id: coursewareId,
-        reviewer_role: reviewerRole,
-        reviewed_at: new Date().toISOString(),
         dimensions: dimensionPayload,
         overall: {verdict: overallVerdict, rejection_reasons: reasons, note: overallNote}
       }};
@@ -330,31 +351,31 @@
 
     form.addEventListener('submit', async event => {
       event.preventDefault(); status.textContent = ''; errorSummary.hidden = true;
+      if (!task) return;
       const result = validateAndBuild();
       if (result.errors) { showErrors(result.errors); return; }
       const accessCode = sessionStorage.getItem(ACCESS_KEY) || '';
+      const wasReviewed = task.status === 'reviewed';
       submitButton.disabled = true;
-      submitButton.textContent = '正在提交…';
+      submitButton.textContent = '正在保存…';
       try {
-        const response = await fetch(`${API_BASE}/api/feedback`, {
+        const response = await fetch(`${API_BASE}/api/reviews/${encodeURIComponent(task.task_id)}`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json', 'X-Courseware-Access-Code': accessCode},
           body: JSON.stringify(result.payload)
         });
         const responsePayload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(responsePayload.error || `提交失败（${response.status}）`);
-        let reviewState = {};
-        try { reviewState = JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch { reviewState = {}; }
-        reviewState[result.payload.courseware_id] = 'reviewed';
-        localStorage.setItem(STATE_KEY, JSON.stringify(reviewState));
-        status.textContent = '评价已提交，谢谢。正在返回课件列表…';
-        window.setTimeout(() => location.assign('../'), 1400);
+        if (!response.ok) throw new Error(responsePayload.error || `保存失败（${response.status}）`);
+        status.textContent = wasReviewed ? '修改已保存。正在返回“我的评价”…' : '评价已提交，谢谢。正在返回“我的评价”…';
+        window.setTimeout(() => location.assign('../reviews/'), 1200);
       } catch (error) {
-        status.textContent = error instanceof Error ? error.message : '提交失败，请稍后再试。';
+        status.textContent = error instanceof Error ? error.message : '保存失败，请稍后再试。';
         submitButton.disabled = false;
-        submitButton.textContent = '重新提交';
+        submitButton.textContent = wasReviewed ? '保存修改' : '重新提交';
       }
     });
+
+    loadTask();
   </script>
 </body>
 </html>

@@ -55,7 +55,7 @@ export COURSEWARE_FC_CODE_OBJECT=deploy/code/<sha256>.zip
 
 ## 私有课件长期链接
 
-内部试题课件使用独立的 `courseware-space-private-10794778` bucket，与生成器 demo bucket、FC 和 RAM 完全分离。bucket ACL 保持 `private`；Bucket Policy 只允许匿名读取 `private/*` 对象，并显式拒绝 bucket 和前缀列举。完整链接包含 48 位密码学随机路径，不进入 Git。
+内部试题课件使用独立的 `courseware-space-private-10794778` bucket，与生成器 demo bucket、FC 和 RAM 完全分离。bucket ACL 保持 `private`；Bucket Policy 只允许匿名读取 `private/*` 对象。匿名主体没有列举 Allow，因此 bucket 与前缀列举仍按默认规则拒绝；不要增加面向所有主体的显式列举 Deny，否则会覆盖 FC 评价运行角色的精确 Allow。完整链接包含 48 位密码学随机路径，不进入 Git。
 
 首次创建或复核 bucket：
 
@@ -76,3 +76,12 @@ export COURSEWARE_FC_CODE_OBJECT=deploy/code/<sha256>.zip
 ```
 
 脚本只接受 `trial/private/courseware/` 下的目录，只允许操作固定 private bucket 和杭州区域。AccessKey 每次从 macOS 钥匙串读取，只注入临时进程；SDK 安装在系统临时目录，不写入仓库。不要把输出链接或 `deliveries.json` 提交到公开仓库。
+
+## feedback-only 生产服务
+
+`server/feedback_app.py` 是无模型凭证的独立运行入口：公开健康检查，保留旧匿名评价提交，并新增受个人长期链接凭证保护的评价任务、历史读取与追加修订接口。生成、媒体、模板和产物路由保持 404。
+
+- `deploy/build_feedback_package.sh` 只打包白名单服务文件、评价校验器和 OSS SDK；包内出现 Kimi、生成器或模型凭证引用即失败。
+- `deploy/deploy_feedback_only.sh` 默认仅输出脱敏 dry-run；真实部署必须显式 `--apply`，并在写入前核验 RAM 用户身份、FC-only 信任、运行策略默认版本及唯一绑定。
+- FC 运行策略只允许向 `feedback/*` 追加对象，读取 `feedback/tasks/*` 与 `feedback/reviews/*`，并以 `oss:Prefix` 将列举限制在这两个前缀；没有删除、ACL、其他 bucket 或模型权限。
+- 首批老师任务由 `scripts/build_teacher_review_seed.py` 在本地生成不可变对象后写入；脚本拒绝覆盖已有输出，任务和评价对象也不得覆盖或删除。
