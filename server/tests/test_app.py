@@ -8,9 +8,11 @@ from unittest.mock import patch
 
 
 SERVER_DIR = Path(__file__).resolve().parents[1]
+ROOT = SERVER_DIR.parent
 sys.path.insert(0, str(SERVER_DIR))
+sys.path.insert(0, str(ROOT))
 
-from access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
+from services.feedback.access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
 from app import (  # noqa: E402
     DEFAULT_CORS_ORIGINS,
     GeneratorHandler,

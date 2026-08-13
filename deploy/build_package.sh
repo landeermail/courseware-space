@@ -23,7 +23,7 @@ elif [[ "$BUILD_MODE" == "auto" ]] && [[ "$(uname -m)" == "x86_64" ]] && docker 
   USE_DOCKER=true
 fi
 
-mkdir -p "$DIST_DIR" "$PACKAGE_DIR/server" "$PACKAGE_DIR/generator" "$PACKAGE_DIR/feedback"
+mkdir -p "$DIST_DIR" "$PACKAGE_DIR/server" "$PACKAGE_DIR/generator" "$PACKAGE_DIR/services/feedback/schema"
 
 if [[ "$USE_DOCKER" == "true" ]]; then
   if ! docker info >/dev/null 2>&1; then
@@ -55,9 +55,13 @@ else
   printf 'dependency_build=manylinux-wheels-x86_64\n'
 fi
 
-cp "$ROOT/server/app.py" "$ROOT/server/access_control.py" "$ROOT/server/artifact_store.py" "$ROOT/server/feedback_service.py" "$ROOT/server/generator_service.py" "$ROOT/server/kimi_client.py" "$ROOT/server/media_service.py" "$ROOT/server/media_demo.html" "$PACKAGE_DIR/server/"
+cp "$ROOT/server/app.py" "$ROOT/server/artifact_store.py" "$ROOT/server/generator_service.py" "$ROOT/server/kimi_client.py" "$ROOT/server/media_service.py" "$ROOT/server/media_demo.html" "$PACKAGE_DIR/server/"
 cp "$ROOT/generator/index.html" "$PACKAGE_DIR/generator/index.html"
-cp "$ROOT/feedback/validate_feedback.py" "$PACKAGE_DIR/feedback/validate_feedback.py"
+cp "$ROOT/services/__init__.py" "$PACKAGE_DIR/services/__init__.py"
+cp "$ROOT/services/feedback/__init__.py" "$ROOT/services/feedback/access_control.py" \
+  "$ROOT/services/feedback/service.py" "$PACKAGE_DIR/services/feedback/"
+cp "$ROOT/services/feedback/schema/__init__.py" "$ROOT/services/feedback/schema/validate_feedback.py" \
+  "$PACKAGE_DIR/services/feedback/schema/"
 cp -R "$ROOT/templates" "$PACKAGE_DIR/templates"
 cp "$ROOT/deploy/fc/bootstrap" "$PACKAGE_DIR/bootstrap"
 chmod 755 "$PACKAGE_DIR/bootstrap"

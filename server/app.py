@@ -23,13 +23,14 @@ from urllib.parse import urlparse
 SERVER_DIR = Path(__file__).resolve().parent
 ROOT = SERVER_DIR.parent
 sys.path.insert(0, str(SERVER_DIR))
+sys.path.insert(0, str(ROOT))
 
 from generator_service import GenerationManager, GenerationService, ManualRequestRecorder  # noqa: E402
 from kimi_client import KimiCodeClient, ProviderError  # noqa: E402
 from media_service import MediaConfirmationWorkflow, MediaError, MediaParser  # noqa: E402
 from artifact_store import artifact_store_from_environment  # noqa: E402
-from access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
-from feedback_service import (  # noqa: E402
+from services.feedback.access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
+from services.feedback.service import (  # noqa: E402
     FeedbackService,
     FeedbackStoreError,
     FeedbackValidationError,

@@ -10,11 +10,10 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 
-SERVER_DIR = Path(__file__).resolve().parents[1]
-ROOT = SERVER_DIR.parent
-sys.path.insert(0, str(SERVER_DIR))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 
-from feedback_service import (  # noqa: E402
+from services.feedback.service import (  # noqa: E402
     FeedbackService,
     FeedbackStoreError,
     FeedbackValidationError,
@@ -24,7 +23,7 @@ from feedback_service import (  # noqa: E402
 
 
 def valid_payload() -> dict[str, object]:
-    return json.loads((ROOT / "feedback" / "example.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "services" / "feedback" / "schema" / "example.json").read_text(encoding="utf-8"))
 
 
 class FeedbackServiceTests(unittest.TestCase):

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -11,9 +10,9 @@ import re
 from typing import Any, Protocol
 
 
-ROOT = Path(__file__).resolve().parent.parent
-VALIDATOR_PATH = ROOT / "feedback" / "validate_feedback.py"
 PRIVATE_BUCKET = re.compile(r"^courseware-space-private-[a-z0-9-]+$")
+
+from services.feedback.schema.validate_feedback import validate_feedback
 
 
 class FeedbackValidationError(ValueError):
@@ -22,18 +21,6 @@ class FeedbackValidationError(ValueError):
 
 class FeedbackStoreError(RuntimeError):
     pass
-
-
-def _load_validator():
-    spec = importlib.util.spec_from_file_location("courseware_feedback_validator", VALIDATOR_PATH)
-    if spec is None or spec.loader is None:
-        raise FeedbackStoreError("反馈校验器不可用")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.validate_feedback
-
-
-validate_feedback = _load_validator()
 
 
 class FeedbackStore(Protocol):

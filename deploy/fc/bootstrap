@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-export PYTHONPATH="/code/python${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="/code:/code/python${PYTHONPATH:+:$PYTHONPATH}"
 if [ -n "${ALIBABA_CLOUD_ACCESS_KEY_ID:-}" ]; then
   export OSS_ACCESS_KEY_ID="$ALIBABA_CLOUD_ACCESS_KEY_ID"
 fi

@@ -31,7 +31,7 @@
 - decision_owner: product-owner
 - approval_ref: q01 blueprint v3.0 approved; q01-v8 A0 and A1 passed; Pages machine gate and product-owner real-entry confirmation passed
 - blocked_preflight: 2026-08-13 production 模块路径治理前重新读取 BLOCKED.md；临时 Root AccessKey 云端删除与备案后域名切换均未触发本地迁移，不得宣称凭证已彻底收口
-- current_evidence_refs: 本记录；feedback/review-q01-20260730.json 为早期 revision 历史反馈；当前不可变 revision 目录；Pages PR 21 与 deploy run 30993320621
+- current_evidence_refs: 本记录；services/feedback/history/review-q01-20260730.json 为早期 revision 历史反馈；当前不可变 revision 目录；Pages PR 21 与 deploy run 30993320621
 - skill_revision: production-module-paths-2026-08-13
 
 ## Question packet and source uncertainty
@@ -73,5 +73,5 @@
 
 - q01 卡片、课件、相对资源与评价入口的机器 live gate 已通过，产品负责人也曾通过原老师长期链接实际确认。
 - 产品负责人于 2026-08-05 报告已发送；该事实只证明发送动作，不证明老师收到、打开、评价、满意或接受。
-- `feedback/review-q01-20260730.json` 是更早 revision 的老师反馈，不能满足当前 revision 的评价任务；其“信息要由逻辑串联”等直接证据已用于形成当前方案，但不得冒充 q01-v8 的评价。
+- `services/feedback/history/review-q01-20260730.json` 是更早 revision 的老师反馈，不能满足当前 revision 的评价任务；其“信息要由逻辑串联”等直接证据已用于形成当前方案，但不得冒充 q01-v8 的评价。
 - 当前只等待老师对 q01-v8 的新证据；没有新证据时不轮询、不修改课件、不自动晋升题库。

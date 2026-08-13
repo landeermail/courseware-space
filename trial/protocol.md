@@ -129,7 +129,7 @@ q20 与 q21 的老师校准已经完成，不在每道新题前重复：两者�
 
 ## 会后整理（不计入 60 分钟）
 
-1. 校验两份校准 JSON：`python3 feedback/validate_feedback.py <文件>`。
+1. 校验两份校准 JSON：`python3 services/feedback/schema/validate_feedback.py <文件>`。
 2. 把口述记录与 JSON 放到经授权的私有位置，不直接提交公开仓库。
 3. 将标准分歧整理为后续 Issue；不要在本轮直接修改 harness 或生成管线。
 4. 关闭本地服务器，确认 `git status` 中没有出现 `trial/private/` 内容。

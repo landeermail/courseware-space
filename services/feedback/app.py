@@ -25,17 +25,18 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
-SERVER_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(SERVER_DIR))
+MODULE_DIR = Path(__file__).resolve().parent
+ROOT = MODULE_DIR.parents[1]
+sys.path.insert(0, str(ROOT))
 
-from access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
-from feedback_service import (  # noqa: E402
+from services.feedback.access_control import ACCESS_HEADER, AccessCodeGate  # noqa: E402
+from services.feedback.service import (  # noqa: E402
     FeedbackService,
     FeedbackStoreError,
     FeedbackValidationError,
     feedback_service_from_environment,
 )
-from review_workspace import (  # noqa: E402
+from services.feedback.review_workspace import (  # noqa: E402
     ReviewAccessError,
     ReviewDataError,
     TeacherReviewWorkspace,

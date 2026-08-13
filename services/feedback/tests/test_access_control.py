@@ -7,10 +7,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 
-SERVER_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SERVER_DIR))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 
-from access_control import AccessCodeGate  # noqa: E402
+from services.feedback.access_control import AccessCodeGate  # noqa: E402
 
 STRONG_CODE = "a1" * 24
 

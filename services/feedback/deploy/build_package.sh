@@ -5,8 +5,9 @@
 # existing zip (used by offline tests and security review).
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DIST_DIR="$ROOT/deploy/dist"
+MODULE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$MODULE_ROOT/../.." && pwd)"
+DIST_DIR="$MODULE_ROOT/dist"
 PACKAGE_NAME="courseware-space-feedback-fc.zip"
 IMAGE="python:3.11-slim-bookworm"
 BUILD_MODE="${COURSEWARE_BUILD_MODE:-auto}"
@@ -34,7 +35,27 @@ audit_zip() {
     printf '部署包内容出现 KIMI_API_KEY。\n' >&2
     return 1
   fi
-  printf 'package_audit=forbidden_names=0 kimi_refs=0\n'
+  local required missing unexpected
+  required='bootstrap
+services/__init__.py
+services/feedback/__init__.py
+services/feedback/access_control.py
+services/feedback/app.py
+services/feedback/review_workspace.py
+services/feedback/schema/__init__.py
+services/feedback/schema/validate_feedback.py
+services/feedback/service.py'
+  missing="$(comm -23 <(printf '%s\n' "$required" | sort) <(printf '%s\n' "$listing" | sort) || true)"
+  if [[ -n "$missing" ]]; then
+    printf '部署包缺少必需文件：\n%s\n' "$missing" >&2
+    return 1
+  fi
+  unexpected="$(printf '%s\n' "$listing" | grep -vE '^(bootstrap|services/__init__\.py|services/feedback/(__init__|access_control|app|review_workspace|service)\.py|services/feedback/schema/(__init__|validate_feedback)\.py|python/.*|services/?|services/feedback/?|services/feedback/schema/?)$' || true)"
+  if [[ -n "$unexpected" ]]; then
+    printf '部署包含白名单外文件：\n%s\n' "$unexpected" >&2
+    return 1
+  fi
+  printf 'package_audit=required_files=9 unexpected_files=0 forbidden_names=0 kimi_refs=0\n'
 }
 
 if [[ "${1:-}" == "--audit-only" ]]; then
@@ -59,7 +80,7 @@ fi
 
 WORK_DIR="$(mktemp -d /tmp/courseware-feedback-fc-build.XXXXXX)"
 PACKAGE_DIR="$WORK_DIR/package"
-mkdir -p "$DIST_DIR" "$PACKAGE_DIR/server" "$PACKAGE_DIR/feedback"
+mkdir -p "$DIST_DIR" "$PACKAGE_DIR/services/feedback/schema"
 
 if [[ "$USE_DOCKER" == "true" ]]; then
   if ! docker info >/dev/null 2>&1; then
@@ -67,11 +88,11 @@ if [[ "$USE_DOCKER" == "true" ]]; then
     exit 1
   fi
   docker run --rm --platform linux/amd64 \
-    --volume "$ROOT:/src:ro" \
+    --volume "$REPO_ROOT:/src:ro" \
     --volume "$PACKAGE_DIR:/out" \
     "$IMAGE" \
     /bin/sh -c 'set -eu
-      python3 -m pip install --disable-pip-version-check --no-cache-dir --requirement /src/deploy/feedback-requirements.txt --target /out/python >/dev/null'
+      python3 -m pip install --disable-pip-version-check --no-cache-dir --requirement /src/services/feedback/deploy/requirements.txt --target /out/python >/dev/null'
   printf 'dependency_build=docker-linux-amd64\n'
 else
   WHEEL_DIR="$WORK_DIR/wheels"
@@ -79,17 +100,20 @@ else
   python3 -m pip download --disable-pip-version-check --no-input --only-binary=:all: \
     --platform manylinux_2_28_x86_64 --platform manylinux2014_x86_64 \
     --implementation cp --python-version 311 --abi cp311 \
-    --destination-directory "$WHEEL_DIR" --requirement "$ROOT/deploy/feedback-requirements.txt" >/dev/null
+    --destination-directory "$WHEEL_DIR" --requirement "$MODULE_ROOT/deploy/requirements.txt" >/dev/null
   for wheel in "$WHEEL_DIR"/*.whl; do
     python3 -m zipfile -e "$wheel" "$PACKAGE_DIR/python"
   done
   printf 'dependency_build=manylinux-wheels-x86_64\n'
 fi
 
-# 白名单复制：feedback-only 运行只需要四个服务端模块、校验器与 bootstrap。
-cp "$ROOT/server/feedback_app.py" "$ROOT/server/access_control.py" "$ROOT/server/feedback_service.py" "$ROOT/server/review_workspace.py" "$PACKAGE_DIR/server/"
-cp "$ROOT/feedback/validate_feedback.py" "$PACKAGE_DIR/feedback/validate_feedback.py"
-cp "$ROOT/deploy/fc/feedback_bootstrap" "$PACKAGE_DIR/bootstrap"
+# 白名单复制：只包含 feedback 模块运行时、校验器与 bootstrap。
+cp "$REPO_ROOT/services/__init__.py" "$PACKAGE_DIR/services/__init__.py"
+cp "$MODULE_ROOT/__init__.py" "$MODULE_ROOT/app.py" "$MODULE_ROOT/access_control.py" \
+  "$MODULE_ROOT/service.py" "$MODULE_ROOT/review_workspace.py" "$PACKAGE_DIR/services/feedback/"
+cp "$MODULE_ROOT/schema/__init__.py" "$MODULE_ROOT/schema/validate_feedback.py" \
+  "$PACKAGE_DIR/services/feedback/schema/"
+cp "$MODULE_ROOT/deploy/bootstrap" "$PACKAGE_DIR/bootstrap"
 chmod 755 "$PACKAGE_DIR/bootstrap"
 
 TEMP_ZIP="$WORK_DIR/$PACKAGE_NAME"
@@ -100,5 +124,5 @@ TEMP_ZIP="$WORK_DIR/$PACKAGE_NAME"
 
 audit_zip "$TEMP_ZIP"
 mv "$TEMP_ZIP" "$DIST_DIR/$PACKAGE_NAME"
-shasum -a 256 "$DIST_DIR/$PACKAGE_NAME" | sed "s|$ROOT/||"
+shasum -a 256 "$DIST_DIR/$PACKAGE_NAME" | sed "s|$REPO_ROOT/||"
 printf 'package=%s\n' "$DIST_DIR/$PACKAGE_NAME"

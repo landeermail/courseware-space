@@ -33,7 +33,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 课件质量与老师试用
 
-物理正确性通过后，课件按[好课件六维标准](docs/quality/standard.md)评价：因果呈现、过程可见、有效交互、任务驱动、可验证性、与解题的衔接。老师可在 <http://localhost:8000/trial/> 逐维记录反馈并导出 JSON；反馈格式和本地校验命令见 `feedback/README.md`，第一次试用流程见 `trial/protocol.md`。
+物理正确性通过后，课件按[好课件六维标准](docs/quality/standard.md)评价：因果呈现、过程可见、有效交互、任务驱动、可验证性、与解题的衔接。老师可在 <http://localhost:8000/trial/> 逐维记录反馈并导出 JSON；反馈格式和本地校验命令见 `services/feedback/README.md`，第一次试用流程见 `trial/protocol.md`。
 
 当前老师提供的是允许公开的练习题。正式静态课件只通过 GitHub Pages 发布，每个精确 revision 使用不可变目录；OSS 私有课件投递工具已经冻结，不再是生产渠道。老师使用一条长期稳定的题库链接进入课件和“我的评价”；评价任务、当前结果与历史版本以服务端精确 revision 记录为准。
 
@@ -48,7 +48,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ├── harness/                   # 自由生成与物理护栏的研发验证
 ├── library/                   # 经验收生成课件的元数据与晋升区
 ├── trial/                     # 六维工具、历史试用协议与单题生产候选
-├── feedback/                  # 结构化反馈 schema 与本地校验器
+├── services/feedback/         # 评价运行时、schema、测试与 feedback-only 部署
 ├── production/                # 单题状态、规范输入与被忽略的可变工作区
 ├── deploy/                    # feedback-only FC、OSS 与域名切换工具
 ├── docs/                      # ADR、质量、部署与历史任务书
