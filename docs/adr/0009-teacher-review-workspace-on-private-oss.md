@@ -11,9 +11,9 @@
 
 ## 决策
 
-1. **个人长期链接即开发阶段身份。** 每位老师持有一个 48 位不可猜测个人凭证，仍通过长期题库 URL 的 fragment 首次进入；静态页面立即把凭证移入同源 `sessionStorage` 并清除地址栏 fragment。评价 API 通过请求头接收凭证。持有链接即视为本人，不增加账号、验证码或登录流程。
+1. **原老师长期链接即当前唯一身份。** 当前只有一位合作老师；老师已经收到的 48 位字母数字凭证保持不变，仍通过长期题库 URL 的 fragment 首次进入。静态页面立即把凭证移入同源 `sessionStorage` 并清除地址栏 fragment，评价 API 对其做精确匹配。部署或内部服务调整不得轮换老师链接；第二位老师出现前不建设多老师映射或账号系统。
 2. **任务沿用产品检查点。** 老师评价任务不是新的派发流程，而是既有产品检查点“某位老师评价某个精确 revision”决定的服务端表示。新 revision 不自动产生任务。
-3. **OSS 只保存不可变对象。** 每项任务保存为 `feedback/tasks/<teacher_key>/<task_id>.json`，每版评价保存为 `feedback/reviews/<teacher_key>/<task_id>/<feedback_id>.json`；`teacher_key` 是个人凭证的 SHA-256。任务和评价均只追加、不覆盖、不删除。
+3. **OSS 只保存不可变对象。** 每项任务保存为 `feedback/tasks/<teacher_key>/<task_id>.json`，每版评价保存为 `feedback/reviews/<teacher_key>/<task_id>/<feedback_id>.json`。恢复原链接时继续读取已经建立的唯一老师存储键，不复制、覆盖或删除历史对象；任务和评价均只追加。
 4. **服务端计算状态与身份。** `GET /api/reviews` 按个人凭证加载任务和评价版本，计算待评价/已评价及当前有效评价；`POST /api/reviews/<task_id>` 从任务对象取得 `courseware_id` 与精确 `revision_id`，客户端不能自行指定。后一版评价指向前一版，旧版保持只读历史。
 5. **前端只消费工作区接口。** 题库卡片、“我的评价”和课件内评价入口共享同一任务身份。`localStorage` 只可缓存界面，不能决定任务状态。
 6. **不引入数据库。** 当前数量下，私有 OSS 中的不可变 JSON 足以形成历史。接口把存储实现隐藏在 `TeacherReviewWorkspace` 后；未来并发或查询需求显著增长时可以迁移数据库而不改变前端领域契约。

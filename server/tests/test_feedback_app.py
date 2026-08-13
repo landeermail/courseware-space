@@ -23,6 +23,7 @@ from feedback_app import (  # noqa: E402
     RequestRateLimiter,
     cors_origins_from_environment,
     feedback_services_from_environment,
+    teacher_storage_key_from_environment,
 )
 from feedback_service import (  # noqa: E402
     FeedbackService,
@@ -33,6 +34,7 @@ from review_workspace import TeacherReviewWorkspace  # noqa: E402
 
 STRONG_CODE = "a1" * 24
 OTHER_STRONG_CODE = "b2" * 24
+STABLE_TEACHER_CODE = "Z9" * 24
 ALLOWED_ORIGIN = "https://landeermail.github.io"
 DENIED_ORIGIN = "https://evil.example.com"
 
@@ -70,14 +72,22 @@ def seed_workspace(root: Path, token: str) -> None:
 
 
 class RunningServer:
-    def __init__(self, service: FeedbackService, code: str = STRONG_CODE, per_client: int = 30) -> None:
+    def __init__(
+        self,
+        service: FeedbackService,
+        code: str = STRONG_CODE,
+        per_client: int = 30,
+        storage_key: str | None = None,
+    ) -> None:
         from access_control import AccessCodeGate
 
         FeedbackHandler.cors_origins = frozenset({ALLOWED_ORIGIN})
         FeedbackHandler.rate_limiter = RequestRateLimiter(per_client=per_client, global_limit=80, window_seconds=600)
         FeedbackHandler.access_gate = AccessCodeGate(code)
         FeedbackHandler.feedback_service = service
-        FeedbackHandler.review_workspace = TeacherReviewWorkspace(service.store)
+        FeedbackHandler.review_workspace = TeacherReviewWorkspace(
+            service.store, storage_key=storage_key
+        )
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), FeedbackHandler)
         self.port = self.server.server_address[1]
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
@@ -120,6 +130,26 @@ class RunningServer:
 
 
 class FeedbackOnlyHttpTests(unittest.TestCase):
+    def test_reviews_require_the_single_stable_teacher_code(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            store_root = Path(temporary)
+            seed_workspace(store_root, STRONG_CODE)
+            storage_key = hashlib.sha256(STRONG_CODE.encode("ascii")).hexdigest()
+            service = FeedbackService(LocalFeedbackStore(store_root))
+            with RunningServer(
+                service, code=STABLE_TEACHER_CODE, storage_key=storage_key
+            ) as running:
+                accepted, workspace, _ = running.request(
+                    "GET", "/api/reviews", code=STABLE_TEACHER_CODE, origin=ALLOWED_ORIGIN
+                )
+                rejected, _, _ = running.request(
+                    "GET", "/api/reviews", code=STRONG_CODE, origin=ALLOWED_ORIGIN
+                )
+
+            self.assertEqual(accepted, 200)
+            self.assertIsNotNone(workspace)
+            self.assertEqual(rejected, 403)
+
     def test_health_is_public_feedback_only_and_has_no_provider(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             service = FeedbackService(LocalFeedbackStore(Path(temporary)))
@@ -283,6 +313,21 @@ class FeedbackOnlyHttpTests(unittest.TestCase):
 
 
 class StartupGateTests(unittest.TestCase):
+    def test_storage_key_environment_requires_sha256(self) -> None:
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_TEACHER_STORAGE_KEY": "c3" * 32},
+            clear=True,
+        ):
+            self.assertEqual(teacher_storage_key_from_environment(), "c3" * 32)
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_TEACHER_STORAGE_KEY": "weak"},
+            clear=True,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "STORAGE_KEY"):
+                teacher_storage_key_from_environment()
+
     def test_starts_without_any_kimi_environment(self) -> None:
         env = {key: value for key, value in os.environ.items() if "KIMI" not in key.upper()}
         with patch.dict(os.environ, env, clear=True):
@@ -318,6 +363,20 @@ class StartupGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "FEEDBACK_OSS_BUCKET"):
                     feedback_services_from_environment(Path(temporary))
 
+    def test_cloud_mode_refuses_to_start_without_teacher_storage_key(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "COURSEWARE_CLOUD_MODE": "1",
+                "COURSEWARE_ACCESS_CODE": STRONG_CODE,
+                "COURSEWARE_FEEDBACK_OSS_BUCKET": "courseware-space-private-x1",
+            },
+            clear=True,
+        ):
+            with tempfile.TemporaryDirectory() as temporary:
+                with self.assertRaisesRegex(RuntimeError, "STORAGE_KEY"):
+                    feedback_services_from_environment(Path(temporary))
+
     def test_cloud_mode_reaches_store_setup_with_code_and_private_bucket(self) -> None:
         with patch.dict(
             os.environ,
@@ -326,6 +385,7 @@ class StartupGateTests(unittest.TestCase):
                 "COURSEWARE_ACCESS_CODE": STRONG_CODE,
                 "COURSEWARE_FEEDBACK_OSS_BUCKET": "courseware-space-private-x1",
                 "COURSEWARE_OSS_REGION": "cn-hangzhou",
+                "COURSEWARE_TEACHER_STORAGE_KEY": "c3" * 32,
             },
             clear=True,
         ):

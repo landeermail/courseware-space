@@ -19,6 +19,7 @@ RATE_GLOBAL="${COURSEWARE_RATE_LIMIT_GLOBAL:-80}"
 RATE_WINDOW="${COURSEWARE_RATE_LIMIT_WINDOW:-600}"
 CLI="${ALIYUN_CLI:-$(command -v aliyun || printf '')}"
 PACKAGE="${COURSEWARE_FEEDBACK_PACKAGE:-$ROOT/deploy/dist/courseware-space-feedback-fc.zip}"
+TEACHER_STORAGE_KEY="${COURSEWARE_TEACHER_STORAGE_KEY:-}"
 
 APPLY=0
 for arg in "$@"; do
@@ -32,8 +33,12 @@ for arg in "$@"; do
 done
 
 # ---- 前置校验：任何失败都在计划输出与写命令之前退出 ----
-if [[ ! "${COURSEWARE_ACCESS_CODE:-}" =~ ^[0-9a-f]{48}$ ]]; then
-  printf 'COURSEWARE_ACCESS_CODE 必须由 openssl rand -hex 24 生成（48 位小写十六进制）。\n' >&2
+if [[ ! "${COURSEWARE_ACCESS_CODE:-}" =~ ^[A-Za-z0-9]{48}$ ]]; then
+  printf 'COURSEWARE_ACCESS_CODE 必须是 48 位大小写字母或数字。\n' >&2
+  exit 1
+fi
+if [[ ! "$TEACHER_STORAGE_KEY" =~ ^[0-9a-f]{64}$ ]]; then
+  printf 'COURSEWARE_TEACHER_STORAGE_KEY 必须是现有老师评价目录的 SHA-256。\n' >&2
   exit 1
 fi
 if [[ ! "$FEEDBACK_BUCKET" =~ ^courseware-space-private-[a-z0-9-]+$ ]]; then
@@ -105,6 +110,7 @@ env_keys=(
   COURSEWARE_RATE_LIMIT_GLOBAL
   COURSEWARE_RATE_LIMIT_WINDOW
   COURSEWARE_ACCESS_CODE
+  COURSEWARE_TEACHER_STORAGE_KEY
 )
 
 if [[ "$APPLY" == "1" ]]; then
@@ -126,6 +132,7 @@ printf 'function_env_keys=%s\n' "${env_keys[*]}"
 printf 'kimi_env_vars=0\n'
 printf 'package_kimi_refs=0 package_generator_refs=0\n'
 printf 'access_code=set-not-printed\n'
+printf 'teacher_storage_key=set-not-printed\n'
 printf 'account=not-printed\n'
 if [[ "$APPLY" != "1" ]]; then
   printf 'cloud_changes=0\n'
@@ -263,6 +270,7 @@ function_env=(
   "COURSEWARE_RATE_LIMIT_GLOBAL=$RATE_GLOBAL"
   "COURSEWARE_RATE_LIMIT_WINDOW=$RATE_WINDOW"
   "COURSEWARE_ACCESS_CODE=$COURSEWARE_ACCESS_CODE"
+  "COURSEWARE_TEACHER_STORAGE_KEY=$TEACHER_STORAGE_KEY"
 )
 code_config=("ossBucketName=$COURSEWARE_OSS_BUCKET" "ossObjectName=$code_object")
 

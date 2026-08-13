@@ -16,6 +16,13 @@ STRONG_CODE = "a1" * 24
 
 
 class AccessCodeGateTests(unittest.TestCase):
+    def test_existing_alphanumeric_teacher_link_is_valid(self) -> None:
+        code = "Z9" * 24
+
+        gate = AccessCodeGate(code)
+
+        self.assertTrue(gate.allows(code))
+
     def test_enabled_gate_accepts_only_exact_code(self) -> None:
         gate = AccessCodeGate(STRONG_CODE)
 
@@ -42,10 +49,10 @@ class AccessCodeGateTests(unittest.TestCase):
                 AccessCodeGate.from_environment()
 
     def test_environment_rejects_weak_or_noncanonical_code(self) -> None:
-        for weak in ("short", "A1" * 24, "g1" * 24, "a1" * 23):
+        for weak in ("short", "a-" * 24, "a_" * 24, "a1" * 23):
             with self.subTest(weak_length=len(weak)):
                 with patch.dict(os.environ, {"COURSEWARE_ACCESS_CODE": weak}, clear=True):
-                    with self.assertRaisesRegex(RuntimeError, "openssl rand -hex 24"):
+                    with self.assertRaisesRegex(RuntimeError, "48 位"):
                         AccessCodeGate.from_environment()
 
     def test_environment_accepts_192_bit_hex_code(self) -> None:

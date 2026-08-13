@@ -59,6 +59,18 @@ def seed_workspace(root: Path, token: str) -> None:
 
 
 class TeacherReviewWorkspaceTests(unittest.TestCase):
+    def test_single_teacher_can_use_stable_storage_key(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            seed_workspace(root, TEACHER_TOKEN)
+            reviews = TeacherReviewWorkspace(
+                LocalFeedbackStore(root), storage_key=teacher_key(TEACHER_TOKEN)
+            )
+
+            workspace = reviews.load("Z9" * 24)
+
+            self.assertEqual(len(workspace["tasks"]), 2)
+
     def test_personal_token_loads_only_its_own_workspace(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
