@@ -18,7 +18,7 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(gate)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PREVIEW_DIR = REPO_ROOT / "preview" / "TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT"
+PREVIEW_DIR = REPO_ROOT / "site" / "preview" / "TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT"
 REAL_PREVIEW = PREVIEW_DIR / "q01-v8-1c89623d5bf0" / "index.html"
 REAL_LIBRARY = PREVIEW_DIR / "index.html"
 REAL_REVISION = "q01-v8-1c89623d5bf0"

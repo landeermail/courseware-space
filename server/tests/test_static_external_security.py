@@ -9,8 +9,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 PAGES = (
-    ROOT / "electromagnetism" / "q21-variable-field-rod-3d" / "index.html",
-    ROOT / "electromagnetism" / "q6-plane" / "index.html",
+    ROOT / "site" / "electromagnetism" / "q21-variable-field-rod-3d" / "index.html",
+    ROOT / "site" / "electromagnetism" / "q6-plane" / "index.html",
 )
 THREE_URL = "https://unpkg.com/three@0.160.0/build/three.module.js"
 ORBIT_URL = "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js"

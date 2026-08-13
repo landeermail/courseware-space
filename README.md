@@ -4,10 +4,10 @@
 
 ## 本地预览
 
-本项目没有构建步骤，也不需要安装 npm 依赖。在仓库根目录启动静态服务器：
+本项目没有前端编译步骤，也不需要安装 npm 依赖。在仓库根目录启动静态服务器：
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8000 --directory site
 ```
 
 然后访问 <http://localhost:8000/>。不要直接双击打开 HTML 文件；部分浏览器功能和相对资源需要通过 HTTP 正常加载。
@@ -41,7 +41,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ```text
 .
-├── index.html                 # 课件库首页和课件清单
+├── site/                      # 唯一 Pages 静态产品源，内部结构即公开 URL
 ├── generator/                 # 老师生成页面和已验证生成产物
 ├── templates/                 # 锁定物理关系的参数化课件模板
 ├── server/                    # 本地异步生成服务与真实验收证据
@@ -49,13 +49,9 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ├── library/                   # 经验收生成课件的元数据与晋升区
 ├── trial/                     # 六维工具、历史试用协议与单题生产候选
 ├── feedback/                  # 结构化反馈 schema 与本地校验器
-├── preview/                   # 老师长期题库与不可变 revision
 ├── production/                # 受版本控制的单题当前生产状态
 ├── deploy/                    # feedback-only FC、OSS 与域名切换工具
 ├── docs/                      # ADR、质量、部署与历史任务书
-├── electromagnetism/          # 电磁学课件
-├── helicopter-dynamics/       # 直升机动力学课件
-├── mh370-physics/             # MH370 物理分析课件
 └── .github/workflows/         # GitHub Pages 部署工作流
 ```
 
@@ -67,7 +63,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 发布
 
-推送或合并到 `main` 后，[GitHub Actions](https://github.com/landeermail/courseware-space/actions) 会自动将仓库内容部署到 GitHub Pages：
+推送或合并到 `main` 后，[GitHub Actions](https://github.com/landeermail/courseware-space/actions) 会通过 `scripts/build_pages.py` 组装 `site/` 白名单工件并部署到 GitHub Pages：
 
 <https://landeermail.github.io/courseware-space/>
 

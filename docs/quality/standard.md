@@ -16,8 +16,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 的“本题因果链”明确连接“OP 运动 → 产生电动势 → 回路电流 → CD 受力”；引导步骤继续让学生从电流方向推到安培力。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 的 `causal-strip` 随阶段和位置更新；阶段 C 同时展示速度、电流、安培力过零与反向，避免把三个变化误看成无关事件。
+- `site/electromagnetism/q20-rotating-rod/index.html` 的“本题因果链”明确连接“OP 运动 → 产生电动势 → 回路电流 → CD 受力”；引导步骤继续让学生从电流方向推到安培力。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 的 `causal-strip` 随阶段和位置更新；阶段 C 同时展示速度、电流、安培力过零与反向，避免把三个变化误看成无关事件。
 
 **不及格表现**：只有公式或最终箭头；动画中的量会变，但学生不知道是谁导致谁；因果文字与模型状态不同步；把同时发生误写成因果关系。
 
@@ -38,8 +38,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 第二问提供物理时间视图、慢放和阶段化状态，将“受力确定电流—电磁感应—能量结算”拆成可观察过程。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 阶段 C 支持教学慢放和拖动时间，并在转向时显示“v、I、Fᴮ 同时为零”，返回时显示磁力总冲量回到零。
+- `site/electromagnetism/q20-rotating-rod/index.html` 第二问提供物理时间视图、慢放和阶段化状态，将“受力确定电流—电磁感应—能量结算”拆成可观察过程。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 阶段 C 支持教学慢放和拖动时间，并在转向时显示“v、I、Fᴮ 同时为零”，返回时显示磁力总冲量回到零。
 
 **不及格表现**：只播放一次完整动画；关键变化过快；只能看起点和终点；把演示耗时当成物理时间；靠大段旁白补充画面中不存在的过程。
 
@@ -57,8 +57,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 允许改变角速度并观察静止、上滑和下滑状态转变，也可独立显示或隐藏电流与受力以支持判断。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 允许直接拖动导体棒或位置滑块，同步更新场景、因果节点和四张位置关系图；“比较同一位置 x=6”用于区分阶段 B 与 D。
+- `site/electromagnetism/q20-rotating-rod/index.html` 允许改变角速度并观察静止、上滑和下滑状态转变，也可独立显示或隐藏电流与受力以支持判断。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 允许直接拖动导体棒或位置滑块，同步更新场景、因果节点和四张位置关系图；“比较同一位置 x=6”用于区分阶段 B 与 D。
 
 **不及格表现**：唯一操作是播放；拖动物体只改变画面位置而不改变物理状态；控件很多但与学习目标无关；操作后没有可辨认反馈；触控设备无法完成主要操作。
 
@@ -76,8 +76,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 用“观察—预测—电流—受力—探究”组织第一问，每步给出当前观察任务，并允许题目页签直接切换，不把阅读顺序当作强制锁。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 各阶段动态更新“观察任务”；阶段 C 要求学生慢放或拖动时间，解释返回同一点时磁力冲量为何回到零。
+- `site/electromagnetism/q20-rotating-rod/index.html` 用“观察—预测—电流—受力—探究”组织第一问，每步给出当前观察任务，并允许题目页签直接切换，不把阅读顺序当作强制锁。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 各阶段动态更新“观察任务”；阶段 C 要求学生慢放或拖动时间，解释返回同一点时磁力冲量为何回到零。
 
 **不及格表现**：页面按解答段落自动播放；任务只是“点击下一步”；问题和操作无关；先显示结论再让学生确认；所有题目被套进同一种固定流程。
 
@@ -95,8 +95,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 改变角速度后，模型同时显示受力与运动状态；静力平衡区间让学生验证安培力、重力分力和摩擦力的组合结果。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 用“同一位置 x=6”的阶段 B/D 对照和速率、磁场、电动势、磁通量四张联动图验证“位置相同不代表电动势相同”；说明区给出每阶段的具体验证动作。
+- `site/electromagnetism/q20-rotating-rod/index.html` 改变角速度后，模型同时显示受力与运动状态；静力平衡区间让学生验证安培力、重力分力和摩擦力的组合结果。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 用“同一位置 x=6”的阶段 B/D 对照和速率、磁场、电动势、磁通量四张联动图验证“位置相同不代表电动势相同”；说明区给出每阶段的具体验证动作。
 
 **不及格表现**：只标注“正确”；图表与场景不联动；读数无法回到同一条件复现；结论来自隐藏计算，学生看不到判定依据；比较对象同时改变多个无关条件。
 
@@ -119,8 +119,8 @@
 
 **黄金样例实证**：
 
-- `electromagnetism/q20-rotating-rod/index.html` 第一问从电荷分离、电势和电流方向衔接到安培力与静力平衡；第二问再由运动状态确定合力、电流和电动势，最后用能量账本解释外力负功，覆盖列式所需的完整桥梁。
-- `electromagnetism/q21-variable-field-rod-3d/index.html` 四张图直接给出 `v(x)`、`B(x)`、`E(x)`、`Φ(x)` 的位置关系；阶段 A 在 `x=1.5 m` 验证 `F=7.5 N`，阶段 B 解释磁通量不变导致总电动势为零，阶段 D 落到 `E=0.05x`，与题目三个设问逐一对应。
+- `site/electromagnetism/q20-rotating-rod/index.html` 第一问从电荷分离、电势和电流方向衔接到安培力与静力平衡；第二问再由运动状态确定合力、电流和电动势，最后用能量账本解释外力负功，覆盖列式所需的完整桥梁。
+- `site/electromagnetism/q21-variable-field-rod-3d/index.html` 四张图直接给出 `v(x)`、`B(x)`、`E(x)`、`Φ(x)` 的位置关系；阶段 A 在 `x=1.5 m` 验证 `F=7.5 N`，阶段 B 解释磁通量不变导致总电动势为零，阶段 D 落到 `E=0.05x`，与题目三个设问逐一对应。
 
 **不及格表现**：模型很直观但学生仍不知道该列什么式；只复述标准答案；公式与动画各占一栏却没有互相指认；只适用于当前数字；通过暴露答案制造“会了”的假象。
 
