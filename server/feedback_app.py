@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import socket
 import sys
 import threading
@@ -50,6 +51,7 @@ DEFAULT_CORS_ORIGINS = frozenset(
 )
 FEEDBACK_PATH = "/api/feedback"
 REVIEWS_PATH = "/api/reviews"
+STORAGE_KEY_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 def cors_origins_from_environment() -> frozenset[str]:
@@ -111,6 +113,13 @@ def cloud_mode_enabled() -> bool:
     return os.environ.get("COURSEWARE_CLOUD_MODE") == "1"
 
 
+def teacher_storage_key_from_environment() -> str | None:
+    value = os.environ.get("COURSEWARE_TEACHER_STORAGE_KEY", "").strip()
+    if value and not STORAGE_KEY_PATTERN.fullmatch(value):
+        raise RuntimeError("COURSEWARE_TEACHER_STORAGE_KEY 必须是 SHA-256")
+    return value or None
+
+
 def feedback_services_from_environment(runtime_dir: Path) -> tuple[AccessCodeGate, FeedbackService]:
     """Build the gate and service; cloud mode fails closed without both prerequisites."""
 
@@ -119,6 +128,8 @@ def feedback_services_from_environment(runtime_dir: Path) -> tuple[AccessCodeGat
         bucket = os.environ.get("COURSEWARE_FEEDBACK_OSS_BUCKET", "").strip()
         if not bucket:
             raise RuntimeError("云端 feedback-only 运行必须设置 COURSEWARE_FEEDBACK_OSS_BUCKET")
+        if not teacher_storage_key_from_environment():
+            raise RuntimeError("云端评价工作区必须设置 COURSEWARE_TEACHER_STORAGE_KEY")
     return gate, feedback_service_from_environment(runtime_dir)
 
 
@@ -226,6 +237,8 @@ class FeedbackHandler(BaseHTTPRequestHandler):
             return
         if not self._rate_limit_ok(path):
             return
+        if not self._access_ok():
+            return
         task_id = path[len(REVIEWS_PATH) + 1 :]
         if not task_id or "/" in task_id:
             self._json(HTTPStatus.NOT_FOUND, {"error": "接口不存在"})
@@ -276,6 +289,8 @@ class FeedbackHandler(BaseHTTPRequestHandler):
         if path == REVIEWS_PATH:
             if not self._rate_limit_ok(path):
                 return
+            if not self._access_ok():
+                return
             try:
                 query = dict(
                     part.split("=", 1) if "=" in part else (part, "")
@@ -313,7 +328,10 @@ def main() -> int:
     FeedbackHandler.rate_limiter = rate_limiter_from_environment()
     FeedbackHandler.access_gate = gate
     FeedbackHandler.feedback_service = service
-    FeedbackHandler.review_workspace = TeacherReviewWorkspace(service.store)
+    FeedbackHandler.review_workspace = TeacherReviewWorkspace(
+        service.store,
+        storage_key=teacher_storage_key_from_environment(),
+    )
     server = ThreadingHTTPServer((args.host, args.port), FeedbackHandler)
     print(f"Courseware feedback-only service: http://{args.host}:{args.port}/api/health")
     try:

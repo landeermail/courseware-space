@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DEPLOY_SCRIPT = ROOT / "deploy" / "deploy_feedback_only.sh"
 BUILD_SCRIPT = ROOT / "deploy" / "build_feedback_package.sh"
 STRONG_CODE = "a1" * 24
+TEACHER_STORAGE_KEY = "c3" * 32
 BUCKET_SUFFIX = "10794778"
 FEEDBACK_BUCKET = f"courseware-space-private-{BUCKET_SUFFIX}"
 ROLE = "courseware-space-fc-feedback-role"
@@ -166,6 +167,7 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
         return {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
             "COURSEWARE_ACCESS_CODE": STRONG_CODE,
+            "COURSEWARE_TEACHER_STORAGE_KEY": TEACHER_STORAGE_KEY,
             "COURSEWARE_FEEDBACK_OSS_BUCKET": FEEDBACK_BUCKET,
             "ALIYUN_CLI": str(self.fake_cli),
             "COURSEWARE_FEEDBACK_PACKAGE": str(self.package),
@@ -260,6 +262,14 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
         env["COURSEWARE_ACCESS_CODE"] = "weak"
         result = self.run_deploy(env)
         self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.cli_calls(), [])
+
+    def test_missing_teacher_storage_key_is_rejected(self) -> None:
+        env = self.base_env()
+        del env["COURSEWARE_TEACHER_STORAGE_KEY"]
+        result = self.run_deploy(env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("TEACHER_STORAGE_KEY", result.stderr)
         self.assertEqual(self.cli_calls(), [])
 
     def test_apply_is_explicit_and_still_refuses_without_credentials(self) -> None:

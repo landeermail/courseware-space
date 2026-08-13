@@ -9,17 +9,17 @@ import re
 
 
 ACCESS_HEADER = "X-Courseware-Access-Code"
-ACCESS_CODE_PATTERN = re.compile(r"^[0-9a-f]{48}$")
+ACCESS_CODE_PATTERN = re.compile(r"^[A-Za-z0-9]{48}$")
 
 
 def validate_access_code(value: str) -> None:
-    """Require the exact 192-bit lowercase hex form produced by openssl."""
+    """Require the existing 48-character alphanumeric long-link format."""
 
     if value != value.strip() or "\n" in value or "\r" in value:
         raise RuntimeError("COURSEWARE_ACCESS_CODE 不能包含首尾空白或换行")
     if value and not ACCESS_CODE_PATTERN.fullmatch(value):
         raise RuntimeError(
-            "COURSEWARE_ACCESS_CODE 必须是 openssl rand -hex 24 生成的 48 位小写十六进制值"
+            "COURSEWARE_ACCESS_CODE 必须是 48 位大小写字母或数字"
         )
 
 

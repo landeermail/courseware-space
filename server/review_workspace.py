@@ -38,10 +38,12 @@ class TeacherReviewWorkspace:
         *,
         clock: Callable[[], datetime] | None = None,
         id_factory: Callable[[], str] | None = None,
+        storage_key: str | None = None,
     ) -> None:
         self.store = store
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         self.id_factory = id_factory or (lambda: f"feedback-{uuid.uuid4()}")
+        self.storage_key = storage_key
 
     def load(
         self,
@@ -155,12 +157,11 @@ class TeacherReviewWorkspace:
             raise ReviewDataError("老师评价任务数据无效")
         return task_id
 
-    @staticmethod
-    def _teacher_key(personal_token: str) -> str:
+    def _teacher_key(self, personal_token: str) -> str:
         try:
             validate_access_code(personal_token)
         except RuntimeError as error:
             raise ReviewAccessError("个人链接无效") from error
         if not personal_token:
             raise ReviewAccessError("个人链接无效")
-        return hashlib.sha256(personal_token.encode("ascii")).hexdigest()
+        return self.storage_key or hashlib.sha256(personal_token.encode("ascii")).hexdigest()
