@@ -1,6 +1,6 @@
 # 老师试用工具包
 
-本目录保留本地校准工具和生产候选。当前正式单题生产以 `$build-physics-courseware` 与 `production/courseware/<courseware_id>/record.md` 为准；练习题可以公开，不能再把本协议中的“私有”理解为试题保密要求。
+本目录保留早期本地校准工具和旧材料生成器，不再承载当前单题的规范输入、候选或证据路径。当前正式单题生产以 `$build-physics-courseware` 与 `production/courseware/<courseware_id>/` 为准；练习题可以公开，不能再把本协议中的“私有”理解为试题保密要求。
 
 - `index.html`：六维打分页，只在浏览器本地生成 JSON。
 - `protocol.md`：第一次 60 分钟试用流程。
@@ -16,7 +16,7 @@ python3 trial/build_private_materials.py \
   --source-docx "/path/to/模拟考试--解析版.docx"
 ```
 
-生成后从本地服务器访问 `trial/private/questions/<题目 ID>/`。脚本拒绝输出到 `trial/private/` 之外，也会拒绝含“答案/解析/详解”、外部 URL 或脚本的题目内容。
+该历史工具仍只输出到 `trial/private/questions/<题目 ID>/`，用于核对旧来源；产物不会自动成为正式生产输入。若题目进入生产，由产品协调者筛选规范题面和原始图进入对应 `production/.../input/`。脚本也会拒绝含“答案/解析/详解”、外部 URL 或脚本的题目内容。
 
 ```bash
 python3 trial/validate_private_materials.py
