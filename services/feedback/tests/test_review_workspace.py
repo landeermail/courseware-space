@@ -9,11 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-SERVER_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SERVER_DIR))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 
-from feedback_service import LocalFeedbackStore  # noqa: E402
-from review_workspace import (  # noqa: E402
+from services.feedback.service import LocalFeedbackStore  # noqa: E402
+from services.feedback.review_workspace import (  # noqa: E402
     ReviewAccessError,
     TeacherReviewWorkspace,
 )
@@ -85,7 +85,7 @@ class TeacherReviewWorkspaceTests(unittest.TestCase):
 
     def test_submission_completes_only_the_exact_revision_task(self) -> None:
         form = json.loads(
-            (Path(__file__).resolve().parents[2] / "feedback" / "example.json").read_text(
+            (ROOT / "services" / "feedback" / "schema" / "example.json").read_text(
                 encoding="utf-8"
             )
         )
@@ -114,7 +114,7 @@ class TeacherReviewWorkspaceTests(unittest.TestCase):
 
     def test_edit_appends_a_new_version_and_preserves_history(self) -> None:
         example = json.loads(
-            (Path(__file__).resolve().parents[2] / "feedback" / "example.json").read_text(
+            (ROOT / "services" / "feedback" / "schema" / "example.json").read_text(
                 encoding="utf-8"
             )
         )

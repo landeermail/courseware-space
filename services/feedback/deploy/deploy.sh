@@ -5,7 +5,7 @@
 # BLOCKED.md check, completed bounded review, and explicit product authorization.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MODULE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REGION="${COURSEWARE_OSS_REGION:-cn-hangzhou}"
 FEEDBACK_BUCKET="${COURSEWARE_FEEDBACK_OSS_BUCKET:-}"
 FUNCTION="${COURSEWARE_FC_FUNCTION:-courseware-space-generator}"
@@ -18,7 +18,7 @@ RATE_PER_CLIENT="${COURSEWARE_RATE_LIMIT_PER_CLIENT:-30}"
 RATE_GLOBAL="${COURSEWARE_RATE_LIMIT_GLOBAL:-80}"
 RATE_WINDOW="${COURSEWARE_RATE_LIMIT_WINDOW:-600}"
 CLI="${ALIYUN_CLI:-$(command -v aliyun || printf '')}"
-PACKAGE="${COURSEWARE_FEEDBACK_PACKAGE:-$ROOT/deploy/dist/courseware-space-feedback-fc.zip}"
+PACKAGE="${COURSEWARE_FEEDBACK_PACKAGE:-$MODULE_ROOT/dist/courseware-space-feedback-fc.zip}"
 TEACHER_STORAGE_KEY="${COURSEWARE_TEACHER_STORAGE_KEY:-}"
 
 APPLY=0
@@ -75,12 +75,12 @@ if [[ -n "$kimi_env" ]]; then
   exit 1
 fi
 if [[ ! -f "$PACKAGE" ]]; then
-  printf 'feedback-only 部署包不存在；请先运行 deploy/build_feedback_package.sh。\n' >&2
+  printf 'feedback-only 部署包不存在；请先运行 services/feedback/deploy/build_package.sh。\n' >&2
   exit 1
 fi
 # 实际待部署 ZIP（包括环境变量指定的自定义包）必须通过同一白名单审计；
 # 审计失败立即退出：不调用 CLI、不输出计划或任何“包无 Kimi/生成代码”的成功主张。
-if ! bash "$ROOT/deploy/build_feedback_package.sh" --audit-only "$PACKAGE"; then
+if ! bash "$MODULE_ROOT/deploy/build_package.sh" --audit-only "$PACKAGE"; then
   printf '待部署包未通过白名单审计，已停止；未进行任何云端调用。\n' >&2
   exit 1
 fi
@@ -256,7 +256,7 @@ else
   CONTROL_DIR="$(mktemp -d /tmp/courseware-feedback-deploy.XXXXXX)"
   python3 -m pip install --disable-pip-version-check --no-input --target "$CONTROL_DIR" 'alibabacloud-oss-v2==1.3.2' >/dev/null
   PYTHONPATH="$CONTROL_DIR" OSS_ACCESS_KEY_ID="$ALIBABA_CLOUD_ACCESS_KEY_ID" OSS_ACCESS_KEY_SECRET="$ALIBABA_CLOUD_ACCESS_KEY_SECRET" \
-    python3 "$ROOT/deploy/oss_bootstrap.py" upload-code --package "$PACKAGE"
+    python3 "$MODULE_ROOT/deploy/upload_code.py" --package "$PACKAGE"
 fi
 
 runtime_config='{"command":["/code/bootstrap"],"port":9000,"healthCheckConfig":{"httpGetUrl":"/api/health","initialDelaySeconds":2,"periodSeconds":10,"timeoutSeconds":3,"failureThreshold":3,"successThreshold":1}}'

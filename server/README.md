@@ -1,9 +1,6 @@
 # 服务端组件
 
-本目录包含两个用途不同的 Python 服务：
-
-- `app.py`：本地生成研发服务，可调用 Kimi Code；
-- `feedback_app.py`：当前公网 FC 的 feedback-only 服务，不包含模型客户端或生成路由。
+本目录保存旧的本地生成研发宿主；`app.py` 可调用 Kimi Code。当前公网 feedback-only 服务已由 `services/feedback/` 独立拥有，入口、测试和部署接口见其 README。
 
 不要把本地生成能力等同于当前线上产品能力。
 
@@ -32,7 +29,7 @@ COURSEWARE_ACCESS_CODE="$(security find-generic-password -s courseware-space-pre
 
 ## 当前公网评价服务
 
-`feedback_app.py` 是独立入口：
+`services/feedback/app.py` 是独立入口：
 
 - `GET /api/health`：公开健康检查；
 - `POST /api/feedback`：保留的受凭证保护六维反馈入口；
@@ -56,14 +53,14 @@ COURSEWARE_ACCESS_CODE="$(security find-generic-password -s courseware-space-pre
 ```bash
 COURSEWARE_ACCESS_CODE=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL \
 COURSEWARE_TEACHER_STORAGE_KEY=0000000000000000000000000000000000000000000000000000000000000000 \
-  python3 server/feedback_app.py
+  python3 services/feedback/app.py
 ```
 
 ## 验证
 
 ```bash
+python3 -m unittest discover -s services/feedback/tests -p "test_*.py"
 python3 -m unittest discover -s server/tests -p "test_*.py"
-python3 -m unittest deploy/test_feedback_only.py deploy/test_private_delivery.py
 python3 scripts/validate_generator.py
 ```
 

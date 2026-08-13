@@ -11,9 +11,10 @@ import zipfile
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent.parent
-DEPLOY_SCRIPT = ROOT / "deploy" / "deploy_feedback_only.sh"
-BUILD_SCRIPT = ROOT / "deploy" / "build_feedback_package.sh"
+ROOT = Path(__file__).resolve().parents[3]
+MODULE_ROOT = ROOT / "services" / "feedback"
+DEPLOY_SCRIPT = MODULE_ROOT / "deploy" / "deploy.sh"
+BUILD_SCRIPT = MODULE_ROOT / "deploy" / "build_package.sh"
 STRONG_CODE = "a1" * 24
 TEACHER_STORAGE_KEY = "c3" * 32
 BUCKET_SUFFIX = "10794778"
@@ -138,10 +139,24 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
         self.package = self.work / "feedback.zip"
         with zipfile.ZipFile(self.package, "w") as archive:
             archive.writestr("bootstrap", "#!/bin/sh\n")
-            archive.writestr("server/feedback_app.py", "# feedback\n")
+            self.write_runtime_whitelist(archive)
 
     def tearDown(self) -> None:
         self._temporary.cleanup()
+
+    @staticmethod
+    def write_runtime_whitelist(archive: zipfile.ZipFile) -> None:
+        for path in (
+            "services/__init__.py",
+            "services/feedback/__init__.py",
+            "services/feedback/access_control.py",
+            "services/feedback/app.py",
+            "services/feedback/review_workspace.py",
+            "services/feedback/schema/__init__.py",
+            "services/feedback/schema/validate_feedback.py",
+            "services/feedback/service.py",
+        ):
+            archive.writestr(path, "# feedback runtime\n")
 
     def write_cli(self, responses: list[tuple[str, str | None, int]]) -> None:
         lines = [
@@ -285,7 +300,7 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
     def test_malicious_package_is_rejected_before_any_success_claim(self) -> None:
         malicious = self.work / "malicious.zip"
         with zipfile.ZipFile(malicious, "w") as archive:
-            archive.writestr("server/feedback_app.py", 'import os\nkey = os.environ["KIMI_API_KEY"]\n')
+            archive.writestr("services/feedback/app.py", 'import os\nkey = os.environ["KIMI_API_KEY"]\n')
             archive.writestr("server/kimi_client.py", "# model client\n")
         env = self.base_env()
         env["COURSEWARE_FEEDBACK_PACKAGE"] = str(malicious)
@@ -579,20 +594,26 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
         clean = self.work / "clean.zip"
         with zipfile.ZipFile(clean, "w") as archive:
             archive.writestr("bootstrap", "#!/bin/sh\n")
-            archive.writestr("server/feedback_app.py", "# feedback\n")
-            archive.writestr("server/access_control.py", "# gate\n")
-            archive.writestr("server/feedback_service.py", "# service\n")
-            archive.writestr("server/review_workspace.py", "# reviews\n")
-            archive.writestr("feedback/validate_feedback.py", "# validator\n")
+            self.write_runtime_whitelist(archive)
             archive.writestr("python/alibabacloud_oss_v2/__init__.py", "# sdk\n")
         result = self.run_audit(clean)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("package_audit=forbidden_names=0 kimi_refs=0", result.stdout)
+        self.assertIn("required_files=9 unexpected_files=0", result.stdout)
+
+    def test_package_audit_rejects_non_runtime_feedback_files(self) -> None:
+        dirty = self.work / "dirty-extra.zip"
+        with zipfile.ZipFile(dirty, "w") as archive:
+            archive.writestr("bootstrap", "#!/bin/sh\n")
+            self.write_runtime_whitelist(archive)
+            archive.writestr("services/feedback/history/review.json", "{}\n")
+        result = self.run_audit(dirty)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("白名单外", result.stderr)
 
     def test_package_audit_rejects_forbidden_file_names(self) -> None:
         dirty = self.work / "dirty.zip"
         with zipfile.ZipFile(dirty, "w") as archive:
-            archive.writestr("server/feedback_app.py", "# feedback\n")
+            archive.writestr("services/feedback/app.py", "# feedback\n")
             archive.writestr("server/kimi_client.py", "# model client\n")
         result = self.run_audit(dirty)
         self.assertNotEqual(result.returncode, 0)
@@ -601,7 +622,7 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
     def test_package_audit_rejects_kimi_content(self) -> None:
         dirty = self.work / "dirty-content.zip"
         with zipfile.ZipFile(dirty, "w") as archive:
-            archive.writestr("server/feedback_app.py", 'import os\nkey = os.environ["KIMI_API_KEY"]\n')
+            archive.writestr("services/feedback/app.py", 'import os\nkey = os.environ["KIMI_API_KEY"]\n')
         result = self.run_audit(dirty)
         self.assertNotEqual(result.returncode, 0)
 

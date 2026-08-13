@@ -13,9 +13,9 @@ import sys
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 TOKEN_PATTERN = re.compile(r"^[0-9a-f]{48}$")
-SOURCE_REVIEW = ROOT / "feedback" / "review-q01-20260730.json"
+SOURCE_REVIEW = ROOT / "services" / "feedback" / "history" / "review-q01-20260730.json"
 
 
 TASKS: tuple[dict[str, Any], ...] = (

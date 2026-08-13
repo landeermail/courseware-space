@@ -9,8 +9,8 @@ import re
 from typing import Any, Callable
 import uuid
 
-from access_control import validate_access_code
-from feedback_service import (
+from services.feedback.access_control import validate_access_code
+from services.feedback.service import (
     FeedbackStore,
     FeedbackStoreError,
     FeedbackValidationError,

@@ -13,24 +13,23 @@ from pathlib import Path
 from unittest.mock import patch
 
 
-SERVER_DIR = Path(__file__).resolve().parents[1]
-ROOT = SERVER_DIR.parent
-sys.path.insert(0, str(SERVER_DIR))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 
-from access_control import ACCESS_HEADER  # noqa: E402
-from feedback_app import (  # noqa: E402
+from services.feedback.access_control import ACCESS_HEADER  # noqa: E402
+from services.feedback.app import (  # noqa: E402
     FeedbackHandler,
     RequestRateLimiter,
     cors_origins_from_environment,
     feedback_services_from_environment,
     teacher_storage_key_from_environment,
 )
-from feedback_service import (  # noqa: E402
+from services.feedback.service import (  # noqa: E402
     FeedbackService,
     FeedbackStoreError,
     LocalFeedbackStore,
 )
-from review_workspace import TeacherReviewWorkspace  # noqa: E402
+from services.feedback.review_workspace import TeacherReviewWorkspace  # noqa: E402
 
 STRONG_CODE = "a1" * 24
 OTHER_STRONG_CODE = "b2" * 24
@@ -40,7 +39,7 @@ DENIED_ORIGIN = "https://evil.example.com"
 
 
 def valid_payload() -> dict[str, object]:
-    return json.loads((ROOT / "feedback" / "example.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "services" / "feedback" / "schema" / "example.json").read_text(encoding="utf-8"))
 
 
 def seed_workspace(root: Path, token: str) -> None:
@@ -79,7 +78,7 @@ class RunningServer:
         per_client: int = 30,
         storage_key: str | None = None,
     ) -> None:
-        from access_control import AccessCodeGate
+        from services.feedback.access_control import AccessCodeGate
 
         FeedbackHandler.cors_origins = frozenset({ALLOWED_ORIGIN})
         FeedbackHandler.rate_limiter = RequestRateLimiter(per_client=per_client, global_limit=80, window_seconds=600)

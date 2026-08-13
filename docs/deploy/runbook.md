@@ -12,11 +12,11 @@
 ## 2. 本地门槛
 
 ```bash
-python3 -m unittest discover -s server/tests -p "test_*.py"
-python3 -m unittest deploy/test_feedback_only.py deploy/test_private_delivery.py
+python3 -m unittest discover -s services/feedback/tests -p "test_*.py"
+python3 -m unittest deploy/test_private_delivery.py
 python3 scripts/validate_site.py
-./deploy/build_feedback_package.sh
-unzip -tq deploy/dist/courseware-space-feedback-fc.zip
+./services/feedback/deploy/build_package.sh
+unzip -tq services/feedback/dist/courseware-space-feedback-fc.zip
 ```
 
 构建脚本只复制白名单服务文件与 OSS SDK；ZIP 中出现 Kimi、生成器、媒体或模板引用会失败。Apple Silicon 默认解析 manylinux x86_64 wheels，不要求 Docker。
@@ -40,13 +40,13 @@ export COURSEWARE_TEACHER_STORAGE_KEY='REPLACE_WITH_EXISTING_64_HEX_STORAGE_KEY'
 先执行脱敏 dry-run：
 
 ```bash
-./deploy/deploy_feedback_only.sh
+./services/feedback/deploy/deploy.sh
 ```
 
 核对包 SHA、指定 function/role/policy、环境变量名、`kimi_env_vars=0` 和 `cloud_changes=0`。确认后才执行：
 
 ```bash
-./deploy/deploy_feedback_only.sh --apply
+./services/feedback/deploy/deploy.sh --apply
 ```
 
 脚本在任何写入前拒绝 root 身份，并核验运行 role 的 FC-only 信任、精确默认策略版本和唯一策略绑定；随后上传内容寻址 ZIP、原位更新 FC 并重申保留并发 1。它不创建或修改 RAM 策略。

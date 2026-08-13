@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 import unittest
 
-from validate_feedback import DIMENSIONS, validate_feedback
+from services.feedback.schema.validate_feedback import DIMENSIONS, validate_feedback
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1] / "schema"
 
 
 def valid_payload() -> dict[str, object]:

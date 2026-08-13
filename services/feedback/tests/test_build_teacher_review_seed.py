@@ -10,8 +10,8 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / "scripts" / "build_teacher_review_seed.py"
+ROOT = Path(__file__).resolve().parents[3]
+SCRIPT = ROOT / "services" / "feedback" / "tools" / "build_teacher_review_seed.py"
 TOKEN = "a1" * 24
 
 
