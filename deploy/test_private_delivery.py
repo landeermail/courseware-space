@@ -22,9 +22,10 @@ class PrivateDeliveryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 delivery.settings()
 
-    def test_policy_allows_only_private_objects_and_explicitly_denies_listing(self) -> None:
+    def test_policy_allows_only_private_objects_and_does_not_deny_runtime_listing(self) -> None:
         policy = delivery.policy_document(delivery.BUCKET, "1234567890123456")
-        allow, deny = policy["Statement"]
+        self.assertEqual(len(policy["Statement"]), 1)
+        allow = policy["Statement"][0]
         self.assertEqual(allow["Effect"], "Allow")
         self.assertEqual(allow["Action"], ["oss:GetObject"])
         self.assertEqual(allow["Principal"], ["*"])
@@ -32,11 +33,9 @@ class PrivateDeliveryTests(unittest.TestCase):
             allow["Resource"],
             [f"acs:oss:*:1234567890123456:{delivery.BUCKET}/private/*"],
         )
-        self.assertEqual(deny["Effect"], "Deny")
-        self.assertEqual(
-            deny["Action"], ["oss:ListObjects", "oss:ListObjectVersions"]
-        )
-        self.assertNotIn("Condition", deny)
+        policy_text = json.dumps(policy)
+        self.assertNotIn("oss:ListObjects", policy_text)
+        self.assertNotIn("oss:ListObjectVersions", policy_text)
 
     def test_random_token_is_url_safe_and_at_least_48_characters(self) -> None:
         for _ in range(20):
