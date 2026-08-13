@@ -24,7 +24,7 @@
 - 目标设备和主要使用场景；
 - 明确不采用的产品方向。
 
-它不用于记录单题进度、临时方案或具体实现步骤；单题状态写入精确 `production-record.md`，跨域工程任务和实现交付分别留在 GitHub Issue 与 Pull Request 中。
+它不用于记录单题进度、临时方案或具体实现步骤；单题状态写入精确 `production/courseware/<courseware_id>/record.md`，跨域工程任务和实现交付分别留在 GitHub Issue 与 Pull Request 中。
 
 ## `docs/adr/` 记录什么
 

@@ -1,6 +1,6 @@
 # 老师试用工具包
 
-本目录保留本地校准工具和生产候选。当前正式单题生产以 `$build-physics-courseware` 与 `trial/private/production-records/<courseware_id>/production-record.md` 为准；练习题可以公开，不能再把本协议中的“私有”理解为试题保密要求。
+本目录保留本地校准工具和生产候选。当前正式单题生产以 `$build-physics-courseware` 与 `production/courseware/<courseware_id>/record.md` 为准；练习题可以公开，不能再把本协议中的“私有”理解为试题保密要求。
 
 - `index.html`：六维打分页，只在浏览器本地生成 JSON。
 - `protocol.md`：第一次 60 分钟试用流程。

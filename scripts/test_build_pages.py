@@ -43,6 +43,7 @@ INTERNAL_TOP_LEVEL = {
     "generator",
     "harness",
     "library",
+    "production",
     "scripts",
     "server",
     "templates",

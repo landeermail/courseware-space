@@ -50,6 +50,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ├── trial/                     # 六维工具、历史试用协议与单题生产候选
 ├── feedback/                  # 结构化反馈 schema 与本地校验器
 ├── preview/                   # 老师长期题库与不可变 revision
+├── production/                # 受版本控制的单题当前生产状态
 ├── deploy/                    # feedback-only FC、OSS 与域名切换工具
 ├── docs/                      # ADR、质量、部署与历史任务书
 ├── electromagnetism/          # 电磁学课件
@@ -62,7 +63,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 添加或修改课件
 
-一道题进入正式生产后统一使用 `$build-physics-courseware` 和该题的 `production-record.md`：当前产品协调任务确认物理与教学方案，短期前端执行者只实现候选和 A0，独立评审者检查精确修订，结论回到产品检查点。获发布授权后，产品协调者从最新 `main` 建隔离分支，把候选字节写入不可变 revision，只更新对应老师题库卡片并通过 PR 合并。Pages 部署后必须从老师真实长期入口验 revision、资源和评价入口。
+一道题进入正式生产后统一使用 `$build-physics-courseware` 和版本化的 `production/courseware/<courseware_id>/record.md`：当前产品协调任务确认物理与教学方案，短期前端执行者只实现候选和 A0，独立评审者检查精确修订，结论回到产品检查点。获发布授权后，产品协调者从最新 `main` 建隔离分支，把候选字节写入不可变 revision，只更新对应老师题库卡片并通过 PR 合并。Pages 部署后必须从老师真实长期入口验 revision、资源和评价入口。
 
 ## 发布
 
