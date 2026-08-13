@@ -40,14 +40,10 @@ INTERNAL_TOP_LEVEL = {
     ".github",
     "deploy",
     "docs",
-    "feedback",
-    "generator",
-    "harness",
-    "library",
     "production",
+    "research",
     "scripts",
-    "server",
-    "templates",
+    "services",
     "trial",
 }
 
@@ -78,7 +74,7 @@ class BuildPagesTests(unittest.TestCase):
     def test_allowlist_does_not_include_generator_or_internal_roots(self) -> None:
         allowed = {path.as_posix() for path in PUBLIC_PATHS}
 
-        self.assertTrue((REPOSITORY_ROOT / "generator/index.html").is_file())
+        self.assertTrue((REPOSITORY_ROOT / "research/generation/generator/index.html").is_file())
         self.assertNotIn("generator", allowed)
         self.assertFalse(INTERNAL_TOP_LEVEL.intersection(EXPECTED_TOP_LEVEL))
 

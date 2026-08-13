@@ -1,8 +1,0 @@
-{
-  "attempt": 3,
-  "prompt_version": "harness-free-code-v2-split",
-  "ran_at": "2026-07-29T07:41:43.058165+00:00",
-  "raw": "{\"title\":\"平抛与斜抛运动通用物理模型\",\"domain\":\"projectile\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample:function(input){var sc=(input&&input.scenario)?input.scenario:{};var g=sc.g_m_s2||0;var m=sc.mass_kg||0;var x0=sc.x0_m||0;var y0=sc.y0_m||0;var v=sc.speed_m_s||0;var rad=(sc.angle_deg||0)*Math.PI/180;var horizontal=sc.mode==='horizontal';var vx0=horizontal?v:v*Math.cos(rad);var vy0=horizontal?0:v*Math.sin(rad);var flightTime;if(g<=0){flightTime=Infinity;}else{var disc=vy0*vy0+2*g*y0;flightTime=(disc>=0?(vy0+Math.sqrt(disc))/g:0);}var range=x0+vx0*flightTime;var apexTime=(vy0>0&&g>0)?vy0/g:0;var maxHeight=y0+((vy0>0&&g>0)?vy0*vy0/(2*g):0);var states=[];var times=(input&&input.times_s)?input.times_s:[];for(var i=0;i<times.length;i++){var t=Number(times[i]);if(t>flightTime+1e-9){states.push({t_s:t,x_m:range,y_m:0,vx_m_s:0,vy_m_s:0,ax_m_s2:0,ay_m_s2:0,kinetic_j:0,potential_j:0,mechanical_j:0});}else{var x=x0+vx0*t;var y=y0+vy0*t-0.5*g*t*t;if(y<0)y=0;var vx=vx0;var vy=vy0-g*t;var ke=0.5*m*(vx*vx+vy*vy);var pe=m*g*y;states.push({t_s:t,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:0,ay_m_s2:-g,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe});}}return{states:states,events:{flight_time_s:flightTime,range_m:range,apex_time_s:apexTime,max_height_m:maxHeight,optimal_equal_height_angle_deg:45}};}});\"}",
-  "status": "rejected",
-  "failure": "model_js 包含沙箱禁止能力"
-}

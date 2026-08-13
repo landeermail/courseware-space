@@ -1,8 +1,6 @@
 # 阿里云部署工具
 
-当前生产只使用 `services/feedback/app.py` 提供老师评价工作区；公网 FC 不运行 Kimi 或生成器。feedback-only 的运行时、测试、打包与部署接口统一位于 `services/feedback/`。本目录保留旧生成、早期 OSS 投递和域名切换工具，不是当前反馈服务的实现目录。
-
-旧生成服务的 `build_package.sh`、`deploy.sh`、`deploy_from_keychain.sh` 与 `rollback_code.sh` 为历史研发工具，不是当前生产入口。未经新的产品、许可、成本与安全裁决，不得用它们覆盖 feedback-only FC。
+当前生产只使用 `services/feedback/app.py` 提供老师评价工作区；公网 FC 不运行 Kimi 或生成器。feedback-only 的运行时、测试、打包与部署接口统一位于 `services/feedback/`。本目录只保留早期 OSS 投递和域名切换工具，不是当前反馈服务或 generation 研发的实现目录；旧 generation 云部署工具已由 Git 历史保留。
 
 ## 当前生产资源
 

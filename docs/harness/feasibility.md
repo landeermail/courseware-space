@@ -15,17 +15,17 @@
 
 ## 完成条件证据
 
-- 抛体验收清单：`harness/evidence/generated/projectile-k3-accepted/results.json`
-- 抛体浏览器记录：`harness/evidence/browser/projectile-k3-browser-acceptance-1/results.json`
-- 抛体故障红→绿：`harness/evidence/faults/projectile-k3-browser-repair-1/results.json`
-- 圆周验收清单：`harness/evidence/generated/circular-k3-accepted/results.json`
-- 圆周浏览器记录：`harness/evidence/browser/circular-k3-browser-acceptance-1/results.json`
-- 圆周故障红→绿：`harness/evidence/faults/circular-k3-holdout-1/results.json`
+- 抛体验收清单：`research/generation/harness/evidence/generated/projectile-k3-accepted/results.json`
+- 抛体浏览器记录：`research/generation/harness/evidence/browser/projectile-k3-browser-acceptance-1/results.json`
+- 抛体故障红→绿：`research/generation/harness/evidence/faults/projectile-k3-browser-repair-1/results.json`
+- 圆周验收清单：`research/generation/harness/evidence/generated/circular-k3-accepted/results.json`
+- 圆周浏览器记录：`research/generation/harness/evidence/browser/circular-k3-browser-acceptance-1/results.json`
+- 圆周故障红→绿：`research/generation/harness/evidence/faults/circular-k3-holdout-1/results.json`
 
 验收清单只引用不可覆盖的实际生成目录，不复制或改写历史。以下命令会逐件检查 HTML、模型、元数据、至少 5 组物理探针、浏览器首屏/播放/暂停/回放/改参、两视口布局和故障红→绿：
 
 ```bash
-python3 harness/audit_acceptance.py \
+python3 research/generation/harness/audit_acceptance.py \
   --projectile-run projectile-k3-accepted \
   --projectile-faults projectile-k3-browser-repair-1 \
   --projectile-browser projectile-k3-browser-acceptance-1 \

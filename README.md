@@ -16,10 +16,10 @@ python3 -m http.server 8000 --directory site
 
 ```bash
 KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 server/app.py
+  python3 research/generation/app.py
 ```
 
-然后访问 <http://localhost:8000/generator/>。生成器后端、密钥管理和验收方法见 `server/README.md`。
+然后访问 <http://localhost:8000/generator/>。生成器后端、密钥管理和验收方法见 `research/generation/README.md`。
 
 文字、图片和 PDF 三种输入已经合并在 <http://localhost:8000/generator/>。图片/PDF 必须经过老师逐项确认后才会生成。该生成服务目前只供本地研发；公网 FC 已收缩为不含模型凭证的评价服务，`/api/generate` 保持关闭。当前部署结构见 [`docs/deploy/architecture.md`](docs/deploy/architecture.md)。
 
@@ -42,15 +42,11 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ```text
 .
 ├── site/                      # 唯一 Pages 静态产品源，内部结构即公开 URL
-├── generator/                 # 老师生成页面和已验证生成产物
-├── templates/                 # 锁定物理关系的参数化课件模板
-├── server/                    # 本地异步生成服务与真实验收证据
-├── harness/                   # 自由生成与物理护栏的研发验证
-├── library/                   # 经验收生成课件的元数据与晋升区
+├── research/generation/       # 本地生成器、Kimi、harness、模板、library 与必要证据
 ├── trial/                     # 六维工具、历史试用协议与单题生产候选
 ├── services/feedback/         # 评价运行时、schema、测试与 feedback-only 部署
 ├── production/                # 单题状态、规范输入与被忽略的可变工作区
-├── deploy/                    # feedback-only FC、OSS 与域名切换工具
+├── deploy/                    # 早期 OSS 投递与域名切换历史工具
 ├── docs/                      # ADR、质量、部署与历史任务书
 └── .github/workflows/         # GitHub Pages 部署工作流
 ```

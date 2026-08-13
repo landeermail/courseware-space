@@ -1,8 +1,0 @@
-{
-  "attempt": 1,
-  "prompt_version": "harness-free-code-v2-split",
-  "ran_at": "2026-07-29T07:40:05.830770+00:00",
-  "raw": "{\"title\":\"抛体运动（平抛/斜抛）纯物理模型\",\"domain\":\"projectile\",\"model_js\":\"globalThis.coursewareModel=Object.freeze({sample:function(input){var s=input.scenario,t=input.times_s,g=+s.g_m_s2,m=+s.mass_kg,x0=+s.x0_m,y0=+s.y0_m,v0=+s.speed_m_s,theta=(+s.angle_deg||0)*Math.PI/180,vx0=v0*Math.cos(theta),vy0=v0*Math.sin(theta),ft=(vy0+Math.sqrt(vy0*vy0+2*g*y0))/g,range=x0+vx0*ft,apex=vy0>0?vy0/g:0,maxH=vy0>0?y0+vy0*vy0/(2*g):y0,states=[],i,x,y,vx,vy,ax,ay,ke,pe;for(i=0;i<t.length;i++){var time=+t[i];if(time>=ft){x=range;y=0;vx=0;vy=0;ax=0;ay=0;}else{x=x0+vx0*time;y=y0+vy0*time-.5*g*time*time;if(y<0)y=0;vx=vx0;vy=vy0-g*time;ax=0;ay=-g;}ke=.5*m*(vx*vx+vy*vy);pe=m*g*y;states.push({t_s:time,x_m:x,y_m:y,vx_m_s:vx,vy_m_s:vy,ax_m_s2:ax,ay_m_s2:ay,kinetic_j:ke,potential_j:pe,mechanical_j:ke+pe});}return{states:states,events:{flight_time_s:ft,range_m:range,apex_time_s:apex,max_height_m:maxH,optimal_equal_height_angle_deg:45}};}});\"}",
-  "status": "rejected",
-  "failure": "model_js 包含沙箱禁止能力"
-}

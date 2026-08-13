@@ -31,10 +31,15 @@ class FeedbackModuleLayoutTests(unittest.TestCase):
         ):
             self.assertFalse(obsolete.exists(), obsolete)
 
-    def test_local_generation_host_uses_feedback_module_explicitly(self) -> None:
-        source = (ROOT / "server" / "app.py").read_text(encoding="utf-8")
-        self.assertIn("from services.feedback.access_control import", source)
-        self.assertIn("from services.feedback.service import", source)
+    def test_generation_is_not_a_feedback_runtime_caller(self) -> None:
+        generation = ROOT / "research" / "generation"
+        self.assertTrue((generation / "app.py").is_file())
+        for base in (generation / "app.py", generation / "runtime"):
+            paths = [base] if base.is_file() else base.glob("*.py")
+            for path in paths:
+                source = path.read_text(encoding="utf-8")
+                self.assertNotIn("services.feedback", source, path)
+                self.assertNotIn("feedback_service", source, path)
 
 
 if __name__ == "__main__":
