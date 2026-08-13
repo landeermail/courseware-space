@@ -18,7 +18,7 @@
 
 ## 发布课件
 
-- 生产候选写入 `trial/private/courseware/<courseware_id>/`；只有通过产品检查点且获发布授权的精确 revision 才进入公开目录。
+- 单题规范输入写入 `production/courseware/<courseware_id>/input/`；可变候选和临时证据分别写入该模块下被忽略的 `work/candidate/` 与 `work/evidence/`。只有通过产品检查点且获发布授权的精确 revision 才进入 `site/` 的不可变公开目录。
 - 正式 revision 目录不可变，目录名使用小写英文、数字和连字符。
 - 每个 `site/` 下的课件目录必须包含可直接访问的 `index.html`。
 - 图片、脚本、图标等专用资源应保存在课件目录内，避免依赖仓库根目录的相对路径。

@@ -8,17 +8,17 @@
 - workflow_state: waiting
 - next_role: product-owner
 - next_action: 等待产品负责人决定是否把原老师长期题库链接发送给老师；只有实际发送后才记录 delivery_ref 并把 outcome 改为 delivered，未经授权不联系老师
-- question_packet_path: trial/private/questions/q07-glass-rod-tir/
-- candidate_path: trial/private/courseware/q07-glass-rod-tir/
-- evidence_path: trial/private/development/q07-glass-rod-tir/
-- release_root: preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/
+- question_packet_path: production/courseware/q07-glass-rod-tir/input/
+- candidate_path: production/courseware/q07-glass-rod-tir/work/candidate/
+- evidence_path: production/courseware/q07-glass-rod-tir/work/evidence/
+- release_root: site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/
 - allowed_write_paths: none
 - physics_gate: passed
 - physics_review: passed
 - teaching_plan: approved
 - blueprint_approval: approved
 - a0_status: passed
-- artifact_manifest_ref: trial/private/courseware/q07-glass-rod-tir/manifest.json
+- artifact_manifest_ref: site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/manifest.json
 - artifact_review_level: A1
 - artifact_review_revision_id: 5c8590bd2060
 - artifact_review_status: passed
@@ -30,16 +30,16 @@
 - promoted_revision_id: none
 - decision_owner: product-owner
 - approval_ref: q07-tir-count-plan-v1 and blueprint v3 approved; release adaptation 5c8590bd2060 A0/A1 passed; PR 22 Pages and product-owner real-entry confirmation passed
-- blocked_preflight: 2026-08-13 第二批状态迁移前重新读取 BLOCKED.md；临时 Root AccessKey 删除与备案后域名切换均未触发本地迁移，联系老师仍需单独产品负责人决定
+- blocked_preflight: 2026-08-13 production 模块路径治理前重新读取 BLOCKED.md；临时 Root AccessKey 云端删除与备案后域名切换均未触发本地迁移，联系老师仍需单独产品负责人决定
 - current_evidence_refs: 本记录；规范题包；q07 blueprint v3；candidate manifest 5c8590bd2060；A1-q07-5c8590bd2060-2026-08-12；Pages PR 22 与 deploy run 31588393867
-- skill_revision: local-production-path-migration-2026-08-13
+- skill_revision: production-module-paths-2026-08-13
 
 ## Question packet and source uncertainty
 
 实心玻璃管长 40 cm、宽 4 cm，折射率为 `2/√3`，光从左端正中心射入，求光最多可以在管中反射多少次。
 
-- 规范转写：`trial/private/questions/q07-glass-rod-tir/question.md`。
-- 原图：`trial/private/questions/q07-glass-rod-tir/source.png`，SHA-256 `589ce078908d72efaee5f9ee031e3efc11a449ddf2be39ba7d44d68602979ae1`。
+- 规范转写：`production/courseware/q07-glass-rod-tir/input/question.md`。
+- 原图：`production/courseware/q07-glass-rod-tir/input/source.png`，SHA-256 `589ce078908d72efaee5f9ee031e3efc11a449ddf2be39ba7d44d68602979ae1`。
 - 不从示意图斜率读取角度；入口折射可实现性是正式模型的一部分。
 
 ## Physics truth contract and review
@@ -58,8 +58,8 @@
 
 ## Artifact identity and A0
 
-- candidate manifest：`trial/private/courseware/q07-glass-rod-tir/manifest.json`，完整 SHA-256 `5c8590bd20609630581c97f1e743cd88b8850127f8beabb5d0496467b902b86f`。
-- 不可变目录：`preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/`；线上 `index.html` SHA-256 `5bb63ec7f581ee4923aa4b3c5a3c5623ea75f4a6f648597f1840a7350c827ead`。
+- 发布 manifest：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/manifest.json`，完整 SHA-256 `5c8590bd20609630581c97f1e743cd88b8850127f8beabb5d0496467b902b86f`。
+- 不可变源码目录：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/`；公开 URL 仍省略 `site/` 前缀，线上 `index.html` SHA-256 `5bb63ec7f581ee4923aa4b3c5a3c5623ea75f4a6f648597f1840a7350c827ead`。
 - 当前 revision 是基于已通过 A2 的 `b308c05e69ac` 做发布适配窄修，只增加正式导航、隐私 meta 和版本信号；19 个 payload 已重算一致。
 - A0 覆盖模型 92/92、站点和学习者表面、桌面与 iPad 横屏、导航、一个真实滑条拖动、控制台和资源加载。
 

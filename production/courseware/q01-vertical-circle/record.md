@@ -8,10 +8,10 @@
 - workflow_state: waiting
 - next_role: requesting-teacher
 - next_action: 等待老师对精确 revision q01-v8-1c89623d5bf0 的新六维评价；收到直接证据后由产品协调者核对 revision 和反馈版本，再回到产品检查点裁决接受、迭代或题库晋升
-- question_packet_path: trial/private/questions/q01-vertical-circle/
-- candidate_path: trial/private/courseware/q01-vertical-circle/
-- evidence_path: trial/private/development/q01-vertical-circle/
-- release_root: preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/
+- question_packet_path: production/courseware/q01-vertical-circle/input/
+- candidate_path: production/courseware/q01-vertical-circle/work/candidate/
+- evidence_path: production/courseware/q01-vertical-circle/work/evidence/
+- release_root: site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/
 - allowed_write_paths: none
 - physics_gate: passed
 - physics_review: passed
@@ -30,15 +30,15 @@
 - promoted_revision_id: none
 - decision_owner: product-owner
 - approval_ref: q01 blueprint v3.0 approved; q01-v8 A0 and A1 passed; Pages machine gate and product-owner real-entry confirmation passed
-- blocked_preflight: 2026-08-13 第二批状态迁移前重新读取 BLOCKED.md；临时 Root AccessKey 删除与备案后域名切换均未触发本地迁移，不得宣称凭证已彻底收口
+- blocked_preflight: 2026-08-13 production 模块路径治理前重新读取 BLOCKED.md；临时 Root AccessKey 云端删除与备案后域名切换均未触发本地迁移，不得宣称凭证已彻底收口
 - current_evidence_refs: 本记录；feedback/review-q01-20260730.json 为早期 revision 历史反馈；当前不可变 revision 目录；Pages PR 21 与 deploy run 30993320621
-- skill_revision: local-production-path-migration-2026-08-13
+- skill_revision: production-module-paths-2026-08-13
 
 ## Question packet and source uncertainty
 
 半径为 `R` 的固定光滑绝缘圆环位于竖直平面内。两个相同带电小球 `a`、`b` 只能沿环移动，初始静止且球间距离为 `R`。外力缓慢推动左球 `a` 到最低点 `c` 后撤去，判断推动阶段的支持力、外力功、势能变化及撤力后的能量守恒。
 
-- 规范题面与原图：`trial/private/questions/q01-vertical-circle/index.html`、`diagram.png`。
+- 规范题面与原图：`production/courseware/q01-vertical-circle/input/question.md`、`source.png`。
 - 已确认勘误：原稿 A 项“b求”按语义更正为“b球”。
 - 参考答案 BD 只作对照；原稿对 C 的解释不充分，不覆盖下列独立物理结论。
 
@@ -47,7 +47,7 @@
 - 推动阶段为准静态约束路径；`b` 的切向平衡与径向方程共同决定位置和支持力，支持力由 `2mg/√3` 单调减至 `mg`。
 - 两球—地球—静电相互作用构成能量系统；推动阶段两球总重力势能与电势能均增加，外力做正功。
 - 撤力后外力消失，圆环支持力不做功，`K+Ug+Ue` 守恒。
-- 独立结论为 B、D；A、C 错。物理参考与复核工具位于 `trial/private/development/q01-vertical-circle/`，历史复跑为 5/5 单测和 self-check 通过。
+- 独立结论为 B、D；A、C 错。当前可复跑物理参考与 5 项单测位于 `production/courseware/q01-vertical-circle/input/`；历史截图和日志不属于恢复输入。
 - 物理未决项：无。不得把探索性电荷缩放数据当作题设条件，也不得画反 `b` 所受支持力方向。
 
 ## Approved teaching plan and blueprint
@@ -58,7 +58,7 @@
 
 ## Artifact identity and A0
 
-- 不可变目录：`preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q01-v8-1c89623d5bf0/`。
+- 不可变源码目录：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q01-v8-1c89623d5bf0/`；公开 URL 仍省略 `site/` 前缀。
 - 线上 `index.html` SHA-256：`1c89623d5bf0c1f5e4f1722a1799a2ea9a7b563849ca20d88b0e44585e583e45`。
 - A0 覆盖物理参考、静态引用、学习者表面、桌面与 iPad 横屏、自由导航、图式绑定、推动/撤力状态和资源加载；当前 revision 的候选与发布字节已由 Pages 真实入口对账。
 
