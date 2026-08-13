@@ -11,6 +11,7 @@ from pathlib import Path
 import posixpath
 import re
 import sys
+import tempfile
 from typing import Iterable
 from urllib.parse import unquote, urlsplit
 
@@ -354,15 +355,31 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
 def main(argv: Iterable[str] = sys.argv[1:]) -> int:
     args = parse_args(argv)
     root = args.root.resolve()
+    temporary_directory: tempfile.TemporaryDirectory[str] | None = None
+    if args.root == Path(__file__).resolve().parent.parent:
+        from build_pages import build_pages
+
+        temporary_directory = tempfile.TemporaryDirectory()
+        root = Path(temporary_directory.name) / "pages"
+        try:
+            build_pages(args.root, root)
+        except (OSError, RuntimeError) as exc:
+            print(f"静态站点校验失败：{exc}", file=sys.stderr)
+            temporary_directory.cleanup()
+            return 1
     validator = SiteValidator(root)
     if validator.validate():
         print(f"静态站点校验通过：{format_summary(validator)}。")
+        if temporary_directory is not None:
+            temporary_directory.cleanup()
         return 0
 
     print(f"静态站点校验失败，共 {len(validator.errors)} 项：", file=sys.stderr)
     for error in sorted(validator.errors):
         print(f"- {error}", file=sys.stderr)
     print(f"已扫描：{format_summary(validator)}。", file=sys.stderr)
+    if temporary_directory is not None:
+        temporary_directory.cleanup()
     return 1
 
 
