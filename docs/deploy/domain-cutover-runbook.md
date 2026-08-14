@@ -14,7 +14,7 @@ export COURSEWARE_FC_FUNCTION='当前 feedback-only FC function 名'
 先预演并逐行核对：
 
 ```bash
-python3 deploy/domain_cutover.py \
+python3 scripts/domain_cutover.py \
   --domain "$COURSEWARE_DOMAIN" \
   --icp-number "$COURSEWARE_ICP_NUMBER" \
   --oss-bucket "$COURSEWARE_SITE_OSS_BUCKET" \

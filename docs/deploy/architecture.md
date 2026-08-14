@@ -34,4 +34,4 @@ flowchart LR
 - 普通课件发布只改 Pages，不调用阿里云；发布后从老师真实入口跟随卡片验证 revision、资源和评价入口。
 - feedback-only 部署使用内容寻址 ZIP、专用最小权限 RAM deployer、FC-only 运行角色和保留并发 1。
 - GitHub Pages 短暂显示 GitHub 独角兽故障页属于托管方异常；先检查 GitHub Status 和入口恢复情况，不因一次平台故障轮换老师链接或重发 revision。
-- 自定义域名仍等待备案条件；切换与回退见 `deploy/domain-cutover-runbook.md`。
+- 自定义域名仍等待备案条件；切换与回退见 [`docs/deploy/domain-cutover-runbook.md`](domain-cutover-runbook.md)。

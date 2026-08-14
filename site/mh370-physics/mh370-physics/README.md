@@ -1,6 +1,6 @@
 # 机翼电势差三维课件
 
-这是一个可部署到 GitHub Pages 的静态网页课件。部署后可在电脑、iPad Safari 中打开；iPad 可通过“分享 -> 添加到主屏幕”作为类似 App 的入口使用。
+这是 `site/` 静态源中的一份 GitHub Pages 课件。合并到 `main` 后由仓库 Pages 白名单工件统一发布；不单独创建仓库或上传仓库根。发布后可在电脑、iPad Safari 中打开；iPad 可通过“分享 -> 添加到主屏幕”作为类似 App 的入口使用。
 
 ## 文件结构
 
@@ -16,14 +16,9 @@ icons/
   icon.svg
 ```
 
-## GitHub Pages 部署步骤
+## 本地预览
 
-1. 在 GitHub 新建一个公开仓库，例如 `mh370-physics-courseware`。
-2. 上传本文件夹里的所有文件到仓库根目录。
-3. 进入仓库 `Settings -> Pages`。
-4. `Source` 选择 `Deploy from a branch`。
-5. `Branch` 选择 `main`，文件夹选择 `/root`，保存。
-6. 等待 1-3 分钟，GitHub 会生成访问链接。
+在仓库根目录运行 `python3 -m http.server 8000 --directory site`，然后访问 <http://localhost:8000/mh370-physics/mh370-physics/>。
 
 ## iPad 使用
 
