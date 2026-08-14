@@ -7,7 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / "deploy" / "domain_cutover.py"
+SCRIPT = ROOT / "scripts" / "domain_cutover.py"
 
 
 class DomainCutoverTests(unittest.TestCase):

@@ -33,7 +33,7 @@
 在仓库根目录运行：
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8000 --directory site
 ```
 
 然后访问 `http://localhost:8000/mechanics/q23-falling-tube-ball/`。

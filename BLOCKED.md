@@ -10,6 +10,6 @@
 
 ## 备案后域名切换与 Pages 过渡入口
 
-- **现状**：`deploy/domain_cutover.py` 仅支持 `--dry-run`；随机 GitHub Pages 入口仍是备案等待期的过渡方案。
+- **现状**：`scripts/domain_cutover.py` 仅支持 `--dry-run`；随机 GitHub Pages 入口仍是备案等待期的过渡方案。
 - **触发条件**：备案号、DNS、SSL 与自定义域名均可用后。
-- **待裁决**：按 `deploy/domain-cutover-runbook.md` 完成新域名桌面与 iPad 横屏闭环，再决定保留还是撤下随机 Pages 入口。脚本不得替产品负责人自动删除旧入口。
+- **待裁决**：按 `docs/deploy/domain-cutover-runbook.md` 完成新域名桌面与 iPad 横屏闭环，再决定保留还是撤下随机 Pages 入口。脚本不得替产品负责人自动删除旧入口。

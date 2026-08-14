@@ -1,6 +1,6 @@
 # 第13题直升机旋翼感应电动势课件
 
-这是一个可部署到 GitHub Pages 的静态网页课件。部署后可在电脑、iPad Safari 中打开；iPad 可通过“分享 -> 添加到主屏幕”作为类似 App 的入口使用。
+这是 `site/` 静态源中的一份 GitHub Pages 课件。合并到 `main` 后由仓库 Pages 白名单工件统一发布；不单独上传目录或仓库根。发布后可在电脑、iPad Safari 中打开；iPad 可通过“分享 -> 添加到主屏幕”作为类似 App 的入口使用。
 
 ## 文件结构
 
@@ -16,9 +16,9 @@ icons/
   icon.svg
 ```
 
-## 重要
+## 本地预览
 
-当前包仅为部署准备包。请先确认 `q13-helicopter-courseware.html` 验收通过后，再部署到 GitHub Pages。
+在仓库根目录运行 `python3 -m http.server 8000 --directory site`，然后访问 <http://localhost:8000/helicopter-dynamics/q13-helicopter/>。
 
 ## iPad 使用
 

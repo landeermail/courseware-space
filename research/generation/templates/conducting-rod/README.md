@@ -17,7 +17,7 @@ AI 只允许填写 `cases/*.json` 所示的结构化字段。`physics.py` 负责
 ```bash
 python3 research/generation/templates/conducting-rod/render_examples.py
 python3 research/generation/templates/conducting-rod/render_examples.py --check
-python3 scripts/validate_generator.py
+python3 research/generation/validate.py
 ```
 
 示例页面：
