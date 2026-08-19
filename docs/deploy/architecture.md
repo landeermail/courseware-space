@@ -1,6 +1,6 @@
 # 当前生产架构
 
-当前外部验证只提供预生成静态课件和老师评价，不开放公网模型生成。生成器与 harness 只在本地研发；正式静态课件由 GitHub Pages 发布，阿里云 FC 只运行不含 Kimi key 的 feedback-only 服务。
+当前外部验证只提供预生成静态课件和老师评价，不开放公网模型生成。既有生成器与 harness 作为暂停脚手架只在本地保留；正式静态课件由 GitHub Pages 发布，阿里云 FC 只运行不含 Kimi key 的 feedback-only 服务。
 
 ## 数据流
 
@@ -21,7 +21,7 @@ flowchart LR
 - **老师原长期链接**：当前唯一合作老师的评价身份。fragment 首次进入后写入同源 `sessionStorage` 并从地址栏清除；部署不得改变原 fragment。
 - **FC feedback-only**：由 `services/feedback/` 独立拥有运行时、schema、测试和部署接口；仅公开 `GET /api/health`，受凭证保护的 `POST /api/feedback`、`GET /api/reviews`、`GET /api/reviews?courseware_id=...` 和 `POST /api/reviews/<task_id>`；生成、媒体、任务和产物路由均为 404。
 - **私有 OSS**：任务和评价保存为不可变 JSON。运行角色可向 `feedback/*` 追加写，只能读取 `feedback/tasks/*` 与 `feedback/reviews/*`，列举也仅限这两个前缀；没有删除或 ACL 权限。
-- **本地生成研发**：`research/generation/` 独立拥有本地 HTTP 入口、Kimi、媒体解析、harness、模板、library 和必要证据；不包含 feedback API 或生产部署入口。
+- **暂停的本地生成研发**：`research/generation/` 保留本地 HTTP 入口、Kimi、媒体解析、harness、模板、library 和必要证据；它不包含 feedback API 或生产部署入口，也不是新题研发实验的默认入口。
 
 ## 身份与存储
 
