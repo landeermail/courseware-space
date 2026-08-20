@@ -23,6 +23,7 @@ from services.feedback.app import (  # noqa: E402
     cors_origins_from_environment,
     feedback_services_from_environment,
     review_dispositions_from_environment,
+    review_updates_from_environment,
     teacher_storage_key_from_environment,
 )
 from services.feedback.service import (  # noqa: E402
@@ -69,6 +70,24 @@ def seed_workspace(root: Path, token: str) -> None:
         path = root / f"feedback/tasks/{teacher_key}/{task['task_id']}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(task, ensure_ascii=False), encoding="utf-8")
+
+
+def seed_freeform_task(root: Path, token: str) -> None:
+    teacher_key = hashlib.sha256(token.encode("ascii")).hexdigest()
+    task = {
+        "schema_version": 1,
+        "task_id": "q474-v1-teacher-feedback",
+        "courseware_id": "q474-longitudinal-wave",
+        "revision_id": "q474-v1-39e8e4f62f4b",
+        "title": "第474题：纵波弹簧标记点",
+        "courseware_url": "q474-v1-39e8e4f62f4b/",
+        "assigned_at": "2026-08-20T13:57:33+08:00",
+        "feedback_mode": "freeform",
+        "prompt": "请说说这份课件最值得保留的地方，或学生仍可能卡在哪里。",
+    }
+    path = root / f"feedback/tasks/{teacher_key}/{task['task_id']}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(task, ensure_ascii=False), encoding="utf-8")
 
 
 def close_task(root: Path, token: str, task_id: str, courseware_id: str, revision_id: str) -> None:
@@ -149,6 +168,24 @@ class RunningServer:
 
 
 class FeedbackOnlyHttpTests(unittest.TestCase):
+    def test_review_updates_environment_is_optional_and_bounded(self) -> None:
+        update = {"task": {"task_id": "task-1"}, "feedback": {"feedback_id": "feedback-1"}}
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(review_updates_from_environment(), [])
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_REVIEW_UPDATES_JSON": json.dumps([update])},
+            clear=True,
+        ):
+            self.assertEqual(review_updates_from_environment(), [update])
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_REVIEW_UPDATES_JSON": "{}"},
+            clear=True,
+        ):
+            with self.assertRaises(RuntimeError):
+                review_updates_from_environment()
+
     def test_review_dispositions_environment_is_optional_and_bounded(self) -> None:
         with patch.dict(os.environ, {}, clear=True):
             self.assertEqual(review_dispositions_from_environment(), [])
@@ -284,6 +321,37 @@ class FeedbackOnlyHttpTests(unittest.TestCase):
             self.assertEqual(resolved["tasks"][0]["task_id"], "q01-v8-teacher-review")
             self.assertEqual(result["revision_id"], "q01-v8-1c89623d5bf0")
             self.assertEqual(updated["tasks"][1]["status"], "reviewed")
+
+    def test_freeform_feedback_can_be_submitted_through_review_route(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            store_root = Path(temporary)
+            seed_freeform_task(store_root, STRONG_CODE)
+            service = FeedbackService(LocalFeedbackStore(store_root))
+            with RunningServer(service) as running:
+                submitted, result, _ = running.request(
+                    "POST",
+                    "/api/reviews/q474-v1-teacher-feedback",
+                    payload={"message": "动画一看就懂，自然位置的来源也讲清楚了。"},
+                    code=STRONG_CODE,
+                    origin=ALLOWED_ORIGIN,
+                )
+                loaded, workspace, _ = running.request(
+                    "GET",
+                    "/api/reviews?courseware_id=q474-longitudinal-wave",
+                    code=STRONG_CODE,
+                    origin=ALLOWED_ORIGIN,
+                )
+
+            self.assertEqual(submitted, 201)
+            self.assertEqual(loaded, 200)
+            assert result is not None and workspace is not None
+            self.assertEqual(result["record_type"], "free_feedback")
+            self.assertEqual(result["source_channel"], "teacher_entry")
+            self.assertEqual(workspace["tasks"][0]["status"], "reviewed")
+            self.assertEqual(
+                workspace["tasks"][0]["current_feedback"]["message"],
+                "动画一看就懂，自然位置的来源也讲清楚了。",
+            )
 
     def test_closed_review_task_is_visible_but_cannot_be_submitted(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

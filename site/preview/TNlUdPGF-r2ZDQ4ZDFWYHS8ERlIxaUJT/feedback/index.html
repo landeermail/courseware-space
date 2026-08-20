@@ -8,7 +8,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="courseware-api-base" content="https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run">
   <link rel="icon" href="data:,">
-  <title>课件结构化评价</title>
+  <title>反馈这份课件</title>
   <style>
     :root {
       --ink: #172033;
@@ -52,6 +52,11 @@
     .task-info.closed { color: #3d4858; background: #edf1f6; }
     .closed-info { margin: 14px 0 0; padding: 14px 16px; border-radius: 12px; color: #3d4858; background: #edf1f6; }
     .closed-info[hidden] { display: none; }
+    .prior-feedback { margin: 0 0 18px; padding: 14px 16px; border-left: 3px solid var(--green); border-radius: 10px; background: var(--green-soft); }
+    .prior-feedback[hidden] { display: none; }
+    .prior-feedback strong { display: block; margin-bottom: 5px; }
+    .prior-feedback p { margin: 0; white-space: pre-wrap; }
+    .prior-feedback small { display: block; margin-top: 7px; color: var(--muted); }
     .field-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 700; }
     .text-input, textarea {
       width: 100%; min-height: 46px; border: 1px solid #b9c5d4; border-radius: 10px; color: var(--ink); background: #fff;
@@ -117,21 +122,29 @@
     <header class="hero">
       <div>
         <p class="eyebrow">老师试用工具 · 匿名提交</p>
-        <h1>课件结构化评价</h1>
-        <p class="lead">如果希望逐项留存意见，可以使用这份六维表单；直接反馈同样有效。无需填写姓名。</p>
+        <h1 id="pageTitle">反馈这份课件</h1>
+        <p class="lead" id="pageLead">不需要按固定维度打分，说出你最想告诉我们的内容即可。无需填写姓名。</p>
       </div>
-      <nav class="hero-links" aria-label="返回"><a href="../reviews/">我的评价</a><a href="../">返回课件列表</a></nav>
+      <nav class="hero-links" aria-label="返回"><a href="../reviews/">我的反馈</a><a href="../">返回课件列表</a></nav>
     </header>
 
     <form id="feedbackForm" novalidate>
       <section class="panel" aria-labelledby="metaTitle">
-        <h2 class="panel-title" id="metaTitle">本次评价</h2>
-        <p class="panel-help">表单针对服务端分派的精确 revision；再次提交会保存为新版本，历史版本保留。</p>
-        <p class="task-info" id="taskInfo">正在读取评价任务…</p>
+        <h2 class="panel-title" id="metaTitle">本次反馈</h2>
+        <p class="panel-help">反馈会绑定当前精确版本；再次提交会保存为新版本，历史内容不会被覆盖。</p>
+        <p class="task-info" id="taskInfo">正在读取反馈任务…</p>
         <p class="closed-info" id="closedInfo" hidden></p>
       </section>
 
-      <section class="panel" aria-labelledby="dimensionsTitle">
+      <section class="panel" id="freeformPanel" aria-labelledby="freeformTitle" hidden>
+        <h2 class="panel-title" id="freeformTitle">最想告诉我们的内容</h2>
+        <p class="panel-help" id="freeformPrompt">可以说这份课件最值得保留的地方、学生仍可能卡住的地方，或任何你认为重要的内容。</p>
+        <div class="prior-feedback" id="priorFreeform" hidden><strong>已经记录的反馈</strong><p id="priorFreeformMessage"></p><small id="priorFreeformSource"></small></div>
+        <label class="field-label" for="freeformMessage">你的反馈</label>
+        <textarea id="freeformMessage" maxlength="4000" rows="8" placeholder="直接写下新的观察或补充即可。"></textarea>
+      </section>
+
+      <section class="panel" id="structuredDimensions" aria-labelledby="dimensionsTitle">
         <h2 class="panel-title" id="dimensionsTitle">逐维判断</h2>
         <p class="panel-help">每一维都必须选择“过”或“不过”。选择“不过”时必须说明具体问题。</p>
         <div class="dimension-list">
@@ -180,7 +193,7 @@
         </div>
       </section>
 
-      <section class="panel" aria-labelledby="overallTitle">
+      <section class="panel" id="structuredOverall" aria-labelledby="overallTitle">
         <h2 class="panel-title" id="overallTitle">整体结论</h2>
         <p class="panel-help">整体结论不代替六维记录；它只用于决定当前版本是否接受。</p>
         <div class="overall-grid">
@@ -205,13 +218,14 @@
           </div>
         </div>
 
-        <div class="error-summary" id="errorSummary" role="alert" tabindex="-1" hidden></div>
-        <div class="actions">
-          <button class="btn primary" id="submitButton" type="submit" disabled>正在读取评价任务…</button>
-        </div>
-        <p class="status" id="status" aria-live="polite"></p>
-        <p class="privacy">隐私说明：只提交本页显示的匿名评价字段，不收集姓名、学校、联系方式或试卷来源。</p>
       </section>
+
+      <div class="error-summary" id="errorSummary" role="alert" tabindex="-1" hidden></div>
+      <div class="actions">
+        <button class="btn primary" id="submitButton" type="submit" disabled>正在读取反馈任务…</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="privacy">隐私说明：只提交本页显示的匿名反馈，不收集姓名、学校、联系方式或试卷来源。</p>
     </form>
   </main>
 
@@ -222,8 +236,18 @@
       ['verifiability', '可验证性'], ['exam_connection', '与解题的衔接']
     ];
     const form = document.getElementById('feedbackForm');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageLead = document.getElementById('pageLead');
     const taskInfo = document.getElementById('taskInfo');
     const closedInfo = document.getElementById('closedInfo');
+    const freeformPanel = document.getElementById('freeformPanel');
+    const freeformPrompt = document.getElementById('freeformPrompt');
+    const freeformMessage = document.getElementById('freeformMessage');
+    const priorFreeform = document.getElementById('priorFreeform');
+    const priorFreeformMessage = document.getElementById('priorFreeformMessage');
+    const priorFreeformSource = document.getElementById('priorFreeformSource');
+    const structuredDimensions = document.getElementById('structuredDimensions');
+    const structuredOverall = document.getElementById('structuredOverall');
     const reasonPanel = document.getElementById('reasonPanel');
     const reasonInputs = [...document.querySelectorAll('#reasonGrid input')];
     const errorSummary = document.getElementById('errorSummary');
@@ -260,11 +284,22 @@
     function blockForm(message) {
       taskInfo.textContent = message;
       taskInfo.classList.add('error');
+      freeformPanel.hidden = true;
+      structuredDimensions.hidden = true;
+      structuredOverall.hidden = true;
       submitButton.disabled = true;
-      submitButton.textContent = '无法提交';
+      submitButton.hidden = true;
     }
 
     function prefill(feedback) {
+      if (task && task.feedback_mode === 'freeform') {
+        priorFreeform.hidden = false;
+        priorFreeformMessage.textContent = feedback.message || '';
+        priorFreeformSource.textContent = feedback.source_channel === 'product_owner_relay' ? '来源：经产品负责人转述记录' : '来源：老师入口提交';
+        freeformMessage.value = '';
+        submitButton.textContent = '提交补充反馈';
+        return;
+      }
       dimensions.forEach(([key]) => {
         const item = (feedback.dimensions || {})[key];
         if (!item) return;
@@ -295,13 +330,13 @@
         let url = `${API_BASE}/api/reviews`;
         if (!taskIdFromLink && coursewareIdFromLink) url += `?courseware_id=${encodeURIComponent(coursewareIdFromLink)}`;
         const response = await fetch(url, {headers: {'X-Courseware-Access-Code': accessCode}});
-        if (response.status === 403) throw new Error('个人链接无效或评价任务不存在，请从完整专属链接进入。');
-        if (!response.ok) throw new Error('评价任务暂时无法读取，请稍后刷新重试。');
+        if (response.status === 403) throw new Error('个人链接无效或反馈任务不存在，请从完整专属链接进入。');
+        if (!response.ok) throw new Error('反馈任务暂时无法读取，请稍后刷新重试。');
         const data = await response.json();
         const tasks = Array.isArray(data.tasks) ? data.tasks : [];
         task = taskIdFromLink ? tasks.find(candidate => candidate.task_id === taskIdFromLink) || null : tasks[0] || null;
         if (!task) {
-          blockForm('未找到对应的评价任务，请从“我的评价”页面进入。');
+          blockForm('未找到对应的反馈任务，请从“我的反馈”页面进入。');
           return;
         }
         taskInfo.innerHTML = `<strong></strong><span>课件 ID：</span><span>精确 revision：</span><span>任务状态：</span>`;
@@ -312,22 +347,36 @@
         if (task.status === 'closed') {
           spans[2].textContent = '任务状态：已结束';
           taskInfo.classList.add('closed');
-          closedInfo.textContent = (task.disposition || {}).reason || '本任务已经结束，无需补填评价。';
+          closedInfo.textContent = (task.disposition || {}).reason || '本任务已经结束，无需补填反馈。';
           closedInfo.hidden = false;
           [...form.querySelectorAll('.panel')].slice(1).forEach(panel => { panel.hidden = true; });
+          submitButton.hidden = true;
           return;
         }
-        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已评价（本次为修改）' : '待评价'}`;
+        const freeform = task.feedback_mode === 'freeform';
+        pageTitle.textContent = freeform ? '反馈这份课件' : '课件结构化评价';
+        pageLead.textContent = freeform ? '不需要按固定维度打分，说出你最想告诉我们的内容即可。无需填写姓名。' : '这是一份保留的可选六维表单；直接反馈同样有效。无需填写姓名。';
+        freeformPanel.hidden = !freeform;
+        structuredDimensions.hidden = freeform;
+        structuredOverall.hidden = freeform;
+        if (freeform && task.prompt) freeformPrompt.textContent = task.prompt;
+        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已反馈（本次为补充）' : '等待反馈'}`;
         submitButton.disabled = false;
-        submitButton.textContent = task.current_feedback ? '保存修改' : '提交评价';
+        submitButton.hidden = false;
+        submitButton.textContent = task.current_feedback ? (freeform ? '提交补充反馈' : '保存修改') : (freeform ? '提交反馈' : '提交评价');
         if (task.current_feedback) prefill(task.current_feedback);
       } catch (error) {
-        blockForm(error instanceof Error ? error.message : '评价任务暂时无法读取，请稍后刷新重试。');
+        blockForm(error instanceof Error ? error.message : '反馈任务暂时无法读取，请稍后刷新重试。');
       }
     }
 
     function validateAndBuild() {
       const errors = [];
+      if (task && task.feedback_mode === 'freeform') {
+        const message = freeformMessage.value.trim();
+        if (!message) errors.push({element: freeformMessage, text: '请写下最想告诉我们的内容。'});
+        return errors.length ? {errors} : {payload: {message}};
+      }
       const dimensionPayload = {};
       dimensions.forEach(([key, label]) => {
         const card = document.querySelector(`[data-dimension="${key}"]`);
@@ -369,6 +418,7 @@
       if (result.errors) { showErrors(result.errors); return; }
       const accessCode = sessionStorage.getItem(ACCESS_KEY) || '';
       const wasReviewed = task.status === 'reviewed';
+      const freeform = task.feedback_mode === 'freeform';
       submitButton.disabled = true;
       submitButton.textContent = '正在保存…';
       try {
@@ -379,12 +429,12 @@
         });
         const responsePayload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(responsePayload.error || `保存失败（${response.status}）`);
-        status.textContent = wasReviewed ? '修改已保存。正在返回“我的评价”…' : '评价已提交，谢谢。正在返回“我的评价”…';
+        status.textContent = wasReviewed ? (freeform ? '补充反馈已保存。正在返回“我的反馈”…' : '修改已保存。正在返回“我的反馈”…') : (freeform ? '反馈已提交，谢谢。正在返回“我的反馈”…' : '评价已提交，谢谢。正在返回“我的反馈”…');
         window.setTimeout(() => location.assign('../reviews/'), 1200);
       } catch (error) {
         status.textContent = error instanceof Error ? error.message : '保存失败，请稍后再试。';
         submitButton.disabled = false;
-        submitButton.textContent = wasReviewed ? '保存修改' : '重新提交';
+        submitButton.textContent = wasReviewed ? (freeform ? '提交补充反馈' : '保存修改') : '重新提交';
       }
     });
 

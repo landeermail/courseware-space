@@ -21,6 +21,7 @@ CLI="${ALIYUN_CLI:-$(command -v aliyun || printf '')}"
 PACKAGE="${COURSEWARE_FEEDBACK_PACKAGE:-$MODULE_ROOT/dist/courseware-space-feedback-fc.zip}"
 TEACHER_STORAGE_KEY="${COURSEWARE_TEACHER_STORAGE_KEY:-}"
 REVIEW_DISPOSITIONS="${COURSEWARE_REVIEW_DISPOSITIONS_JSON:-}"
+REVIEW_UPDATES="${COURSEWARE_REVIEW_UPDATES_JSON:-}"
 
 APPLY=0
 for arg in "$@"; do
@@ -53,6 +54,18 @@ print(len(value))' "$REVIEW_DISPOSITIONS" 2>/dev/null)"; then
   fi
 else
   disposition_count=0
+fi
+if [[ -n "$REVIEW_UPDATES" ]]; then
+  if ! review_update_count="$(python3 -c 'import json, sys
+value = json.loads(sys.argv[1])
+if not isinstance(value, list) or not 1 <= len(value) <= 10 or not all(isinstance(item, dict) for item in value):
+    raise SystemExit(2)
+print(len(value))' "$REVIEW_UPDATES" 2>/dev/null)"; then
+    printf 'COURSEWARE_REVIEW_UPDATES_JSON 必须包含 1 至 10 个 JSON 对象。\n' >&2
+    exit 1
+  fi
+else
+  review_update_count=0
 fi
 if [[ ! "$FEEDBACK_BUCKET" =~ ^courseware-space-private-[a-z0-9-]+$ ]]; then
   printf 'COURSEWARE_FEEDBACK_OSS_BUCKET 必须是 courseware-space-private-* bucket。\n' >&2
@@ -128,6 +141,9 @@ env_keys=(
 if [[ -n "$REVIEW_DISPOSITIONS" ]]; then
   env_keys+=(COURSEWARE_REVIEW_DISPOSITIONS_JSON)
 fi
+if [[ -n "$REVIEW_UPDATES" ]]; then
+  env_keys+=(COURSEWARE_REVIEW_UPDATES_JSON)
+fi
 
 if [[ "$APPLY" == "1" ]]; then
   printf 'mode=apply\n'
@@ -150,6 +166,7 @@ printf 'package_kimi_refs=0 package_generator_refs=0\n'
 printf 'access_code=set-not-printed\n'
 printf 'teacher_storage_key=set-not-printed\n'
 printf 'review_dispositions=%s\n' "$disposition_count"
+printf 'review_updates=%s\n' "$review_update_count"
 printf 'account=not-printed\n'
 if [[ "$APPLY" != "1" ]]; then
   printf 'cloud_changes=0\n'
@@ -291,6 +308,9 @@ function_env=(
 )
 if [[ -n "$REVIEW_DISPOSITIONS" ]]; then
   function_env+=("COURSEWARE_REVIEW_DISPOSITIONS_JSON=$REVIEW_DISPOSITIONS")
+fi
+if [[ -n "$REVIEW_UPDATES" ]]; then
+  function_env+=("COURSEWARE_REVIEW_UPDATES_JSON=$REVIEW_UPDATES")
 fi
 code_config=("ossBucketName=$COURSEWARE_OSS_BUCKET" "ossObjectName=$code_object")
 

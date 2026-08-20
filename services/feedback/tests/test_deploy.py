@@ -248,6 +248,32 @@ class FeedbackOnlyDeployTests(unittest.TestCase):
         self.assertNotIn("https://", result.stdout)
         self.assertNotIn("KIMI_API_KEY", result.stdout)
 
+    def test_dry_run_accepts_bounded_review_updates_without_printing_contents(self) -> None:
+        env = self.base_env()
+        marker = "老师转述内容不得出现在部署计划"
+        env["COURSEWARE_REVIEW_UPDATES_JSON"] = json.dumps(
+            [{"task": {"task_id": "q474-v1-teacher-feedback"}, "feedback": {"message": marker}}],
+            ensure_ascii=False,
+        )
+
+        result = self.run_deploy(env)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("review_updates=1", result.stdout)
+        self.assertIn("COURSEWARE_REVIEW_UPDATES_JSON", result.stdout)
+        self.assertNotIn(marker, result.stdout + result.stderr)
+        self.assertEqual(self.cli_calls(), [])
+
+    def test_invalid_review_updates_are_rejected_before_cloud_calls(self) -> None:
+        env = self.base_env()
+        env["COURSEWARE_REVIEW_UPDATES_JSON"] = "{}"
+
+        result = self.run_deploy(env)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("COURSEWARE_REVIEW_UPDATES_JSON", result.stderr)
+        self.assertEqual(self.cli_calls(), [])
+
     def test_non_private_feedback_bucket_is_rejected(self) -> None:
         env = self.base_env()
         env["COURSEWARE_FEEDBACK_OSS_BUCKET"] = "courseware-space-demo-123"

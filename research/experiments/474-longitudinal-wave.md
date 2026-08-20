@@ -1,7 +1,7 @@
 # 474 纵波标记点研发实验
 
 - question_id: 474
-- courseware_id: 474-longitudinal-wave
+- courseware_id: q474-longitudinal-wave
 - lifecycle: experiment
 - workflow_state: closed
 - revision_id: q474-v1-39e8e4f62f4b
