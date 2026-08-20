@@ -20,6 +20,7 @@ RATE_WINDOW="${COURSEWARE_RATE_LIMIT_WINDOW:-600}"
 CLI="${ALIYUN_CLI:-$(command -v aliyun || printf '')}"
 PACKAGE="${COURSEWARE_FEEDBACK_PACKAGE:-$MODULE_ROOT/dist/courseware-space-feedback-fc.zip}"
 TEACHER_STORAGE_KEY="${COURSEWARE_TEACHER_STORAGE_KEY:-}"
+REVIEW_DISPOSITIONS="${COURSEWARE_REVIEW_DISPOSITIONS_JSON:-}"
 
 APPLY=0
 for arg in "$@"; do
@@ -40,6 +41,18 @@ fi
 if [[ ! "$TEACHER_STORAGE_KEY" =~ ^[0-9a-f]{64}$ ]]; then
   printf 'COURSEWARE_TEACHER_STORAGE_KEY 必须是现有老师评价目录的 SHA-256。\n' >&2
   exit 1
+fi
+if [[ -n "$REVIEW_DISPOSITIONS" ]]; then
+  if ! disposition_count="$(python3 -c 'import json, sys
+value = json.loads(sys.argv[1])
+if not isinstance(value, list) or not 1 <= len(value) <= 10 or not all(isinstance(item, dict) for item in value):
+    raise SystemExit(2)
+print(len(value))' "$REVIEW_DISPOSITIONS" 2>/dev/null)"; then
+    printf 'COURSEWARE_REVIEW_DISPOSITIONS_JSON 必须包含 1 至 10 个 JSON 对象。\n' >&2
+    exit 1
+  fi
+else
+  disposition_count=0
 fi
 if [[ ! "$FEEDBACK_BUCKET" =~ ^courseware-space-private-[a-z0-9-]+$ ]]; then
   printf 'COURSEWARE_FEEDBACK_OSS_BUCKET 必须是 courseware-space-private-* bucket。\n' >&2
@@ -112,6 +125,9 @@ env_keys=(
   COURSEWARE_ACCESS_CODE
   COURSEWARE_TEACHER_STORAGE_KEY
 )
+if [[ -n "$REVIEW_DISPOSITIONS" ]]; then
+  env_keys+=(COURSEWARE_REVIEW_DISPOSITIONS_JSON)
+fi
 
 if [[ "$APPLY" == "1" ]]; then
   printf 'mode=apply\n'
@@ -133,6 +149,7 @@ printf 'kimi_env_vars=0\n'
 printf 'package_kimi_refs=0 package_generator_refs=0\n'
 printf 'access_code=set-not-printed\n'
 printf 'teacher_storage_key=set-not-printed\n'
+printf 'review_dispositions=%s\n' "$disposition_count"
 printf 'account=not-printed\n'
 if [[ "$APPLY" != "1" ]]; then
   printf 'cloud_changes=0\n'
@@ -272,6 +289,9 @@ function_env=(
   "COURSEWARE_ACCESS_CODE=$COURSEWARE_ACCESS_CODE"
   "COURSEWARE_TEACHER_STORAGE_KEY=$TEACHER_STORAGE_KEY"
 )
+if [[ -n "$REVIEW_DISPOSITIONS" ]]; then
+  function_env+=("COURSEWARE_REVIEW_DISPOSITIONS_JSON=$REVIEW_DISPOSITIONS")
+fi
 code_config=("ossBucketName=$COURSEWARE_OSS_BUCKET" "ossObjectName=$code_object")
 
 "$CLI" fc update-function --region "$REGION" --function-name "$FUNCTION" \

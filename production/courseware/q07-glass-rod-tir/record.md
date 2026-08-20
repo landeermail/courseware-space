@@ -2,81 +2,48 @@
 
 - question_id: q07-glass-rod-tir
 - courseware_id: q07-glass-rod-tir
+- lifecycle: production
+- workflow_state: closed
 - revision_id: 5c8590bd2060
-- entry_mode: resume
-- current_stage: release
-- workflow_state: waiting
-- next_role: product-owner
-- next_action: 等待产品负责人决定是否把原老师长期题库链接发送给老师；只有实际发送后才记录 delivery_ref 并把 outcome 改为 delivered，未经授权不联系老师
-- question_packet_path: production/courseware/q07-glass-rod-tir/input/
-- candidate_path: production/courseware/q07-glass-rod-tir/work/candidate/
-- evidence_path: production/courseware/q07-glass-rod-tir/work/evidence/
+- next_actor: none
+- next_action: none
+- candidate_path: none
 - release_root: site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/
 - allowed_write_paths: none
-- physics_gate: passed
-- physics_review: passed
-- teaching_plan: approved
-- blueprint_approval: approved
-- a0_status: passed
-- artifact_manifest_ref: site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/manifest.json
-- artifact_review_level: A1
-- artifact_review_revision_id: 5c8590bd2060
-- artifact_review_status: passed
-- artifact_review_evidence_ref: production/courseware/q07-glass-rod-tir/record.md#independent-artifact-review
-- teacher_ready_revision: 5c8590bd2060
-- delivery_ref: none
-- access_path: 原老师长期 GitHub Pages 题库链接，经稳定卡片进入 q07-v4-5bb63ec7f581/；访问 fragment 不写入记录
-- outcome: pending
-- promoted_revision_id: none
-- decision_owner: product-owner
-- approval_ref: q07-tir-count-plan-v1 and blueprint v3 approved; release adaptation 5c8590bd2060 A0/A1 passed; PR 22 Pages and product-owner real-entry confirmation passed
-- blocked_preflight: 2026-08-13 production 模块路径治理前重新读取 BLOCKED.md；临时 Root AccessKey 云端删除与备案后域名切换均未触发本地迁移，联系老师仍需单独产品负责人决定
-- current_evidence_refs: 本记录；规范题包；q07 blueprint v3；candidate manifest 5c8590bd2060；A1-q07-5c8590bd2060-2026-08-12；Pages PR 22 与 deploy run 31588393867
-- skill_revision: production-module-paths-2026-08-13
+- blocked_preflight: 2026-08-20 已重读 BLOCKED.md；本任务不触发临时 Root AccessKey 已清理结论或备案后域名切换
+- current_evidence_refs: 本记录；docs/adr/0010-teacher-controlled-interactive-tool.md；docs/adr/0011-default-to-minimal-courseware-research-experiments.md；docs/adr/0013-close-retired-teacher-review-tasks-with-dispositions.md；PROGRESS.md v11；2026-08-20 生产评价 API 核验
+- skill_revision: lean-lifecycle-2026-08-20
 
-## Question packet and source uncertainty
+## Goal and evidence boundary
 
-实心玻璃管长 40 cm、宽 4 cm，折射率为 `2/√3`，光从左端正中心射入，求光最多可以在管中反射多少次。
+保留 q07 已发布精确版本和顾问老师的产品反馈，同时结束已经退出当前产品协议的固定六维补填义务。结束旧任务不等于补录老师评价，也不证明精确 revision 已送达、被打开或被接受。
 
-- 规范转写：`production/courseware/q07-glass-rod-tir/input/question.md`。
-- 原图：`production/courseware/q07-glass-rod-tir/input/source.png`，SHA-256 `589ce078908d72efaee5f9ee031e3efc11a449ddf2be39ba7d44d68602979ae1`。
-- 不从示意图斜率读取角度；入口折射可实现性是正式模型的一部分。
+## Current artifact
 
-## Physics truth contract and review
+- 不可变源码：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/`。
+- manifest revision：`5c8590bd20609630581c97f1e743cd88b8850127f8beabb5d0496467b902b86f`；线上 `index.html` SHA-256：`5bb63ec7f581ee4923aa4b3c5a3c5623ea75f4a6f648597f1840a7350c827ead`。
+- 发布与老师长期题库真实入口已经验证；旧记录没有留下该精确 revision 的发送、打开或评价凭证。
 
-- 玻璃内轴向角为 `θ`，侧壁入射角为 `α=90°−θ`，临界角 `C=60°`；严格全反射要求 `θ<30°`。
-- 反射点位置 `x_k=(4k−2)/tanθ`；第 6 次存在 `28.81°<θ<30°` 的可行开区间，第 7 次要求的角度与全反射条件冲突，最大值为 6。
-- 空气入射角与管内角通过 Snell 关系联立，不把不可实现的管内方向作为自由输入。
-- 独立物理复核 `physics-review-q07-2026-08-07` 通过；未决物理项为无。
+## Direct evidence
 
-## Approved teaching plan and blueprint
+- ADR 0010 记录顾问老师对 q07 给出明确正面意见，但没有在该处标明意见对应的精确 revision。
+- 服务端为 revision `5c8590bd2060` 建立了旧六维评价任务，因此老师题库持续显示待评价。
+- 旧生产记录同时写着该精确 revision 尚未发送，和 ADR 0010 的反馈存在版本归属缺口。
 
-- 现行 blueprint v3 将学习路径压缩为读原题、找边界、拆开步长、判定上限；主操控是真实空气入射方向。
-- 学习者通过跨越 `29.9° → 30.0° → 30.1°` 观察严格全反射边界，再把折叠光路转换为首段 2 cm、周期段 4 cm 和 `x_k`。
-- 图、式、文字、角度、反射点与计数只消费 `model.js` 的同一输出。
-- 支持桌面与 iPad 横屏 1024×768；手机、竖屏、真实 iPad 手感和老师教学认可不在内部放行范围。
+## Interpretation
 
-## Artifact identity and A0
+不能把顾问老师的正面意见强行绑定到 `5c8590bd2060`，也没有理由继续要求老师补填已经退出默认协议的表单。最诚实的收口是结束旧任务，同时保留“精确 revision 是否实际体验”未验证。
 
-- 发布 manifest：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/manifest.json`，完整 SHA-256 `5c8590bd20609630581c97f1e743cd88b8850127f8beabb5d0496467b902b86f`。
-- 不可变源码目录：`site/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q07-v4-5bb63ec7f581/`；公开 URL 仍省略 `site/` 前缀，线上 `index.html` SHA-256 `5bb63ec7f581ee4923aa4b3c5a3c5623ea75f4a6f648597f1840a7350c827ead`。
-- 当前 revision 是基于已通过 A2 的 `b308c05e69ac` 做发布适配窄修，只增加正式导航、隐私 meta 和版本信号；19 个 payload 已重算一致。
-- A0 覆盖模型 92/92、站点和学习者表面、桌面与 iPad 横屏、导航、一个真实滑条拖动、控制台和资源加载。
+## Decision and next action
 
-## Independent artifact review
+产品负责人于 2026-08-20 授权完整收口。评价服务已部署包 `de110628bf60b7705a8b943917840ee5446a717b9e44cc6b2f5771b55bb3b642`，受限 FC 运行角色已追加处置对象并移除一次性迁移变量；生产 API 返回 q07 为 `closed`。本轮结束，不再要求老师补填固定表单。
 
-- `A1` 对精确 `5c8590bd2060` 通过，4 个 rendered states 内无开放 P0/P1。
-- 两条生产导航、URL 不含访问码、版本身份、桌面滑条锚点及双视口不遮挡均通过。
-- 未检查范围为完整临界矩阵、全部场景、真实 iPad 触控、手机/竖屏、老师认可和真实学习效果；这些不由 A1 冒充通过。
+## Verified and unverified
 
-## Product checkpoint and immutable release
+- 已验证：物理结论、发布 revision、真实入口、顾问老师对 q07 的正面产品意见及旧状态成因；生产评价 API 返回 q07 `closed`、无伪造评价，迁移环境变量已移除。
+- 未验证：正面意见对应的精确 revision；该 revision 的发送、打开与学生效果。
 
-- 产品负责人批准 `5c8590bd2060` teacher-ready，并授权发布；PR 22 合并提交 `33c2dfbe23a35ec0bfda4106636f7c8299dbb894`，Pages run `31588393867` 成功。
-- 真实入口机器门禁五项及线上 manifest 19/19 对账通过；产品负责人于 2026-08-12 从长期题库实际确认卡片、课件、返回题库和去评价路径。
-- 发布与入口确认不等于已经发送老师。当前没有发送、送达、打开、评价或接受证据，因此 `outcome` 保持 `pending`。
+## Token observation and reusable-learning candidates
 
-## Current waiting boundary
-
-- 下一步只需要产品负责人决定是否发送原长期题库链接；发送动作需在执行前重新读取 `BLOCKED.md`。
-- 若发送，记录脱敏 `delivery_ref` 并进入 `teacher-evaluation`；不得在记录中写入老师链接 fragment 或访问码。
-- 没有新授权时不重复部署、不创建新 revision、不修改评价服务或老师凭证。
+- 本题历史 Token 未形成可比总量。
+- 待跨题复验：当评价协议改变时，应通过明确任务处置结束旧义务，而不是删除历史或要求老师重填。

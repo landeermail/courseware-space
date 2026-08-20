@@ -38,8 +38,10 @@ from services.feedback.service import (  # noqa: E402
 )
 from services.feedback.review_workspace import (  # noqa: E402
     ReviewAccessError,
+    ReviewClosedError,
     ReviewDataError,
     TeacherReviewWorkspace,
+    apply_task_dispositions,
 )
 
 
@@ -119,6 +121,23 @@ def teacher_storage_key_from_environment() -> str | None:
     if value and not STORAGE_KEY_PATTERN.fullmatch(value):
         raise RuntimeError("COURSEWARE_TEACHER_STORAGE_KEY 必须是 SHA-256")
     return value or None
+
+
+def review_dispositions_from_environment() -> list[dict[str, object]]:
+    raw = os.environ.get("COURSEWARE_REVIEW_DISPOSITIONS_JSON", "").strip()
+    if not raw:
+        return []
+    if len(raw.encode("utf-8")) > 16384:
+        raise RuntimeError("COURSEWARE_REVIEW_DISPOSITIONS_JSON 过大")
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("COURSEWARE_REVIEW_DISPOSITIONS_JSON 必须是 JSON") from error
+    if not isinstance(value, list) or not 1 <= len(value) <= 10 or not all(
+        isinstance(item, dict) for item in value
+    ):
+        raise RuntimeError("COURSEWARE_REVIEW_DISPOSITIONS_JSON 必须包含 1 至 10 个对象")
+    return value
 
 
 def feedback_services_from_environment(runtime_dir: Path) -> tuple[AccessCodeGate, FeedbackService]:
@@ -248,6 +267,8 @@ class FeedbackHandler(BaseHTTPRequestHandler):
             data = self._read_json()
             result = self.review_workspace.submit(self._personal_token(), task_id, data)
             self._json(HTTPStatus.CREATED, result)
+        except ReviewClosedError:
+            self._json(HTTPStatus.CONFLICT, {"error": "评价任务已结束，无需补填"})
         except ReviewAccessError:
             self._json(HTTPStatus.FORBIDDEN, {"error": "个人链接无效或评价任务不存在"})
         except (ValueError, FeedbackValidationError) as error:
@@ -329,9 +350,19 @@ def main() -> int:
     FeedbackHandler.rate_limiter = rate_limiter_from_environment()
     FeedbackHandler.access_gate = gate
     FeedbackHandler.feedback_service = service
+    storage_key = teacher_storage_key_from_environment()
+    dispositions = review_dispositions_from_environment()
+    if dispositions:
+        if not storage_key:
+            raise RuntimeError("任务处置需要现有老师存储键")
+        result = apply_task_dispositions(service.store, storage_key, dispositions)
+        print(
+            "Teacher review dispositions: "
+            f"written={result['written']} existing={result['existing']}"
+        )
     FeedbackHandler.review_workspace = TeacherReviewWorkspace(
         service.store,
-        storage_key=teacher_storage_key_from_environment(),
+        storage_key=storage_key,
     )
     server = ThreadingHTTPServer((args.host, args.port), FeedbackHandler)
     print(f"Courseware feedback-only service: http://{args.host}:{args.port}/api/health")
