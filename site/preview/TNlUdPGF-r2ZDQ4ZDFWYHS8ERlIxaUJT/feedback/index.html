@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="courseware-api-base" content="https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run">
+  <link rel="icon" href="data:,">
+  <title>反馈这份课件</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5f6b7c;
+      --line: #d8e0ea;
+      --surface: #ffffff;
+      --soft: #f4f7fb;
+      --blue: #2459d3;
+      --blue-soft: #edf3ff;
+      --green: #087a55;
+      --green-soft: #eaf8f2;
+      --red: #b42318;
+      --red-soft: #fff0ee;
+      --shadow: 0 16px 44px rgba(23, 32, 51, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f7f9fc 0, #eef3f9 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+    button, input, textarea { font: inherit; }
+    button, label { -webkit-tap-highlight-color: transparent; }
+    a { color: var(--blue); }
+    .page { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 36px 0 64px; }
+    .hero { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; margin-bottom: 22px; }
+    .eyebrow { margin: 0 0 6px; color: var(--blue); font-size: 13px; font-weight: 750; letter-spacing: .08em; }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; letter-spacing: -.02em; }
+    .lead { max-width: 720px; margin: 12px 0 0; color: var(--muted); }
+    .hero-links { display: flex; gap: 12px; white-space: nowrap; }
+    .hero-links a { display: inline-flex; min-height: 44px; align-items: center; padding: 8px 14px; border: 1px solid #b7caf3; border-radius: 10px; background: #fff; font-weight: 700; text-decoration: none; }
+    .panel { margin-top: 16px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
+    .panel-title { margin: 0 0 4px; font-size: 20px; }
+    .panel-help { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+    .task-info { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--soft); font-size: 14px; }
+    .task-info strong { display: block; margin-bottom: 4px; font-size: 16px; }
+    .task-info span { display: inline-block; margin-right: 16px; color: var(--muted); }
+    .task-info.error { color: #7a271a; background: var(--red-soft); }
+    .task-info.closed { color: #3d4858; background: #edf1f6; }
+    .closed-info { margin: 14px 0 0; padding: 14px 16px; border-radius: 12px; color: #3d4858; background: #edf1f6; }
+    .closed-info[hidden] { display: none; }
+    .prior-feedback { margin: 0 0 18px; padding: 14px 16px; border-left: 3px solid var(--green); border-radius: 10px; background: var(--green-soft); }
+    .prior-feedback[hidden] { display: none; }
+    .prior-feedback strong { display: block; margin-bottom: 5px; }
+    .prior-feedback p { margin: 0; white-space: pre-wrap; }
+    .prior-feedback small { display: block; margin-top: 7px; color: var(--muted); }
+    .field-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 700; }
+    .text-input, textarea {
+      width: 100%; min-height: 46px; border: 1px solid #b9c5d4; border-radius: 10px; color: var(--ink); background: #fff;
+    }
+    .text-input { padding: 10px 12px; }
+    textarea { min-height: 92px; padding: 11px 12px; resize: vertical; }
+    .text-input:focus, textarea:focus, button:focus-visible, input:focus-visible + span { outline: 3px solid rgba(36, 89, 211, .22); outline-offset: 2px; }
+    .verdict-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .choice { position: relative; display: block; min-width: 0; cursor: pointer; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice span {
+      display: flex; min-height: 46px; align-items: center; justify-content: center; padding: 8px 12px;
+      border: 1px solid #b9c5d4; border-radius: 10px; background: #fff; font-weight: 700; text-align: center;
+    }
+    .choice input:checked + span { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); box-shadow: inset 0 0 0 1px var(--blue); }
+    .dimension-list { display: grid; gap: 14px; }
+    .dimension {
+      display: grid; grid-template-columns: minmax(210px, .75fr) minmax(280px, 1.25fr); gap: 22px;
+      padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface);
+    }
+    .dimension h3 { margin: 0 0 5px; font-size: 18px; }
+    .dimension p { margin: 0; color: var(--muted); font-size: 13px; }
+    .dimension-controls { display: grid; gap: 12px; }
+    .verdict-options .choice.pass input:checked + span { border-color: var(--green); color: var(--green); background: var(--green-soft); box-shadow: inset 0 0 0 1px var(--green); }
+    .verdict-options .choice.fail input:checked + span { border-color: var(--red); color: var(--red); background: var(--red-soft); box-shadow: inset 0 0 0 1px var(--red); }
+    .note-label { color: var(--muted); font-size: 13px; font-weight: 650; }
+    .note-label em { color: var(--red); font-style: normal; }
+    .overall-grid { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(320px, 1.2fr); gap: 22px; }
+    .reason-panel { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--red-soft); }
+    .reason-panel[hidden] { display: none; }
+    .reason-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 16px; margin: 10px 0 14px; }
+    .check { display: flex; min-height: 42px; align-items: center; gap: 9px; font-size: 14px; cursor: pointer; }
+    .check input { width: 20px; height: 20px; accent-color: var(--red); }
+    .error-summary { margin-bottom: 16px; padding: 14px 16px; border: 1px solid #f0a39d; border-radius: 12px; color: #7a271a; background: var(--red-soft); }
+    .error-summary[hidden] { display: none; }
+    .error-summary strong { display: block; margin-bottom: 5px; }
+    .error-summary ul { margin: 0; padding-left: 20px; }
+    .error-summary a { color: inherit; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .btn { min-height: 46px; padding: 10px 18px; border: 1px solid #aebacc; border-radius: 10px; color: var(--ink); background: #fff; cursor: pointer; font-weight: 750; }
+    .btn.primary { border-color: var(--blue); color: #fff; background: var(--blue); }
+    .btn:disabled { cursor: not-allowed; opacity: .45; }
+    .status { min-height: 26px; margin: 10px 0 0; color: var(--green); font-weight: 700; }
+    .privacy { margin: 16px 0 0; color: var(--muted); font-size: 13px; }
+    @media (max-width: 780px) {
+      .page { width: min(100% - 24px, 680px); padding-top: 24px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-links { white-space: normal; }
+      .dimension, .overall-grid { grid-template-columns: 1fr; }
+      .reason-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 420px) {
+      .page { width: min(100% - 20px, 380px); }
+      .panel { padding: 18px 14px; border-radius: 14px; }
+      .dimension { padding: 16px 14px; }
+      .reason-grid { grid-template-columns: 1fr; }
+      .actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">老师试用工具 · 匿名提交</p>
+        <h1 id="pageTitle">反馈这份课件</h1>
+        <p class="lead" id="pageLead">不需要按固定维度打分，说出你最想告诉我们的内容即可。无需填写姓名。</p>
+      </div>
+      <nav class="hero-links" aria-label="返回"><a href="../reviews/">我的反馈</a><a href="../">返回课件列表</a></nav>
+    </header>
+
+    <form id="feedbackForm" novalidate>
+      <section class="panel" aria-labelledby="metaTitle">
+        <h2 class="panel-title" id="metaTitle">本次反馈</h2>
+        <p class="panel-help">反馈会绑定当前精确版本；再次提交会保存为新版本，历史内容不会被覆盖。</p>
+        <p class="task-info" id="taskInfo">正在读取反馈任务…</p>
+        <p class="closed-info" id="closedInfo" hidden></p>
+      </section>
+
+      <section class="panel" id="freeformPanel" aria-labelledby="freeformTitle" hidden>
+        <h2 class="panel-title" id="freeformTitle">最想告诉我们的内容</h2>
+        <p class="panel-help" id="freeformPrompt">可以说这份课件最值得保留的地方、学生仍可能卡住的地方，或任何你认为重要的内容。</p>
+        <div class="prior-feedback" id="priorFreeform" hidden><strong>已经记录的反馈</strong><p id="priorFreeformMessage"></p><small id="priorFreeformSource"></small></div>
+        <label class="field-label" for="freeformMessage">你的反馈</label>
+        <textarea id="freeformMessage" maxlength="4000" rows="8" placeholder="直接写下新的观察或补充即可。"></textarea>
+      </section>
+
+      <section class="panel" id="structuredDimensions" aria-labelledby="dimensionsTitle">
+        <h2 class="panel-title" id="dimensionsTitle">逐维判断</h2>
+        <p class="panel-help">每一维都必须选择“过”或“不过”。选择“不过”时必须说明具体问题。</p>
+        <div class="dimension-list">
+          <article class="dimension" data-dimension="causal_presentation">
+            <div><h3>1. 因果呈现</h3><p>是否看得见起因、中间机制与结果，而非并列陈列结论。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="causal_presentation" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="causal_presentation" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="具体缺了哪个因果环节？"></textarea></label>
+            </div>
+          </article>
+          <article class="dimension" data-dimension="process_visibility">
+            <div><h3>2. 过程可见</h3><p>关键时序、中间状态、临界和转向是否能看清、停留和回看。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="process_visibility" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="process_visibility" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="哪个关键过程仍然看不清？"></textarea></label>
+            </div>
+          </article>
+          <article class="dimension" data-dimension="effective_interaction">
+            <div><h3>3. 有效交互</h3><p>学生是否能改变关键条件，并直接观察相应的物理后果。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="effective_interaction" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="effective_interaction" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="哪项操作没有形成有效反馈？"></textarea></label>
+            </div>
+          </article>
+          <article class="dimension" data-dimension="task_driven">
+            <div><h3>4. 任务驱动</h3><p>学生是否带着观察、预测、比较或验证问题使用模型。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="task_driven" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="task_driven" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="任务为什么没有带动思考？"></textarea></label>
+            </div>
+          </article>
+          <article class="dimension" data-dimension="verifiability">
+            <div><h3>5. 可验证性</h3><p>学生能否用操作、对照、读数或图表检验自己的预测。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="verifiability" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="verifiability" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="缺少什么证据或对照？"></textarea></label>
+            </div>
+          </article>
+          <article class="dimension" data-dimension="exam_connection">
+            <div><h3>6. 与解题的衔接</h3><p>直观理解能否回到对象、条件、规律、方程和变式判断。</p></div>
+            <div class="dimension-controls">
+              <div class="verdict-options"><label class="choice pass"><input type="radio" name="exam_connection" value="pass"><span>过</span></label><label class="choice fail"><input type="radio" name="exam_connection" value="fail"><span>不过</span></label></div>
+              <label class="note-label">判断依据 <em>（不过时必填）</em><textarea maxlength="2000" data-note placeholder="学生在哪一步仍无法落到列式或判断？"></textarea></label>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="structuredOverall" aria-labelledby="overallTitle">
+        <h2 class="panel-title" id="overallTitle">整体结论</h2>
+        <p class="panel-help">整体结论不代替六维记录；它只用于决定当前版本是否接受。</p>
+        <div class="overall-grid">
+          <fieldset style="margin:0;padding:0;border:0">
+            <legend class="field-label">当前版本</legend>
+            <div class="verdict-options"><label class="choice pass"><input type="radio" name="overall_verdict" value="satisfied"><span>整体满意</span></label><label class="choice fail"><input type="radio" name="overall_verdict" value="reject"><span>打回修改</span></label></div>
+          </fieldset>
+          <label class="note-label">整体备注<textarea id="overallNote" maxlength="2000" placeholder="补充最重要的保留意见或优点。"></textarea></label>
+        </div>
+        <div class="reason-panel" id="reasonPanel" hidden>
+          <strong>打回原因（至少选择一项）</strong>
+          <div class="reason-grid" id="reasonGrid">
+            <label class="check"><input type="checkbox" value="causal_presentation">因果呈现</label>
+            <label class="check"><input type="checkbox" value="process_visibility">过程可见</label>
+            <label class="check"><input type="checkbox" value="effective_interaction">有效交互</label>
+            <label class="check"><input type="checkbox" value="task_driven">任务驱动</label>
+            <label class="check"><input type="checkbox" value="verifiability">可验证性</label>
+            <label class="check"><input type="checkbox" value="exam_connection">解题衔接</label>
+            <label class="check"><input type="checkbox" value="usability">操作可用性</label>
+            <label class="check"><input type="checkbox" value="information_overload">信息过载</label>
+            <label class="check"><input type="checkbox" value="other">其他</label>
+          </div>
+        </div>
+
+      </section>
+
+      <div class="error-summary" id="errorSummary" role="alert" tabindex="-1" hidden></div>
+      <div class="actions">
+        <button class="btn primary" id="submitButton" type="submit" disabled>正在读取反馈任务…</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="privacy">隐私说明：只提交本页显示的匿名反馈，不收集姓名、学校、联系方式或试卷来源。</p>
+    </form>
+  </main>
+
+  <script>
+    const dimensions = [
+      ['causal_presentation', '因果呈现'], ['process_visibility', '过程可见'],
+      ['effective_interaction', '有效交互'], ['task_driven', '任务驱动'],
+      ['verifiability', '可验证性'], ['exam_connection', '与解题的衔接']
+    ];
+    const form = document.getElementById('feedbackForm');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageLead = document.getElementById('pageLead');
+    const taskInfo = document.getElementById('taskInfo');
+    const closedInfo = document.getElementById('closedInfo');
+    const freeformPanel = document.getElementById('freeformPanel');
+    const freeformPrompt = document.getElementById('freeformPrompt');
+    const freeformMessage = document.getElementById('freeformMessage');
+    const priorFreeform = document.getElementById('priorFreeform');
+    const priorFreeformMessage = document.getElementById('priorFreeformMessage');
+    const priorFreeformSource = document.getElementById('priorFreeformSource');
+    const structuredDimensions = document.getElementById('structuredDimensions');
+    const structuredOverall = document.getElementById('structuredOverall');
+    const reasonPanel = document.getElementById('reasonPanel');
+    const reasonInputs = [...document.querySelectorAll('#reasonGrid input')];
+    const errorSummary = document.getElementById('errorSummary');
+    const submitButton = document.getElementById('submitButton');
+    const status = document.getElementById('status');
+    const configuredApiBase = document.querySelector('meta[name="courseware-api-base"]').content.replace(/\/$/, '');
+    const isLocalPreview = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+    const API_BASE = isLocalPreview ? '' : configuredApiBase;
+    const ACCESS_KEY = 'coursewareAccessCode';
+
+    const fragment = new URLSearchParams(location.hash.slice(1));
+    const fragmentCode = fragment.get('access');
+    if (fragmentCode) {
+      sessionStorage.setItem(ACCESS_KEY, fragmentCode);
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+    const params = new URLSearchParams(location.search);
+    const taskIdFromLink = params.get('task_id') || '';
+    const coursewareIdFromLink = params.get('courseware_id') || '';
+
+    let task = null;
+
+    function selected(name) {
+      const input = form.querySelector(`input[name="${name}"]:checked`);
+      return input ? input.value : '';
+    }
+    function setReasonVisibility() {
+      const rejected = selected('overall_verdict') === 'reject';
+      reasonPanel.hidden = !rejected;
+      reasonInputs.forEach(input => { input.disabled = !rejected; if (!rejected) input.checked = false; });
+    }
+    form.querySelectorAll('input[name="overall_verdict"]').forEach(input => input.addEventListener('change', setReasonVisibility));
+
+    function blockForm(message) {
+      taskInfo.textContent = message;
+      taskInfo.classList.add('error');
+      freeformPanel.hidden = true;
+      structuredDimensions.hidden = true;
+      structuredOverall.hidden = true;
+      submitButton.disabled = true;
+      submitButton.hidden = true;
+    }
+
+    function prefill(feedback) {
+      if (task && task.feedback_mode === 'freeform') {
+        priorFreeform.hidden = false;
+        priorFreeformMessage.textContent = feedback.message || '';
+        priorFreeformSource.textContent = feedback.source_channel === 'product_owner_relay' ? '来源：经产品负责人转述记录' : '来源：老师入口提交';
+        freeformMessage.value = '';
+        submitButton.textContent = '提交补充反馈';
+        return;
+      }
+      dimensions.forEach(([key]) => {
+        const item = (feedback.dimensions || {})[key];
+        if (!item) return;
+        const radio = form.querySelector(`input[name="${key}"][value="${item.verdict}"]`);
+        if (radio) radio.checked = true;
+        const card = document.querySelector(`[data-dimension="${key}"]`);
+        card.querySelector('[data-note]').value = item.note || '';
+      });
+      const overall = feedback.overall || {};
+      const overallRadio = form.querySelector(`input[name="overall_verdict"][value="${overall.verdict}"]`);
+      if (overallRadio) overallRadio.checked = true;
+      setReasonVisibility();
+      (overall.rejection_reasons || []).forEach(value => {
+        const checkbox = reasonInputs.find(input => input.value === value);
+        if (checkbox) checkbox.checked = true;
+      });
+      document.getElementById('overallNote').value = overall.note || '';
+      submitButton.textContent = '保存修改';
+    }
+
+    async function loadTask() {
+      const accessCode = sessionStorage.getItem(ACCESS_KEY) || '';
+      if (!accessCode) {
+        blockForm('缺少个人凭证，请从完整的专属链接重新进入。');
+        return;
+      }
+      try {
+        let url = `${API_BASE}/api/reviews`;
+        if (!taskIdFromLink && coursewareIdFromLink) url += `?courseware_id=${encodeURIComponent(coursewareIdFromLink)}`;
+        const response = await fetch(url, {headers: {'X-Courseware-Access-Code': accessCode}});
+        if (response.status === 403) throw new Error('个人链接无效或反馈任务不存在，请从完整专属链接进入。');
+        if (!response.ok) throw new Error('反馈任务暂时无法读取，请稍后刷新重试。');
+        const data = await response.json();
+        const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+        task = taskIdFromLink ? tasks.find(candidate => candidate.task_id === taskIdFromLink) || null : tasks[0] || null;
+        if (!task) {
+          blockForm('未找到对应的反馈任务，请从“我的反馈”页面进入。');
+          return;
+        }
+        taskInfo.innerHTML = `<strong></strong><span>课件 ID：</span><span>精确 revision：</span><span>任务状态：</span>`;
+        taskInfo.querySelector('strong').textContent = task.title || task.courseware_id;
+        const spans = taskInfo.querySelectorAll('span');
+        spans[0].textContent = `课件 ID：${task.courseware_id}`;
+        spans[1].textContent = `精确 revision：${task.revision_id}`;
+        if (task.status === 'closed') {
+          spans[2].textContent = '任务状态：已结束';
+          taskInfo.classList.add('closed');
+          closedInfo.textContent = (task.disposition || {}).reason || '本任务已经结束，无需补填反馈。';
+          closedInfo.hidden = false;
+          [...form.querySelectorAll('.panel')].slice(1).forEach(panel => { panel.hidden = true; });
+          submitButton.hidden = true;
+          return;
+        }
+        const freeform = task.feedback_mode === 'freeform';
+        pageTitle.textContent = freeform ? '反馈这份课件' : '课件结构化评价';
+        pageLead.textContent = freeform ? '不需要按固定维度打分，说出你最想告诉我们的内容即可。无需填写姓名。' : '这是一份保留的可选六维表单；直接反馈同样有效。无需填写姓名。';
+        freeformPanel.hidden = !freeform;
+        structuredDimensions.hidden = freeform;
+        structuredOverall.hidden = freeform;
+        if (freeform && task.prompt) freeformPrompt.textContent = task.prompt;
+        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已反馈（本次为补充）' : '等待反馈'}`;
+        submitButton.disabled = false;
+        submitButton.hidden = false;
+        submitButton.textContent = task.current_feedback ? (freeform ? '提交补充反馈' : '保存修改') : (freeform ? '提交反馈' : '提交评价');
+        if (task.current_feedback) prefill(task.current_feedback);
+      } catch (error) {
+        blockForm(error instanceof Error ? error.message : '反馈任务暂时无法读取，请稍后刷新重试。');
+      }
+    }
+
+    function validateAndBuild() {
+      const errors = [];
+      if (task && task.feedback_mode === 'freeform') {
+        const message = freeformMessage.value.trim();
+        if (!message) errors.push({element: freeformMessage, text: '请写下最想告诉我们的内容。'});
+        return errors.length ? {errors} : {payload: {message}};
+      }
+      const dimensionPayload = {};
+      dimensions.forEach(([key, label]) => {
+        const card = document.querySelector(`[data-dimension="${key}"]`);
+        const verdict = selected(key);
+        const note = card.querySelector('[data-note]').value.trim();
+        if (!verdict) errors.push({id: 'dimensionsTitle', element: card.querySelector(`input[name="${key}"]`), text: `${label}尚未判定。`});
+        if (verdict === 'fail' && !note) errors.push({element: card.querySelector('[data-note]'), text: `${label}不过时必须填写原因。`});
+        dimensionPayload[key] = {verdict, note};
+      });
+
+      const overallVerdict = selected('overall_verdict');
+      const reasons = reasonInputs.filter(input => input.checked).map(input => input.value);
+      const overallNote = document.getElementById('overallNote').value.trim();
+      if (!overallVerdict) errors.push({id: 'overallTitle', text: '请选择整体结论。'});
+      if (overallVerdict === 'reject' && reasons.length === 0) errors.push({element: reasonPanel, text: '打回修改时至少选择一个原因。'});
+      if (reasons.includes('other') && !overallNote) errors.push({id: 'overallNote', text: '选择“其他”时必须填写整体备注。'});
+
+      if (errors.length) return {errors};
+      return {payload: {
+        dimensions: dimensionPayload,
+        overall: {verdict: overallVerdict, rejection_reasons: reasons, note: overallNote}
+      }};
+    }
+
+    function showErrors(errors) {
+      errorSummary.innerHTML = `<strong>请先补齐 ${errors.length} 项：</strong><ul>${errors.map((error, index) => `<li><a href="#" data-error="${index}">${error.text}</a></li>`).join('')}</ul>`;
+      errorSummary.hidden = false;
+      errorSummary.querySelectorAll('[data-error]').forEach(link => link.addEventListener('click', event => {
+        event.preventDefault(); const error = errors[Number(link.dataset.error)];
+        const target = error.element || document.getElementById(error.id); if (target) { target.scrollIntoView({behavior: 'smooth', block: 'center'}); if (target.focus) target.focus(); }
+      }));
+      errorSummary.focus();
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault(); status.textContent = ''; errorSummary.hidden = true;
+      if (!task) return;
+      const result = validateAndBuild();
+      if (result.errors) { showErrors(result.errors); return; }
+      const accessCode = sessionStorage.getItem(ACCESS_KEY) || '';
+      const wasReviewed = task.status === 'reviewed';
+      const freeform = task.feedback_mode === 'freeform';
+      submitButton.disabled = true;
+      submitButton.textContent = '正在保存…';
+      try {
+        const response = await fetch(`${API_BASE}/api/reviews/${encodeURIComponent(task.task_id)}`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-Courseware-Access-Code': accessCode},
+          body: JSON.stringify(result.payload)
+        });
+        const responsePayload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(responsePayload.error || `保存失败（${response.status}）`);
+        status.textContent = wasReviewed ? (freeform ? '补充反馈已保存。正在返回“我的反馈”…' : '修改已保存。正在返回“我的反馈”…') : (freeform ? '反馈已提交，谢谢。正在返回“我的反馈”…' : '评价已提交，谢谢。正在返回“我的反馈”…');
+        window.setTimeout(() => location.assign('../reviews/'), 1200);
+      } catch (error) {
+        status.textContent = error instanceof Error ? error.message : '保存失败，请稍后再试。';
+        submitButton.disabled = false;
+        submitButton.textContent = wasReviewed ? (freeform ? '提交补充反馈' : '保存修改') : '重新提交';
+      }
+    });
+
+    loadTask();
+  </script>
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第13题：直升机旋翼感应电动势</title>
+  <meta name="description" content="高中物理三维课件：用直升机旋翼模型讲解旋转导体切割磁感线、叶尖电势更高和感应电动势公式。">
+  <meta name="theme-color" content="#f0faf7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="旋翼电动势">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --surface: #ffffff;
+      --ink: #17211f;
+      --muted: #60706c;
+      --line: #d8e3e0;
+      --accent: #00856f;
+      --accent-soft: #e1f5ef;
+      --blue: #2267a8;
+      --green: #0a8d6d;
+      --red: #d34f2f;
+      --amber: #c97910;
+      --shadow: 0 10px 30px rgba(25, 42, 38, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(0, 133, 111, 0.16), transparent 34%),
+        linear-gradient(180deg, #f0faf7, var(--bg) 330px);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1540px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 12px 0;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 8px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .intro {
+      padding: 12px 16px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    strong {
+      color: var(--accent);
+    }
+
+    .answer-card {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .answer-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      border-radius: 8px;
+      color: #004d42;
+      background: var(--accent-soft);
+      font-size: 23px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .answer-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    details {
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    details img {
+      display: block;
+      max-width: 100%;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .lesson {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .scene-shell {
+      height: clamp(560px, calc(100vh - 200px), 760px);
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(232, 246, 241, 0.45)),
+        #f9fcfb;
+    }
+
+    #scene {
+      position: absolute;
+      inset: 0;
+    }
+
+    .model-label-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .model-label {
+      position: absolute;
+      min-width: 56px;
+      max-width: 300px;
+      padding: 5px 10px;
+      border: 1px solid rgba(216, 227, 224, 0.95);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(25, 42, 38, 0.06);
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+
+    .scene-hud {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      gap: 8px;
+      max-width: min(455px, calc(100% - 28px));
+      pointer-events: none;
+    }
+
+    .hud-card {
+      padding: 10px 12px;
+      border: 1px solid rgba(216, 227, 224, 0.92);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 22px rgba(25, 42, 38, 0.08);
+    }
+
+    .hud-title {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .hud-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .blue { color: var(--blue); }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .amber { color: var(--amber); }
+
+    .view-tools {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      right: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .view-tools button,
+    .choice,
+    .toggle {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      transition: 160ms ease;
+    }
+
+    .view-tools button,
+    .toggle {
+      padding: 7px 10px;
+      font-weight: 800;
+    }
+
+    .view-tools button:hover,
+    .view-tools button:focus-visible,
+    .choice:hover,
+    .choice:focus-visible,
+    .toggle:hover,
+    .toggle:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 133, 111, 0.14);
+    }
+
+    .side {
+      max-height: clamp(560px, calc(100vh - 200px), 760px);
+      overflow-y: auto;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .side h2 {
+      margin: 0;
+      font-size: 21px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .side h2::after {
+      content: "b 高于 a";
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #075b3f;
+      background: #dff3e8;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .choice.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .letter {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #edf3f1;
+      font-weight: 900;
+    }
+
+    .choice.active .letter {
+      color: white;
+      background: var(--accent);
+    }
+
+    .result {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+    }
+
+    .result h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.18;
+    }
+
+    .claim {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    .steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .steps li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .step-no {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: var(--accent);
+      background: #edf3f1;
+      font-weight: 900;
+    }
+
+    .steps p {
+      margin: 0;
+    }
+
+    .formula-box {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #e3f5eb;
+      color: #075b3f;
+      font-weight: 900;
+    }
+
+    .math {
+      display: block;
+      margin-top: 6px;
+      color: #004d42;
+      font-size: 18px;
+    }
+
+    .fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+      background: #fbfdfc;
+      z-index: 3;
+    }
+
+    .fallback.show {
+      display: grid;
+    }
+
+    @media (max-width: 1040px) {
+      .top,
+      .lesson {
+        grid-template-columns: 1fr;
+      }
+
+      .scene-shell,
+      .side {
+        height: auto;
+        max-height: none;
+        min-height: 620px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      main {
+        width: min(100% - 18px, 1540px);
+      }
+
+      .scene-shell {
+        min-height: 560px;
+      }
+
+      .scene-hud {
+        max-width: calc(100% - 32px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="top">
+      <div class="intro panel">
+        <h1>第13题：直升机旋翼为什么叶尖 b 电势更高</h1>
+        <p class="subtitle">把某一片桨叶从近轴端 <strong>a</strong> 到远轴端 <strong>b</strong> 看成一根旋转金属棒。<strong>a</strong> 非常靠近四片桨叶交叉处和转轴中心线；题干说忽略这段距离，所以计算中把 <strong>a</strong> 近似视为 r = 0。</p>
+      </div>
+      <aside class="answer-card panel">
+        <div class="answer-pill">φ_b &gt; φ_a</div>
+        <p>每片叶片的感应电动势：<strong>E = πBL²f</strong></p>
+      </aside>
+    </section>
+
+    <details>
+      <summary>题目原图</summary>
+      <img src="q13-original-question.jpg" alt="第13题原图截图">
+    </details>
+
+    <section class="lesson">
+      <section class="scene-shell panel">
+        <div id="scene"></div>
+        <div class="fallback" id="fallback">当前浏览器没有成功加载 3D 场景。请使用 Chrome、Edge 或 Safari 打开本课件。</div>
+        <div class="scene-hud">
+          <div class="hud-card">
+            <p class="hud-title" id="hudTitle">沿 B 方向观察：旋翼顺时针转动</p>
+            <p class="hud-text" id="hudText">蓝色细箭头是叶片上一点的线速度 v；红色箭头是正电荷受到的 qv×B，沿叶片指向外端 b。</p>
+          </div>
+          <div class="hud-card legend">
+            <span class="chip green"><span class="dot"></span>地磁场 B 向上</span>
+            <span class="chip blue"><span class="dot"></span>切向速度 v（细箭头）</span>
+            <span class="chip red"><span class="dot"></span>qv × B 向外</span>
+            <span class="chip amber"><span class="dot"></span>正电荷聚集到 b</span>
+          </div>
+        </div>
+        <div class="view-tools">
+          <button type="button" data-view="teacher">斜视讲解</button>
+          <button type="button" data-view="alongB">沿 B 方向看</button>
+          <button type="button" data-view="side">侧看磁场</button>
+          <button type="button" data-view="free">自由旋转</button>
+          <button type="button" class="toggle" id="toggleSpin">暂停旋转</button>
+        </div>
+      </section>
+
+      <aside class="side panel">
+        <h2>判题思路</h2>
+        <div class="choices" id="choices"></div>
+        <article class="result">
+          <h3 id="resultTitle">结论：b 点电势高</h3>
+          <p class="claim" id="claim">正电荷沿同一片叶片从近轴端 a 被推向远轴端 b，因此 b 端积累正电荷，电势更高。</p>
+          <ul class="steps" id="steps"></ul>
+        </article>
+        <div class="formula-box">
+          电动势来自整根叶片上不同半径处的速度叠加：
+          <span class="math">E = ∫₀ᴸ Bωr dr = 1/2 BωL² = πBL²f</span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="assets/three.min.js"></script>
+  <script src="assets/OrbitControls.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
+    }
+
+    const scenes = {
+      direction: {
+        label: "方向判断",
+        title: "结论：b 点电势高",
+        claim: "按题意沿 B 方向看，旋翼顺时针转动；模型中红色 qv×B 箭头沿叶片向外，正电荷聚集到 b 端。",
+        steps: [
+          "地磁场在南半球地磁极上空竖直向上，用绿色箭头表示。",
+          "叶片转动时，叶片上一点的速度 v 沿切线方向，用蓝色细箭头表示。",
+          "对正电荷使用右手定则：v × B 沿半径向外。",
+          "正电荷被推向远轴端 b，所以 b 端电势高于 a 端。"
+        ]
+      },
+      formula: {
+        label: "公式来源",
+        title: "公式：E = πBL²f",
+        claim: "a 不是几何中心本身，而是该片桨叶非常靠近转轴的近轴端；题目忽略 a 到转轴中心线的距离，所以计算时把 a 视为 r = 0。",
+        steps: [
+          "半径为 r 的位置，线速度 v = ωr。",
+          "一小段 dr 产生的电动势 dE = Bvdr = Bωrdr。",
+          "从 a 点（视作 r = 0）到叶尖 b 积分：E = ∫₀ᴸ Bωrdr = 1/2 BωL²。",
+          "转动频率为 f，所以 ω = 2πf，代入得到 E = πBL²f。"
+        ]
+      },
+      intuition: {
+        label: "直观记忆",
+        title: "直观：越外侧切割越快",
+        claim: "同一片叶片上，a 是靠近转轴的内端，b 是远离转轴的外端；越外侧线速度越大，正电荷一路被推向 b。",
+        steps: [
+          "a 在高亮桨叶的近轴端，十分接近 X 形交叉中心；题干要求忽略它到转轴中心线的距离。",
+          "远轴端 b 离轴心远，速度大。",
+          "每一小段都把正电荷向外推，效果沿整片叶片累积。",
+          "所以 a 到 b 之间形成电势差，b 高、a 低。"
+        ]
+      },
+      trap: {
+        label: "易错点",
+        title: "易错：别把整片叶片当成同速直棒",
+        claim: "直棒平动时可用 E = BLv；旋转叶片上 v 随 r 变化，必须用平均效果或积分。",
+        steps: [
+          "叶片不是整体以同一个 v 平动，而是绕轴转动。",
+          "离轴越远，v = ωr 越大。",
+          "因此答案中会出现 1/2，再由 ω = 2πf 化为 π。",
+          "若写成 BL²f 或 2πBL²f，通常就是漏掉了积分或角速度换算。"
+        ]
+      }
+    };
+
+    const colors = {
+      blue: 0x2267a8,
+      green: 0x0a8d6d,
+      red: 0xd34f2f,
+      amber: 0xc97910,
+      gray: 0xa8b7b3
+    };
+
+    const state = {
+      current: "direction",
+      pulse: 0,
+      spin: true,
+      freeRotate: false
+    };
+
+    const sceneHost = document.getElementById("scene");
+    const fallback = document.getElementById("fallback");
+    const toggleSpin = document.getElementById("toggleSpin");
+    let scene;
+    let camera;
+    let renderer;
+    let controls;
+    let rotorGroup;
+    let bladeHighlight;
+    let chargeGlow;
+    let velocityArrow;
+    let forceArrow;
+    let magneticArrows = [];
+    let labelLayer;
+    let sceneResizeObserver;
+    const domLabels = [];
+    const modelTarget = new THREE.Vector3(0, 0.2, 0);
+
+    init3D();
+    buildChoices();
+    updatePanel("direction");
+    animate();
+
+    function init3D() {
+      if (!window.THREE || !THREE.WebGLRenderer) {
+        fallback.classList.add("show");
+        return;
+      }
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf9fcfb);
+      camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      camera.position.set(5.8, 4.5, 6.5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.shadowMap.enabled = true;
+      sceneHost.appendChild(renderer.domElement);
+      labelLayer = document.createElement("div");
+      labelLayer.className = "model-label-layer";
+      sceneHost.appendChild(labelLayer);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.target.copy(modelTarget);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.78));
+      const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+      sun.position.set(4, 8, 5);
+      sun.castShadow = true;
+      scene.add(sun);
+
+      addGround();
+      addMagneticField();
+      addHelicopter();
+      addDynamicArrows();
+      resize();
+      sceneResizeObserver = new ResizeObserver(() => resize());
+      sceneResizeObserver.observe(sceneHost);
+      window.addEventListener("resize", resize);
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.addEventListener("click", () => setView(button.dataset.view));
+      });
+      toggleSpin.addEventListener("click", () => {
+        state.spin = !state.spin;
+        toggleSpin.textContent = state.spin ? "暂停旋转" : "继续旋转";
+      });
+    }
+
+    function addGround() {
+      const grid = new THREE.GridHelper(8, 16, 0xc6d8d3, 0xe1ebe8);
+      grid.position.y = -0.82;
+      scene.add(grid);
+
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(8.2, 8.2),
+        new THREE.MeshStandardMaterial({
+          color: 0xf3faf7,
+          roughness: 0.92,
+          transparent: true,
+          opacity: 0.7
+        })
+      );
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.84;
+      scene.add(ground);
+    }
+
+    function addMagneticField() {
+      for (let x = -3; x <= 3; x += 1.5) {
+        for (let z = -3; z <= 3; z += 1.5) {
+          const arrow = addArrow(
+            new THREE.Vector3(x, -0.65, z),
+            new THREE.Vector3(0, 1, 0),
+            2.65,
+            colors.green
+          );
+          arrow.line.material.transparent = true;
+          arrow.cone.material.transparent = true;
+          arrow.line.material.opacity = 0.52;
+          arrow.cone.material.opacity = 0.7;
+          magneticArrows.push(arrow);
+        }
+      }
+      scene.add(makeLabel("地磁场 B：竖直向上", new THREE.Vector3(-1.5, 2.35, -2.55), "#0a8d6d", 140));
+    }
+
+    function addHelicopter() {
+      rotorGroup = new THREE.Group();
+      scene.add(rotorGroup);
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf8fbff, metalness: 0.2, roughness: 0.42 });
+      const highlightMat = new THREE.MeshStandardMaterial({ color: 0x44c7e8, transparent: true, opacity: 0.9 });
+      const redMat = new THREE.MeshStandardMaterial({ color: colors.red, emissive: 0x7a1607, emissiveIntensity: 0.18 });
+      const grayMat = new THREE.MeshStandardMaterial({ color: colors.gray, roughness: 0.55 });
+
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 1.35, 32), bodyMat);
+      shaft.position.y = -0.25;
+      shaft.castShadow = true;
+      scene.add(shaft);
+
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.18, 36), bodyMat);
+      hub.rotation.x = Math.PI / 2;
+      hub.castShadow = true;
+      rotorGroup.add(hub);
+
+      bladeHighlight = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.075, 0.34), highlightMat);
+      bladeHighlight.position.x = 1.42;
+      bladeHighlight.position.y = 0.03;
+      rotorGroup.add(bladeHighlight);
+
+      const aDot = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16), grayMat);
+      aDot.position.set(0.18, 0.18, 0);
+      rotorGroup.add(aDot);
+
+      const bDot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 32, 16), redMat);
+      bDot.position.set(2.75, 0.12, 0);
+      rotorGroup.add(bDot);
+
+      chargeGlow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.34, 32, 16),
+        new THREE.MeshBasicMaterial({ color: colors.red, transparent: true, opacity: 0.2 })
+      );
+      chargeGlow.position.copy(bDot.position);
+      rotorGroup.add(chargeGlow);
+
+      rotorGroup.add(makeLabel("a 近轴端（近似 r=0）", new THREE.Vector3(0.24, 0.58, 0.08), "#17211f", 160));
+      rotorGroup.add(makeLabel("b 远轴端：电势高", new THREE.Vector3(2.75, 0.48, 0), "#d34f2f", 132));
+      rotorGroup.add(makeLabel("旋翼顺时针", new THREE.Vector3(-1.85, 0.48, -1.25), "#c97910", 108));
+    }
+
+    function addDynamicArrows() {
+      velocityArrow = addArrow(
+        new THREE.Vector3(1.8, 0.52, 0),
+        new THREE.Vector3(0, 0, 1),
+        0.72,
+        colors.blue,
+        "v 切向",
+        new THREE.Vector3(1.85, 0.92, 0.9)
+      );
+      forceArrow = addArrow(
+        new THREE.Vector3(0.45, 0.35, 0.18),
+        new THREE.Vector3(1, 0, 0),
+        1.85,
+        colors.red,
+        "qv×B 向外",
+        new THREE.Vector3(1.55, 0.72, 0.36)
+      );
+    }
+
+    function addArrow(origin, direction, length, color, labelText, labelPos) {
+      const arrow = new THREE.ArrowHelper(direction.clone().normalize(), origin, length, color, 0.22, 0.12);
+      arrow.line.material.linewidth = 4;
+      scene.add(arrow);
+      if (labelText) {
+        const label = makeLabel(labelText, labelPos, `#${color.toString(16).padStart(6, "0")}`, 92);
+        scene.add(label);
+        arrow.userData.label = label;
+      }
+      return arrow;
+    }
+
+    function makeLabel(text, position, color, width) {
+      const anchor = new THREE.Object3D();
+      anchor.position.copy(position);
+      const el = document.createElement("div");
+      el.className = "model-label";
+      el.textContent = text;
+      el.style.color = color;
+      el.style.minWidth = `${Math.max(56, width)}px`;
+      labelLayer.appendChild(el);
+      anchor.userData = { text, color, width, labelEl: el };
+      domLabels.push(anchor);
+      return anchor;
+    }
+
+    function buildChoices() {
+      const choices = document.getElementById("choices");
+      choices.innerHTML = Object.keys(scenes).map((key) => `
+        <button class="choice" type="button" data-choice="${key}">
+          <span class="letter">${scenes[key].label.slice(0, 1)}</span>
+          <span>${scenes[key].label}</span>
+        </button>
+      `).join("");
+      choices.querySelectorAll("[data-choice]").forEach((button) => {
+        button.addEventListener("click", () => updatePanel(button.dataset.choice));
+      });
+    }
+
+    function updatePanel(key) {
+      state.current = key;
+      const item = scenes[key];
+      document.getElementById("resultTitle").textContent = item.title;
+      document.getElementById("claim").textContent = item.claim;
+      document.getElementById("steps").innerHTML = item.steps.map((text, index) => `
+        <li><span class="step-no">${index + 1}</span><p>${text}</p></li>
+      `).join("");
+      document.querySelectorAll("[data-choice]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.choice === key);
+      });
+    }
+
+    function setView(view) {
+      if (!camera || !controls) return;
+      state.freeRotate = view === "free";
+      const positions = {
+        teacher: new THREE.Vector3(5.8, 4.5, 6.5),
+        alongB: new THREE.Vector3(0.01, -7.2, 0.01),
+        side: new THREE.Vector3(6.8, 1.4, 0.01),
+        free: camera.position.clone()
+      };
+      camera.position.copy(positions[view] || positions.teacher);
+      controls.target.copy(modelTarget);
+      controls.update();
+    }
+
+    function resize() {
+      if (!renderer || !camera) return;
+      const rect = sceneHost.getBoundingClientRect();
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / Math.max(rect.height, 1);
+      camera.updateProjectionMatrix();
+    }
+
+    function updateDomLabels() {
+      if (!camera || !renderer) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      const world = new THREE.Vector3();
+      domLabels.forEach((anchor) => {
+        anchor.getWorldPosition(world);
+        world.project(camera);
+        const visible = world.z > -1 && world.z < 1;
+        const el = anchor.userData.labelEl;
+        el.style.display = visible ? "block" : "none";
+        if (!visible) return;
+        const x = (world.x * 0.5 + 0.5) * rect.width;
+        const y = (-world.y * 0.5 + 0.5) * rect.height;
+        el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      });
+    }
+
+    function updateMovingArrows() {
+      const angle = rotorGroup.rotation.y;
+      const radial = new THREE.Vector3(Math.cos(-angle), 0, Math.sin(-angle)).normalize();
+      const tangent = new THREE.Vector3(-radial.z, 0, radial.x).normalize();
+      const forceOrigin = radial.clone().multiplyScalar(0.46).add(new THREE.Vector3(0, 0.35, 0.18));
+      const velocityOrigin = radial.clone().multiplyScalar(1.72).add(new THREE.Vector3(0, 0.52, 0));
+      forceArrow.position.copy(forceOrigin);
+      forceArrow.setDirection(radial);
+      forceArrow.setLength(1.85, 0.25, 0.14);
+      velocityArrow.position.copy(velocityOrigin);
+      velocityArrow.setDirection(tangent);
+      velocityArrow.setLength(0.72, 0.18, 0.09);
+      if (forceArrow.userData.label) {
+        forceArrow.userData.label.position.copy(radial.clone().multiplyScalar(1.62).add(new THREE.Vector3(0, 0.72, 0.36)));
+      }
+      if (velocityArrow.userData.label) {
+        velocityArrow.userData.label.position.copy(velocityOrigin.clone().add(tangent.clone().multiplyScalar(0.86)).add(new THREE.Vector3(0, 0.34, 0)));
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!renderer || !scene || !camera) return;
+      state.pulse += 0.035;
+      if (state.spin && rotorGroup) rotorGroup.rotation.y -= 0.012;
+      if (state.freeRotate && rotorGroup) rotorGroup.rotation.y -= 0.004;
+      if (chargeGlow) {
+        const glowScale = 1 + Math.sin(state.pulse * 2.4) * 0.12;
+        chargeGlow.scale.setScalar(glowScale);
+      }
+      magneticArrows.forEach((arrow, index) => {
+        const opacity = 0.42 + Math.sin(state.pulse + index * 0.35) * 0.12;
+        arrow.line.material.opacity = opacity;
+        arrow.cone.material.opacity = opacity + 0.18;
+      });
+      updateMovingArrows();
+      controls.update();
+      renderer.render(scene, camera);
+      updateDomLabels();
+    }
+  </script>
+</body>
+</html>

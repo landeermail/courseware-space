@@ -1,0 +1,19 @@
+{
+  "name": "第13题直升机旋翼感应电动势课件",
+  "short_name": "旋翼电动势",
+  "description": "用三维模型演示直升机旋翼在竖直地磁场中转动时，为什么叶尖 b 点电势高于 a 点，并推导 E = πBL²f。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#f5f8f7",
+  "theme_color": "#f0faf7",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

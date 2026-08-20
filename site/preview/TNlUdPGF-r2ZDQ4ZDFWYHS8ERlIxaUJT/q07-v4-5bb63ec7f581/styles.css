@@ -1,0 +1,604 @@
+/* q07-glass-rod-tir 候选课件样式：桌面与 iPad 横屏（1024×768 基准）。 */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #1d2733;
+  background: #f4f6f8;
+}
+
+/* 手机与 iPad 竖屏：只提示改用横屏或桌面设备，不承担交互。 */
+#orientation-gate {
+  display: none;
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+  #orientation-gate {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #1d2733;
+    color: #fff;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .site-header,
+  #scene-root,
+  .site-footer {
+    display: none;
+  }
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #173a5e;
+  color: #fff;
+  flex-wrap: wrap;
+}
+
+.site-header h1 {
+  font-size: 18px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+#scene-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+#scene-tabs button {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: transparent;
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+#scene-tabs button[aria-selected="true"] {
+  background: #fff;
+  color: #173a5e;
+  font-weight: 600;
+}
+
+#audit-entry {
+  border: 1px dashed rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: #ffe9a8;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+#scene-root {
+  padding: 14px 20px 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.scene {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-bar {
+  background: #fff8e1;
+  border-left: 4px solid #f0b429;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.notice-bar {
+  background: #e3f2fd;
+  border-left: 4px solid #1e88e5;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.scene-body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.stage {
+  position: relative;
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  touch-action: none;
+}
+
+.stage svg {
+  display: block;
+  user-select: none;
+}
+
+.panel {
+  flex: 1 1 300px;
+  min-width: 280px;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.panel h2 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.formula-block {
+  border: 1px solid #e0e6ec;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fbfcfd;
+}
+
+.formula-block.flash {
+  outline: 3px solid #f0b429;
+  background: #fff8e1;
+}
+
+.formula-name {
+  font-size: 13px;
+  color: #5a6b7b;
+}
+
+.formula-line {
+  font-size: 17px;
+  overflow-x: auto;
+}
+
+.formula-sub {
+  font-size: 14px;
+  color: #37485a;
+  border-top: 1px dashed #d5dde5;
+  padding-top: 4px;
+  overflow-x: auto;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #b9c6d2;
+  background: #eef3f7;
+  border-radius: 5px;
+  padding: 1px 7px;
+  margin: 0 2px;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 28px;
+}
+
+.chip:hover,
+.chip:focus-visible {
+  border-color: #173a5e;
+  outline: none;
+  background: #dce8f3;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  font-size: 14px;
+  color: #37485a;
+}
+
+.svg-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 15px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.svg-label.pointing {
+  pointer-events: auto;
+}
+
+.hl-target {
+  transition: stroke-width 0.1s;
+}
+
+.hl-on {
+  stroke-width: 4 !important;
+}
+
+.hl-fill {
+  fill: rgba(240, 180, 41, 0.45) !important;
+}
+
+.svg-label.hl-on {
+  background: #ffe9a8;
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
+.status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.status-tag {
+  border-radius: 5px;
+  padding: 2px 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-tag.tir {
+  background: #e6f4ea;
+  border-color: #2e7d32;
+  color: #1b5e20;
+}
+
+.status-tag.critical {
+  background: #fff3e0;
+  border-color: #e65100;
+  color: #b53d00;
+}
+
+.status-tag.escape {
+  background: #fdecea;
+  border-color: #c62828;
+  color: #8e1616;
+}
+
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.preset-row button,
+.action-btn {
+  border: 1px solid #173a5e;
+  background: #fff;
+  color: #173a5e;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.preset-row button.active {
+  background: #173a5e;
+  color: #fff;
+}
+
+.action-btn.primary {
+  background: #173a5e;
+  color: #fff;
+}
+
+.action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.radio-group label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.radio-group input {
+  margin-top: 4px;
+  transform: scale(1.25);
+}
+
+.hint {
+  font-size: 13px;
+  color: #6a7a89;
+}
+
+.source-fig {
+  margin: 0;
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 12px;
+  max-width: 980px;
+}
+
+.source-fig img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.source-fig figcaption {
+  font-size: 13px;
+  color: #6a7a89;
+  margin-top: 6px;
+}
+
+.readings {
+  background: #f0f4f8;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reveal-block {
+  border: 1px solid #cfd9e2;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fbfcfd;
+}
+
+.conclusion {
+  border: 2px solid #2e7d32;
+  background: #e6f4ea;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.drag-hint {
+  font-size: 13px;
+  color: #6a7a89;
+}
+
+/* 场景 1/2 的水平连续滑条：明确的拖动轨道与大触控区。 */
+.theta-slider {
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.theta-slider label {
+  font-size: 14px;
+  color: #37485a;
+}
+
+.theta-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theta-slider-row input[type="range"] {
+  flex: 1;
+  min-height: 44px;
+  accent-color: #173a5e;
+  cursor: pointer;
+}
+
+.theta-end {
+  font-size: 13px;
+  color: #6a7a89;
+  flex: 0 0 auto;
+}
+
+.theta-value {
+  min-width: 96px;
+  font-size: 16px;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+input[type="number"],
+input[type="text"] {
+  font-size: 15px;
+  padding: 6px 8px;
+  border: 1px solid #b9c6d2;
+  border-radius: 5px;
+  min-height: 36px;
+}
+
+.audit-section {
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  max-width: 980px;
+}
+
+.audit-section h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.assertion-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.assertion-list .pass {
+  color: #1b5e20;
+}
+
+.assertion-list .fail {
+  color: #c62828;
+  font-weight: 700;
+}
+
+.kv-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 15px;
+}
+
+/* 场景 1「找边界」：核心视觉与主控件常驻，讲解区独立滚动（视口共视契约）。 */
+.finder-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.visual-col {
+  flex: 0 0 640px;
+  width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 12px;
+}
+
+.visual-col .status-strip {
+  /* 状态文案长度随分类变化；固定列宽内换行，不得撑宽视觉区改变滑条几何。 */
+  min-width: 0;
+}
+
+.explain-col {
+  position: relative; /* 使内部绝对定位节点（如 KaTeX MathML）随滚动一并裁剪，不撑出页面滚动 */
+  flex: 1 1 300px;
+  min-width: 280px;
+  max-width: 460px;
+  max-height: calc(100vh - 190px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #d5dde5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.step-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.step-tabs button {
+  border: 1px solid #173a5e;
+  background: #fff;
+  color: #173a5e;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.step-tabs button[aria-selected="true"] {
+  background: #173a5e;
+  color: #fff;
+  font-weight: 600;
+}
+
+.predict-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.predict-inline label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.notice-line {
+  background: #e6f4ea;
+  border-left: 4px solid #2e7d32;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* 固定生产导航：返回题库与去评价，仅链接，不含访问码。 */
+.site-footer {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 20px 16px;
+  font-size: 14px;
+}
+
+.site-footer a {
+  color: #173a5e;
+  text-decoration: underline;
+  padding: 6px 4px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
