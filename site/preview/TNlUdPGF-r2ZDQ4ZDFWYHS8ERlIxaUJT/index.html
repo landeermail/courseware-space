@@ -93,7 +93,7 @@
       const priority=lessons.filter(item=>{const task=taskFor(item);return task&&task.status==='pending'});
       section.hidden=priority.length===0;
       count.textContent=priority.length?`${priority.length} 份课件等待反馈`:'';
-      grid.innerHTML=priority.map(item=>{const task=taskFor(item);return `<article class="priority-card"><div><span class="status pending">等待反馈</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><div class="priority-actions"><a class="open secondary" href="${item.href}">开始体验</a><a class="open" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">反馈这份课件</a></div></article>`}).join('');
+      grid.innerHTML=priority.map(item=>{const task=taskFor(item);return `<article class="priority-card"><div><span class="status pending">等待反馈</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><div class="priority-actions"><a class="open secondary" href="${item.href}" target="_blank" rel="noopener">开始体验</a><a class="open" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">反馈这份课件</a></div></article>`}).join('');
     }
     function renderSubjects(){
       const subjects=['机械波','电磁感应','力学','光学'];
@@ -104,7 +104,7 @@
           const task=taskFor(item);
           return !(task&&task.status==='pending');
         });
-        return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(item=>{const task=taskFor(item);const feedbackLink=task&&task.status!=='closed'?`<a class="lesson-link" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">${task.status==='reviewed'?'查看或补充反馈':'反馈这份课件'}</a>`:'';return `<article class="lesson-card"><div class="lesson-top"><h3>${item.title}</h3>${statusBadge(item)}</div><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><div class="lesson-actions"><a class="lesson-link" href="${item.href}">打开课件</a>${feedbackLink}</div></article>`}).join('')}</div></section>`
+        return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(item=>{const task=taskFor(item);const feedbackLink=task&&task.status!=='closed'?`<a class="lesson-link" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">${task.status==='reviewed'?'查看或补充反馈':'反馈这份课件'}</a>`:'';return `<article class="lesson-card"><div class="lesson-top"><h3>${item.title}</h3>${statusBadge(item)}</div><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><div class="lesson-actions"><a class="lesson-link" href="${item.href}" target="_blank" rel="noopener">打开课件</a>${feedbackLink}</div></article>`}).join('')}</div></section>`
       }).join('');
     }
     function renderAll(){renderPriority();renderSubjects();}

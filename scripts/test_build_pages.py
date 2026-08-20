@@ -71,9 +71,25 @@ class BuildPagesTests(unittest.TestCase):
         self.assertIn("希望您重点体验", teacher_home)
         self.assertIn("section.hidden=priority.length===0", teacher_home)
         self.assertIn("反馈这份课件", teacher_home)
+        self.assertIn(
+            'href="${item.href}" target="_blank" rel="noopener">开始体验',
+            teacher_home,
+        )
+        self.assertIn(
+            'href="${item.href}" target="_blank" rel="noopener">打开课件',
+            teacher_home,
+        )
         self.assertIn('id="freeformMessage"', feedback_form)
         self.assertIn("task.feedback_mode === 'freeform'", feedback_form)
         self.assertIn("来源：经产品负责人转述记录", history)
+        self.assertIn(
+            'href="${tryUrl}" target="_blank" rel="noopener">再次体验课件',
+            history,
+        )
+        self.assertIn(
+            'href="${tryUrl}" target="_blank" rel="noopener">先体验课件',
+            history,
+        )
 
     def test_build_is_complete_deterministic_and_excludes_internal_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

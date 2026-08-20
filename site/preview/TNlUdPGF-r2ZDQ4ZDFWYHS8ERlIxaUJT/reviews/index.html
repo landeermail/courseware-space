@@ -102,17 +102,17 @@
       if(mode==='reviewed'){
         const current=task.current_feedback||{};
         meta.push(`<span>当前反馈时间：${esc(formatTime(current.reviewed_at))}</span>`);
-        actions=`<a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'查看或补充反馈':'修改评价'}</a><a class="btn" href="${tryUrl}">再次体验课件</a><button class="btn" type="button" data-history="${esc(task.task_id)}">查看历史</button>`;
+        actions=`<a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'查看或补充反馈':'修改评价'}</a><a class="btn" href="${tryUrl}" target="_blank" rel="noopener">再次体验课件</a><button class="btn" type="button" data-history="${esc(task.task_id)}">查看历史</button>`;
         const history=Array.isArray(task.feedback_history)?task.feedback_history:[];
         historyHtml=`<div class="history" id="history-${esc(task.task_id)}" hidden>${history.map(version=>versionHtml(version,current.feedback_id)).join('')}</div>`;
       }else if(mode==='closed'){
         const disposition=task.disposition||{};
         meta.push(`<span>结束时间：${esc(formatTime(disposition.decided_at))}</span>`);
         if(disposition.reason)meta.push(`<span>${esc(disposition.reason)}</span>`);
-        actions=`<a class="btn" href="${tryUrl}">查看课件</a>`;
+        actions=`<a class="btn" href="${tryUrl}" target="_blank" rel="noopener">查看课件</a>`;
       }else{
         meta.push(`<span>分派时间：${esc(formatTime(task.assigned_at))}</span>`);
-        actions=`<a class="btn" href="${tryUrl}">先体验课件</a><a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'反馈这份课件':'填写评价'}</a>`;
+        actions=`<a class="btn" href="${tryUrl}" target="_blank" rel="noopener">先体验课件</a><a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'反馈这份课件':'填写评价'}</a>`;
       }
       const label=mode==='reviewed'?'已反馈':mode==='closed'?'已结束':'等待反馈';
       return `<article class="task-card ${mode}"><div class="task-head"><h3>${esc(task.title)}</h3><span class="status ${mode}">${label}</span></div><p class="task-meta">${meta.join('')}</p><div class="card-actions">${actions}</div>${historyHtml}</article>`;
