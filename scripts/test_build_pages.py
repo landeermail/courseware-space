@@ -23,6 +23,7 @@ REQUIRED_URLS = (
     TEACHER_ROOT / "index.html",
     TEACHER_ROOT / "feedback/index.html",
     TEACHER_ROOT / "reviews/index.html",
+    TEACHER_ROOT / "q474-v1-39e8e4f62f4b/index.html",
     TEACHER_ROOT / "q01-v8-1c89623d5bf0/index.html",
     TEACHER_ROOT / "q01-vertical-circle/index.html",
     TEACHER_ROOT / "q07-v4-5bb63ec7f581/index.html",
@@ -56,6 +57,24 @@ def content_manifest(root: Path) -> dict[str, str]:
 
 
 class BuildPagesTests(unittest.TestCase):
+    def test_teacher_workspace_exposes_free_feedback_without_empty_home_backlog(self) -> None:
+        teacher_home = (REPOSITORY_ROOT / "site" / TEACHER_ROOT / "index.html").read_text(
+            encoding="utf-8"
+        )
+        feedback_form = (
+            REPOSITORY_ROOT / "site" / TEACHER_ROOT / "feedback/index.html"
+        ).read_text(encoding="utf-8")
+        history = (
+            REPOSITORY_ROOT / "site" / TEACHER_ROOT / "reviews/index.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("希望您重点体验", teacher_home)
+        self.assertIn("section.hidden=priority.length===0", teacher_home)
+        self.assertIn("反馈这份课件", teacher_home)
+        self.assertIn('id="freeformMessage"', feedback_form)
+        self.assertIn("task.feedback_mode === 'freeform'", feedback_form)
+        self.assertIn("来源：经产品负责人转述记录", history)
+
     def test_build_is_complete_deterministic_and_excludes_internal_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             base = Path(temporary_directory)

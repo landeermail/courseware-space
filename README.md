@@ -41,9 +41,9 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 已发布课件与评价
 
-正式静态课件只通过 GitHub Pages 发布，每个精确 revision 使用不可变目录。老师从原长期题库的“去评价”和“我的评价”进入精确 revision 任务；反馈格式、本地校验和 feedback-only 运行边界见 [`services/feedback/README.md`](services/feedback/README.md)。
+正式静态课件只通过 GitHub Pages 发布，每个精确 revision 使用不可变目录。老师从原长期题库的“反馈这份课件”和“我的反馈”进入精确 revision 任务；新任务默认接收自由反馈，旧六维表单只作兼容入口。数据契约与 feedback-only 运行边界见 [`services/feedback/README.md`](services/feedback/README.md)。
 
-当前老师提供的是允许公开的练习题；OSS 私有课件投递工具已经冻结，不再是生产渠道。老师使用一条长期稳定的题库链接进入课件和“我的评价”；评价任务、当前结果与历史版本以服务端精确 revision 记录为准。
+当前老师提供的是允许公开的练习题；OSS 私有课件投递工具已经冻结，不再是生产渠道。老师使用一条长期稳定的题库链接进入课件和“我的反馈”；反馈任务、当前结果与历史版本以服务端精确 revision 记录为准。
 
 ## 目录结构
 

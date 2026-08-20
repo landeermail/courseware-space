@@ -18,6 +18,7 @@ from services.feedback.review_workspace import (  # noqa: E402
     ReviewClosedError,
     TeacherReviewWorkspace,
     apply_task_dispositions,
+    apply_teacher_feedback_updates,
 )
 
 
@@ -60,6 +61,23 @@ def seed_workspace(root: Path, token: str) -> None:
         path.write_text(json.dumps(task, ensure_ascii=False), encoding="utf-8")
 
 
+def seed_freeform_task(root: Path, token: str) -> None:
+    task = {
+        "schema_version": 1,
+        "task_id": "q474-v1-teacher-feedback",
+        "courseware_id": "q474-longitudinal-wave",
+        "revision_id": "q474-v1-39e8e4f62f4b",
+        "title": "第474题：纵波弹簧标记点",
+        "courseware_url": "q474-v1-39e8e4f62f4b/",
+        "assigned_at": "2026-08-20T13:57:33+08:00",
+        "feedback_mode": "freeform",
+        "prompt": "请说说这份课件最值得保留的地方，或学生仍可能卡在哪里。",
+    }
+    path = root / task_key(token, task["task_id"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(task, ensure_ascii=False), encoding="utf-8")
+
+
 def close_task(root: Path, token: str, task_id: str, courseware_id: str, revision_id: str) -> None:
     disposition = {
         "schema_version": 1,
@@ -82,6 +100,123 @@ def close_task(root: Path, token: str, task_id: str, courseware_id: str, revisio
 
 
 class TeacherReviewWorkspaceTests(unittest.TestCase):
+    def test_free_feedback_update_is_idempotent_and_preserves_provenance(self) -> None:
+        task = {
+            "schema_version": 1,
+            "task_id": "q474-v1-teacher-feedback",
+            "courseware_id": "q474-longitudinal-wave",
+            "revision_id": "q474-v1-39e8e4f62f4b",
+            "title": "第474题：纵波弹簧标记点",
+            "courseware_url": "q474-v1-39e8e4f62f4b/",
+            "assigned_at": "2026-08-20T13:57:33+08:00",
+            "feedback_mode": "freeform",
+            "prompt": "请说说最值得保留的地方。",
+        }
+        response = {
+            "schema_version": 3,
+            "record_type": "free_feedback",
+            "feedback_id": "feedback-q474-relayed",
+            "task_id": task["task_id"],
+            "courseware_id": task["courseware_id"],
+            "revision_id": task["revision_id"],
+            "reviewed_at": "2026-08-20T14:52:29+08:00",
+            "previous_feedback_id": None,
+            "source_channel": "product_owner_relay",
+            "source_ref": "research/experiments/474-longitudinal-wave.md#direct-evidence",
+            "message": "老师也表示很满意。",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            store = LocalFeedbackStore(Path(temporary))
+            update = [{"task": task, "feedback": response}]
+
+            first = apply_teacher_feedback_updates(store, teacher_key(TEACHER_TOKEN), update)
+            second = apply_teacher_feedback_updates(store, teacher_key(TEACHER_TOKEN), update)
+            workspace = TeacherReviewWorkspace(store).load(TEACHER_TOKEN)
+
+            self.assertEqual(first, {"written": 2, "existing": 0})
+            self.assertEqual(second, {"written": 0, "existing": 2})
+            self.assertEqual(workspace["tasks"][0]["status"], "reviewed")
+            self.assertEqual(
+                workspace["tasks"][0]["current_feedback"]["source_channel"],
+                "product_owner_relay",
+            )
+
+    def test_freeform_task_accepts_plain_feedback_and_preserves_history(self) -> None:
+        ids = iter(("feedback-q474-first", "feedback-q474-second"))
+        times = iter(
+            (
+                datetime(2026, 8, 20, 7, 0, tzinfo=timezone.utc),
+                datetime(2026, 8, 20, 8, 0, tzinfo=timezone.utc),
+            )
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            seed_freeform_task(root, TEACHER_TOKEN)
+            reviews = TeacherReviewWorkspace(
+                LocalFeedbackStore(root),
+                clock=lambda: next(times),
+                id_factory=lambda: next(ids),
+            )
+
+            first = reviews.submit(
+                TEACHER_TOKEN,
+                "q474-v1-teacher-feedback",
+                {"message": "动画一看就懂，建议保留。"},
+            )
+            second = reviews.submit(
+                TEACHER_TOKEN,
+                "q474-v1-teacher-feedback",
+                {"message": "补充：自然位置的来源也讲清楚了。"},
+            )
+            task = reviews.load(TEACHER_TOKEN)["tasks"][0]
+
+            self.assertEqual(first["record_type"], "free_feedback")
+            self.assertEqual(second["previous_feedback_id"], first["feedback_id"])
+            self.assertEqual(task["status"], "reviewed")
+            self.assertEqual(task["current_feedback"]["message"], "补充：自然位置的来源也讲清楚了。")
+            self.assertEqual(len(task["feedback_history"]), 2)
+
+    def test_freeform_task_rejects_empty_or_structured_payload(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            seed_freeform_task(root, TEACHER_TOKEN)
+            reviews = TeacherReviewWorkspace(LocalFeedbackStore(root))
+
+            with self.assertRaisesRegex(Exception, "最想告诉"):
+                reviews.submit(TEACHER_TOKEN, "q474-v1-teacher-feedback", {"message": "  "})
+            with self.assertRaisesRegex(Exception, "只允许 message"):
+                reviews.submit(
+                    TEACHER_TOKEN,
+                    "q474-v1-teacher-feedback",
+                    {"message": "很好", "dimensions": {}},
+                )
+
+    def test_relayed_free_feedback_requires_source_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            seed_freeform_task(root, TEACHER_TOKEN)
+            task_id = "q474-v1-teacher-feedback"
+            review_dir = root / f"feedback/reviews/{teacher_key(TEACHER_TOKEN)}/{task_id}"
+            review_dir.mkdir(parents=True, exist_ok=True)
+            relayed = {
+                "schema_version": 3,
+                "record_type": "free_feedback",
+                "feedback_id": "feedback-q474-relayed",
+                "task_id": task_id,
+                "courseware_id": "q474-longitudinal-wave",
+                "revision_id": "q474-v1-39e8e4f62f4b",
+                "reviewed_at": "2026-08-20T14:52:29+08:00",
+                "previous_feedback_id": None,
+                "source_channel": "product_owner_relay",
+                "message": "老师也表示很满意。",
+            }
+            (review_dir / "feedback-q474-relayed.json").write_text(
+                json.dumps(relayed, ensure_ascii=False), encoding="utf-8"
+            )
+
+            with self.assertRaisesRegex(Exception, "转述反馈缺少来源"):
+                TeacherReviewWorkspace(LocalFeedbackStore(root)).load(TEACHER_TOKEN)
+
     def test_single_teacher_can_use_stable_storage_key(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

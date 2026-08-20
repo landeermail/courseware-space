@@ -36,6 +36,8 @@ export COURSEWARE_TEACHER_STORAGE_KEY='REPLACE_WITH_EXISTING_64_HEX_STORAGE_KEY'
 
 如需结束旧评价任务，先用现有 `COURSEWARE_TEACHER_STORAGE_KEY` 生成处置对象，再把对象数组仅在一次部署中注入 `COURSEWARE_REVIEW_DISPOSITIONS_JSON`。函数启动后会追加或核对同字节对象；确认接口状态后再次部署并移除该变量。不要为此扩大部署用户的私有 OSS 权限。
 
+如需追加新自由反馈任务或经确认的转述反馈，先用对应有界生成器产出 `review-updates.json`，再把对象数组仅在一次部署中注入 `COURSEWARE_REVIEW_UPDATES_JSON`。函数启动后会逐对象追加或核对同字节内容；确认状态后再次部署并移除该变量。该通道只接受精确绑定 revision 的自由反馈任务和带来源的反馈记录。
+
 ## 4. 部署
 
 先执行脱敏 dry-run：
@@ -62,7 +64,7 @@ export COURSEWARE_TEACHER_STORAGE_KEY='REPLACE_WITH_EXISTING_64_HEX_STORAGE_KEY'
 - 错凭证：403；
 - q01 v7 为已评价；写入 ADR 0013 的处置对象后，q01 v8 与 q07 为已结束且没有伪造评价历史；
 - Pages 题库、`reviews/`、`feedback/` 和精确课件 revision 均为 200；
-- 全新浏览器打开老师原完整链接，fragment 被清除且显示正确待评价数量；
+- 全新浏览器打开老师原完整链接，fragment 被清除且显示正确的等待反馈数量；没有活动任务时首页不显示空待办区域；
 - 匿名 OSS 列举仍为 403。
 
 不得只分别验证 Pages 200 和 API 200；必须证明浏览器从 Pages 带原 fragment 跨域读取生产 API 成功。

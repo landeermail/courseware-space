@@ -8,7 +8,7 @@
 flowchart LR
     T["老师原长期链接\n#access=<稳定凭证>"] --> P["GitHub Pages\n稳定题库"]
     P --> I["不可变课件 revision"]
-    P --> R["我的评价 / 六维表单"]
+    P --> R["我的反馈 / 默认自由反馈"]
     R -->|"X-Courseware-Access-Code"| F["FC feedback-only"]
     F -->|"读取任务与历史\n追加评价版本"| O["私有 OSS\nfeedback/tasks + feedback/reviews"]
     L["本地 research/generation/app.py\n生成器研发"] --> K["Kimi Code"]
@@ -19,7 +19,7 @@ flowchart LR
 
 - **GitHub Pages**：静态课件唯一生产渠道；老师题库路径稳定，每个精确 revision 使用新的不可变目录。
 - **老师原长期链接**：当前唯一合作老师的评价身份。fragment 首次进入后写入同源 `sessionStorage` 并从地址栏清除；部署不得改变原 fragment。
-- **FC feedback-only**：由 `services/feedback/` 独立拥有运行时、schema、测试和部署接口；仅公开 `GET /api/health`，受凭证保护的 `POST /api/feedback`、`GET /api/reviews`、`GET /api/reviews?courseware_id=...` 和 `POST /api/reviews/<task_id>`；生成、媒体、任务和产物路由均为 404。
+- **FC feedback-only**：由 `services/feedback/` 独立拥有运行时、schema、测试和部署接口；仅公开 `GET /api/health`，受凭证保护的 `POST /api/feedback`、`GET /api/reviews`、`GET /api/reviews?courseware_id=...` 和 `POST /api/reviews/<task_id>`。新老师任务默认提交自由文字，旧结构化评价保持兼容；生成、媒体、任务和产物路由均为 404。
 - **私有 OSS**：任务和评价保存为不可变 JSON。运行角色可向 `feedback/*` 追加写，只能读取 `feedback/tasks/*` 与 `feedback/reviews/*`，列举也仅限这两个前缀；没有删除或 ACL 权限。
 - **暂停的本地生成研发**：`research/generation/` 保留本地 HTTP 入口、Kimi、媒体解析、harness、模板、library 和必要证据；它不包含 feedback API 或生产部署入口，也不是新题研发实验的默认入口。
 
@@ -34,4 +34,4 @@ flowchart LR
 - 普通课件发布只改 Pages，不调用阿里云；发布后从老师真实入口跟随卡片验证 revision、资源和评价入口。
 - feedback-only 部署使用内容寻址 ZIP、专用最小权限 RAM deployer、FC-only 运行角色和保留并发 1。
 - GitHub Pages 短暂显示 GitHub 独角兽故障页属于托管方异常；先检查 GitHub Status 和入口恢复情况，不因一次平台故障轮换老师链接或重发 revision。
-- 自定义域名仍等待备案条件；切换与回退见 [`docs/deploy/domain-cutover-runbook.md`](domain-cutover-runbook.md)。
+- GitHub Pages 与当前 FC 默认地址是现行稳定生产入口。自定义域名方案仅作为远期参考保留，不属于当前待办；只有产品负责人重新明确启动时才读取 [`docs/deploy/domain-cutover-runbook.md`](domain-cutover-runbook.md)。

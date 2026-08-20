@@ -42,6 +42,7 @@ from services.feedback.review_workspace import (  # noqa: E402
     ReviewDataError,
     TeacherReviewWorkspace,
     apply_task_dispositions,
+    apply_teacher_feedback_updates,
 )
 
 
@@ -137,6 +138,23 @@ def review_dispositions_from_environment() -> list[dict[str, object]]:
         isinstance(item, dict) for item in value
     ):
         raise RuntimeError("COURSEWARE_REVIEW_DISPOSITIONS_JSON 必须包含 1 至 10 个对象")
+    return value
+
+
+def review_updates_from_environment() -> list[dict[str, object]]:
+    raw = os.environ.get("COURSEWARE_REVIEW_UPDATES_JSON", "").strip()
+    if not raw:
+        return []
+    if len(raw.encode("utf-8")) > 32768:
+        raise RuntimeError("COURSEWARE_REVIEW_UPDATES_JSON 过大")
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("COURSEWARE_REVIEW_UPDATES_JSON 必须是 JSON") from error
+    if not isinstance(value, list) or not 1 <= len(value) <= 10 or not all(
+        isinstance(item, dict) for item in value
+    ):
+        raise RuntimeError("COURSEWARE_REVIEW_UPDATES_JSON 必须包含 1 至 10 个对象")
     return value
 
 
@@ -351,6 +369,15 @@ def main() -> int:
     FeedbackHandler.access_gate = gate
     FeedbackHandler.feedback_service = service
     storage_key = teacher_storage_key_from_environment()
+    updates = review_updates_from_environment()
+    if updates:
+        if not storage_key:
+            raise RuntimeError("老师反馈更新需要现有老师存储键")
+        result = apply_teacher_feedback_updates(service.store, storage_key, updates)
+        print(
+            "Teacher feedback updates: "
+            f"written={result['written']} existing={result['existing']}"
+        )
     dispositions = review_dispositions_from_environment()
     if dispositions:
         if not storage_key:

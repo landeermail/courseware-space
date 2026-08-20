@@ -7,7 +7,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="courseware-api-base" content="https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run">
   <link rel="icon" href="data:,">
-  <title>我的评价</title>
+  <title>我的反馈</title>
   <style>
     :root{--ink:#172033;--muted:#647084;--line:#d9e2ee;--surface:#fff;--soft:#f4f7fb;--blue:#2459d3;--blue-soft:#edf3ff;--green:#087a55;--green-soft:#e8f7f1;--amber:#9a5700;--amber-soft:#fff6e5;--red:#b42318;--shadow:0 14px 38px rgba(23,32,51,.08)}
     *{box-sizing:border-box}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#f7faff 0,#eef3f9 100%);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}
@@ -31,20 +31,20 @@
 <body>
   <main class="page">
     <header class="hero">
-      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>我的评价</h1><p class="lead">这里列出已分派的评价任务。待完成的可以选择留下结构化意见，已完成的可以修改或回看历史；已经结束的旧任务无需补填。</p></div>
+      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>我的反馈</h1><p class="lead">这里保存当前希望听取意见的课件，以及已经留下的反馈。默认直接表达即可；旧的结构化评价仍可回看。</p></div>
       <a class="back-link" href="../">返回课件列表</a>
     </header>
     <p class="notice" id="notice" hidden></p>
 
     <section class="section" aria-labelledby="pendingTitle">
-      <h2 id="pendingTitle">待评价</h2>
-      <p class="section-copy">如需留存结构化意见，可在体验后填写；平时直接反馈也同样有效。</p>
-      <div class="task-list" id="pendingList"><div class="empty">正在读取评价任务…</div></div>
+      <h2 id="pendingTitle">等待反馈</h2>
+      <p class="section-copy">先体验课件，再直接说出最想告诉我们的内容。</p>
+      <div class="task-list" id="pendingList"><div class="empty">正在读取反馈任务…</div></div>
     </section>
 
     <section class="section" aria-labelledby="reviewedTitle">
-      <h2 id="reviewedTitle">已完成评价</h2>
-      <p class="section-copy">每次修改都会保留为新版本，历史版本只读。</p>
+      <h2 id="reviewedTitle">已反馈</h2>
+      <p class="section-copy">每次补充都会保留为新版本，历史内容只读。</p>
       <div class="task-list" id="reviewedList"></div>
     </section>
 
@@ -53,7 +53,7 @@
       <p class="section-copy">这些旧任务已按当前评价方式收口，不代表补填过结构化评价。</p>
       <div class="task-list" id="closedList"></div>
     </section>
-    <footer>评价记录保存在服务端，仅用于改进课件，不关联姓名、学校或其他身份信息。</footer>
+    <footer>反馈记录保存在服务端，仅用于改进课件，不关联姓名、学校或其他身份信息。</footer>
   </main>
   <script>
   (()=>{
@@ -78,6 +78,10 @@
     function showNotice(message){notice.textContent=message;notice.hidden=false;}
     function versionHtml(version,currentId){
       const current=version.feedback_id===currentId;
+      if(version.record_type==='free_feedback'){
+        const source=version.source_channel==='product_owner_relay'?'<p class="dim-line">来源：经产品负责人转述记录</p>':'';
+        return `<article class="version${current?' current':''}"><div class="version-head"><strong>${current?'<span class="version-tag">当前版本</span> ':''}自由反馈</strong><span class="version-time">${esc(formatTime(version.reviewed_at))}</span></div><div class="version-body"><p>${esc(version.message||'')}</p>${source}</div></article>`;
+      }
       const overall=version.overall||{};
       const verdict=overall.verdict==='satisfied'?'整体满意':overall.verdict==='reject'?'打回修改':'—';
       const dims=Object.keys(DIMENSION_LABELS).map(key=>{
@@ -97,8 +101,8 @@
       let historyHtml='';
       if(mode==='reviewed'){
         const current=task.current_feedback||{};
-        meta.push(`<span>当前评价时间：${esc(formatTime(current.reviewed_at))}</span>`);
-        actions=`<a class="btn primary" href="${feedbackUrl}">修改评价</a><a class="btn" href="${tryUrl}">再次体验课件</a><button class="btn" type="button" data-history="${esc(task.task_id)}">查看历史</button>`;
+        meta.push(`<span>当前反馈时间：${esc(formatTime(current.reviewed_at))}</span>`);
+        actions=`<a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'查看或补充反馈':'修改评价'}</a><a class="btn" href="${tryUrl}">再次体验课件</a><button class="btn" type="button" data-history="${esc(task.task_id)}">查看历史</button>`;
         const history=Array.isArray(task.feedback_history)?task.feedback_history:[];
         historyHtml=`<div class="history" id="history-${esc(task.task_id)}" hidden>${history.map(version=>versionHtml(version,current.feedback_id)).join('')}</div>`;
       }else if(mode==='closed'){
@@ -108,17 +112,17 @@
         actions=`<a class="btn" href="${tryUrl}">查看课件</a>`;
       }else{
         meta.push(`<span>分派时间：${esc(formatTime(task.assigned_at))}</span>`);
-        actions=`<a class="btn" href="${tryUrl}">先体验课件</a><a class="btn primary" href="${feedbackUrl}">填写评价</a>`;
+        actions=`<a class="btn" href="${tryUrl}">先体验课件</a><a class="btn primary" href="${feedbackUrl}">${task.feedback_mode==='freeform'?'反馈这份课件':'填写评价'}</a>`;
       }
-      const label=mode==='reviewed'?'已评价':mode==='closed'?'已结束':'待评价';
+      const label=mode==='reviewed'?'已反馈':mode==='closed'?'已结束':'等待反馈';
       return `<article class="task-card ${mode}"><div class="task-head"><h3>${esc(task.title)}</h3><span class="status ${mode}">${label}</span></div><p class="task-meta">${meta.join('')}</p><div class="card-actions">${actions}</div>${historyHtml}</article>`;
     }
     function render(tasks){
       const pending=tasks.filter(task=>task.status==='pending');
       const reviewed=tasks.filter(task=>task.status==='reviewed');
       const closed=tasks.filter(task=>task.status==='closed');
-      pendingList.innerHTML=pending.length?pending.map(task=>taskCard(task,'pending')).join(''):'<div class="empty">目前没有待评价的课件。</div>';
-      reviewedList.innerHTML=reviewed.length?reviewed.map(task=>taskCard(task,'reviewed')).join(''):'<div class="empty">还没有已完成的结构化评价。</div>';
+      pendingList.innerHTML=pending.length?pending.map(task=>taskCard(task,'pending')).join(''):'<div class="empty">目前没有等待反馈的课件。</div>';
+      reviewedList.innerHTML=reviewed.length?reviewed.map(task=>taskCard(task,'reviewed')).join(''):'<div class="empty">还没有已保存的反馈。</div>';
       closedList.innerHTML=closed.length?closed.map(task=>taskCard(task,'closed')).join(''):'<div class="empty">目前没有已结束的旧任务。</div>';
       reviewedList.querySelectorAll('[data-history]').forEach(button=>button.addEventListener('click',()=>{
         const panel=document.getElementById(`history-${button.dataset.history}`);
@@ -129,7 +133,7 @@
     }
     const accessCode=sessionStorage.getItem(ACCESS_KEY);
     if(!accessCode){
-      pendingList.innerHTML='<div class="empty">无法读取评价任务。</div>';
+      pendingList.innerHTML='<div class="empty">无法读取反馈任务。</div>';
       reviewedList.innerHTML='';
       closedList.innerHTML='';
       showNotice('此页面需要从完整的专属链接进入，请回到收到的原链接重新打开。');
@@ -137,25 +141,25 @@
     }
     fetch(`${API_BASE}/api/reviews`,{headers:{'X-Courseware-Access-Code':accessCode}})
       .then(response=>{
-        if(response.status===403)throw new Error('个人链接无效或没有评价任务，请从完整专属链接进入。');
-        if(!response.ok)throw new Error('评价状态暂时无法读取，请稍后刷新重试。');
+        if(response.status===403)throw new Error('个人链接无效或没有反馈任务，请从完整专属链接进入。');
+        if(!response.ok)throw new Error('反馈状态暂时无法读取，请稍后刷新重试。');
         return response.json();
       })
       .then(data=>{
         const tasks=Array.isArray(data.tasks)?data.tasks:[];
         if(!tasks.length){
-          pendingList.innerHTML='<div class="empty">目前没有待评价的课件。</div>';
-          reviewedList.innerHTML='<div class="empty">还没有已完成的结构化评价。</div>';
+          pendingList.innerHTML='<div class="empty">目前没有等待反馈的课件。</div>';
+          reviewedList.innerHTML='<div class="empty">还没有已保存的反馈。</div>';
           closedList.innerHTML='<div class="empty">目前没有已结束的旧任务。</div>';
           return;
         }
         render(tasks);
       })
       .catch(error=>{
-        pendingList.innerHTML='<div class="empty">无法读取评价任务。</div>';
+        pendingList.innerHTML='<div class="empty">无法读取反馈任务。</div>';
         reviewedList.innerHTML='';
         closedList.innerHTML='';
-        showNotice(error instanceof Error?error.message:'评价状态暂时无法读取，请稍后刷新重试。');
+        showNotice(error instanceof Error?error.message:'反馈状态暂时无法读取，请稍后刷新重试。');
       });
   })();
   </script>

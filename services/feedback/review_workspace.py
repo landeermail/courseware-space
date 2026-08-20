@@ -77,6 +77,49 @@ def apply_task_dispositions(
     return {"written": written, "existing": existing}
 
 
+def apply_teacher_feedback_updates(
+    store: FeedbackStore,
+    storage_key: str,
+    updates: list[dict[str, Any]],
+) -> dict[str, int]:
+    """Append exact free-feedback tasks and records or verify identical prior bytes."""
+
+    if not STORAGE_KEY.fullmatch(storage_key) or not 1 <= len(updates) <= 10:
+        raise ReviewDataError("老师反馈更新配置无效")
+    workspace = TeacherReviewWorkspace(store, storage_key=storage_key)
+    written = 0
+    existing = 0
+    for update in updates:
+        if not isinstance(update, dict) or set(update) != {"task", "feedback"}:
+            raise ReviewDataError("老师反馈更新配置无效")
+        task = update.get("task")
+        feedback = update.get("feedback")
+        workspace._validate_task(task, require_freeform=True)
+        if not isinstance(task, dict) or not isinstance(feedback, dict):
+            raise ReviewDataError("老师反馈更新配置无效")
+        workspace._validate_record_identity(feedback, task)
+        workspace._validate_free_feedback(feedback, task)
+        task_id = workspace._task_id(task)
+        feedback_id = feedback["feedback_id"]
+        for key, value in (
+            (f"feedback/tasks/{storage_key}/{task_id}.json", task),
+            (f"feedback/reviews/{storage_key}/{task_id}/{feedback_id}.json", feedback),
+        ):
+            body = canonical_json(value)
+            try:
+                store.write(key, body)
+                written += 1
+            except FeedbackStoreError:
+                try:
+                    prior = store.read(key)
+                except FeedbackStoreError as error:
+                    raise ReviewDataError("老师反馈更新写入失败") from error
+                if prior != body:
+                    raise ReviewDataError("老师反馈更新对象已存在但内容不同")
+                existing += 1
+    return {"written": written, "existing": existing}
+
+
 class TeacherReviewWorkspace:
     """Hide teacher identity, task lookup and history behind one interface."""
 
@@ -133,6 +176,19 @@ class TeacherReviewWorkspace:
             raise ReviewClosedError("评价任务已结束，无需补填")
         reviewed_at = self.clock().astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
         feedback_id = self.id_factory()
+        revision_id = task.get("revision_id")
+        if not isinstance(revision_id, str) or not revision_id:
+            raise ReviewDataError("评价任务缺少精确 revision")
+        if task.get("feedback_mode", "structured") == "freeform":
+            return self._submit_freeform(
+                teacher_key,
+                task,
+                task_id,
+                form,
+                previous,
+                feedback_id,
+                reviewed_at,
+            )
         validation_payload = {
             "schema_version": 1,
             "feedback_id": feedback_id,
@@ -146,9 +202,6 @@ class TeacherReviewWorkspace:
         errors = validate_feedback(validation_payload)
         if errors:
             raise FeedbackValidationError("；".join(errors))
-        revision_id = task.get("revision_id")
-        if not isinstance(revision_id, str) or not revision_id:
-            raise ReviewDataError("评价任务缺少精确 revision")
         payload = {
             "schema_version": 2,
             "feedback_id": feedback_id,
@@ -165,6 +218,40 @@ class TeacherReviewWorkspace:
         self.store.write(key, body)
         return payload
 
+    def _submit_freeform(
+        self,
+        teacher_key: str,
+        task: dict[str, Any],
+        task_id: str,
+        form: dict[str, Any],
+        previous: list[dict[str, Any]],
+        feedback_id: str,
+        reviewed_at: str,
+    ) -> dict[str, Any]:
+        if not isinstance(form, dict) or set(form) != {"message"}:
+            raise FeedbackValidationError("自由反馈只允许 message 字段")
+        message = form.get("message")
+        if not isinstance(message, str) or not message.strip():
+            raise FeedbackValidationError("请写下最想告诉我们的内容")
+        message = message.strip()
+        if len(message) > 4000:
+            raise FeedbackValidationError("反馈不能超过 4000 个字符")
+        payload = {
+            "schema_version": 3,
+            "record_type": "free_feedback",
+            "feedback_id": feedback_id,
+            "task_id": task_id,
+            "courseware_id": task["courseware_id"],
+            "revision_id": task["revision_id"],
+            "reviewed_at": reviewed_at,
+            "previous_feedback_id": previous[-1]["feedback_id"] if previous else None,
+            "source_channel": "teacher_entry",
+            "message": message,
+        }
+        key = f"feedback/reviews/{teacher_key}/{task_id}/{feedback_id}.json"
+        self.store.write(key, canonical_json(payload))
+        return payload
+
     def _load_tasks(self, teacher_key: str) -> list[dict[str, Any]]:
         prefix = f"feedback/tasks/{teacher_key}/"
         keys = self.store.list(prefix)
@@ -176,9 +263,7 @@ class TeacherReviewWorkspace:
                 task = json.loads(self.store.read(key))
             except (FeedbackStoreError, UnicodeDecodeError, json.JSONDecodeError) as error:
                 raise ReviewDataError("老师评价任务数据无效") from error
-            if not isinstance(task, dict) or task.get("schema_version") != 1:
-                raise ReviewDataError("老师评价任务数据无效")
-            self._task_id(task)
+            self._validate_task(task)
             tasks.append(task)
         tasks.sort(key=lambda task: (str(task.get("assigned_at", "")), task["task_id"]))
         return tasks
@@ -203,6 +288,11 @@ class TeacherReviewWorkspace:
                 self._validate_record_identity(item, task)
                 history.append(item)
                 continue
+            if item.get("schema_version") == 3 and item.get("record_type") == "free_feedback":
+                self._validate_record_identity(item, task)
+                self._validate_free_feedback(item, task)
+                history.append(item)
+                continue
             if item.get("schema_version") == 1 and item.get("record_type") == "task_disposition":
                 self._validate_disposition(item, task)
                 dispositions.append(item)
@@ -213,6 +303,46 @@ class TeacherReviewWorkspace:
             key=lambda item: (str(item.get("decided_at", "")), str(item.get("disposition_id", "")))
         )
         return history, dispositions[-1] if dispositions else None
+
+    @staticmethod
+    def _validate_free_feedback(item: dict[str, Any], task: dict[str, Any]) -> None:
+        if task.get("feedback_mode", "structured") != "freeform":
+            raise ReviewDataError("老师自由反馈与任务类型不一致")
+        message = item.get("message")
+        if not isinstance(message, str) or not message.strip() or len(message) > 4000:
+            raise ReviewDataError("老师自由反馈数据无效")
+        source_channel = item.get("source_channel")
+        if source_channel not in {"teacher_entry", "product_owner_relay"}:
+            raise ReviewDataError("老师自由反馈数据无效")
+        source_ref = item.get("source_ref")
+        if source_channel == "product_owner_relay" and (
+            not isinstance(source_ref, str) or not source_ref.strip()
+        ):
+            raise ReviewDataError("转述反馈缺少来源")
+        feedback_id = item.get("feedback_id")
+        reviewed_at = item.get("reviewed_at")
+        if not isinstance(feedback_id, str) or not TASK_ID.fullmatch(feedback_id):
+            raise ReviewDataError("老师自由反馈数据无效")
+        if not isinstance(reviewed_at, str) or not reviewed_at.strip():
+            raise ReviewDataError("老师自由反馈数据无效")
+
+    def _validate_task(self, task: object, *, require_freeform: bool = False) -> None:
+        if not isinstance(task, dict) or task.get("schema_version") != 1:
+            raise ReviewDataError("老师评价任务数据无效")
+        self._task_id(task)
+        feedback_mode = task.get("feedback_mode", "structured")
+        if feedback_mode not in {"structured", "freeform"}:
+            raise ReviewDataError("老师评价任务数据无效")
+        if require_freeform and feedback_mode != "freeform":
+            raise ReviewDataError("老师反馈更新只允许自由反馈任务")
+        for field in ("courseware_id", "revision_id", "title", "courseware_url", "assigned_at"):
+            if not isinstance(task.get(field), str) or not task[field].strip():
+                raise ReviewDataError("老师评价任务数据无效")
+        prompt = task.get("prompt")
+        if prompt is not None and (
+            not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 600
+        ):
+            raise ReviewDataError("老师评价任务数据无效")
 
     @staticmethod
     def _validate_record_identity(item: dict[str, Any], task: dict[str, Any]) -> None:
