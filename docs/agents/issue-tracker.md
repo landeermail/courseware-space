@@ -1,6 +1,6 @@
 # GitHub Issues 协作规则
 
-GitHub Issues 用于跨课件、跨模块或需要长期追踪的工程任务。单题生产的生命周期事实以精确 `production/courseware/<courseware_id>/record.md` 为准；产品负责人当前指令和生产状态单优先于历史 Issue 或本地笔记。
+GitHub Issues 用于跨课件、跨模块或需要长期追踪的工程任务。单题生命周期事实以当前 `research/experiments/<experiment_id>.md` 或明确转正后的 `production/courseware/<courseware_id>/record.md` 为准；产品负责人当前指令和精确滚动记录优先于历史 Issue 或本地笔记。
 
 ## 何时建议创建 Issue
 
@@ -12,7 +12,7 @@ GitHub Issues 用于跨课件、跨模块或需要长期追踪的工程任务。
 - 需要先讨论方案或明确验收标准的问题；
 - 需要长期保留决策过程的任务。
 
-顾问老师提供的新题默认先做研发实验，不要求另建 Issue，也不自动进入生产状态单或 `$build-physics-courseware`。只有用户明确决定转入正式生产时，才重新评估是否使用该 skill 与 `production/courseware/<courseware_id>/record.md`。如果实验暴露经过复验的跨题型、架构或部署问题，再为那个跨域问题建 Issue。
+顾问老师提供的新题默认先做研发实验，不要求另建 Issue，也不自动进入生产记录；但从真实题开始即使用 `$build-physics-courseware` 组织轻量生命周期。只有用户明确决定转入正式生产时，才建立 `production/courseware/<courseware_id>/record.md`。如果实验暴露经过复验的跨题型、架构或部署问题，再为那个跨域问题建 Issue。
 
 以下小型改动不强制创建 Issue：
 
