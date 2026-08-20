@@ -106,10 +106,9 @@ class BuildPagesTests(unittest.TestCase):
             for required in REQUIRED_URLS:
                 self.assertTrue((first / required).is_file(), required.as_posix())
 
-    def test_allowlist_does_not_include_generator_or_internal_roots(self) -> None:
+    def test_allowlist_does_not_include_internal_roots(self) -> None:
         allowed = {path.as_posix() for path in PUBLIC_PATHS}
 
-        self.assertTrue((REPOSITORY_ROOT / "research/generation/generator/index.html").is_file())
         self.assertNotIn("generator", allowed)
         self.assertFalse(INTERNAL_TOP_LEVEL.intersection(EXPECTED_TOP_LEVEL))
 

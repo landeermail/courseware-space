@@ -1,76 +1,45 @@
-# 面向高中物理老师的互动课件
+# Courseware Space：高中物理互动课件
 
-这是一个帮助高中物理老师把不可见物理过程变成可观察、可操控、可验证时空模型的互动课件项目。学生在老师组织下参与学习，但不是当前产品客户。GitHub Pages 只承载公开静态课件、老师题库与评价页面；评价服务与本地研发资产分别由独立职责模块承担，都不会因为与站点共仓而进入 Pages。
+把题目中难以想象的运动、变化和因果过程，变成老师可以直接用于课堂的可观察、可操控互动课件。
+
+**[打开公开课件库](https://landeermail.github.io/courseware-space/)**
+
+## 精选课件
+
+| 题目 | 学生原本难以看见的过程 | 在线体验 |
+|---|---|---|
+| 474：纵波弹簧标记点 | 弹簧质点如何左右振动，疏密结构如何向右传播，以及怎样从静态点图回到波长和振幅 | [体验纵波课件](https://landeermail.github.io/courseware-space/preview/TNlUdPGF-r2ZDQ4ZDFWYHS8ERlIxaUJT/q474-v1-39e8e4f62f4b/) |
+| 20：旋转导体与电磁感应 | 转动、电流、安培力和运动状态如何形成连续因果链 | [体验旋转导体课件](https://landeermail.github.io/courseware-space/electromagnetism/q20-rotating-rod/) |
+| 23：落管与上抛小球 | 在地面与落管两个参考系中，怎样理解相对运动和穿出条件 | [体验相对运动课件](https://landeermail.github.io/courseware-space/mechanics/q23-falling-tube-ball/) |
+
+## 我们怎样做课件
+
+- 从学生真正“想象不出来”的过程出发，而不是默认自动讲完整道题；
+- 动画和交互只服务当前理解障碍，并能回到题图、条件和纸笔判断；
+- AI负责扩大实现能力，物理、教学范围、用户体验和发布仍由人独立检查与决定；
+- 老师可以自由反馈，不需要填写固定评价表。
+
+学生在老师组织下参与学习，当前产品首先服务于老师的课堂表达和判断。
+
+## 公开仓库边界
+
+本仓库只保存公开静态课件、展示内容及 GitHub Pages 所需的最小构建校验。研发实验、生产记录、老师反馈、评价服务和内部方法保存在独立私有仓库。
+
+公开展示不代表放弃知识产权或授予复制、修改、再发布、销售许可；具体边界见 [`LICENSE.md`](LICENSE.md)。题目、图片等第三方材料的权利仍归各自权利人所有。
 
 ## 本地预览
 
-本项目没有前端编译步骤，也不需要安装 npm 依赖。在仓库根目录启动静态服务器：
+项目没有前端编译步骤，也不需要 npm：
 
 ```bash
 python3 -m http.server 8000 --directory site
 ```
 
-然后访问 <http://localhost:8000/>。不要直接双击打开 HTML 文件；部分浏览器功能和相对资源需要通过 HTTP 正常加载。
-
-`research/generation/` 中仍保留一套可运行的本地生成器与 harness，但它是暂停的历史研发脚手架，不是下一道真实题的默认入口。只有明确恢复该方向时，才按其 README 启动和验证：
+访问 <http://localhost:8000/>。提交公开站点改动前运行：
 
 ```bash
-KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-kimi -w)" \
-  python3 research/generation/app.py
+python3 -m unittest discover -s scripts -p "test_*.py"
+python3 scripts/validate_site.py
 ```
 
-然后访问 <http://localhost:8000/generator/>。生成器后端、密钥管理和验收方法见 `research/generation/README.md`。
-
-该生成服务只供本地研发；公网 FC 已收缩为不含模型凭证的评价服务，`/api/generate` 保持关闭。当前部署结构见 [`docs/deploy/architecture.md`](docs/deploy/architecture.md)。
-
-## 先读什么
-
-- [`CONTEXT.md`](CONTEXT.md)：产品使命、术语和长期边界；
-- [`docs/adr/0011-default-to-minimal-courseware-research-experiments.md`](docs/adr/0011-default-to-minimal-courseware-research-experiments.md)：下一道真实题的默认实验方式；
-- [`docs/adr/0012-adopt-lean-courseware-lifecycle.md`](docs/adr/0012-adopt-lean-courseware-lifecycle.md)：把已跑通的实验责任链作为统一生产编排默认路径；
-- [`docs/quality/standard.md`](docs/quality/standard.md)：可按需使用的历史六维质量视角；
-- [`docs/adr/`](docs/adr/)：已采纳的重要取舍；
-- [`PROGRESS.md`](PROGRESS.md)：实现与验收历史；[`BLOCKED.md`](BLOCKED.md) 只列仍待处理事项；
-- [`docs/goals/`](docs/goals/)：历史任务书归档，不代表当前待办。
-
-## 下一道真实题默认怎么做
-
-顾问老师给出的下一道真实题先作为研发实验，不自动进入 `production/`，也不自动使用旧 harness、九阶段状态或 A0/A1/A2/A3 评审。`$build-physics-courseware` 从真实题开始组织同一条轻量生命周期；单题 Codex 完成物理与教学分析、形成紧凑临时任务书、调用 Kimi Code CLI 实现前端候选并独立检查；用户体验通过并明确批准后，才协调稳定链接给老师试用。
-
-老师可以自由反馈，不要求按六维或结构化 intake 填写。现有评价页面仍是可用的意见入口；老师原意与用户解释必须分开记录。每轮只长期保留最小实验结论，不保存完整调试流水账或把单题经验自动写成通用规则。
-
-## 已发布课件与评价
-
-正式静态课件只通过 GitHub Pages 发布，每个精确 revision 使用不可变目录。老师从原长期题库的“反馈这份课件”和“我的反馈”进入精确 revision 任务；新任务默认接收自由反馈，旧六维表单只作兼容入口。数据契约与 feedback-only 运行边界见 [`services/feedback/README.md`](services/feedback/README.md)。
-
-当前老师提供的是允许公开的练习题；OSS 私有课件投递工具已经冻结，不再是生产渠道。老师使用一条长期稳定的题库链接进入课件和“我的反馈”；反馈任务、当前结果与历史版本以服务端精确 revision 记录为准。
-
-## 目录结构
-
-```text
-.
-├── site/                      # 唯一 Pages 静态产品源，内部结构即公开 URL
-├── production/                # 明确转入正式生产后的单题状态与规范输入
-├── services/feedback/         # 评价运行时、schema、测试与 feedback-only 部署
-├── research/experiments/      # 新题轻量生命周期的唯一滚动记录
-├── research/generation/       # 暂停的本地生成器、harness、模板与历史研发证据
-├── scripts/                   # Pages 打包、站点校验等仓库级小接口
-├── docs/                      # ADR、质量、部署与历史任务书
-└── .github/workflows/         # GitHub Pages 部署工作流
-```
-
-本机可能仍有被 Git 忽略的 `trial/private/` 恢复保险和 `deploy/dist/` 旧构建产物；它们不是当前源码模块、事实源或发布输入。
-
-每个课件目录以 `index.html` 为入口，并将图片、脚本、图标等专用资源保存在同一目录或其子目录中。
-
-## 正式生产与发布
-
-只有用户明确决定某题转入正式生产时，才建立 `production/courseware/<courseware_id>/`；`$build-physics-courseware` 直接承接研发实验已经成立的证据和候选，不重新运行旧九阶段协议。任何写入 `site/`、发布或外部状态变化都需要明确授权；获准发布的候选使用不可变 revision 目录，只更新对应老师题库卡片。Pages 部署后必须从老师真实长期入口验 revision、资源和评价入口。
-
-## 发布
-
-推送或合并到 `main` 后，[GitHub Actions](https://github.com/landeermail/courseware-space/actions) 会通过 `scripts/build_pages.py` 组装 `site/` 白名单工件并部署到 GitHub Pages：
-
-<https://landeermail.github.io/courseware-space/>
-
-除非正在处理紧急修复，否则不要直接向 `main` 推送。
+`main` 受保护；所有正常变更通过 Pull Request 校验后部署到 GitHub Pages。

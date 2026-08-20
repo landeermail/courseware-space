@@ -1,9 +1,4 @@
 .DS_Store
 __pycache__/
 *.py[cod]
-
-# Local recovery insurance and generated deployment artifacts are not source modules.
-trial/private/
-deploy/dist/
-deploy/.control/
-deploy/*.zip
+_site/

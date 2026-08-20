@@ -1,7 +1,0 @@
-[
-  {"id":"projectile-horizontal-cliff","question":"从距地面20 m的高处，以10 m/s的水平速度抛出一个质量1 kg的小球，取g=10 m/s²。观察速度方向、落地时间与射程如何随过程变化。","scenario":{"mode":"horizontal","g_m_s2":10,"mass_kg":1,"x0_m":0,"y0_m":20,"speed_m_s":10,"angle_deg":0}},
-  {"id":"projectile-oblique-30","question":"在水平地面以20 m/s、与水平面成30°斜向上抛出质量2 kg的小球，取g=10 m/s²。研究顶点、射程和能量变化。","scenario":{"mode":"oblique","g_m_s2":10,"mass_kg":2,"x0_m":0,"y0_m":0,"speed_m_s":20,"angle_deg":30}},
-  {"id":"projectile-oblique-platform","question":"从5 m高的平台以18 m/s、45°斜向上抛出0.5 kg小球，取g=9.8 m/s²。比较顶点时刻与落地时刻，并观察速度分解。","scenario":{"mode":"oblique","g_m_s2":9.8,"mass_kg":0.5,"x0_m":0,"y0_m":5,"speed_m_s":18,"angle_deg":45}},
-  {"id":"projectile-horizontal-fast","question":"从45 m高处以15 m/s水平抛出0.2 kg物体，取g=10 m/s²。操控初速度并验证水平位移和下落过程相互独立。","scenario":{"mode":"horizontal","g_m_s2":10,"mass_kg":0.2,"x0_m":2,"y0_m":45,"speed_m_s":15,"angle_deg":0}},
-  {"id":"projectile-oblique-60","question":"从水平地面以25 m/s、60°斜抛质量1.5 kg的小球，取g=10 m/s²。比较不同角度下的最高点和射程。","scenario":{"mode":"oblique","g_m_s2":10,"mass_kg":1.5,"x0_m":0,"y0_m":0,"speed_m_s":25,"angle_deg":60}}
-]

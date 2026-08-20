@@ -1,3 +1,0 @@
-{"request_id":"rotating-rod","event":"generation_fallback","question":"一根长1 m的导体杆绕一端在垂直纸面向里的匀强磁场中以角速度2 rad/s匀速转动，求杆两端的感应电动势。","reason":"导体杆绕端旋转而非平动，未给出B、v、R","status":"awaiting_contact","recorded_at":"2026-07-28T06:18:14.475373+00:00"}
-{"request_id":"time-varying-field","event":"generation_fallback","question":"闭合平行导轨中的导体杆以2 m/s向右运动，同时磁感应强度按B=0.2-0.01t变化，求回路总电动势随时间的关系。","reason":"时变磁场且缺少导轨间距L和回路总电阻R等参数","status":"awaiting_contact","recorded_at":"2026-07-28T06:18:30.006108+00:00"}
-{"request_id":"accelerated-motion","event":"generation_fallback","question":"质量0.5 kg的导体杆静止在光滑平行导轨上，接通恒力后在0.5 T匀强磁场中加速运动，回路电阻0.2 Ω，求速度随时间变化规律。","reason":"导体杆做加速运动，非匀速直线运动，且缺少导轨间距 L","status":"awaiting_contact","recorded_at":"2026-07-28T06:18:42.513422+00:00"}

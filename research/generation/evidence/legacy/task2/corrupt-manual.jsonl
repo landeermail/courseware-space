@@ -1,1 +1,0 @@
-{"request_id":"corrupt-parameter","event":"generation_fallback","question":"闭合平行导轨间距1 m，0.5 T匀强磁场向里，杆以2 m/s向右匀速运动，总电阻0.4 Ω。","reason":"resistance_ohm=-0.4 超出模板范围 [0.001, 100]","status":"awaiting_contact","recorded_at":"2026-07-28T06:18:42.514449+00:00"}
