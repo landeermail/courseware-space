@@ -22,6 +22,7 @@ from services.feedback.app import (  # noqa: E402
     RequestRateLimiter,
     cors_origins_from_environment,
     feedback_services_from_environment,
+    review_dispositions_from_environment,
     teacher_storage_key_from_environment,
 )
 from services.feedback.service import (  # noqa: E402
@@ -68,6 +69,25 @@ def seed_workspace(root: Path, token: str) -> None:
         path = root / f"feedback/tasks/{teacher_key}/{task['task_id']}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(task, ensure_ascii=False), encoding="utf-8")
+
+
+def close_task(root: Path, token: str, task_id: str, courseware_id: str, revision_id: str) -> None:
+    teacher_key = hashlib.sha256(token.encode("ascii")).hexdigest()
+    disposition = {
+        "schema_version": 1,
+        "record_type": "task_disposition",
+        "disposition_id": "disposition-fixed-form-retired-20260820",
+        "task_id": task_id,
+        "courseware_id": courseware_id,
+        "revision_id": revision_id,
+        "status": "closed",
+        "decided_at": "2026-08-20T00:00:00+08:00",
+        "reason": "固定六维表单已退出默认评价协议，本任务结束，无需老师补填。",
+        "decision_ref": "docs/adr/0011-default-to-minimal-courseware-research-experiments.md#决策",
+    }
+    path = root / f"feedback/reviews/{teacher_key}/{task_id}/{disposition['disposition_id']}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(disposition, ensure_ascii=False), encoding="utf-8")
 
 
 class RunningServer:
@@ -129,6 +149,23 @@ class RunningServer:
 
 
 class FeedbackOnlyHttpTests(unittest.TestCase):
+    def test_review_dispositions_environment_is_optional_and_bounded(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(review_dispositions_from_environment(), [])
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_REVIEW_DISPOSITIONS_JSON": json.dumps([{"task_id": "task-1"}])},
+            clear=True,
+        ):
+            self.assertEqual(review_dispositions_from_environment(), [{"task_id": "task-1"}])
+        with patch.dict(
+            os.environ,
+            {"COURSEWARE_REVIEW_DISPOSITIONS_JSON": "{}"},
+            clear=True,
+        ):
+            with self.assertRaises(RuntimeError):
+                review_dispositions_from_environment()
+
     def test_reviews_require_the_single_stable_teacher_code(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             store_root = Path(temporary)
@@ -247,6 +284,39 @@ class FeedbackOnlyHttpTests(unittest.TestCase):
             self.assertEqual(resolved["tasks"][0]["task_id"], "q01-v8-teacher-review")
             self.assertEqual(result["revision_id"], "q01-v8-1c89623d5bf0")
             self.assertEqual(updated["tasks"][1]["status"], "reviewed")
+
+    def test_closed_review_task_is_visible_but_cannot_be_submitted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            store_root = Path(temporary)
+            seed_workspace(store_root, STRONG_CODE)
+            close_task(
+                store_root,
+                STRONG_CODE,
+                "q01-v8-teacher-review",
+                "q01-vertical-circle",
+                "q01-v8-1c89623d5bf0",
+            )
+            service = FeedbackService(LocalFeedbackStore(store_root))
+            example = valid_payload()
+            form = {"dimensions": example["dimensions"], "overall": example["overall"]}
+            with RunningServer(service) as running:
+                loaded, workspace, _ = running.request(
+                    "GET", "/api/reviews", code=STRONG_CODE, origin=ALLOWED_ORIGIN
+                )
+                submitted, body, _ = running.request(
+                    "POST",
+                    "/api/reviews/q01-v8-teacher-review",
+                    payload=form,
+                    code=STRONG_CODE,
+                    origin=ALLOWED_ORIGIN,
+                )
+
+            self.assertEqual(loaded, 200)
+            self.assertIsNotNone(workspace)
+            assert workspace is not None and body is not None
+            self.assertEqual(workspace["tasks"][1]["status"], "closed")
+            self.assertEqual(submitted, 409)
+            self.assertEqual(body["error"], "评价任务已结束，无需补填")
 
     def test_review_routes_reject_token_without_workspace(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

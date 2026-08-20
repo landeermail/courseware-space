@@ -35,22 +35,31 @@ class ProductionLayoutTests(unittest.TestCase):
                 fields = record_fields(record)
                 expected_root = f"production/courseware/{courseware_id}"
                 self.assertEqual(fields["courseware_id"], courseware_id)
-                self.assertEqual(
-                    fields["question_packet_path"], f"{expected_root}/input/"
-                )
-                self.assertEqual(
-                    fields["candidate_path"], f"{expected_root}/work/candidate/"
-                )
-                self.assertEqual(
-                    fields["evidence_path"], f"{expected_root}/work/evidence/"
-                )
+                if fields.get("lifecycle") == "production":
+                    self.assertIn(
+                        fields["candidate_path"],
+                        {"none", f"{expected_root}/work/candidate/"},
+                    )
+                else:
+                    self.assertEqual(
+                        fields["question_packet_path"], f"{expected_root}/input/"
+                    )
+                    self.assertEqual(
+                        fields["candidate_path"], f"{expected_root}/work/candidate/"
+                    )
+                    self.assertEqual(
+                        fields["evidence_path"], f"{expected_root}/work/evidence/"
+                    )
                 self.assertNotIn("trial/private/", record.read_text(encoding="utf-8"))
 
     def test_versioned_inputs_and_release_references_exist(self) -> None:
         for record in sorted(PRODUCTION_ROOT.glob("*/record.md")):
             with self.subTest(record=record.parent.name):
                 fields = record_fields(record)
-                input_root = REPOSITORY_ROOT / fields["question_packet_path"]
+                if fields.get("lifecycle") == "production":
+                    input_root = record.parent / "input"
+                else:
+                    input_root = REPOSITORY_ROOT / fields["question_packet_path"]
                 self.assertTrue((input_root / "question.md").is_file())
                 if record.parent.name in SOURCE_IMAGE_SHA256:
                     import hashlib
@@ -65,7 +74,7 @@ class ProductionLayoutTests(unittest.TestCase):
                 release_root = REPOSITORY_ROOT / fields["release_root"]
                 self.assertTrue(release_root.is_dir())
 
-                manifest_ref = fields["artifact_manifest_ref"].split("#", 1)[0]
+                manifest_ref = fields.get("artifact_manifest_ref", "none").split("#", 1)[0]
                 if manifest_ref != "none":
                     self.assertTrue((REPOSITORY_ROOT / manifest_ref).is_file())
 

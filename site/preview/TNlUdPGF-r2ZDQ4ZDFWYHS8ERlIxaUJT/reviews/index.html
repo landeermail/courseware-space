@@ -15,8 +15,8 @@
     .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:end;margin-bottom:28px}.eyebrow{margin:0 0 8px;color:var(--blue);font-size:13px;font-weight:750;letter-spacing:.08em}.hero h1{margin:0;font-size:clamp(30px,4vw,44px);line-height:1.12;letter-spacing:-.03em}.lead{max-width:680px;margin:12px 0 0;color:var(--muted);font-size:16px}.back-link{display:inline-flex;min-height:44px;align-items:center;padding:9px 16px;border:1px solid #b7caf3;border-radius:11px;color:var(--blue);background:#fff;font-weight:750;text-decoration:none;white-space:nowrap}.back-link:focus-visible,.card-actions a:focus-visible,.card-actions button:focus-visible{outline:3px solid rgba(36,89,211,.24);outline-offset:3px}
     .notice{margin:0 0 20px;padding:12px 14px;border:1px solid #efb083;border-radius:12px;color:#7a3b00;background:#fff6ed}.notice[hidden]{display:none}
     .section{margin-top:30px}.section h2{margin:0 0 4px;font-size:23px}.section-copy{margin:0 0 14px;color:var(--muted);font-size:14px}
-    .task-list{display:grid;gap:14px}.task-card{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 24px rgba(23,32,51,.05)}.task-card.pending{border-color:#b7caf3;background:linear-gradient(135deg,#fff,#edf3ff)}
-    .task-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.task-head h3{margin:0;font-size:19px}.status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750;white-space:nowrap}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.reviewed{color:var(--green);background:var(--green-soft)}
+    .task-list{display:grid;gap:14px}.task-card{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 24px rgba(23,32,51,.05)}.task-card.pending{border-color:#b7caf3;background:linear-gradient(135deg,#fff,#edf3ff)}.task-card.closed{background:var(--soft);box-shadow:none}
+    .task-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.task-head h3{margin:0;font-size:19px}.status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750;white-space:nowrap}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.reviewed{color:var(--green);background:var(--green-soft)}.status.closed{color:#566273;background:#e5eaf0}
     .task-meta{margin:8px 0 0;color:var(--muted);font-size:13px}.task-meta span{display:inline-block;margin-right:14px}
     .card-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.btn{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:9px 16px;border:1px solid #aebacc;border-radius:11px;color:var(--ink);background:#fff;font-weight:750;text-decoration:none;cursor:pointer;white-space:nowrap}.btn.primary{border-color:var(--blue);color:#fff;background:var(--blue)}
     .history{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px;display:grid;gap:12px}.history[hidden]{display:none}
@@ -31,14 +31,14 @@
 <body>
   <main class="page">
     <header class="hero">
-      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>我的评价</h1><p class="lead">这里列出您的全部评价任务：待完成的可以直接进入评价，已完成的可以修改或回看历史版本。</p></div>
+      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>我的评价</h1><p class="lead">这里列出已分派的评价任务。待完成的可以选择留下结构化意见，已完成的可以修改或回看历史；已经结束的旧任务无需补填。</p></div>
       <a class="back-link" href="../">返回课件列表</a>
     </header>
     <p class="notice" id="notice" hidden></p>
 
     <section class="section" aria-labelledby="pendingTitle">
       <h2 id="pendingTitle">待评价</h2>
-      <p class="section-copy">先完整体验课件，再填写六维评价。</p>
+      <p class="section-copy">如需留存结构化意见，可在体验后填写；平时直接反馈也同样有效。</p>
       <div class="task-list" id="pendingList"><div class="empty">正在读取评价任务…</div></div>
     </section>
 
@@ -46,6 +46,12 @@
       <h2 id="reviewedTitle">已完成评价</h2>
       <p class="section-copy">每次修改都会保留为新版本，历史版本只读。</p>
       <div class="task-list" id="reviewedList"></div>
+    </section>
+
+    <section class="section" aria-labelledby="closedTitle">
+      <h2 id="closedTitle">已结束</h2>
+      <p class="section-copy">这些旧任务已按当前评价方式收口，不代表补填过结构化评价。</p>
+      <div class="task-list" id="closedList"></div>
     </section>
     <footer>评价记录保存在服务端，仅用于改进课件，不关联姓名、学校或其他身份信息。</footer>
   </main>
@@ -59,6 +65,7 @@
     const notice=document.getElementById('notice');
     const pendingList=document.getElementById('pendingList');
     const reviewedList=document.getElementById('reviewedList');
+    const closedList=document.getElementById('closedList');
     const fragment=new URLSearchParams(location.hash.slice(1));
     const fragmentCode=fragment.get('access');
     if(fragmentCode){sessionStorage.setItem(ACCESS_KEY,fragmentCode);history.replaceState(null,'',location.pathname+location.search)}
@@ -82,29 +89,37 @@
       const note=overall.note?`<p>整体备注：${esc(overall.note)}</p>`:'';
       return `<article class="version${current?' current':''}"><div class="version-head"><strong>${current?'<span class="version-tag">当前版本</span> ':''}评价版本</strong><span class="version-time">${esc(formatTime(version.reviewed_at))}</span></div><div class="version-body"><p>整体结论：${verdict}</p><p class="dim-line">${esc(dims)}</p>${reasons}${note}</div></article>`;
     }
-    function taskCard(task,reviewed){
+    function taskCard(task,mode){
       const feedbackUrl=`../feedback/?task_id=${encodeURIComponent(task.task_id)}`;
       const tryUrl=`../${task.courseware_url}`;
       const meta=[`<span>精确 revision：${esc(task.revision_id)}</span>`];
       let actions='';
       let historyHtml='';
-      if(reviewed){
+      if(mode==='reviewed'){
         const current=task.current_feedback||{};
         meta.push(`<span>当前评价时间：${esc(formatTime(current.reviewed_at))}</span>`);
         actions=`<a class="btn primary" href="${feedbackUrl}">修改评价</a><a class="btn" href="${tryUrl}">再次体验课件</a><button class="btn" type="button" data-history="${esc(task.task_id)}">查看历史</button>`;
         const history=Array.isArray(task.feedback_history)?task.feedback_history:[];
         historyHtml=`<div class="history" id="history-${esc(task.task_id)}" hidden>${history.map(version=>versionHtml(version,current.feedback_id)).join('')}</div>`;
+      }else if(mode==='closed'){
+        const disposition=task.disposition||{};
+        meta.push(`<span>结束时间：${esc(formatTime(disposition.decided_at))}</span>`);
+        if(disposition.reason)meta.push(`<span>${esc(disposition.reason)}</span>`);
+        actions=`<a class="btn" href="${tryUrl}">查看课件</a>`;
       }else{
         meta.push(`<span>分派时间：${esc(formatTime(task.assigned_at))}</span>`);
         actions=`<a class="btn" href="${tryUrl}">先体验课件</a><a class="btn primary" href="${feedbackUrl}">填写评价</a>`;
       }
-      return `<article class="task-card${reviewed?'':' pending'}"><div class="task-head"><h3>${esc(task.title)}</h3><span class="status ${reviewed?'reviewed':'pending'}">${reviewed?'已评价':'待评价'}</span></div><p class="task-meta">${meta.join('')}</p><div class="card-actions">${actions}</div>${historyHtml}</article>`;
+      const label=mode==='reviewed'?'已评价':mode==='closed'?'已结束':'待评价';
+      return `<article class="task-card ${mode}"><div class="task-head"><h3>${esc(task.title)}</h3><span class="status ${mode}">${label}</span></div><p class="task-meta">${meta.join('')}</p><div class="card-actions">${actions}</div>${historyHtml}</article>`;
     }
     function render(tasks){
-      const pending=tasks.filter(task=>task.status!=='reviewed');
+      const pending=tasks.filter(task=>task.status==='pending');
       const reviewed=tasks.filter(task=>task.status==='reviewed');
-      pendingList.innerHTML=pending.length?pending.map(task=>taskCard(task,false)).join(''):'<div class="empty">目前没有待评价的课件。</div>';
-      reviewedList.innerHTML=reviewed.length?reviewed.map(task=>taskCard(task,true)).join(''):'<div class="empty">还没有已完成的评价。</div>';
+      const closed=tasks.filter(task=>task.status==='closed');
+      pendingList.innerHTML=pending.length?pending.map(task=>taskCard(task,'pending')).join(''):'<div class="empty">目前没有待评价的课件。</div>';
+      reviewedList.innerHTML=reviewed.length?reviewed.map(task=>taskCard(task,'reviewed')).join(''):'<div class="empty">还没有已完成的结构化评价。</div>';
+      closedList.innerHTML=closed.length?closed.map(task=>taskCard(task,'closed')).join(''):'<div class="empty">目前没有已结束的旧任务。</div>';
       reviewedList.querySelectorAll('[data-history]').forEach(button=>button.addEventListener('click',()=>{
         const panel=document.getElementById(`history-${button.dataset.history}`);
         if(!panel)return;
@@ -116,6 +131,7 @@
     if(!accessCode){
       pendingList.innerHTML='<div class="empty">无法读取评价任务。</div>';
       reviewedList.innerHTML='';
+      closedList.innerHTML='';
       showNotice('此页面需要从完整的专属链接进入，请回到收到的原链接重新打开。');
       return;
     }
@@ -129,7 +145,8 @@
         const tasks=Array.isArray(data.tasks)?data.tasks:[];
         if(!tasks.length){
           pendingList.innerHTML='<div class="empty">目前没有待评价的课件。</div>';
-          reviewedList.innerHTML='<div class="empty">还没有已完成的评价。</div>';
+          reviewedList.innerHTML='<div class="empty">还没有已完成的结构化评价。</div>';
+          closedList.innerHTML='<div class="empty">目前没有已结束的旧任务。</div>';
           return;
         }
         render(tasks);
@@ -137,6 +154,7 @@
       .catch(error=>{
         pendingList.innerHTML='<div class="empty">无法读取评价任务。</div>';
         reviewedList.innerHTML='';
+        closedList.innerHTML='';
         showNotice(error instanceof Error?error.message:'评价状态暂时无法读取，请稍后刷新重试。');
       });
   })();

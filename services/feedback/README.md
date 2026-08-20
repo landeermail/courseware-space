@@ -8,10 +8,11 @@
 
 - `feedback/tasks/<teacher_key>/<task_id>.json`：不可变评价任务；
 - `feedback/reviews/<teacher_key>/<task_id>/<feedback_id>.json`：不可变评价版本。
+- `feedback/reviews/<teacher_key>/<task_id>/<disposition_id>.json`：不可变任务处置记录。
 
-状态按任务是否存在评价版本计算。修改评价会追加新版本并指向前一版，不覆盖旧证据；q01 v7 的评价不能满足 q01 v8 的任务。浏览器缓存只改善界面，不能决定待评价状态。
+状态按精确任务的评价版本和处置记录计算：没有二者为 `pending`，存在评价版本为 `reviewed`，固定表单义务被产品明确撤回且没有评价版本时为 `closed`。修改评价会追加新版本并指向前一版，不覆盖旧证据；处置也不删除任务或伪装成老师评价。q01 v7 的评价不能满足 q01 v8 的任务。浏览器缓存只改善界面，不能决定状态。
 
-新任务由产品检查点决定并通过 `services/feedback/tools/build_teacher_review_seed.py` 生成，不因页面访问、部署或新 revision 自动创建。当前原老师长期链接必须保持不变。
+新任务由产品检查点决定并通过 `services/feedback/tools/build_teacher_review_seed.py` 生成，不因页面访问、部署或新 revision 自动创建。旧固定表单任务的处置对象由 `services/feedback/tools/build_teacher_review_dispositions.py` 生成；部署者没有私有评价 Bucket 权限时，可在获授权的单次部署中通过 `COURSEWARE_REVIEW_DISPOSITIONS_JSON` 交给受限 FC 运行角色追加，确认写入后立即移除该环境变量。当前原老师长期链接必须保持不变。
 
 ## 本地与研究数据
 
@@ -25,4 +26,4 @@ python3 -m unittest discover -s services/feedback/tests -p "test_*.py"
 services/feedback/deploy/build_package.sh
 ```
 
-领域决策见 `docs/adr/0009-teacher-review-workspace-on-private-oss.md`。
+领域决策见 `docs/adr/0009-teacher-review-workspace-on-private-oss.md` 与 `docs/adr/0013-close-retired-teacher-review-tasks-with-dispositions.md`。

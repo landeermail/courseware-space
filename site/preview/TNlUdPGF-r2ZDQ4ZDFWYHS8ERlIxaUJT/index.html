@@ -16,7 +16,7 @@
     .access-warning{margin:0 0 20px;padding:12px 14px;border:1px solid #efb083;border-radius:12px;color:#7a3b00;background:#fff6ed}.access-warning[hidden]{display:none}
     .section{margin-top:30px}.section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:14px}.section h2{margin:0;font-size:23px}.section-copy{margin:5px 0 0;color:var(--muted);font-size:14px}.count{color:var(--muted);font-size:13px;white-space:nowrap}
     .priority-grid,.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.priority-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:24px;border:1px solid #b7caf3;border-radius:18px;background:linear-gradient(135deg,#fff,#edf3ff);box-shadow:var(--shadow)}
-    .priority-card h3,.lesson-card h3{margin:0;font-size:19px}.card-copy{margin:7px 0 0;color:var(--muted);font-size:14px}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{padding:4px 9px;border-radius:999px;color:#48566a;background:#edf1f6;font-size:12px}.status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.calibrated,.status.reviewed{color:var(--green);background:var(--green-soft)}
+    .priority-card h3,.lesson-card h3{margin:0;font-size:19px}.card-copy{margin:7px 0 0;color:var(--muted);font-size:14px}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{padding:4px 9px;border-radius:999px;color:#48566a;background:#edf1f6;font-size:12px}.status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.calibrated,.status.reviewed{color:var(--green);background:var(--green-soft)}.status.closed{color:#566273;background:#edf1f6}
     .open{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:9px 16px;border-radius:11px;color:#fff;background:var(--blue);font-weight:750;text-decoration:none;white-space:nowrap}.open:focus-visible,.lesson-link:focus-visible{outline:3px solid rgba(36,89,211,.24);outline-offset:3px}
     .subject{margin-top:22px}.subject-title{margin:0 0 12px;padding-left:11px;border-left:3px solid var(--blue);color:#43516a;font-size:17px}.lesson-card{display:flex;min-width:0;flex-direction:column;padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 24px rgba(23,32,51,.05)}.lesson-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lesson-link{display:inline-flex;min-height:44px;align-items:center;margin-top:auto;padding-top:16px;color:var(--blue);font-weight:750;text-decoration:none}.lesson-link::after{content:" →"}.empty{padding:18px;border:1px dashed #b8c5d5;border-radius:14px;color:var(--muted);background:rgba(255,255,255,.7)}
     footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
@@ -76,9 +76,9 @@
       if(item.calibrated)return'calibrated';
       const task=taskFor(item);
       if(!task)return null;
-      return task.status==='reviewed'?'reviewed':'pending';
+      return task.status==='reviewed'?'reviewed':task.status==='closed'?'closed':'pending';
     };
-    const statusText=status=>status==='calibrated'?'已评（校准）':status==='reviewed'?'已评价':'待评价';
+    const statusText=status=>status==='calibrated'?'已评（校准）':status==='reviewed'?'已评价':status==='closed'?'本轮已结束':'待评价';
     const chips=item=>item.tags.map(tag=>`<span class="chip">${tag}</span>`).join('');
     const statusBadge=item=>{
       const status=statusOf(item);
@@ -89,9 +89,9 @@
       const count=document.getElementById('priorityCount');
       if(loadFailed){count.textContent='';grid.innerHTML='<div class="empty">评价状态暂时无法读取，请稍后刷新重试；课件仍可正常打开。</div>';return;}
       if(!tasks){count.textContent='';grid.innerHTML='<div class="empty">正在读取评价状态…</div>';return;}
-      const priority=lessons.filter(item=>{const task=taskFor(item);return task&&task.status!=='reviewed'});
+      const priority=lessons.filter(item=>{const task=taskFor(item);return task&&task.status==='pending'});
       count.textContent=priority.length?`${priority.length} 个待评价课件`:'';
-      grid.innerHTML=priority.length?priority.map(item=>`<article class="priority-card"><div><span class="status pending">待评价</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><a class="open" href="${item.href}">开始体验</a></article>`).join(''):'<div class="empty">最新课件已经评价完成，可在下方学科分组中继续查看。</div>';
+      grid.innerHTML=priority.length?priority.map(item=>`<article class="priority-card"><div><span class="status pending">待评价</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><a class="open" href="${item.href}">开始体验</a></article>`).join(''):'<div class="empty">目前没有待评价课件，可在下方学科分组中继续查看。</div>';
     }
     function renderSubjects(){
       const subjects=['机械波','电磁感应','力学','光学'];
@@ -100,7 +100,7 @@
           if(item.subject!==subject)return false;
           if(!tasks)return true;
           const task=taskFor(item);
-          return !(task&&task.status!=='reviewed');
+          return !(task&&task.status==='pending');
         });
         return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(item=>`<article class="lesson-card"><div class="lesson-top"><h3>${item.title}</h3>${statusBadge(item)}</div><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><a class="lesson-link" href="${item.href}">打开课件</a></article>`).join('')}</div></section>`
       }).join('');

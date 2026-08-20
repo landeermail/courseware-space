@@ -8,7 +8,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="courseware-api-base" content="https://coursewenerator-zuhffdutvy.cn-hangzhou.fcapp.run">
   <link rel="icon" href="data:,">
-  <title>课件六维评价</title>
+  <title>课件结构化评价</title>
   <style>
     :root {
       --ink: #172033;
@@ -49,6 +49,9 @@
     .task-info strong { display: block; margin-bottom: 4px; font-size: 16px; }
     .task-info span { display: inline-block; margin-right: 16px; color: var(--muted); }
     .task-info.error { color: #7a271a; background: var(--red-soft); }
+    .task-info.closed { color: #3d4858; background: #edf1f6; }
+    .closed-info { margin: 14px 0 0; padding: 14px 16px; border-radius: 12px; color: #3d4858; background: #edf1f6; }
+    .closed-info[hidden] { display: none; }
     .field-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 700; }
     .text-input, textarea {
       width: 100%; min-height: 46px; border: 1px solid #b9c5d4; border-radius: 10px; color: var(--ink); background: #fff;
@@ -114,8 +117,8 @@
     <header class="hero">
       <div>
         <p class="eyebrow">老师试用工具 · 匿名提交</p>
-        <h1>课件六维评价</h1>
-        <p class="lead">逐维留下判断依据，再给整体结论。无需填写姓名；保存成功后会自动回到“我的评价”。</p>
+        <h1>课件结构化评价</h1>
+        <p class="lead">如果希望逐项留存意见，可以使用这份六维表单；直接反馈同样有效。无需填写姓名。</p>
       </div>
       <nav class="hero-links" aria-label="返回"><a href="../reviews/">我的评价</a><a href="../">返回课件列表</a></nav>
     </header>
@@ -123,8 +126,9 @@
     <form id="feedbackForm" novalidate>
       <section class="panel" aria-labelledby="metaTitle">
         <h2 class="panel-title" id="metaTitle">本次评价</h2>
-        <p class="panel-help">评价针对服务端分派的精确 revision；再次提交会保存为新版本，历史版本保留。</p>
+        <p class="panel-help">表单针对服务端分派的精确 revision；再次提交会保存为新版本，历史版本保留。</p>
         <p class="task-info" id="taskInfo">正在读取评价任务…</p>
+        <p class="closed-info" id="closedInfo" hidden></p>
       </section>
 
       <section class="panel" aria-labelledby="dimensionsTitle">
@@ -219,6 +223,7 @@
     ];
     const form = document.getElementById('feedbackForm');
     const taskInfo = document.getElementById('taskInfo');
+    const closedInfo = document.getElementById('closedInfo');
     const reasonPanel = document.getElementById('reasonPanel');
     const reasonInputs = [...document.querySelectorAll('#reasonGrid input')];
     const errorSummary = document.getElementById('errorSummary');
@@ -304,6 +309,14 @@
         const spans = taskInfo.querySelectorAll('span');
         spans[0].textContent = `课件 ID：${task.courseware_id}`;
         spans[1].textContent = `精确 revision：${task.revision_id}`;
+        if (task.status === 'closed') {
+          spans[2].textContent = '任务状态：已结束';
+          taskInfo.classList.add('closed');
+          closedInfo.textContent = (task.disposition || {}).reason || '本任务已经结束，无需补填评价。';
+          closedInfo.hidden = false;
+          [...form.querySelectorAll('.panel')].slice(1).forEach(panel => { panel.hidden = true; });
+          return;
+        }
         spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已评价（本次为修改）' : '待评价'}`;
         submitButton.disabled = false;
         submitButton.textContent = task.current_feedback ? '保存修改' : '提交评价';
