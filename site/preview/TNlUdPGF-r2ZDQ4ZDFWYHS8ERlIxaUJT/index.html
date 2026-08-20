@@ -57,6 +57,7 @@
     if(fragmentCode){sessionStorage.setItem(ACCESS_KEY,fragmentCode);history.replaceState(null,'',location.pathname+location.search)}
     if(!sessionStorage.getItem(ACCESS_KEY))document.getElementById('accessWarning').hidden=false;
     const lessons=[
+      {id:'q474-longitudinal-wave',revision:'q474-v1-39e8e4f62f4b',subject:'机械波',title:'第474题：纵波弹簧标记点',desc:'观察弹簧上的标记点怎样振动、疏密怎样传播，并从题图读出波长和振幅。',tags:['纵波','波长','振幅'],href:'q474-v1-39e8e4f62f4b/'},
       {id:'q01-vertical-circle',revision:'q01-v8-1c89623d5bf0',subject:'力学',title:'第1题：竖直圆环双带电小球',desc:'观察缓慢推动中的耦合平衡、支持力与能量变化，并从模型回到四个选项。',tags:['耦合运动','准静态平衡','能量'],href:'q01-v8-1c89623d5bf0/'},
       {id:'q07-glass-rod-tir',revision:'5c8590bd2060',subject:'光学',title:'第7题：实心玻璃管中的全反射计数',desc:'连续改变管内光线方向，找到全反射边界，并从动态光路回到最多反射次数的严格判定。',tags:['全反射','临界角','光路展开'],href:'q07-v4-5bb63ec7f581/'},
       {id:'q6-plane',subject:'电磁感应',title:'第6题：飞机机翼电势差',desc:'逐项比较不同飞行方向下机翼两端的电势高低。',tags:['洛伦兹力','方向判断'],href:'../../electromagnetism/q6-plane/'},
@@ -93,7 +94,7 @@
       grid.innerHTML=priority.length?priority.map(item=>`<article class="priority-card"><div><span class="status pending">待评价</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><a class="open" href="${item.href}">开始体验</a></article>`).join(''):'<div class="empty">最新课件已经评价完成，可在下方学科分组中继续查看。</div>';
     }
     function renderSubjects(){
-      const subjects=['电磁感应','力学','光学'];
+      const subjects=['机械波','电磁感应','力学','光学'];
       document.getElementById('subjects').innerHTML=subjects.map(subject=>{
         const items=lessons.filter(item=>{
           if(item.subject!==subject)return false;

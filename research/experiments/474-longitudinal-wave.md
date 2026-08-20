@@ -16,6 +16,7 @@
 - 候选轮次：第四次用户体验候选的单点修正版（三段体验＋A0–A5振幅短桥）
 - 本地路径：`/tmp/courseware-474-longitudinal-wave.0Zkpcq`
 - 本地预览：`http://127.0.0.1:8766/?v=20260820-amplitude-chain-final`
+- 待发布revision：`q474-v1-39e8e4f62f4b`；由候选相对文件清单与字节组合哈希 `39e8e4f62f4b...` 确定
 - 文件：`index.html`、`style.css`、`app.js`、`assets/474.jpg`
 - 上一候选 `/tmp/courseware-474-longitudinal-wave.eV2S8Y` 已失效，仅保留为历史证据
 - Kimi session：`session_08ad93f1-8737-4fa0-b50e-fd901421469f`
@@ -76,7 +77,7 @@
 ## 当前决定与下一动作
 
 - 当前决定：修正版通过用户体验关口，用户已授权接入顾问老师长期入口所需的 Git、PR和Pages部署；这仍是研发实验，不自动转正或修改 skill、模板、`CONTEXT.md`。
-- 唯一下一动作：以组合哈希前缀 `154e263d071c` 建立不可变试用目录，更新现有老师题库卡片，完成PR合并、Pages部署及真实入口核验；保持老师原链接 fragment 不变。
+- 唯一下一动作：以组合哈希前缀 `39e8e4f62f4b` 建立不可变试用目录，更新现有老师题库卡片，完成PR合并、Pages部署及真实入口核验；保持老师原链接 fragment 不变。
 - 禁止：创建生产记录、调用旧生产协议、改变老师原链接或把本次试用发布解释为正式生产转正。
 
 ## 尚未验证

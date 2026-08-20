@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>474 纵波：弹簧上的标记点（前端候选）</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23d32f2f'/%3E%3C/svg%3E">
+<!-- KaTeX（CDN）：加载失败时保留可读文本，不产生 JS 错误 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>纵波：弹簧上的标记点</h1>
+    <p class="sub">三段分页，可前进、返回、直达，无锁。</p>
+  </header>
+
+  <nav class="steps-nav" aria-label="步骤导航">
+    <button type="button" data-step="1">① 先看原题</button>
+    <button type="button" data-step="2">② 看弹簧怎样动</button>
+    <button type="button" data-step="3">③ 停到题图</button>
+  </nav>
+
+  <main>
+    <!-- ============ ① 先看原题 ============ -->
+    <section class="step" id="step1" data-step="1">
+      <h2>先看原题</h2>
+      <div class="problem">
+        <p>
+          如图（a）所示，光滑水平面上一均匀弹簧自然伸展，弹簧左端与起波器相连。
+          在弹簧上每隔相同距离标记一点，打开起波器后形成沿弹簧传播的纵波，
+          某时刻弹簧上各标记点的位置如图（b）所示。则该列纵波的波长
+          <span class="tex" data-tex="\lambda = \_\_\_\_\ \text{cm}">λ = ____ cm</span>，
+          各标记点的振幅
+          <span class="tex" data-tex="A = \_\_\_\_\ \text{cm}">A = ____ cm</span>。
+        </p>
+        <img src="assets/474.jpg" alt="原题照片：图(a) 弹簧与起波器；图(b) 0—50 cm 横轴上某时刻 13 个红点的位置">
+        <p class="caption">原题照片（横轴单位 cm）。</p>
+      </div>
+    </section>
+
+    <!-- ============ ② 看弹簧怎样动 ============ -->
+    <section class="step" id="step2" data-step="2" hidden>
+      <h2>看弹簧怎样动</h2>
+      <p>左端的驱动杆来回推拉弹簧的左端。</p>
+      <p>盯住一个红点：它只在原地附近左右动，不会跟着向右跑。再看疏密：密的地方从左端冒出来，一路向右传；还没传到的地方保持自然伸展。</p>
+      <canvas id="springCanvas" height="340" aria-label="立体弹簧动画：驱动杆往复推拉，红点原地左右振动，疏密向右传播"></canvas>
+      <div class="btn-row">
+        <button id="playBtn" type="button" class="primary">▶ 播放</button>
+        <button id="replayBtn" type="button">⏮ 重新播放</button>
+      </div>
+      <div class="slider-row">
+        <label for="progSlider">进度</label>
+        <input id="progSlider" type="range" min="0" max="1000" value="0" step="1" aria-label="动画进度">
+      </div>
+    </section>
+
+    <!-- ============ ③ 停到题图 ============ -->
+    <section class="step" id="step3" data-step="3" hidden>
+      <h2>停到题图，再看波长和振幅</h2>
+      <p id="s3intro">弹簧还在动。点下面的按钮，让它正好停在题图（b）那一刻。</p>
+      <canvas id="stageCanvas" height="500" aria-label="弹簧停在题图时刻，红点落到下方刻度图"></canvas>
+      <div class="btn-row">
+        <button id="snapBtn" type="button" class="primary">⏸ 停在题图这一刻</button>
+        <button id="lambdaBtn" type="button" hidden>看波长</button>
+        <button id="ampBtn" type="button" hidden>看振幅</button>
+        <button id="ampNextBtn" type="button" hidden>下一步</button>
+        <button id="againBtn" type="button" hidden>重新放一遍</button>
+      </div>
+      <div id="lambdaReveal" class="reveal" hidden>
+        <p>最靠右的两个红点之间，点的排布正好重复一次：从 1 cm 到 41 cm，相差 40 cm。</p>
+        <p class="tex tex-d" data-tex="\lambda = 40\ \text{cm}">λ = 40 cm</p>
+      </div>
+      <div id="ampReveal" class="reveal" hidden></div>
+    </section>
+  </main>
+
+  <div class="pager">
+    <button id="prevBtn" type="button">← 返回</button>
+    <button id="nextBtn" type="button" class="primary">前进 →</button>
+  </div>
+
+  <footer>
+    <p>纯 HTML/CSS/JavaScript；弹簧为 Canvas 固定视角绘制。公式由 KaTeX 渲染，不可用时显示可读文本。默认不自动播放。</p>
+  </footer>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
