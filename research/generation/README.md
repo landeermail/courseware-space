@@ -1,10 +1,12 @@
 # 本地课件生成研发
 
-本目录是生成研发的唯一职责模块：`app.py` 是本地 HTTP 入口，`runtime/` 保存 Kimi、生成、媒体和运行存储实现，`harness/`、`templates/`、`library/` 与必要证据均在本模块内。当前公网 feedback-only 服务由 `services/feedback/` 独立拥有。
+> 状态：暂停的历史研发脚手架。保留代码、验证方式和证据，不作为新题研发实验默认入口；只有独立任务明确恢复该方向时才运行或扩展。当前默认方式见 ADR 0011。
+
+本目录是既有生成研发的唯一职责模块：`app.py` 是本地 HTTP 入口，`runtime/` 保存 Kimi、生成、媒体和运行存储实现，`harness/`、`templates/`、`library/` 与必要证据均在本模块内。当前公网 feedback-only 服务由 `services/feedback/` 独立拥有。
 
 不要把本地生成能力等同于当前线上产品能力。
 
-## 本地生成研发
+## 明确恢复时的本地生成研发
 
 `app.py` 使用标准库提供仓库静态文件和生成 API。Kimi Code 只把题目转换为受限参数，物理公式、方向和页面代码由锁定模板与 harness 约束。
 

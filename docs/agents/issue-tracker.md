@@ -12,7 +12,7 @@ GitHub Issues 用于跨课件、跨模块或需要长期追踪的工程任务。
 - 需要先讨论方案或明确验收标准的问题；
 - 需要长期保留决策过程的任务。
 
-一道已经获准进入生产的具体课件不要求另建 Issue；它必须使用 `$build-physics-courseware` 和 `production/courseware/<courseware_id>/record.md`。如果该题暴露跨题型的 harness、架构或部署问题，再为那个跨域问题建 Issue。
+顾问老师提供的新题默认先做研发实验，不要求另建 Issue，也不自动进入生产状态单或 `$build-physics-courseware`。只有用户明确决定转入正式生产时，才重新评估是否使用该 skill 与 `production/courseware/<courseware_id>/record.md`。如果实验暴露经过复验的跨题型、架构或部署问题，再为那个跨域问题建 Issue。
 
 以下小型改动不强制创建 Issue：
 
