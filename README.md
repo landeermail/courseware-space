@@ -27,6 +27,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 - [`CONTEXT.md`](CONTEXT.md)：产品使命、术语和长期边界；
 - [`docs/adr/0011-default-to-minimal-courseware-research-experiments.md`](docs/adr/0011-default-to-minimal-courseware-research-experiments.md)：下一道真实题的默认实验方式；
+- [`docs/adr/0012-adopt-lean-courseware-lifecycle.md`](docs/adr/0012-adopt-lean-courseware-lifecycle.md)：把已跑通的实验责任链作为统一生产编排默认路径；
 - [`docs/quality/standard.md`](docs/quality/standard.md)：可按需使用的历史六维质量视角；
 - [`docs/adr/`](docs/adr/)：已采纳的重要取舍；
 - [`PROGRESS.md`](PROGRESS.md)：实现与验收历史；[`BLOCKED.md`](BLOCKED.md) 只列仍待处理事项；
@@ -34,7 +35,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 下一道真实题默认怎么做
 
-顾问老师给出的下一道真实题先作为研发实验，不自动进入 `production/`，也不自动使用旧 harness、九阶段状态或 A0/A1/A2/A3 评审。产品协调 Work 生成单题 Codex 任务包；单题 Codex 完成物理与教学分析、形成紧凑临时任务书、调用 Kimi Code CLI 实现前端候选并独立检查；用户体验通过并明确批准后，才协调稳定链接给老师试用。
+顾问老师给出的下一道真实题先作为研发实验，不自动进入 `production/`，也不自动使用旧 harness、九阶段状态或 A0/A1/A2/A3 评审。`$build-physics-courseware` 从真实题开始组织同一条轻量生命周期；单题 Codex 完成物理与教学分析、形成紧凑临时任务书、调用 Kimi Code CLI 实现前端候选并独立检查；用户体验通过并明确批准后，才协调稳定链接给老师试用。
 
 老师可以自由反馈，不要求按六维或结构化 intake 填写。现有评价页面仍是可用的意见入口；老师原意与用户解释必须分开记录。每轮只长期保留最小实验结论，不保存完整调试流水账或把单题经验自动写成通用规则。
 
@@ -51,6 +52,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 ├── site/                      # 唯一 Pages 静态产品源，内部结构即公开 URL
 ├── production/                # 明确转入正式生产后的单题状态与规范输入
 ├── services/feedback/         # 评价运行时、schema、测试与 feedback-only 部署
+├── research/experiments/      # 新题轻量生命周期的唯一滚动记录
 ├── research/generation/       # 暂停的本地生成器、harness、模板与历史研发证据
 ├── scripts/                   # Pages 打包、站点校验等仓库级小接口
 ├── docs/                      # ADR、质量、部署与历史任务书
@@ -63,7 +65,7 @@ KIMI_API_KEY="$(security find-generic-password -a "$USER" -s courseware-space-ki
 
 ## 正式生产与发布
 
-只有用户明确决定某题转入正式生产时，才重新评估 `$build-physics-courseware` 和 `production/courseware/<courseware_id>/` 中哪些既有协议仍适用。任何写入 `site/`、发布或外部状态变化都需要明确授权；获准发布的候选使用不可变 revision 目录，只更新对应老师题库卡片。Pages 部署后必须从老师真实长期入口验 revision、资源和评价入口。
+只有用户明确决定某题转入正式生产时，才建立 `production/courseware/<courseware_id>/`；`$build-physics-courseware` 直接承接研发实验已经成立的证据和候选，不重新运行旧九阶段协议。任何写入 `site/`、发布或外部状态变化都需要明确授权；获准发布的候选使用不可变 revision 目录，只更新对应老师题库卡片。Pages 部署后必须从老师真实长期入口验 revision、资源和评价入口。
 
 ## 发布
 
