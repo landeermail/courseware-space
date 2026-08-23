@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>滑轨上的小球 · 能量四段体验</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      onerror="window.__katexFailed=true">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>滑轨上的小球：能量去哪儿了</h1>
+  <nav class="tabs" aria-label="四段切换">
+    <button type="button" class="tab" data-stage="1">1 · 原题</button>
+    <button type="button" class="tab" data-stage="2">2 · 第一周最低初能</button>
+    <button type="button" class="tab" data-stage="3">3 · 第二次到 D</button>
+    <button type="button" class="tab" data-stage="4">4 · CD 总路程</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ 第一段：原题 ============ -->
+  <section id="stage-1" class="stage">
+    <div class="stage1-layout">
+      <figure class="orig">
+        <img src="assets/688.png"
+             alt="原题图：竖直平面内的游戏滑轨模拟装置，由倾斜直轨AB、水平直轨CD与两段圆弧APD、BQC组成">
+      </figure>
+      <div class="q-list">
+        <p>已知：\(L=3\,\text{m}\)，\(r=1\,\text{m}\)，\(m=1\,\text{kg}\)，\(\mu=\dfrac{1}{3}\)，\(\theta=37^\circ\)，\(g=10\,\text{m/s}^2\)；两段圆弧光滑，直轨有摩擦，连接处无能量损失。求：</p>
+        <ol>
+          <li>要使小球完成一周运动回到 \(B\) 点，初动能 \(E_{k0}\) 至少多大；</li>
+          <li>小球第二次到达 \(D\) 点时的动能；</li>
+          <li>小球在 \(CD\) 段上运动的总路程。</li>
+        </ol>
+        <p class="hint">左侧是原题完整图文。后面三段一次只解决一问：先找第一周的能量门槛，再追踪“第二次到 D”的真实路线，最后只数 CD 上的路程。可用上方按钮直接切换任意一段。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 第二段：第一周最低初能 ============ -->
+  <section id="stage-2" class="stage anim" hidden>
+    <h2 class="stage-title">第一问：完成一周，\(E_{k0}\) 至少多大？</h2>
+    <div class="stage-layout">
+      <div class="track" data-track="2"><p class="map-hint">式中带虚线框的物理量可点按（或按 Enter / Space），在图上查看对应的位置、长度或路程。</p></div>
+      <aside class="panel">
+        <div class="readouts">
+          <div class="ro"><span>当前动能</span><b class="kv-k">—</b></div>
+          <div class="ro"><span>累计摩擦损失</span><b class="kv-fric">0.0 J</b></div>
+        </div>
+        <div class="cards">
+          <div class="card" data-card="intro">
+            <p>小球以 \(E_{k0}\) 从 \(B\) 出发沿 \(AB\) 上行。先看几何（式中关键量可点按，在图上定位）：</p>
+            <p><button type="button" class="map-inline" data-map="hB" aria-pressed="false" title="在图上定位 h_B">\(h_B\)</button>\(=(1+\cos\,\)<button type="button" class="map-inline" data-map="theta" aria-pressed="false" title="在图上定位 θ">\(\theta\)</button>\()\,\)<button type="button" class="map-inline" data-map="r" aria-pressed="false" title="在图上定位 r">\(r\)</button>\(=1.8\,\text{m}\)</p>
+            <p><button type="button" class="map-inline" data-map="R" aria-pressed="false" title="在图上定位 R">\(R\)</button>\(-\,\)<button type="button" class="map-inline" data-map="r" aria-pressed="false" title="在图上定位 r">\(r\)</button>\(=\,\)<button type="button" class="map-inline" data-map="L" aria-pressed="false" title="在图上定位 L">\(L\)</button>\(\tan(\,\)<button type="button" class="map-inline" data-map="theta" aria-pressed="false" title="在图上定位 θ">\(\theta\)</button>\(/2)=3\times\dfrac{1}{3}=1\,\text{m}\)，故 <button type="button" class="map-inline" data-map="R" aria-pressed="false" title="在图上定位 R">\(R\)</button>\(=2\,\text{m}\)，大圆最高点高 <button type="button" class="map-inline" data-map="twoR" aria-pressed="false" title="在图上定位 2R">\(2R\)</button>\(=4\,\text{m}\)。</p>
+            <p class="think">想一想：一整周里，最难通过的是哪个点？</p>
+            <p class="hint">按「播放」让小球出发，每到关键事件会自动停下。</p>
+          </div>
+          <div class="card" data-card="0" hidden>
+            <p><b>到达 A：</b>爬完 \(AB\)，摩擦已耗 <button type="button" class="map-inline" data-map="fAB" aria-pressed="false" title="在图上定位 AB 摩擦功">\(f_{AB}L=\mu mg\cos\theta\cdot L=\dfrac{8}{3}\times 3=8\,\text{J}\)</button>，并升高 \(1.8\,\text{m}\)。能量关系：\(K_A=E_{k0}-18\,\text{J}-8\,\text{J}\)。</p>
+          </div>
+          <div class="card key" data-card="1" hidden>
+            <p><b>大圆最高点 · 临界：</b>从 \(B\) 到这里，重力势能要补 \(mg(4-1.8)=22\,\text{J}\)，加上 \(AB\) 上耗掉的 \(8\,\text{J}\)：\(E_{k0}=22+8=30\,\text{J}\) 时恰好到达。</p>
+            <p class="result">第（1）问结论：\(E_{k0}\) 至少 \(30\,\text{J}\)。</p>
+            <p class="note">临界说明：理想情况下等号对应小球在最高点恰好静止（不稳定平衡）；若要求真正越过最高点，需 \(E_{k0}&gt;30\,\text{J}\)，\(30\,\text{J}\) 是下确界，按题目记法写“至少 \(30\,\text{J}\)”。</p>
+          </div>
+          <div class="card" data-card="2" hidden>
+            <p><b>到达 D：</b>过最高点后一路下行到高度为零的 \(D\)：\(K_D=30-8+18=40\,\text{J}\)。</p>
+          </div>
+          <div class="card" data-card="3" hidden>
+            <p><b>到达 C：</b>穿过 \(CD\) 再耗 <button type="button" class="map-inline" data-map="fCD" aria-pressed="false" title="在图上定位 CD 摩擦功">\(\mu mgL=\dfrac{10}{3}\times 3=10\,\text{J}\)</button>，\(K_C=40-10=30\,\text{J}\)。</p>
+          </div>
+          <div class="card key" data-card="4" hidden>
+            <p><b>回到 B，第一周完成：</b>沿小圆弧升高 \(1.8\,\text{m}\)，\(K_B=30-18=12\,\text{J}\)。</p>
+            <p class="think">想一想：只剩 \(12\,\text{J}\)，小球还能再爬一整圈吗？下一段见分晓。</p>
+          </div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn btn-play">▶ 播放</button>
+          <button type="button" class="btn btn-next">⏭ 下一事件</button>
+          <button type="button" class="btn btn-replay">↺ 重新播放</button>
+        </div>
+        <div class="stage-nav">
+          <button type="button" class="btn nav-prev" data-goto="1">← 上一段</button>
+          <button type="button" class="btn nav-next" data-goto="3">下一段 →</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 第三段：第二次到 D ============ -->
+  <section id="stage-3" class="stage anim" hidden>
+    <h2 class="stage-title">第二问：第二次到达 D 时的动能</h2>
+    <div class="stage-layout">
+      <div class="track" data-track="3"><p class="map-hint">式中带虚线框的物理量可点按（或按 Enter / Space），在图上查看对应的位置、长度或路程。</p></div>
+      <aside class="panel">
+        <div class="readouts">
+          <div class="ro"><span>当前动能</span><b class="kv-k">—</b></div>
+          <div class="ro"><span>本段摩擦损失</span><b class="kv-fric">0.0 J</b></div>
+        </div>
+        <div class="cards">
+          <div class="card" data-card="intro">
+            <p>第一周结束，小球带着 \(K_B=12\,\text{J}\) 从 \(B\) 再次上行。</p>
+            <p class="think">先判断：这 \(12\,\text{J}\) 够它爬到 \(A\) 吗？如果不够，会在哪里转向？</p>
+            <p class="note">题目只给动摩擦因数。以下按教材常规，假定小球停下后会反向滑动；若静摩擦足够大使它停住，后两问不能唯一确定。</p>
+          </div>
+          <div class="card key" data-card="0" hidden>
+            <p><b>在 AB 上转向：</b>上行每米能耗 \(mg\sin\theta+f_{AB}=6+\dfrac{8}{3}=\dfrac{26}{3}\,\text{J/m}\)，只能上行 <button type="button" class="map-inline" data-map="s13" aria-pressed="false" title="在图上定位这段上行路程">\(s=\dfrac{12}{26/3}=\dfrac{18}{13}\,\text{m}\)</button>（约 \(1.38\,\text{m}\)）。到不了 \(A\)，在 \(AB\) 上停下转向！</p>
+          </div>
+          <div class="card" data-card="1" hidden>
+            <p><b>滑回 B：</b>下行同样路程，摩擦再耗 \(\dfrac{48}{13}\,\text{J}\)：\(K_B=(mg\sin\theta-f_{AB})\,s=\dfrac{10}{3}\times\dfrac{18}{13}=\dfrac{60}{13}\,\text{J}\approx4.6\,\text{J}\)。</p>
+          </div>
+          <div class="card" data-card="2" hidden>
+            <p><b>经小圆弧到 C：</b>圆弧光滑无损，下降 \(1.8\,\text{m}\)：\(K_C=\dfrac{60}{13}+18=\dfrac{294}{13}\,\text{J}\approx22.6\,\text{J}\)。</p>
+          </div>
+          <div class="card key" data-card="3" hidden>
+            <p><b>第二次到达 D：</b>\(C\to D\) 摩擦再耗 \(10\,\text{J}\)：\(K_{D,2}=\dfrac{294}{13}-10=\dfrac{164}{13}\,\text{J}\approx12.6\,\text{J}\)。</p>
+            <p class="result">第（2）问结论：\(K_{D,2}=\dfrac{164}{13}\,\text{J}\)。</p>
+            <p class="note">注意路线：这是在 \(AB\) 上转向之后，经小圆弧 \(BQC\) 反向来到 \(D\)，并不是又走了第二整圈。</p>
+          </div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn btn-play">▶ 播放</button>
+          <button type="button" class="btn btn-next">⏭ 下一事件</button>
+          <button type="button" class="btn btn-replay">↺ 重新播放</button>
+        </div>
+        <div class="stage-nav">
+          <button type="button" class="btn nav-prev" data-goto="2">← 上一段</button>
+          <button type="button" class="btn nav-next" data-goto="4">下一段 →</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 第四段：CD 总路程 ============ -->
+  <section id="stage-4" class="stage anim" hidden>
+    <h2 class="stage-title">第三问：CD 段上的总路程</h2>
+    <div class="stage-layout">
+      <div class="track" data-track="4"><p class="map-hint">式中带虚线框的物理量可点按（或按 Enter / Space），在图上查看对应的位置、长度或路程。</p></div>
+      <aside class="panel">
+        <div class="readouts">
+          <div class="ro"><span>当前动能</span><b class="kv-k">—</b></div>
+          <div class="ro"><span>CD 累计路程</span><b class="kv-cd">6.00 m</b></div>
+        </div>
+        <div class="cd-table" aria-label="CD 路程逐段计数">
+          <button type="button" class="cd-row" data-map="cd1" aria-pressed="false"><span>① 第一周 \(D\to C\)</span><b>3 m</b></button>
+          <button type="button" class="cd-row" data-map="cd2" aria-pressed="false"><span>② 折返 \(C\to D\)</span><b>3 m</b></button>
+          <button type="button" class="cd-row" data-map="cd3" aria-pressed="false"><span>③ 再次 \(D\to C\)</span><b class="cd-r3">0 m</b></button>
+          <button type="button" class="cd-row" data-map="cd4" aria-pressed="false"><span>④ 最后滑行</span><b class="cd-r4">0 m</b></button>
+          <div class="cd-row total"><span>合计</span><b class="cd-total">6 m</b></div>
+        </div>
+        <div class="cards">
+          <div class="card" data-card="intro">
+            <p>从第二次到 \(D\)（\(K_{D,2}=\dfrac{164}{13}\,\text{J}\approx12.6\,\text{J}\)）继续。前两段完整 \(CD\) 已计入上方计数。</p>
+            <p class="think">想一想：\(\dfrac{164}{13}\,\text{J}\) 够小球沿大圆弧翻回 \(A\) 吗？</p>
+          </div>
+          <div class="card key" data-card="0" hidden>
+            <p><b>大圆弧上转向：</b>翻到大圆最高点需 \(mg\cdot 2R=40\,\text{J}\)，而只有 \(\dfrac{164}{13}\,\text{J}\)。小球在大圆弧上爬到 \(h=\dfrac{K}{mg}=\dfrac{82}{65}\,\text{m}\approx1.26\,\text{m}\) 处动能耗尽，转向。</p>
+          </div>
+          <div class="card" data-card="1" hidden>
+            <p><b>无损回到 D：</b>圆弧光滑，原路滑回 \(D\)，动能仍为 \(\dfrac{164}{13}\,\text{J}\)，第三次进入 \(CD\)。</p>
+          </div>
+          <div class="card" data-card="2" hidden>
+            <p><b>第三段完整 CD：</b>再耗 \(10\,\text{J}\)，\(K_C=\dfrac{164}{13}-10=\dfrac{34}{13}\,\text{J}\approx2.6\,\text{J}\)。</p>
+            <p class="think">想一想：还能沿小圆弧爬到 \(B\) 吗？</p>
+          </div>
+          <div class="card key" data-card="3" hidden>
+            <p><b>小圆弧上转向：</b>到 \(B\) 需 \(mg(h_B-h_C)=18\,\text{J}\)，而只有 \(\dfrac{34}{13}\,\text{J}\)。小球在小圆弧上爬 \(h=\dfrac{17}{65}\,\text{m}\approx0.26\,\text{m}\) 后转向。</p>
+          </div>
+          <div class="card" data-card="4" hidden>
+            <p><b>无损回到 C：</b>剩 \(\dfrac{34}{13}\,\text{J}\)，最后一次滑上 \(CD\)，这次走不完全程。</p>
+          </div>
+          <div class="card key" data-card="5" hidden>
+            <p><b>停在 CD 上：</b>滑行 <button type="button" class="map-inline" data-map="cd4" aria-pressed="false" title="在图上定位这段滑行">\(s=\dfrac{34/13}{10/3}=\dfrac{51}{65}\,\text{m}\)</button>（约 \(0.78\,\text{m}\)）后停下。</p>
+            <p class="result">第（3）问结论：\(s_{CD}=3\times 3+\dfrac{51}{65}=\dfrac{636}{65}\,\text{m}\approx9.78\,\text{m}\)。</p>
+            <p class="note">可抄的事件链（动能，单位 J）：\(30\to12\to0\to\dfrac{60}{13}\to\dfrac{294}{13}\to\dfrac{164}{13}\to\dfrac{34}{13}\to0\)。</p>
+          </div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn btn-play">▶ 播放</button>
+          <button type="button" class="btn btn-next">⏭ 下一事件</button>
+          <button type="button" class="btn btn-replay">↺ 重新播放</button>
+        </div>
+        <div class="stage-nav">
+          <button type="button" class="btn nav-prev" data-goto="3">← 上一段</button>
+          <button type="button" class="btn nav-next" data-goto="1">回到原题 →</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+        onerror="window.__katexFailed=true"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onerror="window.__katexFailed=true"></script>
+<script defer src="app.js"></script>
+</body>
+</html>

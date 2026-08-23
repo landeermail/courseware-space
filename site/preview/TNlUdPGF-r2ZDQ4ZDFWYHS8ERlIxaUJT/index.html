@@ -57,6 +57,7 @@
     if(fragmentCode){sessionStorage.setItem(ACCESS_KEY,fragmentCode);history.replaceState(null,'',location.pathname+location.search)}
     if(!sessionStorage.getItem(ACCESS_KEY))document.getElementById('accessWarning').hidden=false;
     const lessons=[
+      {id:'q688-multi-stage-track-energy',revision:'q688-v1-c928e6c7df79',subject:'力学',title:'第688题：多阶段滑轨能量',desc:'沿关键事件追踪小球的能量、转向与 CD 路程，并把公式中的物理量映射回轨道模型。',tags:['功能关系','多阶段运动','能量追踪'],href:'q688-v1-c928e6c7df79/'},
       {id:'q474-longitudinal-wave',revision:'q474-v1-39e8e4f62f4b',subject:'机械波',title:'第474题：纵波弹簧标记点',desc:'观察弹簧上的标记点怎样振动、疏密怎样传播，并从题图读出波长和振幅。',tags:['纵波','波长','振幅'],href:'q474-v1-39e8e4f62f4b/'},
       {id:'q01-vertical-circle',revision:'q01-v8-1c89623d5bf0',subject:'力学',title:'第1题：竖直圆环双带电小球',desc:'观察缓慢推动中的耦合平衡、支持力与能量变化，并从模型回到四个选项。',tags:['耦合运动','准静态平衡','能量'],href:'q01-v8-1c89623d5bf0/'},
       {id:'q07-glass-rod-tir',revision:'5c8590bd2060',subject:'光学',title:'第7题：实心玻璃管中的全反射计数',desc:'连续改变管内光线方向，找到全反射边界，并从动态光路回到最多反射次数的严格判定。',tags:['全反射','临界角','光路展开'],href:'q07-v4-5bb63ec7f581/'},

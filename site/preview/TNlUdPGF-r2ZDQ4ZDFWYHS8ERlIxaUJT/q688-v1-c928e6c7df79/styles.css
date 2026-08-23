@@ -1,0 +1,299 @@
+/* 滑轨上的小球 · 四段互动体验 */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #1c2430;
+  background: #f3f5f8;
+  line-height: 1.5;
+}
+
+.site-header {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 6px 16px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+
+.site-header h1 {
+  font-size: 17px;
+  margin: 0;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 14px;
+  font-size: 15px;
+  border: 1px solid #c7d0dc;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c2430;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+  font-weight: 600;
+}
+
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 4px 16px 4px;
+}
+
+.stage-title {
+  font-size: 16px;
+  margin: 4px 0 6px;
+}
+
+/* ---- 第一段：原题 ---- */
+.stage1-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.orig {
+  flex: 2 1 620px;
+  min-width: 0;
+  margin: 4px 0 0;
+}
+
+.orig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid #d8dee7;
+  border-radius: 8px;
+}
+
+.q-list {
+  flex: 1 1 300px;
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  padding: 2px 14px 8px;
+}
+
+.q-list p { margin: 6px 0; }
+
+.q-list ol { margin: 4px 0; padding-left: 24px; }
+
+.hint {
+  color: #5a6675;
+  font-size: 14px;
+}
+
+/* ---- 动画段布局 ---- */
+.stage-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.map-hint {
+  margin: 2px 0 4px;
+  font-size: 13px;
+  color: #5a6675;
+}
+
+.track {
+  flex: 3 1 420px;
+  min-width: 0;
+}
+
+.track svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fbfcfe;
+  border: 1px solid #d8dee7;
+  border-radius: 12px;
+}
+
+.panel {
+  flex: 2 1 300px;
+  min-width: 0;
+}
+
+.readouts {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ro {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  padding: 5px 12px;
+}
+
+.ro span {
+  display: block;
+  font-size: 13px;
+  color: #5a6675;
+}
+
+.ro b {
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- CD 计数表 ---- */
+.cd-table {
+  background: #fff;
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.cd-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+}
+
+.cd-row b { font-variant-numeric: tabular-nums; }
+
+.cd-row.total {
+  border-top: 1px solid #d8dee7;
+  margin-top: 3px;
+  padding-top: 4px;
+  font-weight: 700;
+}
+
+/* ---- 事件卡片 ---- */
+.cards { margin-bottom: 8px; }
+
+.card {
+  background: #fff;
+  border: 1px solid #d8dee7;
+  border-left: 4px solid #9aa7b5;
+  border-radius: 10px;
+  padding: 4px 12px 6px;
+  font-size: 15px;
+}
+
+.card p { margin: 5px 0; }
+
+.card.key { border-left-color: #1f6feb; }
+
+.card .result {
+  font-weight: 700;
+  color: #0b5cad;
+}
+
+.card .think {
+  color: #8a5a00;
+  background: #fff7e6;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.card .note {
+  color: #5a6675;
+  font-size: 13px;
+}
+
+/* ---- 控件 ---- */
+.controls, .stage-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stage-nav { margin-bottom: 0; } /* 末行控件：去掉主体底部多余留白 */
+
+.btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 14px;
+  font-size: 15px;
+  border: 1px solid #c7d0dc;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c2430;
+  cursor: pointer;
+}
+
+.btn-play { background: #1f6feb; border-color: #1f6feb; color: #fff; font-weight: 600; }
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn:not(:disabled):active { transform: translateY(1px); }
+
+/* ---- 关键量—模型映射 ---- */
+.map-inline {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 4px 10px;
+  margin: 2px 0;
+  font: inherit;
+  border: 1px dashed #2f9e44;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.map-inline.map-on { background: #e9f7ee; border-style: solid; }
+
+button.cd-row {
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  min-height: 44px;
+  border-radius: 8px;
+  text-align: left;
+  align-items: center;
+  padding: 3px 8px;
+}
+
+button.cd-row.map-on { background: #e9f7ee; outline: 2px solid #2f9e44; }
+
+.map-inline:focus-visible, button.cd-row:focus-visible {
+  outline: 2px solid #1f6feb;
+  outline-offset: 2px;
+}
+
+/* ---- KaTeX 降级 ---- */
+.no-katex .card, .no-katex .q-list, .no-katex .cd-table {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", monospace;
+}
