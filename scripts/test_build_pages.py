@@ -70,18 +70,21 @@ class BuildPagesTests(unittest.TestCase):
 
         self.assertIn("希望您重点体验", teacher_home)
         self.assertIn("section.hidden=priority.length===0", teacher_home)
+        self.assertIn("每份课件都可以随时反馈", teacher_home)
+        self.assertIn("同一道原题的不同教学实现收在同一张卡片中", teacher_home)
         self.assertIn("反馈这份课件", teacher_home)
         self.assertIn(
-            'href="${item.href}" target="_blank" rel="noopener">开始体验',
+            'href="${entry.href}" target="_blank" rel="noopener">开始体验',
             teacher_home,
         )
         self.assertIn(
-            'href="${item.href}" target="_blank" rel="noopener">打开课件',
+            'href="${entry.href}" target="_blank" rel="noopener">打开课件',
             teacher_home,
         )
         self.assertIn('id="freeformMessage"', feedback_form)
         self.assertIn("task.feedback_mode === 'freeform'", feedback_form)
         self.assertIn("来源：经产品负责人转述记录", history)
+        self.assertIn("随时可反馈", history)
         self.assertIn(
             'href="${tryUrl}" target="_blank" rel="noopener">再次体验课件',
             history,

@@ -11,39 +11,38 @@
   <style>
     :root{--ink:#172033;--muted:#647084;--line:#d9e2ee;--surface:#fff;--soft:#f4f7fb;--blue:#2459d3;--blue-soft:#edf3ff;--green:#087a55;--green-soft:#e8f7f1;--amber:#9a5700;--amber-soft:#fff6e5;--shadow:0 14px 38px rgba(23,32,51,.08)}
     *{box-sizing:border-box}body{margin:0;color:var(--ink);background:linear-gradient(180deg,#f7faff 0,#eef3f9 100%);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}
-    a{color:inherit}button,a{font:inherit;-webkit-tap-highlight-color:transparent}.page{width:min(1160px,calc(100% - 32px));margin:0 auto;padding:42px 0 64px}
-    .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:end;margin-bottom:28px}.eyebrow{margin:0 0 8px;color:var(--blue);font-size:13px;font-weight:750;letter-spacing:.08em}.hero h1{margin:0;font-size:clamp(30px,4vw,48px);line-height:1.12;letter-spacing:-.03em}.lead{max-width:720px;margin:12px 0 0;color:var(--muted);font-size:16px}.hero-side{display:grid;gap:10px;justify-items:end}.reviews-link{display:inline-flex;min-height:44px;align-items:center;padding:9px 16px;border:1px solid #b7caf3;border-radius:11px;color:var(--blue);background:#fff;font-weight:750;text-decoration:none;white-space:nowrap}.reviews-link:focus-visible{outline:3px solid rgba(36,89,211,.24);outline-offset:3px}.privacy{max-width:280px;padding:12px 14px;border:1px solid #bcd0f5;border-radius:12px;color:#294f9a;background:var(--blue-soft);font-size:13px}
-    .access-warning{margin:0 0 20px;padding:12px 14px;border:1px solid #efb083;border-radius:12px;color:#7a3b00;background:#fff6ed}.access-warning[hidden]{display:none}
-    .section{margin-top:30px}.section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:14px}.section h2{margin:0;font-size:23px}.section-copy{margin:5px 0 0;color:var(--muted);font-size:14px}.count{color:var(--muted);font-size:13px;white-space:nowrap}
-    .priority-grid,.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.priority-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:24px;border:1px solid #b7caf3;border-radius:18px;background:linear-gradient(135deg,#fff,#edf3ff);box-shadow:var(--shadow)}
-    .priority-card h3,.lesson-card h3{margin:0;font-size:19px}.card-copy{margin:7px 0 0;color:var(--muted);font-size:14px}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{padding:4px 9px;border-radius:999px;color:#48566a;background:#edf1f6;font-size:12px}.status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.calibrated,.status.reviewed{color:var(--green);background:var(--green-soft)}.status.closed{color:#566273;background:#edf1f6}
-    .priority-actions,.lesson-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.open{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:9px 16px;border-radius:11px;color:#fff;background:var(--blue);font-weight:750;text-decoration:none;white-space:nowrap}.open.secondary{border:1px solid #b7caf3;color:var(--blue);background:#fff}.open:focus-visible,.lesson-link:focus-visible{outline:3px solid rgba(36,89,211,.24);outline-offset:3px}
-    .subject{margin-top:22px}.subject-title{margin:0 0 12px;padding-left:11px;border-left:3px solid var(--blue);color:#43516a;font-size:17px}.lesson-card{display:flex;min-width:0;flex-direction:column;padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 24px rgba(23,32,51,.05)}.lesson-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lesson-actions{margin-top:auto;padding-top:16px}.lesson-link{display:inline-flex;min-height:44px;align-items:center;color:var(--blue);font-weight:750;text-decoration:none}.lesson-link::after{content:" →"}.empty{padding:18px;border:1px dashed #b8c5d5;border-radius:14px;color:var(--muted);background:rgba(255,255,255,.7)}
+    a{color:inherit}button,a{font:inherit;-webkit-tap-highlight-color:transparent}.page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:42px 0 64px}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:end;margin-bottom:28px}.eyebrow{margin:0 0 8px;color:var(--blue);font-size:13px;font-weight:750;letter-spacing:.08em}.hero h1{margin:0;font-size:clamp(30px,4vw,48px);line-height:1.12;letter-spacing:-.03em}.lead{max-width:760px;margin:12px 0 0;color:var(--muted);font-size:16px}.hero-side{display:grid;gap:10px;justify-items:end}.reviews-link{display:inline-flex;min-height:44px;align-items:center;padding:9px 16px;border:1px solid #b7caf3;border-radius:11px;color:var(--blue);background:#fff;font-weight:750;text-decoration:none;white-space:nowrap}.privacy{max-width:280px;padding:12px 14px;border:1px solid #bcd0f5;border-radius:12px;color:#294f9a;background:var(--blue-soft);font-size:13px}
+    .reviews-link:focus-visible,.action:focus-visible,.thumb-link:focus-visible{outline:3px solid rgba(36,89,211,.24);outline-offset:3px}.access-warning{margin:0 0 20px;padding:12px 14px;border:1px solid #efb083;border-radius:12px;color:#7a3b00;background:#fff6ed}.access-warning[hidden]{display:none}
+    .section{margin-top:30px}.section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:14px}.section h2{margin:0;font-size:23px}.section-copy{max-width:760px;margin:5px 0 0;color:var(--muted);font-size:14px}.count{color:var(--muted);font-size:13px;white-space:nowrap}.empty{padding:18px;border:1px dashed #b8c5d5;border-radius:14px;color:var(--muted);background:rgba(255,255,255,.7)}
+    .priority-grid{display:grid;gap:14px}.priority-card{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:20px;align-items:center;padding:18px;border:1px solid #b7caf3;border-radius:18px;background:linear-gradient(135deg,#fff,#edf3ff);box-shadow:var(--shadow)}.priority-image{width:150px;height:112px;object-fit:contain;border:1px solid var(--line);border-radius:12px;background:#fff}.priority-copy h3{margin:5px 0 0;font-size:20px}.priority-copy p{margin:6px 0 0;color:var(--muted);font-size:14px}.priority-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}
+    .subject{margin-top:26px}.subject-title{margin:0 0 12px;padding-left:11px;border-left:3px solid var(--blue);color:#43516a;font-size:18px}.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.lesson-card{display:flex;min-width:0;overflow:hidden;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 8px 24px rgba(23,32,51,.05)}
+    .thumb-link{display:flex;height:230px;align-items:center;justify-content:center;padding:12px;border-bottom:1px solid var(--line);background:#f9fbfe}.question-thumb{display:block;width:100%;height:100%;object-fit:contain}.lesson-body{display:flex;flex:1;flex-direction:column;padding:18px}.question-number{margin:0;color:var(--blue);font-size:13px;font-weight:800;letter-spacing:.04em}.lesson-card h3{margin:3px 0 0;font-size:20px}.card-copy{margin:7px 0 0;color:var(--muted);font-size:14px}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{padding:4px 9px;border-radius:999px;color:#48566a;background:#edf1f6;font-size:12px}
+    .entry-list{display:grid;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}.entry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.entry-name{font-size:14px;font-weight:750}.entry-state{display:block;margin-top:2px;color:var(--muted);font-size:12px}.entry-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}.action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:8px 13px;border:1px solid #b7caf3;border-radius:10px;color:var(--blue);background:#fff;font-size:14px;font-weight:750;text-decoration:none;white-space:nowrap}.action.primary{border-color:var(--blue);color:#fff;background:var(--blue)}
+    .status{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:750}.status.pending{color:var(--amber);background:var(--amber-soft)}.status.available{color:var(--blue);background:var(--blue-soft)}.status.reviewed{color:var(--green);background:var(--green-soft)}.status.closed{color:#566273;background:#edf1f6}.status.unavailable{color:#667085;background:#edf1f6}
     footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
-    @media(max-width:760px){.page{width:min(100% - 24px,620px);padding-top:26px}.hero{grid-template-columns:1fr}.hero-side{justify-items:start}.privacy{max-width:none}.priority-grid,.lesson-grid{grid-template-columns:1fr}.priority-card{grid-template-columns:1fr}.priority-card .open{width:100%}.section-head{align-items:flex-start;flex-direction:column;gap:4px}}
+    @media(max-width:900px){.priority-card{grid-template-columns:120px minmax(0,1fr)}.priority-image{width:120px;height:90px}.priority-actions{grid-column:1/-1;justify-content:flex-start}.thumb-link{height:205px}.entry{grid-template-columns:1fr}.entry-actions{justify-content:flex-start}}
+    @media(max-width:760px){.page{width:min(100% - 24px,620px);padding-top:26px}.hero{grid-template-columns:1fr}.hero-side{justify-items:start}.privacy{max-width:none}.lesson-grid{grid-template-columns:1fr}.priority-card{grid-template-columns:96px minmax(0,1fr)}.priority-image{width:96px;height:80px}.section-head{align-items:flex-start;flex-direction:column;gap:4px}.thumb-link{height:220px}}
   </style>
 </head>
 <body>
   <main class="page">
     <header class="hero">
-      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>老师您好，您的课件都在这里</h1><p class="lead">先体验最新课件，再按自己的节奏查看其他内容。反馈状态保存在服务端，换设备打开同一链接也能看到。</p></div>
-      <div class="hero-side">
-        <a class="reviews-link" href="reviews/">我的反馈</a>
-        <div class="privacy">这里只记录课件反馈状态，不记录姓名、学校或其他身份信息。</div>
-      </div>
+      <div><p class="eyebrow">物理互动课件 · 专属入口</p><h1>老师您好，您的课件都在这里</h1><p class="lead">按学科和题号查找课件。每份课件都可以随时反馈；只有本轮希望重点听取意见的内容，才会单独列在前面。</p></div>
+      <div class="hero-side"><a class="reviews-link" href="reviews/">我的反馈</a><div class="privacy">这里只记录课件反馈状态，不记录姓名、学校或其他身份信息。</div></div>
     </header>
     <p class="access-warning" id="accessWarning" hidden>此页面需要从完整的专属链接进入，请回到收到的原链接重新打开。</p>
 
     <section class="section" id="prioritySection" aria-labelledby="priorityTitle">
-      <div class="section-head"><div><h2 id="priorityTitle">希望您重点体验</h2><p class="section-copy">这些是当前希望听取您意见的课件。体验后，直接说出最想告诉我们的内容即可。</p></div><span class="count" id="priorityCount"></span></div>
+      <div class="section-head"><div><h2 id="priorityTitle">希望您重点体验</h2><p class="section-copy">这里只放当前明确希望听取意见的课件，不代表其他课件不能反馈。</p></div><span class="count" id="priorityCount"></span></div>
       <div class="priority-grid" id="priorityGrid"></div>
     </section>
 
     <section class="section" aria-labelledby="allTitle">
-      <div class="section-head"><div><h2 id="allTitle">全部课件</h2><p class="section-copy">按学科分组整理；反馈状态来自服务端记录，没有反馈任务的课件不显示状态。</p></div></div>
+      <div class="section-head"><div><h2 id="allTitle">全部课件</h2><p class="section-copy">按学科分组、按题号升序排列；同一道原题的不同教学实现收在同一张卡片中。点击原题图片可以查看大图。</p></div></div>
       <div id="subjects"></div>
     </section>
-    <footer>反馈只用于改进课件；反馈状态以服务端记录为准，换浏览器或换设备不会丢失。</footer>
+    <footer>反馈只用于改进课件；每次反馈都绑定页面显示的精确版本，补充内容不会覆盖历史记录。</footer>
   </main>
   <script>
   (()=>{
@@ -56,70 +55,67 @@
     const fragmentCode=fragment.get('access');
     if(fragmentCode){sessionStorage.setItem(ACCESS_KEY,fragmentCode);history.replaceState(null,'',location.pathname+location.search)}
     if(!sessionStorage.getItem(ACCESS_KEY))document.getElementById('accessWarning').hidden=false;
+
     const lessons=[
-      {id:'q689-incline-spring-vt',revision:'q689-v1-2c6eb607bad6',subject:'力学',title:'第689题：斜面弹簧与速度图像',desc:'同步观察弹簧压缩、合力、加速度与 v-t 图像斜率，并回到关键事件和纸笔作图。',tags:['弹簧','变加速运动','v-t 图像'],href:'q689-v1-2c6eb607bad6/'},
-      {id:'q688-multi-stage-track-energy',revision:'q688-v1-c928e6c7df79',subject:'力学',title:'第688题：多阶段滑轨能量',desc:'沿关键事件追踪小球的能量、转向与 CD 路程，并把公式中的物理量映射回轨道模型。',tags:['功能关系','多阶段运动','能量追踪'],href:'q688-v1-c928e6c7df79/'},
-      {id:'q474-longitudinal-wave',revision:'q474-v1-39e8e4f62f4b',subject:'机械波',title:'第474题：纵波弹簧标记点',desc:'观察弹簧上的标记点怎样振动、疏密怎样传播，并从题图读出波长和振幅。',tags:['纵波','波长','振幅'],href:'q474-v1-39e8e4f62f4b/'},
-      {id:'q01-vertical-circle',revision:'q01-v8-1c89623d5bf0',subject:'力学',title:'第1题：竖直圆环双带电小球',desc:'观察缓慢推动中的耦合平衡、支持力与能量变化，并从模型回到四个选项。',tags:['耦合运动','准静态平衡','能量'],href:'q01-v8-1c89623d5bf0/'},
-      {id:'q07-glass-rod-tir',revision:'5c8590bd2060',subject:'光学',title:'第7题：实心玻璃管中的全反射计数',desc:'连续改变管内光线方向，找到全反射边界，并从动态光路回到最多反射次数的严格判定。',tags:['全反射','临界角','光路展开'],href:'q07-v4-5bb63ec7f581/'},
-      {id:'q6-plane',subject:'电磁感应',title:'第6题：飞机机翼电势差',desc:'逐项比较不同飞行方向下机翼两端的电势高低。',tags:['洛伦兹力','方向判断'],href:'../../electromagnetism/q6-plane/'},
-      {id:'mh370-physics',subject:'电磁感应',title:'第6题：飞机机翼空间推理',desc:'在空间模型中理解速度、磁场与洛伦兹力。',tags:['空间推理'],href:'../../mh370-physics/mh370-physics/'},
-      {id:'q13-helicopter-physics',subject:'电磁感应',title:'第13题：旋翼感应电动势',desc:'分步观察旋转、受力与动生电动势积分。',tags:['旋转导体'],href:'../../electromagnetism/q13-helicopter-physics/'},
-      {id:'q13-helicopter',subject:'电磁感应',title:'第13题：旋翼空间推理',desc:'理解叶尖电势与旋转导体公式。',tags:['空间推理'],href:'../../helicopter-dynamics/q13-helicopter/'},
-      {id:'q20-rotating-rod',subject:'电磁感应',title:'第20题：旋转导体与电磁感应',desc:'观察转动、回路电流、安培力与运动状态的联动。',tags:['因果探究'],href:'../../electromagnetism/q20-rotating-rod/',calibrated:true},
-      {id:'q21-variable-field-rod',subject:'电磁感应',title:'第21题：变磁场导体棒（三问引导）',desc:'按四阶段理解磁场、磁通、能量、冲量与 E-x 关系。',tags:['四阶段'],href:'../../electromagnetism/q21-variable-field-rod/'},
-      {id:'q21-variable-field-rod-3d',subject:'电磁感应',title:'第21题：变磁场导体棒（因果探究）',desc:'用运动、电流与受力的动态因果链理解往返过程。',tags:['因果探究'],href:'../../electromagnetism/q21-variable-field-rod-3d/',calibrated:true},
-      {id:'q23-falling-tube-ball',subject:'力学',title:'第23题：落管与上抛小球',desc:'切换双参考系，观察相对运动、穿出条件与落管窗口。',tags:['相对运动'],href:'../../mechanics/q23-falling-tube-ball/'}
+      {number:1,subject:'力学',title:'竖直圆环双带电小球',desc:'观察缓慢推动中的耦合平衡、支持力与能量变化，并从模型回到四个选项。',tags:['耦合运动','准静态平衡','能量'],image:'q01-v8-1c89623d5bf0/q1-problem.png',entries:[{id:'q01-vertical-circle',revision:'q01-v8-1c89623d5bf0',taskId:'q01-v8-free-feedback',name:'当前版本',href:'q01-v8-1c89623d5bf0/'}]},
+      {number:23,subject:'力学',title:'落管与上抛小球',desc:'切换双参考系，观察相对运动、穿出条件与落管窗口。',tags:['相对运动','参考系'],image:'../../mechanics/q23-falling-tube-ball/question.png',entries:[{id:'q23-falling-tube-ball',revision:'snapshot-4abe3371d155',taskId:'q23-free-feedback',name:'双参考系模型',href:'../../mechanics/q23-falling-tube-ball/'}]},
+      {number:688,subject:'力学',title:'多阶段滑轨能量',desc:'沿关键事件追踪小球的能量、转向与 CD 路程，并把公式中的物理量映射回轨道模型。',tags:['功能关系','多阶段运动','能量追踪'],image:'q688-v1-c928e6c7df79/assets/688.png',entries:[{id:'q688-multi-stage-track-energy',revision:'q688-v1-c928e6c7df79',taskId:'q688-v1-teacher-feedback',name:'当前版本',href:'q688-v1-c928e6c7df79/'}]},
+      {number:689,subject:'力学',title:'斜面弹簧与速度图像',desc:'同步观察弹簧压缩、合力、加速度与 v-t 图像斜率，并回到关键事件和纸笔作图。',tags:['弹簧','变加速运动','v-t 图像'],image:'q689-v1-2c6eb607bad6/assets/689.PNG',entries:[{id:'q689-incline-spring-vt',revision:'q689-v1-2c6eb607bad6',taskId:'q689-v1-teacher-feedback',name:'当前版本',href:'q689-v1-2c6eb607bad6/'}]},
+      {number:474,subject:'机械波',title:'纵波弹簧标记点',desc:'观察弹簧上的标记点怎样振动、疏密怎样传播，并从题图读出波长和振幅。',tags:['纵波','波长','振幅'],image:'q474-v1-39e8e4f62f4b/assets/474.jpg',entries:[{id:'q474-longitudinal-wave',revision:'q474-v1-39e8e4f62f4b',taskId:'q474-v1-teacher-feedback',name:'当前版本',href:'q474-v1-39e8e4f62f4b/'}]},
+      {number:7,subject:'光学',title:'实心玻璃管中的全反射计数',desc:'连续改变管内光线方向，找到全反射边界，并从动态光路回到最多反射次数的严格判定。',tags:['全反射','临界角','光路展开'],image:'q07-v4-5bb63ec7f581/assets/source.png',entries:[{id:'q07-glass-rod-tir',revision:'5c8590bd2060',taskId:'q07-v4-free-feedback',name:'当前版本',href:'q07-v4-5bb63ec7f581/'}]},
+      {number:6,subject:'电磁感应',title:'飞机机翼电势差',desc:'比较不同飞行方向下机翼两端的电势高低，并建立速度、磁场与洛伦兹力的空间关系。',tags:['洛伦兹力','方向判断','空间推理'],image:'../../mh370-physics/mh370-physics/original-question.jpg',entries:[{id:'q6-plane',revision:'snapshot-eb2dde1d6be1',taskId:'q6-plane-free-feedback',name:'逐项方向判断',href:'../../electromagnetism/q6-plane/'},{id:'mh370-physics',revision:'snapshot-c111373b0d35',taskId:'q6-space-free-feedback',name:'空间模型',href:'../../mh370-physics/mh370-physics/'}]},
+      {number:13,subject:'电磁感应',title:'旋翼感应电动势',desc:'理解旋转导体的受力、电势与动生电动势积分。',tags:['旋转导体','动生电动势','空间推理'],image:'../../helicopter-dynamics/q13-helicopter/q13-original-question.jpg',entries:[{id:'q13-helicopter-physics',revision:'snapshot-3e766ade0b32',taskId:'q13-guided-free-feedback',name:'分步引导',href:'../../electromagnetism/q13-helicopter-physics/'},{id:'q13-helicopter',revision:'snapshot-833162570d0c',taskId:'q13-space-free-feedback',name:'空间模型',href:'../../helicopter-dynamics/q13-helicopter/'}]},
+      {number:20,subject:'电磁感应',title:'旋转导体与电磁感应',desc:'观察转动、回路电流、安培力与运动状态的联动。',tags:['旋转导体','因果探究'],image:'../../electromagnetism/q20-rotating-rod/question-1.png',entries:[{id:'q20-rotating-rod',revision:'snapshot-5f2db86b5d7d',taskId:'q20-free-feedback',name:'因果探究',href:'../../electromagnetism/q20-rotating-rod/'}]},
+      {number:21,subject:'电磁感应',title:'变磁场导体棒',desc:'理解磁场、磁通、能量、冲量与运动受力的往返关系。',tags:['变磁场','能量','因果链'],image:'../../electromagnetism/q21-variable-field-rod/question.png',entries:[{id:'q21-variable-field-rod',revision:'snapshot-e7a40c5ff5a2',taskId:'q21-guided-free-feedback',name:'三问引导',href:'../../electromagnetism/q21-variable-field-rod/'},{id:'q21-variable-field-rod-3d',revision:'snapshot-0e2223190c46',taskId:'q21-causal-free-feedback',name:'因果探究',href:'../../electromagnetism/q21-variable-field-rod-3d/'}]}
     ];
+    const subjectOrder=['力学','机械波','光学','电磁感应'];
     let tasks=null;
     let loadFailed=false;
-    const taskFor=item=>tasks?tasks.find(task=>task.courseware_id===item.id&&task.revision_id===item.revision):null;
-    const statusOf=item=>{
-      if(item.calibrated)return'calibrated';
-      const task=taskFor(item);
-      if(!task)return null;
-      return task.status==='reviewed'?'reviewed':task.status==='closed'?'closed':'pending';
+    const taskFor=entry=>tasks?tasks.find(task=>task.task_id===entry.taskId)||null:null;
+    const statusOf=entry=>{
+      const task=taskFor(entry);
+      if(!task)return loadFailed?'unavailable':null;
+      if(task.status==='reviewed')return'reviewed';
+      if(task.status==='closed')return'closed';
+      return task.priority===false?'available':'pending';
     };
-    const statusText=status=>status==='calibrated'?'已评（校准）':status==='reviewed'?'已反馈':status==='closed'?'本轮已结束':'等待反馈';
+    const statusText=status=>({pending:'等待反馈',available:'可随时反馈',reviewed:'已反馈',closed:'本轮已结束',unavailable:'状态暂不可读'})[status]||'正在读取状态';
     const chips=item=>item.tags.map(tag=>`<span class="chip">${tag}</span>`).join('');
-    const statusBadge=item=>{
-      const status=statusOf(item);
-      return status?`<span class="status ${status}">${statusText(status)}</span>`:'';
-    };
+    const feedbackLabel=status=>status==='reviewed'?'查看或补充反馈':status==='closed'?'查看状态':'反馈这份课件';
+    function entryHtml(entry){
+      const status=statusOf(entry);
+      const feedbackUrl=`feedback/?task_id=${encodeURIComponent(entry.taskId)}`;
+      return `<div class="entry"><div><span class="entry-name">${entry.name}</span><span class="entry-state">${status?`<span class="status ${status}">${statusText(status)}</span>`:'正在读取反馈状态…'}</span></div><div class="entry-actions"><a class="action" href="${entry.href}" target="_blank" rel="noopener">打开课件</a><a class="action primary" href="${feedbackUrl}">${feedbackLabel(status)}</a></div></div>`;
+    }
+    function lessonHtml(item){
+      return `<article class="lesson-card"><a class="thumb-link" href="${item.image}" target="_blank" rel="noopener" aria-label="查看第${item.number}题原题大图"><img class="question-thumb" src="${item.image}" alt="第${item.number}题原题缩略图" loading="lazy"></a><div class="lesson-body"><p class="question-number">第${item.number}题</p><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><div class="entry-list">${item.entries.map(entryHtml).join('')}</div></div></article>`;
+    }
+    function renderSubjects(){
+      document.getElementById('subjects').innerHTML=subjectOrder.map(subject=>{
+        const items=lessons.filter(item=>item.subject===subject).sort((a,b)=>a.number-b.number);
+        return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(lessonHtml).join('')}</div></section>`;
+      }).join('');
+    }
     function renderPriority(){
       const section=document.getElementById('prioritySection');
       const grid=document.getElementById('priorityGrid');
       const count=document.getElementById('priorityCount');
-      if(loadFailed){section.hidden=false;count.textContent='';grid.innerHTML='<div class="empty">反馈状态暂时无法读取，请稍后刷新重试；课件仍可正常打开。</div>';return;}
-      if(!tasks){section.hidden=false;count.textContent='';grid.innerHTML='<div class="empty">正在读取反馈状态…</div>';return;}
-      const priority=lessons.filter(item=>{const task=taskFor(item);return task&&task.status==='pending'});
+      if(loadFailed){section.hidden=false;count.textContent='';grid.innerHTML='<div class="empty">反馈状态暂时无法读取；全部课件和反馈入口仍可正常打开。</div>';return;}
+      if(!tasks){section.hidden=false;count.textContent='';grid.innerHTML='<div class="empty">正在读取本轮重点课件…</div>';return;}
+      const priority=[];
+      lessons.forEach(item=>item.entries.forEach(entry=>{const task=taskFor(entry);if(task&&task.status==='pending'&&task.priority!==false)priority.push({item,entry,task})}));
       section.hidden=priority.length===0;
-      count.textContent=priority.length?`${priority.length} 份课件等待反馈`:'';
-      grid.innerHTML=priority.map(item=>{const task=taskFor(item);return `<article class="priority-card"><div><span class="status pending">等待反馈</span><h3>${item.title}</h3><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div></div><div class="priority-actions"><a class="open secondary" href="${item.href}" target="_blank" rel="noopener">开始体验</a><a class="open" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">反馈这份课件</a></div></article>`}).join('');
+      count.textContent=priority.length?`${priority.length} 份课件`:'';
+      grid.innerHTML=priority.map(({item,entry,task})=>`<article class="priority-card"><img class="priority-image" src="${item.image}" alt="第${item.number}题原题缩略图"><div class="priority-copy"><span class="status pending">等待反馈</span><h3>第${item.number}题：${item.title}</h3><p>${item.desc}${item.entries.length>1?` 当前邀请：${entry.name}。`:''}</p></div><div class="priority-actions"><a class="action" href="${entry.href}" target="_blank" rel="noopener">开始体验</a><a class="action primary" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">反馈这份课件</a></div></article>`).join('');
     }
-    function renderSubjects(){
-      const subjects=['机械波','电磁感应','力学','光学'];
-      document.getElementById('subjects').innerHTML=subjects.map(subject=>{
-        const items=lessons.filter(item=>{
-          if(item.subject!==subject)return false;
-          if(!tasks)return true;
-          const task=taskFor(item);
-          return !(task&&task.status==='pending');
-        });
-        return `<section class="subject"><h3 class="subject-title">${subject}</h3><div class="lesson-grid">${items.map(item=>{const task=taskFor(item);const feedbackLink=task&&task.status!=='closed'?`<a class="lesson-link" href="feedback/?task_id=${encodeURIComponent(task.task_id)}">${task.status==='reviewed'?'查看或补充反馈':'反馈这份课件'}</a>`:'';return `<article class="lesson-card"><div class="lesson-top"><h3>${item.title}</h3>${statusBadge(item)}</div><p class="card-copy">${item.desc}</p><div class="chips">${chips(item)}</div><div class="lesson-actions"><a class="lesson-link" href="${item.href}" target="_blank" rel="noopener">打开课件</a>${feedbackLink}</div></article>`}).join('')}</div></section>`
-      }).join('');
-    }
-    function renderAll(){renderPriority();renderSubjects();}
+    function renderAll(){renderPriority();renderSubjects()}
     renderAll();
     const accessCode=sessionStorage.getItem(ACCESS_KEY);
-    if(!accessCode){
-      loadFailed=true;renderAll();
-    }else{
-      fetch(`${API_BASE}/api/reviews`,{headers:{'X-Courseware-Access-Code':accessCode}})
-        .then(response=>{if(!response.ok)throw new Error(`反馈状态读取失败（${response.status}）`);return response.json()})
-        .then(data=>{tasks=Array.isArray(data.tasks)?data.tasks:[];renderAll();})
-        .catch(()=>{loadFailed=true;renderAll();});
-    }
+    if(!accessCode){loadFailed=true;renderAll();return;}
+    fetch(`${API_BASE}/api/reviews`,{headers:{'X-Courseware-Access-Code':accessCode}})
+      .then(response=>{if(!response.ok)throw new Error(`反馈状态读取失败（${response.status}）`);return response.json()})
+      .then(data=>{tasks=Array.isArray(data.tasks)?data.tasks:[];renderAll()})
+      .catch(()=>{loadFailed=true;renderAll()});
   })();
   </script>
 </body>
