@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>689 斜面弹簧与 v-t 图像（候选课件）</title>
+<script>
+/* MathJax（tex-svg 单文件，无构建）；CDN 失败时降级为可读公式文本，不抛异常 */
+window.__mjReady = false;
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']] },
+  svg: { fontCache: 'global' },
+  // 关键公式都在初始隐藏的揭示面板里；自动整体排版会在 display:none 下量错字号，
+  // 故关闭启动排版，改为面板首次显示时按需 typeset（见 __typeset）
+  startup: {
+    typeset: false,
+    ready: function () {
+      window.__mjReady = true;
+      try {
+        // 若降级曾触发（CDN 较慢），恢复 LaTeX 源码让 MathJax 接管排版
+        var list = document.querySelectorAll('.tex[data-fell]');
+        Array.prototype.forEach.call(list, function (e) {
+          e.textContent = e.getAttribute('data-tex');
+          e.removeAttribute('data-fell');
+        });
+      } catch (err) { /* 忽略，不阻断 MathJax */ }
+      MathJax.startup.defaultReady();
+      setTimeout(function () { if (window.__typesetVisible) window.__typesetVisible(); }, 0);
+    }
+  }
+};
+window.__typeset = function (elm) {
+  if (!elm || elm.getAttribute('data-mj-done')) return;
+  if (!(window.__mjReady && window.MathJax && MathJax.typesetPromise)) return;
+  elm.setAttribute('data-mj-done', '1');
+  MathJax.typesetPromise([elm]).catch(function () {});
+};
+function __mathFallback() {
+  if (window.__mjReady) return;
+  try {
+    var list = document.querySelectorAll('.tex[data-plain]');
+    Array.prototype.forEach.call(list, function (e) {
+      if (!e.getAttribute('data-tex')) e.setAttribute('data-tex', e.textContent);
+      e.setAttribute('data-fell', '1');
+      e.textContent = e.getAttribute('data-plain');
+    });
+  } catch (err) { /* 降级失败也不再抛出 */ }
+}
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" onerror="__mathFallback()"></script>
+<script>setTimeout(__mathFallback, 6000);</script>
+<style>
+:root{
+  --ink:#1d2129; --mut:#5b6470; --line:#d8dde3; --bg:#f4f6f8; --card:#ffffff;
+  --acc:#1864ab; --t1:#1971c2; --t2:#e8590c; --t3:#9c36b5; --tan:#d6336c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); font-size:15px; line-height:1.6;
+  overflow-x:hidden;
+}
+header.top{background:#fff;border-bottom:1px solid var(--line);padding:7px 16px}
+header.top h1{font-size:17px;margin:0}
+header.top .sub{color:var(--mut);font-size:12.5px;margin-top:1px}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;padding:8px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:6}
+button.tab{min-height:44px;min-width:44px;padding:8px 16px;font-size:15px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink);touch-action:manipulation}
+button.tab[aria-selected="true"]{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{max-width:1240px;margin:0 auto;padding:10px 16px 10px}
+section.step{display:none}
+section.step.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
+.card h2{font-size:15px;margin:0 0 6px}
+.card h3{font-size:14.5px;margin:8px 0 4px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0}
+button.btn{min-height:44px;min-width:44px;padding:8px 14px;font-size:15px;border-radius:10px;border:1.5px solid var(--acc);background:#fff;color:var(--acc);cursor:pointer;touch-action:manipulation}
+button.btn.primary{background:var(--acc);color:#fff}
+button.btn:disabled{opacity:.5;cursor:not-allowed;border-color:var(--line);color:var(--mut);background:#f1f3f5}
+input[type=range]{flex:1;min-width:200px;height:44px;accent-color:var(--acc);cursor:pointer}
+#m2 svg,#m3 svg,#g2 svg,#g3 svg,#g4 svg,#wfsx svg{display:block;width:100%;height:auto}
+/* MathJax 的 svg 用 ex 尺寸属性，不能被上面的规则覆盖 */
+.note{font-size:12.5px;color:var(--mut);margin:4px 0}
+.warn{font-size:13px;color:#8a5a00;background:#fff7e6;border:1px solid #f0d9a8;border-radius:8px;padding:6px 10px;display:inline-block}
+img.problem{display:block;margin:0 auto;max-width:100%;width:auto;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.qblock{border-left:3px solid var(--acc);padding:4px 12px;margin:0;background:#f8fafc;font-size:14px}
+/* 步骤 1：宽屏双栏（图 + 题干），窄屏/1024 只保留原题图并占满剩余高度 */
+.layout1{display:flex;gap:14px;align-items:flex-start}
+.layout1 .imgcol{flex:1.25;min-width:0;text-align:center}
+.layout1 .txtcol{flex:1;min-width:0}
+.layout1 img.problem{max-height:calc(100vh - 240px)}
+.layout1 .qblock{max-height:calc(100vh - 250px);overflow:auto}
+@media (max-width:1100px){
+  .layout1 .txtcol{display:none}
+  .layout1 img.problem{max-height:calc(100vh - 250px)}
+}
+.pred-wrap{display:flex;gap:10px;flex-wrap:wrap}
+.pred-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+button.pred{min-height:44px;padding:8px 18px;font-size:15px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--ink);touch-action:manipulation}
+button.pred[aria-pressed="true"]{background:#e7f0fa;border-color:var(--acc);color:var(--acc);font-weight:600}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:8px 0}
+.ro{background:#f8f9fb;border:1px solid var(--line);border-radius:10px;padding:4px 10px;min-height:44px}
+.ro b{display:block;font-size:11.5px;color:var(--mut);font-weight:600}
+.ro span{font-size:13.5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0;align-items:center}
+.chip{padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--mut);font-size:13px;background:#fff}
+.chip.on.c1{border-color:var(--t1);color:var(--t1);font-weight:600}
+.chip.on.c2{border-color:var(--t2);color:var(--t2);font-weight:600}
+.chip.on.c3{border-color:var(--t3);color:var(--t3);font-weight:600}
+.evline{border-radius:10px;padding:6px 12px;background:#f8f9fb;border:1px solid var(--line);min-height:24px;font-size:13.5px;flex:1;min-width:260px;margin:0}
+.evrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.hidden{display:none !important}
+.math{font-family:"Times New Roman",STSong,serif;font-style:italic;font-size:17px}
+.math .up{font-style:normal}
+.math sup,.math sub{font-size:70%}
+.f{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;line-height:1.25}
+.f .n{border-bottom:1.2px solid currentColor;padding:0 5px}
+.f .d{padding:0 5px}
+.sqrt{border-top:1.2px solid currentColor;padding:0 2px}
+.formula-box{background:#f4f8fd;border:1px solid #c6dbf2;border-radius:10px;padding:8px 14px;margin-top:6px}
+.formula-box p{margin:4px 0}
+.tex{font-size:16px}
+.result-ok{color:#0b7285;font-weight:600}
+.result-no{color:#c92a2a;font-weight:600}
+.seq-btns{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+ul.judge{margin:4px 0;padding-left:20px}
+ul.judge li{margin:3px 0}
+.kv{font-size:14px;color:var(--mut)}
+#wfsx{max-width:280px}
+.caption{font-size:12.5px;color:var(--mut);text-align:center;margin-top:2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>斜面弹簧与 v-t 图像 · 候选课件（题 689）</h1>
+  <div class="sub">光滑斜面 + 轻弹簧：从静止释放到第一次速度为零的互动探究</div>
+</header>
+<nav class="tabs" role="tablist" aria-label="步骤切换">
+  <button class="tab" role="tab" data-step="1" aria-selected="true">1 · 看原题</button>
+  <button class="tab" role="tab" data-step="2" aria-selected="false">2 · 接触瞬间 t₁</button>
+  <button class="tab" role="tab" data-step="3" aria-selected="false">3 · 压缩弹簧 t₁→t₃</button>
+  <button class="tab" role="tab" data-step="4" aria-selected="false">4 · 纸笔作图</button>
+</nav>
+<main>
+
+<!-- ============ 步骤 1：看原题 ============ -->
+<section class="step active" id="step1" role="tabpanel">
+  <div class="card">
+    <h2>原题（本步骤只呈现题目，不含任何答案）</h2>
+    <div class="layout1">
+      <div class="imgcol"><img class="problem" src="assets/689.PNG" alt="原题图：图甲为斜面弹簧模型，图乙为待画的 v-t 坐标"></div>
+      <div class="txtcol">
+        <div class="qblock">
+          <p>如图甲，在水平地面上固定一倾角为 <span class="math">θ</span> 的光滑斜面，一劲度系数为 <span class="math">k</span> 的绝缘轻质弹簧的一端固定在斜面底端，整根弹簧处于自然状态。一质量为 <span class="math">m</span> 的滑块从距离弹簧上端 <span class="math">s₀</span> 处由静止释放，滑块与弹簧接触过程中没有机械能损失，弹簧始终处在弹性限度内，重力加速度大小为 <span class="math">g</span>。</p>
+          <p>（1）求滑块从静止释放到与弹簧上端接触瞬间所经历的时间 <span class="math">t₁</span>；</p>
+          <p>（2）若滑块沿斜面向下运动全过程中的最大速度为 <span class="math">vₘ</span>，求从释放到速度达到 <span class="math">vₘ</span> 期间弹簧弹力所做的功 <span class="math">W</span>；</p>
+          <p>（3）从释放开始计时，在图乙中画出滑块沿斜面向下运动全过程的 <span class="math">v-t</span> 图像；图中 <span class="math">t₁、t₂、t₃</span> 分别表示第一次接触、第一次速度最大、第一次速度减为零的时刻，<span class="math">v₁</span> 为 <span class="math">t₁</span> 时刻的速度大小。</p>
+        </div>
+      </div>
+    </div>
+    <p class="note">请先在草稿纸上预测 v-t 图线的形状，再进入下一步。</p>
+  </div>
+</section>
+
+<!-- ============ 步骤 2：接触瞬间 ============ -->
+<section class="step" id="step2" role="tabpanel">
+  <div class="card">
+    <div class="pred-row">
+      <p style="margin:0"><b>接触瞬间：t₁ 处图线长什么样？</b>先预测：滑块在 <span class="math">t₁</span> 接触弹簧的瞬间，<span class="math">v-t</span> 图线会怎样？</p>
+      <div class="pred-wrap" role="group" aria-label="预测 t1 处图线形态">
+        <button class="pred" data-v="smooth" aria-pressed="false">光滑衔接</button>
+        <button class="pred" data-v="kink" aria-pressed="false">出现折角</button>
+        <button class="pred" data-v="jump" aria-pressed="false">速度跳变</button>
+      </div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <h2>斜面模型（2D，与图像同步）</h2>
+      <div id="m2"></div>
+      <p class="caption">归一化示意，不代表题目给定数值</p>
+    </div>
+    <div class="card">
+      <h2>v-t 图（播放到 t₁ 为止）</h2>
+      <div id="g2"></div>
+      <p class="caption">直线段斜率 = 加速度 a₀ = g·sinθ（恒定）</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="controls">
+      <button class="btn primary" id="btnPlay2">▶ 播放到 t₁</button>
+      <button class="btn" id="btnReplay2">↺ 重放</button>
+      <input type="range" id="rng2" min="0" max="1000" value="0" step="1" aria-label="拖动过程（0 到 t₁）">
+      <button class="btn" id="btnEvidence2" disabled>🔍 到达 t₁ 后查看证据</button>
+      <span class="note" style="margin:0">拖动可来回观察；到达 t₁ 自动暂停</span>
+    </div>
+    <div id="evPanel2" class="hidden">
+      <h3>证据：为什么 t₁ 处无折角、无跳变</h3>
+      <ul>
+        <li>接触瞬间弹簧仍为自然长度：<span class="tex" data-plain="x = 0 ⇒ Fₛ = kx = 0">\(x=0\Rightarrow F_s=kx=0\)</span>，弹力是<b>从零开始连续增长</b>的。</li>
+        <li>合力仍为 <span class="tex" data-plain="mg·sinθ">\(mg\sin\theta\)</span>，加速度 <span class="tex" data-plain="a = g·sinθ">\(a=g\sin\theta\)</span> 不变 ⇒ v-t 图线<b>切线斜率连续</b>。</li>
+        <li>没有任何冲量作用，速度本身也连续 ⇒ <b>无速度跳变</b>。</li>
+      </ul>
+      <p id="predResult2"></p>
+      <p class="note">图中粉色切线与 t₁ 之后的一小段严格曲线（浅色）说明了：直线段在 t₁ 处<b>光滑</b>地变成向下弯曲的曲线。</p>
+      <button class="btn" id="btnT1Formula">显示第（1）问 t₁ 公式</button>
+      <div id="t1FormulaBox" class="formula-box hidden">
+        <p><span class="tex" data-plain="a₀ = g·sinθ ； t₁ = √( 2s₀ / (g·sinθ) ) ； v₁ = √( 2·g·s₀·sinθ )">\(a_0=g\sin\theta,\qquad t_1=\sqrt{\dfrac{2s_0}{g\sin\theta}},\qquad v_1=\sqrt{2\,g s_0\sin\theta}\)</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 步骤 3：压缩弹簧 ============ -->
+<section class="step" id="step3" role="tabpanel">
+  <div class="cols">
+    <div class="card">
+      <h2>斜面模型与力箭头</h2>
+      <div id="m3"></div>
+      <p class="caption">蓝：mg·sinθ 恒定；绿：kx 随压缩增长；红：F合 先减为零再反向</p>
+    </div>
+    <div class="card">
+      <h2>v-t 图：同一时刻的当前点与切线</h2>
+      <div id="g3"></div>
+      <p class="caption">粉色为当前点切线，其斜率 = 当前加速度；接触后曲线始终凹向下</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="controls">
+      <button class="btn primary" id="btnPlay3">▶ 播放</button>
+      <button class="btn" id="btnReplay3">↺ 重放</button>
+      <input type="range" id="rng3" min="0" max="1000" value="0" step="1" aria-label="拖动过程（0 到 t₃）">
+      <button class="btn step3jump" data-t="t1">→ t₁</button>
+      <button class="btn step3jump" data-t="t2">→ t₂</button>
+      <button class="btn step3jump" data-t="t3">→ t₃</button>
+    </div>
+    <div class="evrow">
+      <div class="chips">
+        <span class="chip" id="chipT1">t₁ 接触</span>
+        <span class="chip" id="chipT2">t₂ 速度最大</span>
+        <span class="chip" id="chipT3">t₃ 速度为零</span>
+      </div>
+      <div class="evline" id="evLine3">尚未开始。可播放、拖动或单步到事件时刻。</div>
+    </div>
+    <div class="readouts">
+      <div class="ro"><b>阶段</b><span id="roStage">S1 匀加速</span></div>
+      <div class="ro"><b>x / xₑ</b><span id="roX">0.00</span></div>
+      <div class="ro"><b>kx / (mg·sinθ)</b><span id="roKx">0.00（&lt;1）</span></div>
+      <div class="ro"><b>v / v₁</b><span id="roV">0.00</span></div>
+      <div class="ro"><b>a / a₀</b><span id="roA">+1.00 向下</span></div>
+    </div>
+    <p class="note">读数为归一化单位（a₀=ω=v₁=xₑ=1），只表示比例关系，不是题目数值，也不是物理秒数。</p>
+    <div class="controls">
+      <button class="btn" id="btnW" disabled>🔒 揭示弹力功 W（须先到 t₂）</button>
+    </div>
+    <div id="wPanel" class="hidden">
+      <h3>弹力做的功（到 t₂ 为止）</h3>
+      <div class="cols">
+        <div id="wfsx"></div>
+        <div>
+          <p style="margin:4px 0">从接触到 t₂，弹力从 0 随 <span class="tex" data-plain="x">\(x\)</span> 线性增至 <span class="tex" data-plain="k·xₑ = mg·sinθ">\(kx_e=mg\sin\theta\)</span>，方向与位移相反，故弹力做<b>负功</b>，大小等于 Fₛ-x 图下三角形面积：</p>
+          <div class="formula-box">
+            <p><span class="tex" data-plain="xₑ = mg·sinθ / k ； W = −∫₀^xₑ kx dx = −½·k·xₑ² = −m²g²sin²θ / (2k) ＜ 0">\(x_e=\dfrac{mg\sin\theta}{k},\qquad W=-\int_{0}^{x_e}kx\,\mathrm{d}x=-\frac{1}{2}kx_e^{2}=-\dfrac{m^{2}g^{2}\sin^{2}\theta}{2k}<0\)</span></p>
+          </div>
+          <p class="note">注意：t₂ 是速度最大时刻（a=0），不是压缩最大时刻；W 的负号必须保留。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 步骤 4：纸笔作图 ============ -->
+<section class="step" id="step4" role="tabpanel">
+  <div class="card">
+    <h2>最终分段 v-t 图（按顺序点击，逐步拼出可抄到试卷上的图）</h2>
+    <div class="seq-btns">
+      <button class="btn" id="b4line">① 接触前直线（0→t₁）</button>
+      <button class="btn" id="b4curve" disabled>② 接触后曲线（t₁→t₃）</button>
+      <button class="btn" id="b4tan" disabled>③ 关键切线与事件判断</button>
+      <button class="btn" id="b4form" disabled>④ 两个公式</button>
+    </div>
+    <div id="g4"></div>
+    <div id="judge4" class="hidden">
+      <h3>三个事件判断（可直接抄用）</h3>
+      <ul class="judge">
+        <li><b>t₁</b>（第一次接触）：弹簧仍为自然长度，<span class="tex" data-plain="Fₛ = 0">\(F_s=0\)</span>，v 与 a 都连续 —— 图线<b>无折角、无跳变</b>，只从直线转为向下弯曲。</li>
+        <li><b>t₂</b>（第一次速度最大）：<span class="tex" data-plain="kx = mg·sinθ， a = 0， v = vₘ">\(kx=mg\sin\theta,\ a=0,\ v=v_m\)</span> —— 图线有<b>水平切线</b>。</li>
+        <li><b>t₃</b>（第一次速度为零）：<span class="tex" data-plain="v = 0， a < 0">\(v=0,\ a<0\)</span>（加速度沿斜面向上），滑块<b>仍压着弹簧，不是离开弹簧</b> —— 图线以负斜率到达时间轴。</li>
+      </ul>
+    </div>
+    <div id="form4" class="formula-box hidden">
+      <p>（1）<span class="tex" data-plain="t₁ = √( 2s₀ / (g·sinθ) )">\(t_1=\sqrt{\dfrac{2s_0}{g\sin\theta}}\)</span> &nbsp;&nbsp;（2）<span class="tex" data-plain="W = −½·k·xₑ² = −m²g²sin²θ / (2k)">\(W=-\frac{1}{2}kx_e^{2}=-\dfrac{m^{2}g^{2}\sin^{2}\theta}{2k}\)</span></p>
+    </div>
+    <p class="note">本屏只保留分段图、事件判断与公式；完整推导请回到纸笔完成。</p>
+  </div>
+</section>
+
+</main>
+<script>
+'use strict';
+/* =====================================================================
+ * 物理核心：严格分段函数（归一化代表状态 a0 = ω = v1 = 1）
+ *   S1 (0<=t<=t1):        v = a0·t , x = 0 , a = a0
+ *   S2 (τ = t - t1 >= 0): v = v1·cosωτ + (a0/ω)·sinωτ
+ *                         x = xₑ(1-cosωτ) + (v1/ω)·sinωτ ,  xₑ = a0/ω²
+ *                         a = a0 - ω²x
+ * 归一化下：t1 = 1, t2 = 1+π/4, t3 = 1+3π/4, vₘ = √2
+ * =================================================================== */
+var A0 = 1, OM = 1, V1 = 1, XE = 1;
+var T1 = 1, T2 = 1 + Math.PI / 4, T3 = 1 + 3 * Math.PI / 4, VM = Math.SQRT2;
+
+function stateAt(t) {
+  if (t <= T1) {
+    return { t: t, tau: 0, x: 0, v: A0 * t, a: A0, phase: 1 };
+  }
+  var tau = t - T1, c = Math.cos(tau), s = Math.sin(tau);
+  var x = XE * (1 - c) + (V1 / OM) * s;
+  var v = V1 * c + (A0 / OM) * s;
+  var a = A0 - OM * OM * x;
+  return { t: t, tau: tau, x: x, v: v, a: a, phase: 2 };
+}
+
+/* ---------------- 动画器：统一状态源 ---------------- */
+function makeAnimator(cfg) {
+  var dur = cfg.duration, rate = cfg.rate || 0.45;
+  var t = 0, raf = 0, playing = false, last = 0;
+  var fired = {};
+  function emit() { cfg.onFrame(stateAt(t), playing); }
+  function fireEvents() {
+    (cfg.events || []).forEach(function (ev) {
+      if (t >= ev.t - 1e-9 && !fired[ev.id]) {
+        fired[ev.id] = true;
+        if (cfg.onEvent) cfg.onEvent(ev.id);
+      }
+    });
+  }
+  function tick(ts) {
+    if (!playing) return;
+    // rAF 时间戳可能略早于 play() 里的 performance.now()，dt 需钳位为非负
+    var dt = Math.max(0, (ts - last) / 1000); last = ts;
+    if (t + dt * rate >= dur) {
+      t = dur; fireEvents(); emit();
+      pause();
+      if (cfg.onEnd) cfg.onEnd();
+      return;
+    }
+    t += dt * rate; fireEvents(); emit();
+    raf = requestAnimationFrame(tick);
+  }
+  function play() {
+    if (playing) return;
+    if (t >= dur - 1e-9) { reset(); }
+    playing = true; last = performance.now();
+    raf = requestAnimationFrame(tick);
+    if (cfg.onPlayState) cfg.onPlayState(true);
+  }
+  function pause() {
+    playing = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    if (cfg.onPlayState) cfg.onPlayState(false);
+  }
+  function reset() {
+    pause(); t = 0;
+    for (var k in fired) delete fired[k];
+    if (cfg.onReset) cfg.onReset();
+    emit();
+  }
+  function seek(nt) {
+    t = Math.min(dur, Math.max(0, nt));
+    fireEvents(); emit();
+  }
+  return {
+    play: play, pause: pause, reset: reset, seek: seek,
+    isPlaying: function () { return playing; },
+    getT: function () { return t; },
+    duration: dur
+  };
+}
+
+/* ---------------- SVG 工具 ---------------- */
+var NS = 'http://www.w3.org/2000/svg';
+function el(name, attrs, parent) {
+  var e = document.createElementNS(NS, name);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function fmt(x) { return (x >= 0 ? '+' : '') + x.toFixed(2); }
+function fmt2(x) { return x.toFixed(2); }
+
+/* ---------------- 斜面模型 ---------------- */
+var TH = 26 * Math.PI / 180, THDEG = 26;
+var DX = Math.cos(TH), DY = -Math.sin(TH);      // 沿斜面向下（屏幕坐标）
+var NXX = -Math.sin(TH), NYY = -Math.cos(TH);   // 斜面外法向
+var S0 = { x: 58, y: 252 };
+var LS = 150, XS = 40, GS = 64, BH = 24;
+
+function slopePt(dist, lift) {
+  return { x: S0.x + dist * DX + lift * NXX, y: S0.y + dist * DY + lift * NYY };
+}
+function springPathD(d1, d2) {
+  var coils = 6, amp = 9, n = coils * 2, i, q;
+  var p = slopePt(d1, 0);
+  var d = 'M' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+  for (i = 1; i < n; i++) {
+    q = slopePt(d1 + (d2 - d1) * i / n, (i % 2 === 1) ? amp : -amp);
+    d += 'L' + q.x.toFixed(1) + ' ' + q.y.toFixed(1);
+  }
+  q = slopePt(d2, 0);
+  d += 'L' + q.x.toFixed(1) + ' ' + q.y.toFixed(1);
+  return d;
+}
+
+function makeModel(container, uid) {
+  var W = 480, H = 268;
+  var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': '斜面弹簧二维模型' }, container);
+  var defs = el('defs', {}, svg);
+  function marker(id, color) {
+    var m = el('marker', { id: id, markerWidth: '10', markerHeight: '10', refX: '8', refY: '3', orient: 'auto', markerUnits: 'userSpaceOnUse' }, defs);
+    el('path', { d: 'M0 0 L8 3 L0 6 Z', fill: color }, m);
+  }
+  marker(uid + 'aBlue', '#1864ab'); marker(uid + 'aGreen', '#2f9e44'); marker(uid + 'aRed', '#e03131');
+
+  // 地面
+  el('line', { x1: 14, y1: 258, x2: 470, y2: 258, stroke: '#495057', 'stroke-width': 2.5 }, svg);
+  for (var gx = 22; gx < 466; gx += 16) {
+    el('line', { x1: gx, y1: 258, x2: gx - 9, y2: 267, stroke: '#868e96', 'stroke-width': 1.2 }, svg);
+  }
+  // 斜面（填充三角形 + 面线）
+  var s1 = slopePt(400, 0);
+  el('polygon', { points: S0.x + ',' + S0.y + ' ' + s1.x + ',' + s1.y + ' ' + s1.x + ',258 ' + S0.x + ',258', fill: '#eef1f4', stroke: 'none' }, svg);
+  el('line', { x1: S0.x - 8, y1: S0.y + 3, x2: s1.x + 6, y2: s1.y - 3, stroke: '#495057', 'stroke-width': 2.5 }, svg);
+  // 底端挡板（弹簧固定端）
+  var wall = el('g', { transform: 'translate(' + S0.x + ',' + S0.y + ') rotate(' + (-THDEG) + ')' }, svg);
+  el('rect', { x: -10, y: -30, width: 8, height: 34, fill: '#6c757d', stroke: '#343a40', 'stroke-width': 1 }, wall);
+  // 倾角标注
+  el('path', { d: 'M ' + (S0.x + 46) + ' ' + S0.y + ' A 46 46 0 0 0 ' + (S0.x + 46 * Math.cos(TH)) + ' ' + (S0.y - 46 * Math.sin(TH)), fill: 'none', stroke: '#868e96', 'stroke-width': 1.2 }, svg);
+  var thLab = el('text', { x: S0.x + 56, y: S0.y - 8, 'font-size': 14, fill: '#495057', 'font-style': 'italic' }, svg);
+  thLab.textContent = 'θ';
+  // 弹簧标签
+  var kLab = el('text', { x: 0, y: 0, 'font-size': 13, fill: '#2f9e44', 'font-style': 'italic' }, svg);
+  kLab.textContent = 'k';
+
+  // 动态元素
+  var spring = el('path', { fill: 'none', stroke: '#2f9e44', 'stroke-width': 2 }, svg);
+  var blockG = el('g', {}, svg);
+  el('rect', { x: -BH, y: -30, width: BH * 2, height: 30, rx: 3, fill: '#ffd8a8', stroke: '#e8590c', 'stroke-width': 1.6 }, blockG);
+  var mgLine = el('line', { stroke: '#1864ab', 'stroke-width': 3, 'marker-end': 'url(#' + uid + 'aBlue)' }, svg);
+  var mgLab = el('text', { 'font-size': 13, fill: '#1864ab', 'font-style': 'italic' }, svg);
+  mgLab.textContent = 'mg·sinθ';
+  var kxLine = el('line', { stroke: '#2f9e44', 'stroke-width': 3, 'marker-end': 'url(#' + uid + 'aGreen)' }, svg);
+  var kxLab = el('text', { 'font-size': 13, fill: '#2f9e44', 'font-style': 'italic' }, svg);
+  kxLab.textContent = 'kx';
+  var netLine = el('line', { stroke: '#e03131', 'stroke-width': 3.5, 'marker-end': 'url(#' + uid + 'aRed)' }, svg);
+  var netLab = el('text', { 'font-size': 13, fill: '#e03131', 'font-style': 'italic' }, svg);
+  var mLab = el('text', { 'font-size': 14, fill: '#7a3b00', 'font-style': 'italic', 'text-anchor': 'middle' }, svg);
+  mLab.textContent = 'm';
+
+  function setLine(line, from, to) {
+    line.setAttribute('x1', from.x.toFixed(1)); line.setAttribute('y1', from.y.toFixed(1));
+    line.setAttribute('x2', to.x.toFixed(1)); line.setAttribute('y2', to.y.toFixed(1));
+  }
+  function along(p, d, len) { return { x: p.x + d.x * len, y: p.y + d.y * len }; }
+  var dDown = { x: DX, y: DY }, dUp = { x: -DX, y: -DY };
+
+  function update(st) {
+    var gap = (st.phase === 1) ? Math.max(0, 0.5 - 0.5 * st.t * st.t) : 0;
+    var springTop = LS - st.x * XS;
+    var cd = springTop + gap * GS;          // 块的下端面（沿斜面距底端）
+    spring.setAttribute('d', springPathD(6, springTop));
+    var bp = slopePt(cd + BH, 0);
+    blockG.setAttribute('transform', 'translate(' + bp.x.toFixed(1) + ',' + bp.y.toFixed(1) + ') rotate(' + (-THDEG) + ')');
+    var bc = slopePt(cd + BH, 15);
+    mLab.setAttribute('x', bc.x.toFixed(1)); mLab.setAttribute('y', (bc.y + 5).toFixed(1));
+    var kp = slopePt(LS * 0.45, -16);
+    kLab.setAttribute('x', kp.x.toFixed(1)); kLab.setAttribute('y', kp.y.toFixed(1));
+
+    // mg·sinθ：恒定，沿斜面向下
+    var r1 = slopePt(cd + BH, 46);
+    var mgFrom = along(r1, dUp, 24), mgTo = along(r1, dDown, 30);
+    setLine(mgLine, mgFrom, mgTo);
+    mgLab.setAttribute('x', (mgTo.x + 6).toFixed(1)); mgLab.setAttribute('y', (mgTo.y + 4).toFixed(1));
+
+    // kx：沿斜面向上，长度随 x
+    var r2 = slopePt(cd + BH, 68);
+    if (st.x > 0.02) {
+      kxLine.style.display = ''; kxLab.style.display = '';
+      var kxFrom = along(r2, dDown, 20), kxTo = along(kxFrom, dUp, st.x * 34);
+      setLine(kxLine, kxFrom, kxTo);
+      kxLab.setAttribute('x', (kxFrom.x + 8).toFixed(1)); kxLab.setAttribute('y', (kxFrom.y - 6).toFixed(1));
+    } else {
+      kxLine.style.display = 'none'; kxLab.style.display = 'none';
+    }
+
+    // 合力：先向下缩短为零，再向上增长
+    var r3 = slopePt(cd + BH, 92);
+    if (Math.abs(st.a) > 0.03) {
+      netLine.style.display = '';
+      var nTo = along(r3, dDown, st.a * 36);
+      setLine(netLine, r3, nTo);
+      netLab.textContent = 'F合';
+      netLab.setAttribute('x', (nTo.x + 6).toFixed(1)); netLab.setAttribute('y', (nTo.y + 4).toFixed(1));
+    } else {
+      netLine.style.display = 'none';
+      netLab.textContent = 'F合 = 0';
+      netLab.setAttribute('x', (r3.x - 22).toFixed(1)); netLab.setAttribute('y', (r3.y + 4).toFixed(1));
+    }
+  }
+  return { update: update };
+}
+
+/* ---------------- v-t 图 ---------------- */
+var SAMPLES = (function () {
+  var N = 320, arr = [], i, t;
+  for (i = 0; i <= N; i++) { t = T3 * i / N; arr.push({ t: t, v: stateAt(t).v }); }
+  return arr;
+})();
+
+function makeGraph(container, opts) {
+  var w = opts.w || 470, h = opts.h || 310;
+  var ml = 50, mr = 16, mt = 26, mb = 42;
+  var pw = w - ml - mr, ph = h - mt - mb;
+  var tMax = T3 * 1.09, vMax = VM * 1.2;
+  function X(t) { return ml + (t / tMax) * pw; }
+  function Y(v) { return mt + ph - (v / vMax) * ph; }
+
+  var svg = el('svg', { viewBox: '0 0 ' + w + ' ' + h, role: 'img', 'aria-label': 'v-t 图像' }, container);
+  var defs = el('defs', {}, svg);
+  var clip = el('clipPath', { id: opts.uid + 'clip' }, defs);
+  el('rect', { x: ml, y: mt - 16, width: pw, height: ph + 16 }, clip);
+
+  // 坐标轴
+  el('line', { x1: ml, y1: mt - 14, x2: ml, y2: Y(0), stroke: '#343a40', 'stroke-width': 1.8 }, svg);
+  el('line', { x1: ml, y1: Y(0), x2: X(tMax), y2: Y(0), stroke: '#343a40', 'stroke-width': 1.8 }, svg);
+  var vt = el('text', { x: ml - 16, y: mt - 18, 'font-size': 15, 'font-style': 'italic', fill: '#343a40' }, svg); vt.textContent = 'v';
+  var tt = el('text', { x: X(tMax) + 2, y: Y(0) + 6, 'font-size': 15, 'font-style': 'italic', fill: '#343a40' }, svg); tt.textContent = 't';
+  var ot = el('text', { x: ml - 14, y: Y(0) + 18, 'font-size': 13, fill: '#343a40' }, svg); ot.textContent = 'O';
+  // 静态轴刻度：仅按 opts.axisTicks 绘制（事件相关刻度默认随事件标记出现，见 mkMarker）
+  var TICK_T = { t1: { t: T1, s: 't₁' }, t2: { t: T2, s: 't₂' }, t3: { t: T3, s: 't₃' } };
+  var TICK_V = { v1: { v: V1, s: 'v₁' }, vm: { v: VM, s: 'vₘ' } };
+  function drawTTick(tk, color, parent) {
+    parent = parent || svg;
+    el('line', { x1: X(tk.t), y1: Y(0) - 4, x2: X(tk.t), y2: Y(0) + 4, stroke: color, 'stroke-width': 1.2 }, parent);
+    var tx = el('text', { x: X(tk.t) - 6, y: Y(0) + 20, 'font-size': 13, 'font-style': 'italic', fill: color }, parent);
+    tx.textContent = tk.s;
+  }
+  function drawVTick(tk, color, parent) {
+    parent = parent || svg;
+    el('line', { x1: ml - 4, y1: Y(tk.v), x2: ml + 4, y2: Y(tk.v), stroke: color, 'stroke-width': 1.2 }, parent);
+    var tx = el('text', { x: ml - 26, y: Y(tk.v) + 4, 'font-size': 13, 'font-style': 'italic', fill: color }, parent);
+    tx.textContent = tk.s;
+  }
+  (opts.axisTicks || []).forEach(function (id) {
+    if (TICK_T[id]) drawTTick(TICK_T[id], '#868e96');
+    if (TICK_V[id]) drawVTick(TICK_V[id], '#868e96');
+  });
+
+  // 曲线（由严格分段函数采样生成，绝不使用任意贝塞尔）
+  var trace = el('path', { fill: 'none', stroke: '#1864ab', 'stroke-width': 2.6, 'clip-path': 'url(#' + opts.uid + 'clip)' }, svg);
+  // 切线
+  var tangent = el('line', { stroke: '#d6336c', 'stroke-width': 2.2, 'stroke-dasharray': '8 6', 'stroke-linecap': 'round', 'clip-path': 'url(#' + opts.uid + 'clip)' }, svg);
+  // 当前点
+  var cursor = el('circle', { r: 5.5, fill: '#d6336c', stroke: '#fff', 'stroke-width': 1.5 }, svg);
+
+  function traceD(upTo) {
+    upTo = Math.min(T3, Math.max(0, upTo));
+    var d = '', i, p;
+    for (i = 0; i < SAMPLES.length; i++) {
+      if (SAMPLES[i].t > upTo) break;
+      p = (i === 0 ? 'M' : 'L') + X(SAMPLES[i].t).toFixed(1) + ' ' + Y(SAMPLES[i].v).toFixed(1);
+      d += p;
+    }
+    var st = stateAt(upTo);
+    d += 'L' + X(upTo).toFixed(1) + ' ' + Y(st.v).toFixed(1);
+    return d;
+  }
+  function setTrace(upTo) { trace.setAttribute('d', traceD(upTo)); }
+  function setCursor(st, showTan) {
+    var px = X(st.t), py = Y(st.v);
+    cursor.setAttribute('cx', px.toFixed(1)); cursor.setAttribute('cy', py.toFixed(1));
+    if (showTan === false) { tangent.style.display = 'none'; return; }
+    tangent.style.display = '';
+    var ux = pw / tMax, uy = -(st.a / vMax) * ph;   // 数据方向 (1, a) 的屏幕向量
+    var len = Math.sqrt(ux * ux + uy * uy) || 1;
+    var hx = ux / len * 42, hy = uy / len * 42;
+    tangent.setAttribute('x1', (px - hx).toFixed(1)); tangent.setAttribute('y1', (py - hy).toFixed(1));
+    tangent.setAttribute('x2', (px + hx).toFixed(1)); tangent.setAttribute('y2', (py + hy).toFixed(1));
+  }
+
+  // 事件标记组
+  var markerGroups = {};
+  function mkMarker(id, te, vLevel, color, label, labelDx, labelDy, tTickId, vTickId) {
+    var g = el('g', { visibility: 'hidden' }, svg);
+    el('line', { x1: X(te), y1: Y(0), x2: X(te), y2: Y(Math.max(vLevel, 0.18)), stroke: color, 'stroke-width': 1.4, 'stroke-dasharray': '5 4' }, g);
+    if (vLevel > 0.05) {
+      el('line', { x1: ml, y1: Y(vLevel), x2: X(te), y2: Y(vLevel), stroke: color, 'stroke-width': 1.4, 'stroke-dasharray': '5 4' }, g);
+    } else {
+      el('circle', { cx: X(te), cy: Y(0), r: 4.5, fill: color }, g);
+    }
+    var tx = el('text', { x: X(te) + labelDx, y: mt + 4 + (labelDy || 0), 'font-size': 13, fill: color, 'font-weight': 'bold' }, g);
+    tx.textContent = label;
+    // 事件相关轴刻度随标记一起出现/消失
+    if (opts.markerTicks) {
+      if (tTickId) drawTTick(TICK_T[tTickId], color, g);
+      if (vTickId) drawVTick(TICK_V[vTickId], color, g);
+    }
+    markerGroups[id] = g;
+  }
+  mkMarker('t1', T1, V1, '#1971c2', 't₁ 接触', 4, 0, 't1', 'v1');
+  mkMarker('t2', T2, VM, '#e8590c', 't₂ v 最大', 4, 0, 't2', 'vm');
+  mkMarker('t3', T3, 0, '#9c36b5', 't₃ v=0（仍压弹簧）', -128, 17, 't3', null);
+
+  return {
+    setTrace: setTrace,
+    setCursor: setCursor,
+    showMarker: function (id) { if (markerGroups[id]) markerGroups[id].setAttribute('visibility', 'visible'); },
+    resetMarkers: function () { for (var k in markerGroups) markerGroups[k].setAttribute('visibility', 'hidden'); },
+    X: X, Y: Y, svg: svg, tMax: tMax, vMax: vMax, dims: { ml: ml, mt: mt, pw: pw, ph: ph }
+  };
+}
+
+/* ---------------- F_s - x 三角形小图 ---------------- */
+function buildFsx(container) {
+  var w = 250, h = 180, ml = 36, mb = 30, mt = 14, mr = 10;
+  var pw = w - ml - mr, ph = h - mt - mb;
+  var svg = el('svg', { viewBox: '0 0 ' + w + ' ' + h, role: 'img', 'aria-label': 'F_s-x 面积图' }, container);
+  function X(x) { return ml + (x / 1.15) * pw; }
+  function Y(f) { return mt + ph - (f / 1.15) * ph; }
+  el('polygon', { points: X(0) + ',' + Y(0) + ' ' + X(1) + ',' + Y(0) + ' ' + X(1) + ',' + Y(1), fill: '#ffe8cc', stroke: 'none' }, svg);
+  el('line', { x1: X(0), y1: Y(0), x2: X(1.12), y2: Y(1.12), stroke: '#e8590c', 'stroke-width': 2.2 }, svg);
+  el('line', { x1: ml, y1: mt - 6, x2: ml, y2: Y(0), stroke: '#343a40', 'stroke-width': 1.6 }, svg);
+  el('line', { x1: ml, y1: Y(0), x2: X(1.18), y2: Y(0), stroke: '#343a40', 'stroke-width': 1.6 }, svg);
+  el('line', { x1: X(1), y1: Y(0) - 3, x2: X(1), y2: Y(0) + 3, stroke: '#343a40', 'stroke-width': 1.2 }, svg);
+  el('line', { x1: ml - 3, y1: Y(1), x2: ml + 3, y2: Y(1), stroke: '#343a40', 'stroke-width': 1.2 }, svg);
+  var t1 = el('text', { x: X(1) - 8, y: Y(0) + 16, 'font-size': 12, 'font-style': 'italic', fill: '#343a40' }, svg); t1.textContent = 'xₑ';
+  var t2 = el('text', { x: 2, y: Y(1) + 4, 'font-size': 11, 'font-style': 'italic', fill: '#343a40' }, svg); t2.textContent = 'kxₑ';
+  var t3 = el('text', { x: ml - 16, y: mt - 6, 'font-size': 13, 'font-style': 'italic', fill: '#343a40' }, svg); t3.textContent = 'Fₛ';
+  var t4 = el('text', { x: X(1.18) - 4, y: Y(0) + 16, 'font-size': 13, 'font-style': 'italic', fill: '#343a40' }, svg); t4.textContent = 'x';
+  var t5 = el('text', { x: X(0.42), y: Y(0.3), 'font-size': 12, fill: '#8a4b00' }, svg); t5.textContent = '|W| = 面积';
+}
+
+/* =====================================================================
+ * 步骤 2：接触瞬间
+ * =================================================================== */
+var model2 = makeModel(document.getElementById('m2'), 'u2');
+// 步骤 2 只保留当前任务需要的 t₁、v₁ 轴刻度；t₂/t₃/vₘ 不出现
+var graph2 = makeGraph(document.getElementById('g2'), { uid: 'g2', w: 470, h: 236, axisTicks: ['t1', 'v1'], markerTicks: false });
+// t1 之后的一小段严格曲线（浅色），用于展示“光滑衔接”，默认隐藏
+var cont2 = el('path', { fill: 'none', stroke: '#74a9d8', 'stroke-width': 2.2, 'stroke-dasharray': '1 0', visibility: 'hidden' }, graph2.svg);
+(function () {
+  var d = '', i;
+  for (i = 0; i <= 60; i++) {
+    var t = T1 + 0.5 * i / 60, st = stateAt(t);
+    d += (i === 0 ? 'M' : 'L') + graph2.X(t).toFixed(1) + ' ' + graph2.Y(st.v).toFixed(1);
+  }
+  cont2.setAttribute('d', d);
+})();
+
+var predChoice = null;
+var t1Reached2 = false;
+var btnPlay2 = document.getElementById('btnPlay2');
+var btnEvidence2 = document.getElementById('btnEvidence2');
+var evPanel2 = document.getElementById('evPanel2');
+var rng2 = document.getElementById('rng2');
+
+var anim2 = makeAnimator({
+  duration: T1, rate: 0.5,
+  events: [{ t: T1, id: 't1' }],
+  onFrame: function (st) {
+    model2.update(st);
+    graph2.setTrace(st.t);
+    graph2.setCursor(st, true);
+    rng2.value = Math.round(st.t / T1 * 1000);
+  },
+  onEvent: function (id) {
+    if (id === 't1') {
+      t1Reached2 = true;
+      graph2.showMarker('t1');
+      btnEvidence2.disabled = false;
+    }
+  },
+  onEnd: function () { btnPlay2.textContent = '▶ 播放到 t₁'; },
+  onReset: function () {
+    graph2.resetMarkers();
+    rng2.value = 0;
+    // 重放必须清零揭示状态：收起证据面板与 t₁ 公式、隐藏延伸曲线、重新锁定证据按钮
+    t1Reached2 = false;
+    evPanel2.classList.add('hidden');
+    document.getElementById('t1FormulaBox').classList.add('hidden');
+    cont2.setAttribute('visibility', 'hidden');
+    btnEvidence2.disabled = true;
+  },
+  onPlayState: function (p) { btnPlay2.textContent = p ? '⏸ 暂停' : '▶ 播放到 t₁'; }
+});
+
+btnPlay2.addEventListener('click', function () {
+  if (anim2.isPlaying()) anim2.pause(); else anim2.play();
+});
+document.getElementById('btnReplay2').addEventListener('click', function () { anim2.reset(); });
+rng2.addEventListener('input', function () {
+  anim2.pause();
+  anim2.seek(rng2.value / 1000 * T1);
+});
+
+Array.prototype.forEach.call(document.querySelectorAll('#step2 .pred'), function (b) {
+  b.addEventListener('click', function () {
+    Array.prototype.forEach.call(document.querySelectorAll('#step2 .pred'), function (o) { o.setAttribute('aria-pressed', 'false'); });
+    b.setAttribute('aria-pressed', 'true');
+    predChoice = b.getAttribute('data-v');
+  });
+});
+
+btnEvidence2.addEventListener('click', function () {
+  evPanel2.classList.remove('hidden');
+  cont2.setAttribute('visibility', 'visible');
+  graph2.setCursor(stateAt(T1), true);
+  window.__typeset(evPanel2);
+  var names = { smooth: '光滑衔接', kink: '出现折角', jump: '速度跳变' };
+  var pr = document.getElementById('predResult2');
+  if (predChoice) {
+    var ok = (predChoice === 'smooth');
+    pr.innerHTML = '你的预测：「' + names[predChoice] + '」—— <span class="' + (ok ? 'result-ok' : 'result-no') + '">' +
+      (ok ? '与证据一致。' : '与证据不一致：实际是光滑衔接。') + '</span>';
+  } else {
+    pr.textContent = '你还没有选择预测；证据表明：实际是光滑衔接。';
+  }
+});
+document.getElementById('btnT1Formula').addEventListener('click', function () {
+  var box = document.getElementById('t1FormulaBox');
+  box.classList.remove('hidden');
+  window.__typeset(box);
+});
+
+/* =====================================================================
+ * 步骤 3：压缩弹簧
+ * =================================================================== */
+var model3 = makeModel(document.getElementById('m3'), 'u3');
+// 步骤 3 初始无任何事件轴刻度；t₁/t₂/t₃/vₘ 标签随事件到达再显示、重放后清除
+var graph3 = makeGraph(document.getElementById('g3'), { uid: 'g3', w: 470, h: 236, axisTicks: [], markerTicks: true });
+buildFsx(document.getElementById('wfsx'));
+
+var btnPlay3 = document.getElementById('btnPlay3');
+var rng3 = document.getElementById('rng3');
+var evLine3 = document.getElementById('evLine3');
+var btnW = document.getElementById('btnW');
+var wPanel = document.getElementById('wPanel');
+var reachedT2 = false;
+
+var EV_TEXT = {
+  t1: 't₁ 已到达：刚接触自然长度弹簧，Fₛ = kx = 0，v 与 a 连续，图线无折角。',
+  t2: 't₂ 已到达：x = xₑ，kx = mg·sinθ，a = 0，v = vₘ，切线水平。现在可以揭示弹力功 W。',
+  t3: 't₃ 已到达：v = 0，a < 0（沿斜面向上），滑块仍压着弹簧 —— 不是离开弹簧。'
+};
+var CHIP = { t1: 'chipT1', t2: 'chipT2', t3: 'chipT3' };
+var CHIPCLS = { t1: 'c1', t2: 'c2', t3: 'c3' };
+
+var anim3 = makeAnimator({
+  duration: T3, rate: 0.45,
+  events: [{ t: T1, id: 't1' }, { t: T2, id: 't2' }, { t: T3, id: 't3' }],
+  onFrame: function (st) {
+    model3.update(st);
+    graph3.setTrace(st.t);
+    graph3.setCursor(st, true);
+    rng3.value = Math.round(st.t / T3 * 1000);
+    document.getElementById('roStage').textContent = st.phase === 1 ? 'S1 匀加速' : 'S2 压缩（τ=' + fmt2(st.tau) + '）';
+    document.getElementById('roX').textContent = fmt2(st.x);
+    var rel = st.x < 0.98 ? '（<1）' : (st.x > 1.02 ? '（>1）' : '（=1）');
+    document.getElementById('roKx').textContent = fmt2(st.x) + rel;
+    document.getElementById('roV').textContent = fmt2(st.v) + (Math.abs(st.t - T2) < 0.02 ? '（=vₘ）' : '');
+    var dir = st.a > 0.03 ? ' 向下' : (st.a < -0.03 ? ' 向上' : ' 为零');
+    document.getElementById('roA').textContent = fmt(st.a) + dir;
+    if (st.t >= T2 - 1e-6 && !reachedT2) { reachedT2 = true; btnW.disabled = false; btnW.textContent = '🔓 揭示弹力功 W'; }
+  },
+  onEvent: function (id) {
+    graph3.showMarker(id);
+    var chip = document.getElementById(CHIP[id]);
+    chip.classList.add('on'); chip.classList.add(CHIPCLS[id]);
+    evLine3.textContent = EV_TEXT[id];
+  },
+  onEnd: function () { btnPlay3.textContent = '▶ 播放'; },
+  onReset: function () {
+    graph3.resetMarkers();
+    rng3.value = 0;
+    ['chipT1', 'chipT2', 'chipT3'].forEach(function (id) {
+      var c = document.getElementById(id);
+      c.classList.remove('on'); c.classList.remove('c1'); c.classList.remove('c2'); c.classList.remove('c3');
+    });
+    evLine3.textContent = '已重置。可播放、拖动或单步到事件时刻。';
+    // 重放必须清零揭示状态：收起弹力功面板、重新锁定按钮、复位到达标记
+    wPanel.classList.add('hidden');
+    reachedT2 = false;
+    btnW.disabled = true;
+    btnW.textContent = '🔒 揭示弹力功 W（须先到 t₂）';
+  },
+  onPlayState: function (p) { btnPlay3.textContent = p ? '⏸ 暂停' : '▶ 播放'; }
+});
+
+btnPlay3.addEventListener('click', function () {
+  if (anim3.isPlaying()) anim3.pause(); else anim3.play();
+});
+document.getElementById('btnReplay3').addEventListener('click', function () { anim3.reset(); });
+rng3.addEventListener('input', function () {
+  anim3.pause();
+  anim3.seek(rng3.value / 1000 * T3);
+});
+Array.prototype.forEach.call(document.querySelectorAll('.step3jump'), function (b) {
+  b.addEventListener('click', function () {
+    anim3.pause();
+    var map = { t1: T1, t2: T2, t3: T3 };
+    anim3.seek(map[b.getAttribute('data-t')]);
+  });
+});
+btnW.addEventListener('click', function () {
+  var show = wPanel.classList.contains('hidden');
+  wPanel.classList.toggle('hidden');
+  if (show) window.__typeset(wPanel);
+  btnW.textContent = show ? '🙈 隐藏弹力功 W' : '🔓 揭示弹力功 W';
+});
+
+/* =====================================================================
+ * 步骤 4：纸笔作图（静态大图，按老师按钮分层显示）
+ * =================================================================== */
+// 步骤 4 起始不预显示任何事件标签；① 出现 t₁/v₁，③ 出现 t₂/t₃/vₘ
+var graph4 = makeGraph(document.getElementById('g4'), { uid: 'g4', w: 880, h: 380, axisTicks: [], markerTicks: true });
+graph4.setCursor(stateAt(0), false);
+document.querySelector('#g4 svg circle').style.display = 'none';
+// ① 接触前直线
+var line4 = el('path', { fill: 'none', stroke: '#1864ab', 'stroke-width': 3, visibility: 'hidden' }, graph4.svg);
+line4.setAttribute('d', 'M' + graph4.X(0).toFixed(1) + ' ' + graph4.Y(0).toFixed(1) + 'L' + graph4.X(T1).toFixed(1) + ' ' + graph4.Y(V1).toFixed(1));
+// ② 接触后严格曲线
+var curve4 = el('path', { fill: 'none', stroke: '#1864ab', 'stroke-width': 3, visibility: 'hidden' }, graph4.svg);
+(function () {
+  var d = '', i;
+  for (i = 0; i <= 160; i++) {
+    var t = T1 + (T3 - T1) * i / 160, st = stateAt(t);
+    d += (i === 0 ? 'M' : 'L') + graph4.X(t).toFixed(1) + ' ' + graph4.Y(st.v).toFixed(1);
+  }
+  curve4.setAttribute('d', d);
+})();
+// ③ 关键切线与事件标注
+var tan4 = el('g', { visibility: 'hidden' }, graph4.svg);
+(function () {
+  function tanLine(t, v, a, color) {
+    var d = graph4.dims;
+    var px = graph4.X(t), py = graph4.Y(v);
+    var ux = d.pw / graph4.tMax, uy = -(a / graph4.vMax) * d.ph;
+    var len = Math.sqrt(ux * ux + uy * uy) || 1;
+    var hx = ux / len * 60, hy = uy / len * 60;
+    el('line', { x1: px - hx, y1: py - hy, x2: px + hx, y2: py + hy, stroke: color, 'stroke-width': 2.4, 'stroke-dasharray': '8 6', 'stroke-linecap': 'round' }, tan4);
+  }
+  tanLine(T1, V1, A0, '#d6336c');
+  tanLine(T2, VM, 0, '#d6336c');
+  tanLine(T3, 0, -VM, '#d6336c');
+})();
+var b4line = document.getElementById('b4line'), b4curve = document.getElementById('b4curve'),
+    b4tan = document.getElementById('b4tan'), b4form = document.getElementById('b4form');
+b4line.addEventListener('click', function () {
+  line4.setAttribute('visibility', 'visible');
+  graph4.showMarker('t1');   // ① 接触前直线：同时出现 t₁、v₁ 标注
+  b4line.disabled = true; b4curve.disabled = false;
+});
+b4curve.addEventListener('click', function () {
+  curve4.setAttribute('visibility', 'visible');
+  b4curve.disabled = true; b4tan.disabled = false;
+});
+b4tan.addEventListener('click', function () {
+  tan4.setAttribute('visibility', 'visible');
+  graph4.showMarker('t2'); graph4.showMarker('t3');   // ③ 出现 t₂、t₃、vₘ 标注
+  var j = document.getElementById('judge4');
+  j.classList.remove('hidden');
+  window.__typeset(j);
+  b4tan.disabled = true; b4form.disabled = false;
+});
+b4form.addEventListener('click', function () {
+  var f = document.getElementById('form4');
+  f.classList.remove('hidden');
+  window.__typeset(f);
+  b4form.disabled = true;
+});
+
+// MathJax 就绪后，对已经显示但尚未排版的面板补排版
+window.__typesetVisible = function () {
+  ['evPanel2', 't1FormulaBox', 'wPanel', 'judge4', 'form4'].forEach(function (pid) {
+    var e = document.getElementById(pid);
+    if (e && !e.classList.contains('hidden')) window.__typeset(e);
+  });
+};
+
+/* =====================================================================
+ * 全局：步骤切换、页面隐藏自动暂停
+ * =================================================================== */
+function switchStep(n) {
+  anim2.pause(); anim3.pause();
+  Array.prototype.forEach.call(document.querySelectorAll('section.step'), function (s) {
+    s.classList.toggle('active', s.id === 'step' + n);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button.tab'), function (b) {
+    b.setAttribute('aria-selected', b.getAttribute('data-step') === String(n) ? 'true' : 'false');
+  });
+}
+Array.prototype.forEach.call(document.querySelectorAll('button.tab'), function (b) {
+  b.addEventListener('click', function () { switchStep(b.getAttribute('data-step')); });
+});
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) { anim2.pause(); anim3.pause(); }
+});
+
+// 初始帧
+anim2.seek(0);
+anim3.seek(0);
+</script>
+</body>
+</html>
+
