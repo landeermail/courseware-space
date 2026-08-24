@@ -360,7 +360,7 @@
         structuredDimensions.hidden = freeform;
         structuredOverall.hidden = freeform;
         if (freeform && task.prompt) freeformPrompt.textContent = task.prompt;
-        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已反馈（本次为补充）' : '等待反馈'}`;
+        spans[2].textContent = `任务状态：${task.status === 'reviewed' ? '已反馈（本次为补充）' : task.priority === false ? '可随时反馈' : '等待反馈'}`;
         submitButton.disabled = false;
         submitButton.hidden = false;
         submitButton.textContent = task.current_feedback ? (freeform ? '提交补充反馈' : '保存修改') : (freeform ? '提交反馈' : '提交评价');
