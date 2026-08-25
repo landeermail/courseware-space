@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>笔的弹跳：事件分段与能量口径</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header id="topbar">
+  <h1>笔的弹跳：事件分段与能量口径</h1>
+  <div id="topBtns">
+    <button id="btnView" type="button">切换到纸笔整理</button>
+    <button id="btnReset" type="button">重置</button>
+  </div>
+</header>
+
+<main>
+  <!-- 动态证据视图 -->
+  <section id="dynView">
+    <div class="dynGrid">
+      <div id="modelCard">
+        <svg id="stage" viewBox="0 0 380 470" role="img" aria-label="笔的竖直剖面：外壳、内芯、弹簧与桌面">
+          <!-- 高度标记 -->
+          <line id="deskLine" x1="40" y1="390" x2="345" y2="390" class="desk"/>
+          <g id="deskHatch"></g>
+          <text x="34" y="394" class="mk" text-anchor="end">y=0</text>
+          <line id="mkH1line" x1="60" y1="300" x2="345" y2="300" class="mkline"/>
+          <text id="mkH1text" x="56" y="304" class="mk" text-anchor="end">h₁</text>
+          <line id="mkH2line" x1="60" y1="210" x2="345" y2="210" class="mkline"/>
+          <text id="mkH2text" x="56" y="214" class="mk" text-anchor="end">h₂</text>
+          <!-- u/v 映射 referent 标签（仅映射高亮时可见，不含速度关系） -->
+          <text id="uvTag" x="246" y="246" class="uvTag" visibility="hidden"></text>
+          <!-- h₂−h₁ 指认括号（默认隐藏） -->
+          <g id="gBracket" visibility="hidden">
+            <line x1="350" y1="300" x2="350" y2="210" class="bracket"/>
+            <line x1="345" y1="300" x2="355" y2="300" class="bracket"/>
+            <line x1="345" y1="210" x2="355" y2="210" class="bracket"/>
+            <text x="358" y="258" class="bracketText">h₂−h₁</text>
+          </g>
+          <!-- 地球成员区（能量口径比较时与系统边界同款式显示） -->
+          <rect id="earthZone" class="bound" visibility="hidden" x="60" y="404" width="270" height="34" rx="6"/>
+          <text id="earthLabel" x="70" y="426" class="boundText" visibility="hidden">地球</text>
+          <!-- 研究对象边界轮廓（仅能量口径比较时可见） -->
+          <rect id="boundShell" class="bound" visibility="hidden" x="150" y="214" width="80" height="182" rx="6"/>
+          <rect id="boundPen" class="bound" visibility="hidden" x="146" y="212" width="88" height="188" rx="6"/>
+          <text id="boundLabel" x="150" y="206" class="boundText"></text>
+          <text id="boundOut" x="150" y="192" class="boundOutText"></text>
+          <!-- 弹簧 -->
+          <polyline id="spring" class="spring" points="" fill="none"/>
+          <text id="springTag" x="150" y="260" class="tagText" text-anchor="end" visibility="hidden"></text>
+          <!-- 内芯：细杆 + 底部法兰（法兰上表面是接触面） -->
+          <g id="gCore">
+            <rect id="coreBody" x="178" y="240" width="24" height="150" class="core"/>
+            <rect id="coreFlange" x="173" y="272" width="34" height="12" class="coreFlange"/>
+            <text id="coreLabel" x="160" y="330" class="mlabel" text-anchor="end">m</text>
+          </g>
+          <!-- 外壳：两侧壁 + 顶板 + 底部向内挡点（挡点上表面与法兰接触） -->
+          <g id="gShell">
+            <rect id="shTop" x="158" y="220" width="64" height="10" class="shell"/>
+            <rect id="shL" x="158" y="220" width="8" height="170" class="shell"/>
+            <rect id="shR" x="214" y="220" width="8" height="170" class="shell"/>
+            <rect id="ledgeL" x="166" y="362" width="10" height="8" class="shellLedge"/>
+            <rect id="ledgeR" x="204" y="362" width="10" height="8" class="shellLedge"/>
+            <text id="shellLabel" x="230" y="150" class="mlabel">4m</text>
+          </g>
+          <!-- 外壳下端标记（y 的测量点） -->
+          <g id="gYRef">
+            <line id="yrefLine" x1="150" y1="390" x2="230" y2="390" class="yref"/>
+            <text id="yrefText" x="240" y="394" class="tagText">外壳下端</text>
+          </g>
+          <!-- 接触间距指示（S1 内可见） -->
+          <g id="gGap" visibility="hidden">
+            <line id="gapLine" x1="240" y1="300" x2="240" y2="272" class="gapLine"/>
+            <line id="gapTick1" x1="236" y1="300" x2="244" y2="300" class="gapLine"/>
+            <line id="gapTick2" x1="236" y1="272" x2="244" y2="272" class="gapLine"/>
+            <text id="gapText" x="248" y="290" class="tagText">间距</text>
+          </g>
+          <!-- 碰撞接触点 -->
+          <g id="gFlash" visibility="hidden">
+            <circle cx="190" cy="272" r="7" class="flash"/>
+            <text x="62" y="276" class="flashText">X1 接触点</text>
+          </g>
+          <!-- 速度箭头 -->
+          <g id="gArrow" visibility="hidden">
+            <line id="arrowLine" x1="256" y1="366" x2="256" y2="330" class="varrow"/>
+            <polygon id="arrowHead" points="250,336 262,336 256,326" class="varrow"/>
+            <text id="arrowLabel" x="266" y="340" class="mlabel"></text>
+          </g>
+        </svg>
+        <div id="controls">
+          <div id="cpRow">
+            <button id="btnPrevCp" type="button">◀ 上一检查点</button>
+            <span id="cpName">① 离桌（y=0）</span>
+            <button id="btnNextCp" type="button">下一检查点 ▶</button>
+          </div>
+          <label for="cursor">过程位置（辅助观察：拖动演示，不对应物理时间）</label>
+          <input id="cursor" type="range" min="0" max="1000" value="0" step="1">
+          <div id="ticks"><span>离桌 y=0</span><span>X1 碰撞 y=h₁</span><span>最高点 y=h₂</span></div>
+          <div id="playRow">
+            <button id="btnPlay" type="button">▶ 播放（辅助，到下一检查点自停）</button>
+            <button id="btnReplay" type="button">↺ 重放过程</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="panelRight">
+        <div id="taskLine" class="card"></div>
+        <div id="x1Evidence" class="card" hidden></div>
+        <div class="card">
+          <div class="cardTitle">能量口径比较（按需进入）</div>
+          <div id="energyBox"></div>
+        </div>
+        <details id="mapCard" class="card">
+          <summary>原题图与关键量映射（点名称，题图与模型同时高亮）</summary>
+          <p class="note">题面给定：m、4m、g、y=0、h₁、h₂　｜　过程定义：u（碰前外壳速度）、v（碰后共同速度）　｜　题目待求：W<sub>s</sub>、E<sub>损</sub></p>
+          <div class="chips">
+            <button class="chip" data-obj="shell" type="button">外壳 4m</button>
+            <button class="chip" data-obj="core" type="button">内芯 m</button>
+            <button class="chip" data-obj="spring" type="button">轻质弹簧</button>
+            <button class="chip" data-obj="yref" type="button">外壳下端</button>
+            <button class="chip" data-obj="desk" type="button">桌面 y=0（地球）</button>
+            <button class="chip" data-obj="h1" type="button">h₁</button>
+            <button class="chip" data-obj="h2" type="button">h₂</button>
+            <button class="chip" data-obj="u" type="button">u（碰前外壳速度）</button>
+            <button class="chip" data-obj="v" type="button">v（碰后共同速度）</button>
+            <button class="chip" data-obj="ws" type="button">W<sub>s</sub>（待求·弹簧功）</button>
+            <button class="chip" data-obj="eloss" type="button">E<sub>损</sub>（待求·机械能损失）</button>
+          </div>
+          <div class="probWrap">
+            <img src="problem.png" alt="原题：探究某种笔的弹跳问题">
+            <div class="hl-box" data-obj="spring" style="left:45.9%;top:20.4%;width:4.3%;height:8.6%"></div>
+            <div class="hl-box" data-obj="shell"  style="left:44.7%;top:19.7%;width:6.4%;height:23.2%"></div>
+            <div class="hl-box" data-obj="core"   style="left:46.3%;top:32.2%;width:3.6%;height:10.3%"></div>
+            <div class="hl-box" data-obj="h1"     style="left:61.5%;top:38.6%;width:5.3%;height:7.5%"></div>
+            <div class="hl-box" data-obj="h2"     style="left:75.7%;top:32.2%;width:5.2%;height:13.9%"></div>
+            <div class="hl-box" data-obj="desk"   style="left:36%;top:44%;width:47%;height:2.4%"></div>
+            <div class="hl-box" data-obj="yref"   style="left:44.7%;top:41%;width:6.4%;height:2%"></div>
+            <div class="hl-box" data-obj="ws"     style="left:6%;top:88.6%;width:52%;height:3.4%"></div>
+            <div class="hl-box" data-obj="eloss"  style="left:6%;top:92%;width:55%;height:3.4%"></div>
+          </div>
+          <p class="note">题图 a/b/c 分别对应：下压后释放、碰前瞬间（h₁）、共同上升到最高点（h₂）。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 纸笔整理视图（与动态证据不同时占据主视区） -->
+  <section id="paperView" hidden></section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
