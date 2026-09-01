@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<title>竖直弹跳笔：碰撞与能量 v2</title>
+<script>window.__Q690_RELEASE__ = { version: 'q690-v2' };</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>竖直弹跳笔：碰撞与能量</h1>
+  <button id="btnProblem" class="btn ghost" type="button">查看完整原题</button>
+</header>
+
+<nav class="tabs" aria-label="教学单元切换">
+  <button class="tab active" data-unit="u1" type="button">① 上升与碰撞全过程</button>
+  <button class="tab" data-unit="u2" type="button">② 碰撞瞬间</button>
+  <button class="tab" data-unit="u3" type="button">③ 弹簧做功</button>
+  <button class="tab" data-unit="u4" type="button">④ 碰撞能量损失</button>
+</nav>
+
+<main>
+  <!-- 单元一：完整三段过程 -->
+  <section id="u1" class="unit active">
+    <div class="model-pane">
+      <svg id="svgU1" class="model-svg" viewBox="0 0 420 540" role="img" aria-label="竖直弹跳笔简化模型"></svg>
+      <p class="stage-caption" id="capU1"></p>
+      <p class="legend">蓝色：外壳（4m）　橙色：内芯（m）　螺旋线：轻质弹簧　红色箭头：速度</p>
+    </div>
+    <div class="side-pane">
+      <div class="judgment">
+        <strong>本单元判断</strong>：碰后外壳与内芯共同上升的距离是
+        <math><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub></math>，
+        所以共同速度 <math><mi>v</mi></math> 由碰后这一段上升决定。
+      </div>
+      <div class="controls">
+        <button id="u1Play" class="btn primary" type="button">播放</button>
+        <button id="u1Replay" class="btn" type="button">重放</button>
+        <span class="ctl-sep"></span>
+        <button class="btn small" data-seek="0.05" type="button">① 刚离开桌面</button>
+        <button class="btn small" data-seek="2.55" type="button">② 碰撞瞬间</button>
+        <button class="btn small" data-seek="5.7" type="button">③ 到达最高点</button>
+      </div>
+      <p class="hint">定位按钮用于观察与复盘；三段过程与两次状态交接的完整证据，请用连续播放观看。</p>
+      <button class="btn reveal-toggle" data-reveal="u1Box" type="button">显示公式与结果</button>
+      <div class="reveal" id="u1Box" hidden>
+        <p>碰后外壳与内芯共同上升
+          <math><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub></math>，
+          末速度减为 0，由匀变速关系：</p>
+        <math display="block">
+          <msup><mi>v</mi><mn>2</mn></msup><mo>=</mo><mn>2</mn><mi>g</mi><mo>(</mo><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo>
+        </math>
+        <math display="block">
+          <mi>v</mi><mo>=</mo><msqrt><mn>2</mn><mi>g</mi><mo>(</mo><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo></msqrt>
+        </math>
+        <p class="q-tag">—— 第（1）问：碰撞后瞬间的共同速度大小</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 单元二：碰撞瞬间 -->
+  <section id="u2" class="unit">
+    <div class="model-pane">
+      <svg id="svgU2" class="model-svg" viewBox="0 0 420 540" role="img" aria-label="碰撞瞬间模型"></svg>
+      <p class="stage-caption" id="capU2"></p>
+      <p class="legend">蓝色：外壳（4m）　橙色：内芯（m）　红色箭头：速度</p>
+    </div>
+    <div class="side-pane">
+      <div class="judgment">
+        <strong>本单元判断</strong>：碰撞时间极短，撞击力远大于重力，重力的冲量可以忽略——
+        碰撞前后总动量不变，把碰前的
+        <math><msub><mi>v</mi><mn>1</mn></msub></math>
+        与碰后的 <math><mi>v</mi></math> 接起来。
+      </div>
+      <div class="info-card">
+        <p><strong>碰前瞬间</strong>：外壳（4m）以
+          <math><msub><mi>v</mi><mn>1</mn></msub></math> 向上运动；内芯（m）静止。</p>
+        <p><strong>碰后瞬间</strong>：外壳与内芯总质量 5m，以共同速度 <math><mi>v</mi></math> 一起向上。</p>
+      </div>
+      <div class="controls">
+        <button id="u2Before" class="btn" type="button">碰前瞬间</button>
+        <button id="u2After" class="btn" type="button">碰后瞬间</button>
+        <button id="u2ReplayBtn" class="btn primary" type="button">重放碰撞瞬间</button>
+      </div>
+      <button class="btn reveal-toggle" data-reveal="u2Box" type="button">显示公式与结果</button>
+      <div class="reveal" id="u2Box" hidden>
+        <p>碰撞时间极短，忽略重力冲量，动量守恒：</p>
+        <math display="block">
+          <mn>4</mn><mi>m</mi><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mn>5</mn><mi>m</mi><mi>v</mi>
+        </math>
+        <math display="block">
+          <msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>5</mn><mn>4</mn></mfrac><mi>v</mi><mo>=</mo><mfrac><mn>5</mn><mn>4</mn></mfrac><msqrt><mn>2</mn><mi>g</mi><mo>(</mo><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo></msqrt>
+        </math>
+      </div>
+    </div>
+  </section>
+
+  <!-- 单元三：弹簧做功 -->
+  <section id="u3" class="unit">
+    <div class="model-pane">
+      <svg id="svgU3" class="model-svg" viewBox="0 0 420 540" role="img" aria-label="弹簧推动外壳上升模型"></svg>
+      <p class="stage-caption" id="capU3"></p>
+      <p class="legend">蓝色：外壳（4m）　橙色：内芯（m）　螺旋线：轻质弹簧　红色箭头：速度</p>
+    </div>
+    <div class="side-pane">
+      <div class="judgment">
+        <strong>本单元判断</strong>：从外壳离开桌面到碰前，弹簧对外壳做的功同时变成外壳增加的重力势能和动能；内芯此段保持静止。
+      </div>
+      <div class="live-formula">
+        <math>
+          <msub><mi>W</mi><mi>弹</mi></msub><mo>=</mo><mn>4</mn><mi>m</mi><mi>g</mi><mi>h</mi><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>·</mo><mn>4</mn><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup>
+        </math>
+        <span class="note">（h、v 为外壳当前的高度与速度，随播放同步变化）</span>
+      </div>
+      <div class="ledger">
+        <div class="ledger-row" id="u3LedPE">
+          <span class="ledger-chip">未开始</span>
+          <span class="ledger-text">外壳增加的重力势能
+            <math><mn>4</mn><mi>m</mi><mi>g</mi><mi>h</mi></math>
+          </span>
+        </div>
+        <div class="ledger-row" id="u3LedKE">
+          <span class="ledger-chip">未开始</span>
+          <span class="ledger-text">外壳的动能
+            <math><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>·</mo><mn>4</mn><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></math>
+          </span>
+        </div>
+        <p class="bar-note">弹簧对外壳做的功同时计入上面两项；两项只表示随过程被计入，不比较大小。内芯静止，不获得能量。</p>
+      </div>
+      <div class="controls">
+        <button id="u3Play" class="btn primary" type="button">播放</button>
+        <button id="u3Replay" class="btn" type="button">重放</button>
+      </div>
+      <button class="btn reveal-toggle" data-reveal="u3Box" type="button">显示公式与结果</button>
+      <div class="reveal" id="u3Box" hidden>
+        <p>碰前瞬间，外壳高度为
+          <math><msub><mi>h</mi><mn>1</mn></msub></math>、速度为
+          <math><msub><mi>v</mi><mn>1</mn></msub></math>：</p>
+        <math display="block">
+          <mi>W</mi><mo>=</mo><mn>4</mn><mi>m</mi><mi>g</mi><msub><mi>h</mi><mn>1</mn></msub><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>·</mo><mn>4</mn><mi>m</mi><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup>
+        </math>
+        <p>代入
+          <math><msup><mi>v</mi><mn>2</mn></msup><mo>=</mo><mn>2</mn><mi>g</mi><mo>(</mo><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo></math>
+          与
+          <math><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>5</mn><mn>4</mn></mfrac><mi>v</mi></math>：</p>
+        <math display="block">
+          <mi>W</mi><mo>=</mo><mfrac><mrow><mi>m</mi><mi>g</mi></mrow><mn>4</mn></mfrac><mo>(</mo><mn>25</mn><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><mn>9</mn><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo>
+        </math>
+        <p class="q-tag">—— 第（2）问：从外壳离开桌面到碰撞前瞬间，弹簧做的功</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 单元四：碰撞能量损失 -->
+  <section id="u4" class="unit">
+    <div class="model-pane">
+      <div class="pen-pair">
+        <figure>
+          <figcaption>碰前瞬间</figcaption>
+          <svg id="svgU4a" viewBox="95 90 305 420" role="img" aria-label="碰前瞬间模型"></svg>
+        </figure>
+        <figure>
+          <figcaption>碰后瞬间</figcaption>
+          <svg id="svgU4b" viewBox="95 90 305 420" role="img" aria-label="碰后瞬间模型"></svg>
+        </figure>
+      </div>
+      <p class="stage-caption">同一次碰撞：外壳（4m，蓝色）与内芯（m，橙色）身份不变；碰前只有外壳运动，碰后 5m 一起运动。</p>
+      <p class="legend">蓝色：外壳（4m）　橙色：内芯（m）　红色箭头：速度　示意图非按比例</p>
+    </div>
+    <div class="side-pane">
+      <div class="judgment">
+        <strong>本单元判断</strong>：碰撞前后总动量不变，但动能减少；减少的机械能转化为内能。从外壳离开桌面到上升至
+        <math><msub><mi>h</mi><mn>2</mn></msub></math>，
+        只有这次非弹性碰撞损失机械能。
+      </div>
+      <div class="bars">
+        <p class="bars-title">碰撞前后的对比（长度按本题比例关系画出）</p>
+        <div class="bar-row"><span class="bar-label">碰前总动量<br><small>只有外壳运动</small></span><div class="bar-track"><div class="bar-fill p" style="width:72%"></div></div></div>
+        <div class="bar-row"><span class="bar-label">碰后总动量<br><small>5m 一起运动</small></span><div class="bar-track"><div class="bar-fill p" style="width:72%"></div></div></div>
+        <p class="bar-note">动量：碰后与碰前相等。</p>
+        <div class="bar-row"><span class="bar-label">碰前动能<br><small>只有外壳</small></span><div class="bar-track"><div class="bar-fill ke" style="width:100%"></div></div></div>
+        <div class="bar-row"><span class="bar-label">碰后动能<br><small>5m 一起</small></span><div class="bar-track"><div class="bar-fill ke2" style="width:80%"></div><div class="bar-fill loss" style="width:20%"></div></div></div>
+        <p class="bar-note">动能：碰后是碰前的
+          <math><mfrac><mn>4</mn><mn>5</mn></mfrac></math>；
+          斜纹部分是减少的机械能，转化为内能。</p>
+      </div>
+      <button class="btn reveal-toggle" data-reveal="u4Box" type="button">显示公式与结果</button>
+      <div class="reveal" id="u4Box" hidden>
+        <p>全过程只有这次非弹性碰撞损失机械能：</p>
+        <math display="block">
+          <mi>Δ</mi><mi>E</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>·</mo><mn>4</mn><mi>m</mi><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>·</mo><mn>5</mn><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup>
+        </math>
+        <math display="block">
+          <mi>Δ</mi><mi>E</mi><mo>=</mo><mfrac><mn>5</mn><mn>4</mn></mfrac><mi>m</mi><mi>g</mi><mo>(</mo><msub><mi>h</mi><mn>2</mn></msub><mo>−</mo><msub><mi>h</mi><mn>1</mn></msub><mo>)</mo>
+        </math>
+        <p class="q-tag">—— 第（3）问：从外壳下端离开桌面到上升至 h₂ 处，笔损失的机械能</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="problemModal" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <span>完整原题</span>
+      <button id="btnCloseModal" class="btn" type="button">关闭</button>
+    </div>
+    <div class="modal-body">
+      <img src="690.PNG" alt="完整原题图片">
+    </div>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
