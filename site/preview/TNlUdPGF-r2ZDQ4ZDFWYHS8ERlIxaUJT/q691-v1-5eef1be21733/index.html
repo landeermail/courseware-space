@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>传送带与平抛：C 点速度怎样生成落点</title>
+<style>
+  :root{
+    --ink:#1d2733; --muted:#5b6a7a; --line:#d5dde6; --panel:#f7f9fc;
+    --accent:#b5482e; --blue:#1f6fd6; --bg:#eef1f5;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:var(--ink); background:var(--bg); overflow:hidden;
+    display:flex; flex-direction:column; height:100vh;
+  }
+  header{
+    flex:0 0 auto; display:flex; align-items:center; gap:12px;
+    padding:8px 14px; background:#fff; border-bottom:1px solid var(--line);
+  }
+  header h1{ font-size:17px; font-weight:700; white-space:nowrap; }
+  header .spacer{ flex:1; }
+  .tabbtn, .origbtn{
+    font-size:14px; padding:8px 16px; border-radius:8px; border:1px solid var(--line);
+    background:#fff; color:var(--ink); cursor:pointer; min-height:40px;
+    touch-action:manipulation; white-space:nowrap;
+  }
+  .tabbtn.active{ background:var(--blue); color:#fff; border-color:var(--blue); font-weight:600; }
+  .origbtn{ border-color:#c9a24b; color:#7a5b13; background:#fdf6e3; }
+  main{ flex:1 1 auto; min-height:0; padding:10px 12px; }
+  .unit{ display:none; height:100%; gap:10px; }
+  .unit.active{ display:flex; }
+  .stage{ flex:1 1 auto; min-width:0; position:relative; background:#fff;
+    border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .stage canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .panel{ flex:0 0 400px; width:400px; min-height:0; overflow-y:auto;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; }
+  .panel h2{ font-size:15px; margin-bottom:8px; }
+  .group{ background:#fff; border:1px solid var(--line); border-radius:8px; padding:10px; margin-bottom:10px; }
+  .group .glabel{ font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .ctlrow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  button.ctl{
+    font-size:14px; min-height:40px; padding:8px 14px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; touch-action:manipulation;
+  }
+  button.ctl.primary{ background:var(--blue); color:#fff; border-color:var(--blue); font-weight:600; }
+  button.ctl.warn{ border-color:#c9a24b; color:#7a5b13; background:#fdf6e3; }
+  input.omega{
+    width:110px; font-size:15px; padding:8px 10px; min-height:40px;
+    border:1px solid var(--line); border-radius:8px;
+  }
+  .hint{ font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.6; }
+  .status{ font-size:14px; line-height:1.7; }
+  .status b{ color:var(--accent); }
+  .reveal{ display:none; }
+  .reveal.show{ display:block; }
+  .reveal p{ font-size:13.5px; line-height:1.7; margin-bottom:6px; }
+  .formula{ margin:6px 0; overflow-x:auto; }
+  math{ font-size:15px; }
+  .hint math, .reveal p math, .status math{ font-size:13px; }
+  .chartwrap{ text-align:center; }
+  .chartwrap svg{ width:100%; max-width:380px; height:auto; }
+  .chip{ display:inline-block; font-size:12px; color:#fff; background:#1d7a46;
+    border-radius:10px; padding:1px 8px; margin-left:6px; }
+  /* 原题弹层 */
+  .overlay{ display:none; position:fixed; inset:0; background:rgba(20,28,38,.55);
+    z-index:20; align-items:center; justify-content:center; }
+  .overlay.open{ display:flex; }
+  .dialog{ background:#fff; border-radius:12px; width:min(920px,92vw); max-height:88vh;
+    display:flex; flex-direction:column; overflow:hidden; }
+  .dialog header{ border-bottom:1px solid var(--line); }
+  .dialog .body{ overflow-y:auto; padding:12px; }
+  .dialog img{ width:100%; height:auto; display:block; }
+  @media (max-width:1000px){
+    .panel{ flex-basis:340px; width:340px; }
+    header h1{ font-size:15px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>传送带与平抛：C 点速度怎样生成落点</h1>
+  <button class="tabbtn active" id="tab1">到 C 前发生什么</button>
+  <button class="tabbtn" id="tab2">C 点速度怎样变成落点</button>
+  <span class="spacer"></span>
+  <button class="origbtn" id="openOrig">查看原题</button>
+</header>
+<main>
+  <!-- ===================== 单元 1 ===================== -->
+  <section class="unit active" id="unit1">
+    <div class="stage"><canvas id="cv1"></canvas></div>
+    <aside class="panel">
+      <h2>到 C 前发生什么</h2>
+      <div class="group">
+        <div class="glabel">皮带轮角速度 ω（顺时针为正，rad/s）</div>
+        <div class="ctlrow">
+          <input class="omega" id="om1" type="number" step="1" value="0" aria-label="角速度 ω">
+          <button class="ctl" id="u1q0">题给 ω = 0</button>
+          <button class="ctl" id="u1q20">题给 ω = 20</button>
+        </div>
+        <div class="hint">可直接键入任意角速度（含负值）。皮带速度
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>u</mi><mo>=</mo><mn>0.2</mn><mi>ω</mi></math>，向右为正。</div>
+      </div>
+      <div class="group">
+        <div class="glabel">播放一次从 B 到 C 的完整过程</div>
+        <div class="ctlrow">
+          <button class="ctl primary" id="u1play">播放</button>
+          <button class="ctl" id="u1replay">重放</button>
+        </div>
+        <div class="hint">货物以 v = 10 m/s 从 B 进入传送带，播放中可暂停观察。</div>
+      </div>
+      <div class="group">
+        <div class="glabel">同步证据（由同一物理状态驱动）</div>
+        <div class="status" id="u1status">设置角速度后播放，观察货物与皮带的速度比较。</div>
+      </div>
+      <div class="group">
+        <button class="ctl warn" id="u1reveal">老师揭示：速度变化范围与边界</button>
+        <div class="reveal" id="u1revealBody">
+          <p>传送带长 8 m，滑动时摩擦加速度大小恒为
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>6</mn><mtext>&#8201;</mtext><mi mathvariant="normal">m</mi><mo>/</mo><msup><mi mathvariant="normal">s</mi><mn>2</mn></msup></math>：
+            货物在 8 m 内最多从 10 m/s 减到 2 m/s，最多从 10 m/s 加到 14 m/s。</p>
+          <p><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>ω</mi><mo>=</mo><mn>10</mn><mtext>&#8201;rad/s</mtext></math>（<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>u</mi><mo>=</mo><mn>2</mn><mtext>&#8201;m/s</mtext></math>）与
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>ω</mi><mo>=</mo><mn>70</mn><mtext>&#8201;rad/s</mtext></math>（<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>u</mi><mo>=</mo><mn>14</mn><mtext>&#8201;m/s</mtext></math>）
+            恰好是“在 C 点正好达到共速”的两端边界。</p>
+        </div>
+      </div>
+      <div class="group">
+        <div class="glabel">进入传送带前的交代（题面条件）</div>
+        <div class="formula">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <msub><mi>v</mi><mi>B</mi></msub><mo>=</mo>
+            <msqrt><mrow><mn>2</mn><mi>g</mi><mi>H</mi></mrow></msqrt>
+            <mo>=</mo><msqrt><mrow><mn>2</mn><mo>×</mo><mn>10</mn><mo>×</mo><mn>5</mn></mrow></msqrt>
+            <mo>=</mo><mn>10</mn><mtext>&#8201;m/s</mtext>
+          </math>
+        </div>
+        <div class="hint">斜面 AB 光滑、高 H = 5 m，拐角无机械能损失；斜面过程不展开。</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ===================== 单元 2 ===================== -->
+  <section class="unit" id="unit2">
+    <div class="stage"><canvas id="cv2"></canvas></div>
+    <aside class="panel">
+      <h2>C 点速度怎样变成落点</h2>
+      <div class="group">
+        <div class="glabel">皮带轮角速度 ω（顺时针为正，rad/s）</div>
+        <div class="ctlrow">
+          <input class="omega" id="om2" type="number" step="1" value="0" aria-label="角速度 ω">
+          <button class="ctl" id="u2q0">题给 ω = 0</button>
+          <button class="ctl" id="u2q20">题给 ω = 20</button>
+        </div>
+        <div class="hint">货物以 v = 10 m/s 从 B 进入，皮带速度
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>u</mi><mo>=</mo><mn>0.2</mn><mi>ω</mi></math>。</div>
+      </div>
+      <div class="group">
+        <div class="glabel">播放：进入 BC → 连续越过 C → 落上车厢底板</div>
+        <div class="ctlrow">
+          <button class="ctl primary" id="u2play">播放</button>
+          <button class="ctl" id="u2replay">重放</button>
+          <button class="ctl" id="u2clear">清除已积累落点</button>
+        </div>
+        <div class="hint">每次落地会生成当前 S 和 S–ω 坐标中的一个真实点；换角速度重放可积累比较。</div>
+      </div>
+      <div class="group">
+        <div class="glabel">同步证据（由同一物理状态驱动）</div>
+        <div class="status" id="u2status">设置角速度后播放，观察 C 点速度怎样变成落点。</div>
+      </div>
+      <div class="group chartwrap">
+        <div class="glabel" style="text-align:left">S–ω 坐标中的落点<span class="chip" id="ptcount">0 个点</span></div>
+        <svg id="chart" viewBox="0 0 400 270" role="img" aria-label="S-ω 落点图"></svg>
+      </div>
+      <div class="group">
+        <button class="ctl warn" id="u2reveal">老师揭示：本题答案</button>
+        <div class="reveal" id="u2revealBody">
+          <div class="formula">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <msub><mi>v</mi><mi>B</mi></msub><mo>=</mo>
+              <msqrt><mrow><mn>2</mn><mi>g</mi><mi>H</mi></mrow></msqrt>
+              <mo>=</mo><mn>10</mn><mtext>&#8201;m/s</mtext><mo>,</mo>
+              <mspace width="0.8em"></mspace>
+              <msub><mi>t</mi><mi>f</mi></msub><mo>=</mo>
+              <msqrt><mrow><mn>2</mn><mi>h</mi><mo>/</mo><mi>g</mi></mrow></msqrt>
+              <mo>=</mo><mn>0.30</mn><mtext>&#8201;s</mtext><mo>,</mo>
+              <mspace width="0.8em"></mspace>
+              <mi>S</mi><mo>=</mo><mn>0.30</mn><msub><mi>v</mi><mi>C</mi></msub>
+            </math>
+          </div>
+          <div class="formula">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>S</mi><mo>(</mo><mn>0</mn><mo>)</mo><mo>=</mo><mn>0.60</mn><mtext>&#8201;m</mtext><mo>,</mo>
+              <mspace width="1em"></mspace>
+              <mi>S</mi><mo>(</mo><mn>20</mn><mo>)</mo><mo>=</mo><mn>1.20</mn><mtext>&#8201;m</mtext>
+            </math>
+          </div>
+          <p>S–ω 图像：过 (10, 0.60) 与 (70, 4.20) 的中间直线段，两侧为水平段（左侧 S = 0.60 m，右侧 S = 4.20 m）。</p>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<!-- 原题弹层：调出/关闭不影响任何播放与揭示状态 -->
+<div class="overlay" id="origOverlay">
+  <div class="dialog">
+    <header>
+      <h1 style="font-size:15px">原题</h1>
+      <span class="spacer"></span>
+      <button class="ctl" id="closeOrig">关闭并返回</button>
+    </header>
+    <div class="body"><img src="source-691.PNG" alt="原题图片"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================= 不可见物理约束（单一事实源） ================= */
+const V0 = 10;      // 货物进入 BC 的速度 m/s
+const L  = 8;       // BC 长 m
+const AM = 6;       // 滑动摩擦加速度大小 m/s^2，方向总是减小 v-u
+const HFALL = 0.45; // C 到车厢底板的高度 m
+const G  = 10;
+const TFALL = Math.sqrt(2*HFALL/G); // 0.30 s
+const RATE = 0.12;  // 固定的慢速播放比例（不提供倍率选择）
+
+const uOf = om => 0.2*om;
+
+/* 分析 BC 段结局：第一事件是 v=u 或 x=L。
+   共速必须沿速度单调接近发生：减速（a<0）时只有 u>=0 才可能在带内共速；
+   u<0 时货物要到 x=100/12=8.33 m 才停下，已在 C 之外，故必然先到 C（vC=2）。 */
+function bcOutcome(om){
+  const u = uOf(om);
+  if (Math.abs(V0-u) < 1e-9) return {type:'noslip', u, vC:V0};
+  const a = AM*Math.sign(u-V0);
+  const xcs = (u*u - V0*V0)/(2*a);   // 达到共速所需距离
+  if (xcs >= 0 && xcs <= L + 1e-9 && (a > 0 || u >= 0))
+    return {type:'cospeed', u, xcs:Math.min(xcs,L), vC:u};
+  const vC = Math.sqrt(V0*V0 + 2*a*L);
+  return {type:'reachC', u, vC};
+}
+
+const fmt = (v,d=2) => {
+  const s = v.toFixed(d);
+  return s.replace(/\.?0+$/,'') || '0';
+};
+const fmtS = v => {
+  const r = Math.round(v*100)/100;
+  return (Math.abs(r - Math.round(r)) < 1e-9) ? String(Math.round(r)) : r.toFixed(2);
+};
+
+/* 内联 MathML（状态文字中的公式） */
+const M  = inner => `<math xmlns="http://www.w3.org/1998/Math/MathML" style="font-size:13px">${inner}</math>`;
+const eq = (varMml, val, unit) =>
+  M(`${varMml}<mo>=</mo><mn>${val}</mn>${unit?`<mtext>&#8201;${unit}</mtext>`:''}`);
+const M_V='<mi>v</mi>', M_U='<mi>u</mi>',
+      M_VC='<msub><mi>v</mi><mi>C</mi></msub>',
+      M_VX='<msub><mi>v</mi><mi>x</mi></msub>',
+      M_VY='<msub><mi>v</mi><mi>y</mi></msub>',
+      M_S='<mi>S</mi>';
+
+/* ================= 主循环：页面不可见时停止持续动画 ================= */
+let rafId = 0, lastTs = 0, running = false;
+function loop(ts){
+  if(!running) return;
+  rafId = requestAnimationFrame(loop);
+  const dt = Math.min((ts-lastTs)/1000 || 0, 0.05); lastTs = ts;
+  sims.forEach(s => s.tick(dt*RATE));
+}
+function startLoop(){ if(!running){ running=true; lastTs=0; rafId=requestAnimationFrame(loop); } }
+function stopLoop(){ running=false; cancelAnimationFrame(rafId); }
+document.addEventListener('visibilitychange', () => { document.hidden ? stopLoop() : startLoop(); });
+window.addEventListener('pagehide', stopLoop);
+window.addEventListener('pageshow', () => { if(!document.hidden) startLoop(); });
+
+/* ================= Canvas 工具（按 devicePixelRatio 保持清晰） ================= */
+function setupCanvas(cv, onResize){
+  const ctx = cv.getContext('2d');
+  const st = {ctx, w:0, h:0};
+  const ro = new ResizeObserver(() => {
+    const r = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    cv.width  = Math.max(1, Math.round(r.width*dpr));
+    cv.height = Math.max(1, Math.round(r.height*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);   // 逻辑坐标=CSS 像素，dpr 只影响清晰度
+    st.w = r.width; st.h = r.height;
+    if (onResize) onResize();
+  });
+  ro.observe(cv);
+  return st;
+}
+function arrow(ctx,x1,y1,x2,y2,color,label,lw=3){
+  const ang = Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const hl = 9;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hl*Math.cos(ang-0.42), y2-hl*Math.sin(ang-0.42));
+  ctx.lineTo(x2-hl*Math.cos(ang+0.42), y2-hl*Math.sin(ang+0.42));
+  ctx.closePath(); ctx.fill();
+  if (label){
+    ctx.font = '13px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText(label, (x1+x2)/2, (y1+y2)/2-8);
+  }
+}
+/* 带下标的速度标注：parts 为 [文字, 是否下标] 序列 */
+function richLabel(ctx,x,y,parts,color,align='center',size=13){
+  ctx.textBaseline='bottom'; ctx.textAlign='left'; ctx.fillStyle=color;
+  const fam='-apple-system,"PingFang SC",sans-serif';
+  const widths=parts.map(([t,sub])=>{
+    ctx.font=`${sub?size-4:size}px ${fam}`; return ctx.measureText(t).width;
+  });
+  const total=widths.reduce((a,b)=>a+b,0);
+  let sx = align==='center' ? x-total/2 : x;
+  parts.forEach(([t,sub],i)=>{
+    ctx.font=`${sub?size-4:size}px ${fam}`;
+    ctx.fillText(t, sx, y+(sub?2:0)); sx+=widths[i];
+  });
+}
+function block(ctx,x,y,w,h,face){
+  ctx.fillStyle = face; ctx.strokeStyle = '#3a2d22'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.rect(x-w/2, y-h, w, h); ctx.fill(); ctx.stroke();
+}
+
+/* ================= 场景几何（BC 与平抛共用同一侧视参照，横纵同一比例） ================= */
+function makeGeo(W,H,withFall){
+  const labelPad = 48;                     // 顶部留给速度箭头与标注
+  const marginX = 18;
+  const floorExtra = withFall ? 4.9 : 1.6, rightPad = 0.6;
+  let s = Math.min((W-2*marginX)/(L+floorExtra+rightPad), (H-70)/2.9);
+  s = Math.max(20, Math.min(s, 64));
+  const Bx = W - marginX - (L+floorExtra+rightPad)*s;
+  const usedH = labelPad + (withFall?HFALL:0)*s + (withFall?96:1.3*s+44);
+  const yTop = Math.max(labelPad+8, (H-usedH)/2 + labelPad);
+  return {s, Bx, yTop, W, H, X: xm => Bx + xm*s, Y: ym => yTop + ym*s, withFall};
+}
+
+/* ================= 单元 1 仿真 ================= */
+class Sim1 {
+  constructor(cv, els){
+    this.els = els;
+    this.cv = setupCanvas(cv, ()=>this.render());
+    this.omega = 0; this.reset(); this.render();
+  }
+  setOmega(v){ this.omega = v; this.reset(); this.render(); }
+  reset(){
+    this.out = bcOutcome(this.omega);
+    this.phase='idle'; this.x=0; this.v=V0; this.cosX=null;
+    this.playing=false; this.beltDist=0;
+    this.els.play.textContent='播放';
+    this.setStatus(this.predictText());
+  }
+  predictText(){
+    const o=this.out;
+    if (o.type==='noslip')
+      return `皮带速度 ${eq(M_U,fmt(o.u),'m/s')}，与货物速度相同：货物进入 BC 即无相对滑动，不受摩擦，匀速到达 C。`;
+    if (o.type==='cospeed')
+      return `皮带速度 ${eq(M_U,fmt(o.u),'m/s')}。按当前角速度：货物先与皮带<b>达到共速</b>（在距 B 约 ${fmtS(o.xcs)} m 处），此后无相对滑动。`;
+    return `皮带速度 ${eq(M_U,fmt(o.u),'m/s')}。按当前角速度：货物<b>先到达 C</b>，全程都在相对滑动。`;
+  }
+  liveText(){
+    const o=this.out, pos = `位置 x = ${fmtS(this.x)} m / 8 m`;
+    if (this.phase==='slide'){
+      const kind = o.u > this.v ? '加速' : '减速';
+      return `货物与皮带相对滑动，摩擦使货物${kind}。货物 ${eq(M_V,fmt(this.v),'m/s')}，皮带 ${eq(M_U,fmt(o.u),'m/s')}；${pos}。`;
+    }
+    if (this.phase==='coast')
+      return `已在 x = ${fmtS(this.cosX)} m 处<b>达到共速</b>，相对滑动消失，不再有摩擦。${M(`${M_V}<mo>=</mo>${M_U}<mo>=</mo><mn>${fmt(this.v)}</mn><mtext>&#8201;m/s</mtext>`)}；${pos}。`;
+    if (this.phase==='doneC')
+      return `货物<b>先到达 C</b>：C 点速度 ${eq(M_VC,fmt(this.v),'m/s')}（向右）。`;
+    if (this.phase==='doneCs')
+      return `货物在 x = ${fmtS(this.cosX)} m 处<b>先达到共速</b>，随后匀速到 C：${eq(M_VC,fmt(this.v),'m/s')}。`;
+    if (this.phase==='doneN')
+      return `全程无相对滑动，货物匀速到达 C：${eq(M_VC,fmt(this.v),'m/s')}。`;
+    return this.predictText();
+  }
+  setStatus(t){ this.els.status.innerHTML = t; }
+  toggle(){
+    if (this.phase==='idle'){ this.playing=true; this.phase=(this.out.type==='noslip')?'noslip':'slide'; }
+    else this.playing = !this.playing;
+    this.els.play.textContent = this.playing ? '暂停' : '播放';
+    this.render();
+  }
+  replay(){ this.reset(); this.toggle(); this.render(); }
+  tick(dt){
+    if (!this.playing) return;
+    const o=this.out;
+    if (this.phase==='slide'||this.phase==='coast'||this.phase==='noslip'){
+      // 第一事件之一：达到共速
+      if (this.phase==='slide'){
+        const a=AM*Math.sign(o.u-this.v);
+        const dtCs=(o.u-this.v)/a;
+        if (dtCs>=0 && dtCs<=dt){
+          this.x+=this.v*dtCs+0.5*a*dtCs*dtCs;
+          this.v=o.u; this.cosX=this.x;
+          this.beltDist+=o.u*dtCs; dt-=dtCs;
+          this.phase='coast';
+        }
+      }
+      // 第一事件之二：到达 C
+      if (this.phase!=='idle'){
+        const a=(this.phase==='slide')?AM*Math.sign(o.u-this.v):0;
+        let dtC;
+        if (a===0) dtC=(L-this.x)/this.v;
+        else { const disc=this.v*this.v+2*a*(L-this.x); dtC=disc>0?(-this.v+Math.sqrt(disc))/a:Infinity; }
+        if (dtC<=dt){
+          if (a!==0) this.v=Math.sqrt(Math.max(this.v*this.v+2*a*(L-this.x),0));
+          this.x=L; this.beltDist+=o.u*dtC;
+          this.playing=false; this.els.play.textContent='播放';
+          this.phase=(this.out.type==='noslip')?'doneN':(this.cosX!==null?'doneCs':'doneC');
+        } else {
+          this.x+=this.v*dt+0.5*a*dt*dt; this.v+=a*dt; this.beltDist+=o.u*dt;
+        }
+      }
+    }
+    this.setStatus(this.liveText());
+    this.render();
+  }
+  render(){
+    const {ctx,w,h}=this.cv; if(!w) return;
+    ctx.clearRect(0,0,w,h);
+    const g=makeGeo(w,h,false), o=this.out;
+    drawBC(ctx,g,o.u,this.beltDist);
+    const cx=g.X(this.x), cy=g.yTop;
+    const done=this.phase.startsWith('done');
+    block(ctx,cx,cy,0.72*g.s,0.52*g.s,'#c98a4b');
+    // 货物速度箭头（方向与大小实时同步；到达后由 v_C 标注接管，避免重叠）
+    if (!done){
+      const len=Math.abs(this.v)*8, dir=Math.sign(this.v)||1;
+      arrow(ctx,cx,cy-0.62*g.s,cx+dir*len,cy-0.62*g.s,'#b5482e');
+      richLabel(ctx,cx+dir*len/2,cy-0.62*g.s-6,[['v',false],[` = ${fmt(this.v)} m/s`,false]],'#b5482e');
+    }
+    // 摩擦箭头：只在相对滑动中出现（ω=50 等无滑动情形不虚构摩擦）
+    if (this.phase==='slide'){
+      const fd=Math.sign(o.u-this.v)||1;
+      const fy=cy+0.16*g.s;
+      arrow(ctx,cx,fy,cx+fd*34,fy,'#1d7a46');
+      ctx.fillStyle='#1d7a46'; ctx.font='11px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText('摩擦', cx+fd*17, fy+5);
+    }
+    // 相对滑动消失的位置
+    if (this.cosX!==null && this.cosX>0.01 && this.cosX<L-0.01){
+      const mx=g.X(this.cosX);
+      ctx.fillStyle='#7a3ea8';
+      ctx.beginPath(); ctx.moveTo(mx,cy+0.34*g.s+16);
+      ctx.lineTo(mx-6,cy+0.34*g.s+26); ctx.lineTo(mx+6,cy+0.34*g.s+26);
+      ctx.closePath(); ctx.fill();
+      ctx.font='12px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText('共速处', mx, cy+0.34*g.s+28);
+    }
+    // 到达事件发生后指出当前 C 点速度
+    if (this.phase.startsWith('done'))
+      richLabel(ctx,g.X(L),g.yTop-1.05*g.s,
+        [['v',false],['C',true],[` = ${fmt(this.v)} m/s`,false]],'#b5482e','center',14);
+  }
+}
+
+/* ================= 单元 2 仿真 ================= */
+class Sim2 {
+  constructor(cv, els){
+    this.els=els;
+    this.cv=setupCanvas(cv, ()=>this.render());
+    this.omega=0; this.points=[]; this.revealed=false;
+    this.reset(); this.render(); drawChart(this);
+  }
+  setOmega(v){ this.omega=v; this.reset(); this.render(); }
+  reset(){
+    this.out=bcOutcome(this.omega);
+    this.phase='idle'; this.x=0; this.v=V0; this.cosX=null;
+    this.px=0; this.py=0; this.vy=0; this.vC=null;
+    this.playing=false; this.beltDist=0; this.trail=[];
+    this.els.play.textContent='播放';
+    this.setStatus(this.predictText());
+  }
+  predictText(){
+    const o=this.out, base=`皮带速度 ${eq(M_U,fmt(o.u),'m/s')}。`;
+    if (o.type==='noslip') return base+'货物进入 BC 即无相对滑动，将以 10 m/s 到达 C。';
+    if (o.type==='cospeed') return base+`货物将先与皮带共速再到 C，预计 ${eq(M_VC,fmt(o.vC),'m/s')}。`;
+    return base+`货物将先到达 C，预计 ${eq(M_VC,fmt(o.vC),'m/s')}。`;
+  }
+  liveText(){
+    const o=this.out;
+    if (this.phase==='slide'){
+      const kind=o.u>this.v?'加速':'减速';
+      return `BC 段：相对滑动，摩擦使货物${kind}。${eq(M_V,fmt(this.v),'m/s')}，${eq(M_U,fmt(o.u),'m/s')}；x = ${fmtS(this.x)} m。`;
+    }
+    if (this.phase==='coast')
+      return `BC 段：已共速（无摩擦），${M(`${M_V}<mo>=</mo>${M_U}<mo>=</mo><mn>${fmt(this.v)}</mn><mtext>&#8201;m/s</mtext>`)}；x = ${fmtS(this.x)} m。`;
+    if (this.phase==='noslip')
+      return `BC 段：无相对滑动，${M(`${M_V}<mo>=</mo>${M_U}<mo>=</mo><mn>${fmt(this.v)}</mn><mtext>&#8201;m/s</mtext>`)}；x = ${fmtS(this.x)} m。`;
+    if (this.phase==='flight')
+      return `已过 C：接触与摩擦同时结束，${M(`${M_VX}<mo>=</mo>${M_VC}<mo>=</mo><mn>${fmt(this.vC)}</mn><mtext>&#8201;m/s</mtext>`)} 保持不变；竖直方向从 0 按重力增大，当前 ${eq(M_VY,fmt(this.vy),'m/s')}。`;
+    if (this.phase==='landed'){
+      const S=TFALL*this.vC;
+      return `落地：${eq(M_VC,fmt(this.vC),'m/s')}，下落时间 0.30 s，水平距离 <b>${eq(M_S,fmtS(S),'m')}</b>。当前落点已加入 S–ω 坐标。`;
+    }
+    return this.predictText();
+  }
+  setStatus(t){ this.els.status.innerHTML=t; }
+  toggle(){
+    if (this.phase==='idle'){ this.playing=true; this.phase=(this.out.type==='noslip')?'noslip':'slide'; }
+    else this.playing=!this.playing;
+    this.els.play.textContent=this.playing?'暂停':'播放';
+    this.render();
+  }
+  replay(){ this.reset(); this.toggle(); this.render(); }
+  clearPoints(){ this.points=[]; drawChart(this); }
+  setRevealed(on){ this.revealed=on; drawChart(this); }
+  tick(dt){
+    if (!this.playing) return;
+    const o=this.out;
+    if (this.phase==='slide'||this.phase==='coast'||this.phase==='noslip'){
+      if (this.phase==='slide'){
+        const a=AM*Math.sign(o.u-this.v);
+        const dtCs=(o.u-this.v)/a;
+        if (dtCs>=0 && dtCs<=dt){
+          this.x+=this.v*dtCs+0.5*a*dtCs*dtCs; this.v=o.u; this.cosX=this.x;
+          this.beltDist+=o.u*dtCs; dt-=dtCs; this.phase='coast';
+        }
+      }
+      if (this.phase!=='idle'){
+        const a=(this.phase==='slide')?AM*Math.sign(o.u-this.v):0;
+        let dtC;
+        if (a===0) dtC=(L-this.x)/this.v;
+        else { const disc=this.v*this.v+2*a*(L-this.x); dtC=disc>0?(-this.v+Math.sqrt(disc))/a:Infinity; }
+        if (dtC<=dt){
+          if (a!==0) this.v=Math.sqrt(Math.max(this.v*this.v+2*a*(L-this.x),0));
+          this.x=L; this.beltDist+=o.u*dtC;
+          /* C 点因果交接：接触与摩擦同时结束，同一速度原样成为平抛水平初速度 */
+          this.vC=this.v; this.px=0; this.py=0; this.vy=0;
+          this.trail=[[0,0]]; this.phase='flight';
+        } else {
+          this.x+=this.v*dt+0.5*a*dt*dt; this.v+=a*dt; this.beltDist+=o.u*dt;
+        }
+      }
+    } else if (this.phase==='flight'){
+      this.px+=this.vC*dt; this.vy+=G*dt; this.py+=this.vy*dt-0.5*G*dt*dt;
+      if (this.py>=HFALL){
+        this.py=HFALL; this.px=this.vC*TFALL; this.vy=G*TFALL;
+        this.playing=false; this.els.play.textContent='播放'; this.phase='landed';
+        const S=TFALL*this.vC;
+        this.points.push({om:this.omega, S:Math.round(S*100)/100});
+        drawChart(this);
+      } else {
+        const last=this.trail[this.trail.length-1];
+        if (!last || Math.hypot(this.px-last[0],this.py-last[1])>0.12)
+          this.trail.push([this.px,this.py]);
+      }
+    }
+    this.setStatus(this.liveText());
+    this.render();
+  }
+  render(){
+    const {ctx,w,h}=this.cv; if(!w) return;
+    ctx.clearRect(0,0,w,h);
+    const g=makeGeo(w,h,true), o=this.out;
+    drawBC(ctx,g,o.u,this.beltDist,{rScale:0.2,ticks:false});
+    // 车厢：左壁、底板、车轮（底板比 C 低 0.45 m）
+    const floorY=g.Y(HFALL), wallX=g.X(L+0.35);
+    ctx.strokeStyle='#4a5560'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(wallX,floorY-0.35*g.s); ctx.lineTo(wallX,floorY);
+    ctx.lineTo(w-14,floorY); ctx.stroke();
+    ctx.fillStyle='#4a5560';
+    [g.X(L+2.2), g.X(L+3.6)].forEach(wx=>{
+      ctx.beginPath(); ctx.arc(wx,floorY+7,7,0,7); ctx.fill();
+    });
+    ctx.font='12px sans-serif'; ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillStyle='#5b6a7a';
+    ctx.fillText('车厢底板', w-16, floorY+18);
+    // C 点竖直参考线与 0.45 m 高度标注
+    ctx.strokeStyle='rgba(90,110,130,.55)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(g.X(L),g.yTop-6); ctx.lineTo(g.X(L),floorY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#5b6a7a'; ctx.font='11px sans-serif';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText('0.45 m', g.X(L)-14, (g.yTop+floorY)/2);
+    // 已积累落点
+    this.points.forEach(p=>{
+      const lx=g.X(L+p.S);
+      ctx.fillStyle='#b5482e';
+      ctx.beginPath(); ctx.moveTo(lx,floorY-4); ctx.lineTo(lx-5,floorY-13); ctx.lineTo(lx+5,floorY-13); ctx.closePath(); ctx.fill();
+      ctx.font='11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText(fmtS(p.S), lx, floorY+16);
+    });
+    if (this.phase==='flight'||this.phase==='landed'){
+      // 平抛轨迹
+      ctx.strokeStyle='rgba(31,111,214,.7)'; ctx.lineWidth=2;
+      ctx.beginPath();
+      this.trail.concat([[this.px,this.py]]).forEach((p,i)=>{
+        const X=g.X(L+p[0]), Y=g.Y(p[1]); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      });
+      ctx.stroke();
+      const bx=g.X(L+this.px), by=g.Y(this.py);
+      block(ctx,bx,by,0.36*g.s,0.27*g.s,'#c98a4b');
+      // 同一速度箭头连续成为水平初速度（长度与标注限制在画面内）
+      const ay=by-0.27*g.s-8, hl=Math.min(Math.abs(this.vC)*8, w-20-bx);
+      arrow(ctx,bx,ay,bx+Math.sign(this.vC)*hl,ay,'#b5482e');
+      richLabel(ctx,Math.min(bx+Math.sign(this.vC)*hl/2, w-70),ay-6,
+        [['v',false],['x',true],[' = v',false],['C',true],[` = ${fmt(this.vC)} m/s`,false]],'#b5482e');
+      // 竖直速度从零按重力增大（只在空中显示，不穿透底板）
+      if (this.phase==='flight'){
+        const vl=Math.min(Math.abs(this.vy)*8, floorY-2-(by-6));
+        if (vl>4){
+          arrow(ctx,bx+16,by-6,bx+16,by-6+vl,'#1f6fd6');
+          richLabel(ctx,bx+22,by-6+vl/2,
+            [['v',false],['y',true],[` = ${fmt(this.vy)} m/s`,false]],'#1f6fd6','left');
+        }
+      }
+      if (this.phase==='landed'){
+        const S=TFALL*this.vC;
+        ctx.strokeStyle='#b5482e'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(g.X(L),floorY+30); ctx.lineTo(g.X(L+S),floorY+30); ctx.stroke();
+        [g.X(L),g.X(L+S)].forEach(X=>{
+          ctx.beginPath(); ctx.moveTo(X,floorY+25); ctx.lineTo(X,floorY+35); ctx.stroke();
+        });
+        ctx.fillStyle='#b5482e'; ctx.font='bold 14px sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='top';
+        ctx.fillText(`S = ${fmtS(S)} m`, g.X(L+S/2), floorY+38);
+      }
+    } else {
+      const cx=g.X(this.x), cy=g.yTop;
+      block(ctx,cx,cy,0.72*g.s,0.52*g.s,'#c98a4b');
+      const len=Math.abs(this.v)*8, dir=Math.sign(this.v)||1;
+      arrow(ctx,cx,cy-0.62*g.s,cx+dir*len,cy-0.62*g.s,'#b5482e');
+      richLabel(ctx,cx+dir*len/2,cy-0.62*g.s-6,[['v',false],[` = ${fmt(this.v)} m/s`,false]],'#b5482e');
+      // 相对滑动消失的位置：紧凑标记在皮带环内
+      if (this.cosX!==null && this.cosX>0.01 && this.cosX<L-0.01){
+        const mx=g.X(this.cosX);
+        ctx.fillStyle='#7a3ea8';
+        ctx.beginPath(); ctx.moveTo(mx,cy+2);
+        ctx.lineTo(mx-5,cy+9); ctx.lineTo(mx+5,cy+9);
+        ctx.closePath(); ctx.fill();
+        ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+        ctx.fillText('共速', mx, cy+0.36*g.s);
+      }
+    }
+  }
+}
+
+/* ================= 共用：BC 传送带侧视 ================= */
+function drawBC(ctx,g,u,beltDist,opt={}){
+  const s=g.s, Bx=g.Bx, yTop=g.yTop;
+  const r=(opt.rScale??0.5)*s;             // 皮带轮半径（单元2 用真实 0.2 m 比例）
+  const xL=Bx, xR=g.X(L), yC=yTop+r;
+  // BC 距离刻度（皮带下方，可关闭）
+  if (opt.ticks!==false){
+    ctx.fillStyle='#8a97a5'; ctx.font='11px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    for(let xm=0; xm<=8; xm+=2){
+      const X=g.X(xm);
+      ctx.strokeStyle='#c3ccd6'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(X,yC+r+8); ctx.lineTo(X,yC+r+14); ctx.stroke();
+      ctx.fillText(String(xm), X, yC+r+17);
+    }
+    ctx.textAlign='left';
+    ctx.fillText('x / m', g.X(8)+14, yC+r+17);
+  }
+  // B、C 标注
+  ctx.fillStyle='#1d2733'; ctx.font='bold 14px sans-serif'; ctx.textBaseline='alphabetic';
+  ctx.textAlign='right'; ctx.fillText('B', xL-8, yTop-8);
+  ctx.textAlign='center'; ctx.fillText('C', xR, yTop-10);
+  // 皮带环与皮带轮
+  ctx.strokeStyle='#3a4550'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(xL,yTop); ctx.lineTo(xR,yTop); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(xL,yTop+2*r); ctx.lineTo(xR,yTop+2*r); ctx.stroke();
+  [xL,xR].forEach(X=>{
+    ctx.fillStyle='#e8edf2'; ctx.strokeStyle='#3a4550'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(X,yC,r,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#3a4550';
+    ctx.beginPath(); ctx.arc(X,yC,3,0,7); ctx.fill();
+    if (Math.abs(u)>1e-9){
+      const ang=(beltDist/0.2)%(Math.PI*2);   // 不打滑：皮带走过距离 / R
+      ctx.strokeStyle='#3a4550'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(X,yC);
+      ctx.lineTo(X+(r-4)*Math.cos(ang), yC+(r-4)*Math.sin(ang)); ctx.stroke();
+    }
+  });
+  // 上侧皮带运动标记（随皮带速度移动，方向可辨）
+  if (Math.abs(u)>1e-9){
+    const spacing=0.8, off=((beltDist%spacing)+spacing)%spacing;
+    ctx.fillStyle='#5b6a7a';
+    for(let xm=off; xm<L; xm+=spacing){
+      const X=g.X(xm);
+      ctx.beginPath(); ctx.moveTo(X,yTop); ctx.lineTo(X,yTop-5); ctx.lineTo(X+4,yTop); ctx.closePath(); ctx.fill();
+    }
+    const len=Math.min(Math.abs(u)*8,120), dir=Math.sign(u);
+    const ax=xL+Math.min(2.2*s,(xR-xL)/2-len-8);
+    arrow(ctx, dir>0?ax:ax+len, yTop-22, dir>0?ax+len:ax, yTop-22, '#1f6fd6', `皮带 u = ${fmt(u)} m/s`, 2.5);
+  } else {
+    ctx.fillStyle='#5b6a7a'; ctx.font='13px sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='bottom';
+    ctx.fillText('皮带静止（u = 0）', g.X(0.9), yTop-16);
+  }
+  // 正方向标注放在右下角，不与模型标注争抢位置
+  ctx.textAlign='right'; ctx.textBaseline='bottom';
+  ctx.fillStyle='#5b6a7a'; ctx.font='12px sans-serif';
+  ctx.fillText('向右为正', g.W-14, g.H-10);
+}
+
+/* ================= S–ω 图（SVG；完整分段图像初始隐藏） ================= */
+const CH = {x0:46, y0:14, x1:392, y1:212, omMin:-20, omMax:100, sMax:5};
+function chX(om){ return CH.x0+(om-CH.omMin)/(CH.omMax-CH.omMin)*(CH.x1-CH.x0); }
+function chY(S){ return CH.y1 - S/CH.sMax*(CH.y1-CH.y0); }
+function drawChart(sim){
+  const svg=document.getElementById('chart');
+  const NS='http://www.w3.org/2000/svg';
+  svg.innerHTML='';
+  const el=(n,at)=>{const e=document.createElementNS(NS,n);for(const k in at)e.setAttribute(k,at[k]);svg.appendChild(e);return e;};
+  for(let om=-20; om<=100; om+=20){
+    const X=chX(om);
+    el('line',{x1:X,y1:CH.y0,x2:X,y2:CH.y1,stroke:'#e2e8ef','stroke-width':1});
+    const t=el('text',{x:X,y:CH.y1+14,'text-anchor':'middle','font-size':10,fill:'#5b6a7a'});
+    t.textContent=String(om);
+  }
+  for(let S=0; S<=5; S+=1){
+    const Y=chY(S);
+    el('line',{x1:CH.x0,y1:Y,x2:CH.x1,y2:Y,stroke:'#e2e8ef','stroke-width':1});
+    const t=el('text',{x:CH.x0-6,y:Y+3,'text-anchor':'end','font-size':10,fill:'#5b6a7a'});
+    t.textContent=String(S);
+  }
+  el('line',{x1:CH.x0,y1:chY(0),x2:CH.x1,y2:chY(0),stroke:'#3a4550','stroke-width':1.5});
+  el('line',{x1:chX(0),y1:CH.y0,x2:chX(0),y2:CH.y1,stroke:'#3a4550','stroke-width':1.5});
+  const ta=el('text',{x:CH.x1,y:CH.y1+26,'text-anchor':'end','font-size':11,fill:'#3a4550'});
+  ta.textContent='ω / (rad/s)';
+  const tb=el('text',{x:CH.x0-34,y:CH.y0+4,'font-size':11,fill:'#3a4550'});
+  tb.textContent='S/m';
+  // 完整分段图像：仅在老师揭示后显示
+  if (sim.revealed){
+    const d=[[-20,0.6],[10,0.6],[70,4.2],[100,4.2]]
+      .map((p,i)=>(i?'L':'M')+chX(p[0]).toFixed(1)+' '+chY(p[1]).toFixed(1)).join(' ');
+    el('path',{d,fill:'none',stroke:'#1f6fd6','stroke-width':2.5});
+    [[10,0.6],[70,4.2]].forEach(p=>el('circle',{cx:chX(p[0]),cy:chY(p[1]),r:3.5,fill:'#1f6fd6'}));
+    const t1=el('text',{x:chX(10),y:chY(0.6)-8,'text-anchor':'middle','font-size':10,fill:'#1f6fd6'});
+    t1.textContent='(10, 0.60)';
+    const t2=el('text',{x:chX(70),y:chY(4.2)-8,'text-anchor':'middle','font-size':10,fill:'#1f6fd6'});
+    t2.textContent='(70, 4.20)';
+  }
+  // 真实积累落点
+  sim.points.forEach(p=>{
+    el('circle',{cx:chX(p.om),cy:chY(p.S),r:4.5,fill:'#b5482e','fill-opacity':0.85,stroke:'#fff','stroke-width':1});
+  });
+  document.getElementById('ptcount').textContent = sim.points.length+' 个点';
+}
+
+/* ================= 装配 ================= */
+const $=id=>document.getElementById(id);
+const sim1=new Sim1($('cv1'),{play:$('u1play'),status:$('u1status')});
+const sim2=new Sim2($('cv2'),{play:$('u2play'),status:$('u2status')});
+const sims=[sim1,sim2];
+
+function bindOmega(input, sim, quickIds){
+  const valid=()=>{ const v=parseFloat(input.value); return Number.isFinite(v)?v:null; };
+  // 输入过程中：每个合法可见值立即同步到物理状态；无效值不动状态
+  input.addEventListener('input',()=>{ const v=valid(); if(v!==null) sim.setOmega(v); });
+  // 提交点（失焦/change）：无效或非法值回退显示为当前物理状态，保证显示与场景一致
+  input.addEventListener('change',()=>{ const v=valid();
+    if(v!==null) sim.setOmega(v); else input.value=String(sim.omega); });
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ const v=valid();
+    if(v!==null) sim.setOmega(v); else input.value=String(sim.omega); input.blur(); }});
+  quickIds.forEach(([id,val])=>$(id).addEventListener('click',()=>{
+    input.value=String(val); sim.setOmega(val);
+  }));
+  // 播放/重放前强制同步当前可见值；值未变化时不重置正在进行的过程
+  sim.commitOmega=()=>{ const v=valid();
+    if(v===null){ input.value=String(sim.omega); return; }
+    if(v!==sim.omega) sim.setOmega(v); };
+}
+bindOmega($('om1'),sim1,[['u1q0',0],['u1q20',20]]);
+bindOmega($('om2'),sim2,[['u2q0',0],['u2q20',20]]);
+
+$('u1play').addEventListener('click',()=>{ sim1.commitOmega(); sim1.toggle(); });
+$('u1replay').addEventListener('click',()=>{ sim1.commitOmega(); sim1.replay(); });
+$('u2play').addEventListener('click',()=>{ sim2.commitOmega(); sim2.toggle(); });
+$('u2replay').addEventListener('click',()=>{ sim2.commitOmega(); sim2.replay(); });
+$('u2clear').addEventListener('click',()=>sim2.clearPoints());
+
+$('u1reveal').addEventListener('click',()=>{
+  const body=$('u1revealBody');
+  body.classList.toggle('show');
+  $('u1reveal').textContent=body.classList.contains('show')
+    ?'收起：速度变化范围与边界':'老师揭示：速度变化范围与边界';
+});
+$('u2reveal').addEventListener('click',()=>{
+  const body=$('u2revealBody');
+  body.classList.toggle('show');
+  sim2.setRevealed(body.classList.contains('show'));
+  $('u2reveal').textContent=body.classList.contains('show')?'收起：本题答案':'老师揭示：本题答案';
+});
+
+/* 单元切换 */
+$('tab1').addEventListener('click',()=>{
+  $('tab1').classList.add('active'); $('tab2').classList.remove('active');
+  $('unit1').classList.add('active'); $('unit2').classList.remove('active');
+  sim1.render();
+});
+$('tab2').addEventListener('click',()=>{
+  $('tab2').classList.add('active'); $('tab1').classList.remove('active');
+  $('unit2').classList.add('active'); $('unit1').classList.remove('active');
+  sim2.render();
+});
+
+/* 原题弹层：只叠加显示，不触碰任何仿真状态 */
+$('openOrig').addEventListener('click',()=>$('origOverlay').classList.add('open'));
+$('closeOrig').addEventListener('click',()=>$('origOverlay').classList.remove('open'));
+$('origOverlay').addEventListener('click',e=>{
+  if(e.target===$('origOverlay')) $('origOverlay').classList.remove('open');
+});
+
+/* 页面加载后不自动播放，主循环仅待命 */
+startLoop();
+</script>
+</body>
+</html>
