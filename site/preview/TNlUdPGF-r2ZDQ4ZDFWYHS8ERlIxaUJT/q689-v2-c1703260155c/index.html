@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>斜面滑块与弹簧：接触与压缩</title>
+<style>
+:root { --ink:#1f2329; --sub:#5b6470; --line:#e2e4e9; --blue:#1d4ed8; }
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body { margin:0; display:flex; flex-direction:column; overflow:hidden;
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+  color:var(--ink); background:#f3f4f6; }
+header { display:flex; align-items:center; gap:14px; padding:9px 18px;
+  background:#fff; border-bottom:1px solid var(--line); flex:0 0 auto; }
+h1 { font-size:17px; margin:0; white-space:nowrap; }
+nav.tabs { display:flex; gap:8px; }
+.tab { font-size:15px; padding:8px 14px; min-height:40px; border-radius:8px;
+  border:1px solid #cdd1d8; background:#fff; cursor:pointer; color:var(--ink); }
+.tab.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+#btnProblem { margin-left:auto; font-size:15px; padding:8px 16px; min-height:40px;
+  border-radius:8px; border:1px solid #d9b95c; background:#fff8e6; cursor:pointer; color:var(--ink); }
+main { flex:1 1 auto; display:flex; gap:14px; padding:12px 18px; min-height:0; }
+.pane { background:#fff; border:1px solid var(--line); border-radius:10px;
+  padding:8px 12px; display:flex; flex-direction:column; min-height:0; min-width:0; }
+#modelPane { flex:0 0 500px; }
+#graphPane { flex:1 1 auto; }
+.pane h2 { font-size:14px; margin:2px 0 6px; color:var(--sub); font-weight:600; }
+svg { display:block; width:100%; height:auto; }
+.legend { font-size:13.5px; color:var(--sub); margin-top:6px; display:flex;
+  gap:18px; align-items:center; flex-wrap:wrap; }
+.sw { display:inline-block; width:22px; height:4px; border-radius:2px;
+  vertical-align:middle; margin-right:5px; }
+.callout { font-size:15px; min-height:26px; margin-top:2px; }
+.explain { font-size:13.5px; color:var(--sub); line-height:1.5; margin-top:auto;
+  padding-top:5px; border-top:1px dashed var(--line); }
+footer { flex:0 0 auto; background:#fff; border-top:1px solid var(--line);
+  padding:10px 18px 12px; }
+.controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.ctl { font-size:15px; min-height:42px; padding:8px 18px; border-radius:8px;
+  border:1px solid #cdd1d8; background:#fff; cursor:pointer; color:var(--ink); }
+.ctl.primary { background:var(--blue); color:#fff; border-color:var(--blue); }
+.ctl:disabled { opacity:.45; cursor:default; }
+.revealRow { margin-top:8px; font-size:15px; line-height:1.6; min-height:25px; }
+.hidden { display:none !important; }
+math { font-size:1.08em; }
+#sliderWrap { display:flex; align-items:center; gap:10px; flex:1 1 auto; max-width:560px; }
+#cmpSlider { flex:1 1 auto; height:36px; }
+.endLabel { font-size:13px; color:var(--sub); white-space:nowrap; }
+#problemModal { position:fixed; inset:0; background:rgba(15,18,25,.55);
+  display:flex; align-items:center; justify-content:center; z-index:50; }
+.modalBox { background:#fff; border-radius:10px; max-width:min(880px,92vw);
+  max-height:84vh; display:flex; flex-direction:column; overflow:hidden; }
+.modalBar { display:flex; align-items:center; padding:8px 14px;
+  border-bottom:1px solid var(--line); font-size:15px; }
+.modalBar button { margin-left:auto; font-size:15px; min-height:38px; padding:6px 14px;
+  border-radius:8px; border:1px solid #cdd1d8; background:#fff; cursor:pointer; }
+.modalImg { overflow:auto; padding:10px 14px; }
+.modalImg img { width:100%; height:auto; display:block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>斜面滑块与弹簧</h1>
+  <nav class="tabs" aria-label="教学单元">
+    <button class="tab active" data-unit="u1">接触怎样交接</button>
+    <button class="tab" data-unit="u2">压缩怎样改变斜率</button>
+    <button class="tab" data-unit="u3">最大速度时的弹力功</button>
+  </nav>
+  <button id="btnProblem">完整原题</button>
+</header>
+<main>
+  <section class="pane" id="modelPane">
+    <h2>斜面模型</h2>
+    <svg id="modelSvg" viewBox="0 0 520 400" role="img" aria-label="斜面、弹簧与滑块模型"></svg>
+    <div class="legend" id="modelLegend"></div>
+  </section>
+  <section class="pane" id="graphPane">
+    <h2 id="graphTitle">速度–时间图</h2>
+    <svg id="graphSvg" viewBox="0 0 620 430" role="img" aria-label="图像"></svg>
+    <div class="callout" id="graphCallout"></div>
+    <div class="explain" id="graphExplain"></div>
+  </section>
+</main>
+<footer>
+  <div class="controls" id="ctl-u1">
+    <button class="ctl primary" id="u1Play">播放</button>
+    <button class="ctl" id="u1Replay">重放</button>
+    <button class="ctl" id="u1RevJ">揭示判断</button>
+    <button class="ctl" id="u1RevR" disabled>揭示第（1）问结果</button>
+  </div>
+  <div class="controls hidden" id="ctl-u2">
+    <button class="ctl primary" id="u2Play">播放</button>
+    <button class="ctl" id="u2Replay">重放</button>
+    <button class="ctl" id="u2GoT2" disabled>定位：受力平衡</button>
+    <button class="ctl" id="u2GoT3" disabled>定位：速度为零</button>
+    <button class="ctl" id="u2Rev">揭示图像判断</button>
+  </div>
+  <div class="controls hidden" id="ctl-u3">
+    <span class="endLabel">压缩量</span>
+    <span class="endLabel">0（自然长）</span>
+    <div id="sliderWrap"><input type="range" id="cmpSlider" min="0" max="1000" value="0" step="1" aria-label="压缩量"></div>
+    <span class="endLabel">受力平衡</span>
+    <button class="ctl" id="u3Rev">揭示弹力做的功</button>
+  </div>
+  <div class="revealRow" id="revealRow"></div>
+</footer>
+<div id="problemModal" class="hidden" role="dialog" aria-label="完整原题">
+  <div class="modalBox">
+    <div class="modalBar">完整原题（第 32 题）<button id="btnCloseModal">关闭</button></div>
+    <div class="modalImg"><img src="assets/689.PNG" alt="原题图片"></div>
+  </div>
+</div>
+<script>
+'use strict';
+/* 归一化代表状态：取 g sinθ = 1、k/m = 1、接触时速度 v1 = √2。
+   只保持题目要求的物理关系，所有画面均为示意，不对应题目给定数值。 */
+const V1 = Math.SQRT2;                 // 接触瞬间速度
+const A0 = 1;                          // 接触前加速度 g sinθ
+const XE = 1;                          // 受力平衡压缩量 x_e
+const T2 = Math.atan(1 / V1);          // 受力平衡（速度最大）时刻，从接触起算
+const T3 = Math.PI - Math.atan(V1);    // 第一次速度为零时刻
+const VM = Math.sqrt(V1 * V1 + 1);     // 最大速度
+const T1A = -0.9, T1B = 0.45;          // 第一单元播放时间段（接触前一小段到接触后一小段）
+const RATE = 0.4;                      // 播放速率（示意比例，不显示读数）
+
+function physV(t){ return t < 0 ? V1 + A0 * t : V1 * Math.cos(t) + Math.sin(t); }
+function physX(t){ return t < 0 ? 0 : 1 - Math.cos(t) + V1 * Math.sin(t); }   // 弹簧压缩量
+function physA(t){ return t < 0 ? A0 : Math.cos(t) - V1 * Math.sin(t); }      // 沿斜面加速度（合力/m）
+function physP(t){ return t < 0 ? -(V1 * t + 0.5 * A0 * t * t) : -physX(t); } // 相对弹簧自然顶端位置，沿斜面向上为正
+
+/* 模型几何（SVG 逻辑坐标） */
+const SCALE = 46;
+const ANG = 28 * Math.PI / 180;
+const UX = Math.cos(ANG), UY = -Math.sin(ANG);   // 沿斜面向上单位矢量
+const NX = UY, NY = -UX;                          // 斜面法向（指向外侧，左上）
+const AX = 70, AY = 340;                          // 斜面底端
+const T0X = AX + 235 * UX, T0Y = AY + 235 * UY;   // 弹簧自然顶端
+const S0X = T0X - 150 * UX, S0Y = T0Y - 150 * UY; // 弹簧固定端（挡板处）
+
+const state = {
+  unit: 'u1',
+  u1: { t: T1A, playing: false, revJ: false, revR: false },
+  u2: { t: 0, playing: false, maxT: 0, rev: false },
+  u3: { x: 0, rev: false },
+  modalWasPlaying: false
+};
+
+const $ = id => document.getElementById(id);
+const modelSvg = $('modelSvg'), graphSvg = $('graphSvg');
+
+/* ---------- 数学公式（MathML） ---------- */
+const M_SIN = '<mi mathvariant="normal">sin</mi>';
+const MLNS = 'xmlns="http://www.w3.org/1998/Math/MathML"';
+const ML_T1 = '<math ' + MLNS + '><msub><mi>t</mi><mn>1</mn></msub><mo>=</mo><msqrt><mfrac><mrow><mn>2</mn><msub><mi>s</mi><mn>0</mn></msub></mrow><mrow><mi>g</mi>' + M_SIN + '<mi>θ</mi></mrow></mfrac></msqrt></math>';
+const ML_W  = '<math ' + MLNS + '><mi>W</mi><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>k</mi><msubsup><mi>x</mi><mi>e</mi><mn>2</mn></msubsup><mo>=</mo><mo>−</mo><mfrac><mrow><msup><mi>m</mi><mn>2</mn></msup><msup><mi>g</mi><mn>2</mn></msup><msup><mi mathvariant="normal">sin</mi><mn>2</mn></msup><mi>θ</mi></mrow><mrow><mn>2</mn><mi>k</mi></mrow></mfrac></math>';
+const ML_KEQ = '<math ' + MLNS + '><mi>k</mi><msub><mi>x</mi><mi>e</mi></msub><mo>=</mo><mi>m</mi><mi>g</mi>' + M_SIN + '<mi>θ</mi></math>';
+const ML_XE  = '<math ' + MLNS + '><msub><mi>x</mi><mi>e</mi></msub><mo>=</mo><mfrac><mrow><mi>m</mi><mi>g</mi>' + M_SIN + '<mi>θ</mi></mrow><mi>k</mi></mfrac></math>';
+const ML_MGSIN = '<math ' + MLNS + '><mi>m</mi><mi>g</mi>' + M_SIN + '<mi>θ</mi></math>';
+
+/* ---------- 斜面模型 ---------- */
+function f1(v){ return v.toFixed(1); }
+
+function arrowStr(x1, y1, x2, y2, color){
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+  if (L < 2.5) return '';
+  const ux = dx / L, uy = dy / L, px = -uy, py = ux;
+  const hl = Math.min(10, L * 0.45), hw = 4.6;
+  const bx = x2 - ux * hl, by = y2 - uy * hl;
+  return '<line x1="' + f1(x1) + '" y1="' + f1(y1) + '" x2="' + f1(bx) + '" y2="' + f1(by) +
+    '" stroke="' + color + '" stroke-width="3.2" stroke-linecap="round"/>' +
+    '<polygon points="' + f1(x2) + ',' + f1(y2) + ' ' + f1(bx + px * hw) + ',' + f1(by + py * hw) +
+    ' ' + f1(bx - px * hw) + ',' + f1(by - py * hw) + '" fill="' + color + '"/>';
+}
+
+function springStr(){
+  const Cx = T0X + curP * SCALE * UX, Cy = T0Y + curP * SCALE * UY;
+  const dx = Cx - S0X, dy = Cy - S0Y;
+  const L = Math.hypot(dx, dy);
+  const ux = dx / L, uy = dy / L, px = -uy, py = ux;
+  const lead = Math.min(7, L * 0.15);
+  const coils = L > 70 ? 6 : 4;
+  const n = coils * 2;
+  const seg = Math.max(1, (L - 2 * lead) / n);
+  const amp = Math.min(9, L * 0.16 + 3);
+  let pts = f1(S0X) + ',' + f1(S0Y) + ' ' + f1(S0X + ux * lead) + ',' + f1(S0Y + uy * lead);
+  for (let i = 1; i <= n; i++){
+    const d = lead + seg * i;
+    const a = (i === n) ? 0 : (i % 2 === 1 ? 1 : -1) * amp;
+    pts += ' ' + f1(S0X + ux * d + px * a) + ',' + f1(S0Y + uy * d + py * a);
+  }
+  pts += ' ' + f1(Cx) + ',' + f1(Cy);
+  return '<polyline points="' + pts + '" fill="none" stroke="#374151" stroke-width="2.4" stroke-linejoin="round"/>';
+}
+
+let curP = 0; // 当前滑块位置（供 springStr 使用）
+
+function drawModel(){
+  let p;
+  if (state.unit === 'u3') p = -state.u3.x;
+  else p = physP(state.unit === 'u1' ? state.u1.t : state.u2.t);
+  curP = p;
+  const Cx = T0X + p * SCALE * UX, Cy = T0Y + p * SCALE * UY;
+  const s = [];
+  // 地面与斜面
+  s.push('<polygon points="70,340 490,116.7 490,340" fill="#eef1f5" stroke="#9aa3ad" stroke-width="1.5"/>');
+  s.push('<line x1="30" y1="340" x2="505" y2="340" stroke="#9aa3ad" stroke-width="1.5"/>');
+  // 倾角标记
+  s.push('<path d="M 118 340 A 48 48 0 0 0 112.4 317.5" fill="none" stroke="#9aa3ad" stroke-width="1.2"/>');
+  s.push('<text x="127" y="334" font-size="15" font-style="italic" fill="#5b6470">θ</text>');
+  // 固定挡板
+  s.push('<g transform="translate(' + f1(S0X) + ' ' + f1(S0Y) + ') rotate(-28)">' +
+    '<rect x="-11" y="-34" width="11" height="34" fill="#8a919b" stroke="#6b7280" stroke-width="1"/></g>');
+  // 弹簧
+  s.push(springStr());
+  // 滑块
+  s.push('<g transform="translate(' + f1(Cx) + ' ' + f1(Cy) + ') rotate(-28)">' +
+    '<rect x="-22" y="-28" width="44" height="28" rx="2" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/></g>');
+  // 力箭头
+  const b1x = Cx + 4 * NX, b1y = Cy + 4 * NY;      // 滑块底面（弹簧一侧）
+  const b2x = Cx + 34 * NX, b2y = Cy + 34 * NY;    // 滑块顶面
+  if (state.unit === 'u3'){
+    const x = state.u3.x;
+    if (x > 0.001) s.push(arrowStr(b1x, b1y, b1x + 26 * x * UX, b1y + 26 * x * UY, '#d63626'));
+    s.push(arrowStr(b2x, b2y, b2x - 26 * UX, b2y - 26 * UY, '#2563eb'));
+    if (x >= 0.999)
+      s.push('<text x="' + f1(b2x + 46 * UX) + '" y="' + f1(b2y + 46 * UY - 6) + '" font-size="13.5" fill="#b45309">受力平衡</text>');
+  } else {
+    const t = state.unit === 'u1' ? state.u1.t : state.u2.t;
+    const x = physX(t), fnet = A0 - x;
+    if (x > 0.001) s.push(arrowStr(b1x, b1y, b1x + 26 * x * UX, b1y + 26 * x * UY, '#d63626'));
+    if (Math.abs(fnet) > 0.02){
+      const ex = fnet > 0 ? b2x - 26 * fnet * UX : b2x + 26 * (-fnet) * UX;
+      const ey = fnet > 0 ? b2y - 26 * fnet * UY : b2y + 26 * (-fnet) * UY;
+      s.push(arrowStr(b2x, b2y, ex, ey, '#1a7f37'));
+    }
+  }
+  modelSvg.innerHTML = s.join('');
+}
+
+/* ---------- 图像 ---------- */
+const ML = 64, MR = 26, MT = 26, MB = 54;
+const PW = 620 - ML - MR, PH = 430 - MT - MB;
+
+function drawGraphVT(){
+  const isU1 = state.unit === 'u1';
+  const tCur = isU1 ? state.u1.t : state.u2.t;
+  const tMin = isU1 ? -1.02 : 0, tMax = isU1 ? 0.58 : 2.32;
+  const vMax = isU1 ? 1.9 : 2.0;
+  const tx = t => ML + (t - tMin) / (tMax - tMin) * PW;
+  const ty = v => MT + (vMax - v) / vMax * PH;
+  const s = [];
+  // 坐标轴
+  s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + (ML + PW + 8) + '" y2="' + ty(0) + '" stroke="#374151" stroke-width="1.6"/>');
+  s.push('<polygon points="' + (ML + PW + 14) + ',' + ty(0) + ' ' + (ML + PW + 4) + ',' + (ty(0) - 4) + ' ' + (ML + PW + 4) + ',' + (ty(0) + 4) + '" fill="#374151"/>');
+  s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + ML + '" y2="' + (MT - 8) + '" stroke="#374151" stroke-width="1.6"/>');
+  s.push('<polygon points="' + ML + ',' + (MT - 14) + ' ' + (ML - 4) + ',' + (MT - 4) + ' ' + (ML + 4) + ',' + (MT - 4) + '" fill="#374151"/>');
+  s.push('<text x="' + (ML - 12) + '" y="' + (MT - 2) + '" font-size="16" font-style="italic" text-anchor="end" fill="#374151">v</text>');
+  s.push('<text x="' + (ML + PW + 16) + '" y="' + (ty(0) + 5) + '" font-size="16" font-style="italic" fill="#374151">t</text>');
+
+  const guide = '#8a919b';
+  if (isU1){
+    // 接触时刻 t1 轴刻度始终标出；到达接触后给出虚线参照
+    s.push('<text x="' + tx(0) + '" y="' + (ty(0) + 22) + '" font-size="15" font-style="italic" text-anchor="middle" fill="#374151">t<tspan dy="3" font-size="11">1</tspan></text>');
+    if (tCur >= 0){
+      s.push('<line x1="' + tx(0) + '" y1="' + ty(0) + '" x2="' + tx(0) + '" y2="' + ty(V1) + '" stroke="' + guide + '" stroke-width="1.2" stroke-dasharray="5 4"/>');
+      s.push('<line x1="' + ML + '" y1="' + ty(V1) + '" x2="' + tx(0) + '" y2="' + ty(V1) + '" stroke="' + guide + '" stroke-width="1.2" stroke-dasharray="5 4"/>');
+      s.push('<text x="' + (ML - 10) + '" y="' + (ty(V1) + 5) + '" font-size="15" font-style="italic" text-anchor="end" fill="#374151">v<tspan dy="3" font-size="11">1</tspan></text>');
+    }
+  } else {
+    // 起点即接触时刻 t1、速度 v1
+    s.push('<text x="' + ML + '" y="' + (ty(0) + 22) + '" font-size="15" font-style="italic" text-anchor="middle" fill="#374151">t<tspan dy="3" font-size="11">1</tspan></text>');
+    s.push('<text x="' + (ML - 10) + '" y="' + (ty(0) + 20) + '" font-size="14" text-anchor="end" fill="#374151">O</text>');
+    s.push('<text x="' + (ML - 10) + '" y="' + (ty(V1) + 5) + '" font-size="15" font-style="italic" text-anchor="end" fill="#374151">v<tspan dy="3" font-size="11">1</tspan></text>');
+    // 事件标记随过程出现
+    if (state.u2.maxT >= T2 - 1e-6){
+      s.push('<line x1="' + tx(T2) + '" y1="' + ty(0) + '" x2="' + tx(T2) + '" y2="' + ty(VM) + '" stroke="' + guide + '" stroke-width="1.2" stroke-dasharray="5 4"/>');
+      s.push('<line x1="' + ML + '" y1="' + ty(VM) + '" x2="' + tx(T2) + '" y2="' + ty(VM) + '" stroke="' + guide + '" stroke-width="1.2" stroke-dasharray="5 4"/>');
+      s.push('<text x="' + tx(T2) + '" y="' + (ty(0) + 22) + '" font-size="15" font-style="italic" text-anchor="middle" fill="#374151">t<tspan dy="3" font-size="11">2</tspan></text>');
+      s.push('<text x="' + (ML - 10) + '" y="' + (ty(VM) + 5) + '" font-size="15" font-style="italic" text-anchor="end" fill="#374151">v<tspan dy="3" font-size="11">m</tspan></text>');
+      s.push('<text x="' + (tx(T2) + 8) + '" y="' + (ty(VM) - 10) + '" font-size="13.5" fill="#b45309">受力平衡，速度最大</text>');
+    }
+    if (state.u2.maxT >= T3 - 1e-6){
+      s.push('<line x1="' + tx(T3) + '" y1="' + ty(0) + '" x2="' + tx(T3) + '" y2="' + ty(0.18) + '" stroke="' + guide + '" stroke-width="1.2" stroke-dasharray="5 4"/>');
+      s.push('<text x="' + tx(T3) + '" y="' + (ty(0) + 22) + '" font-size="15" font-style="italic" text-anchor="middle" fill="#374151">t<tspan dy="3" font-size="11">3</tspan></text>');
+      s.push('<text x="' + (tx(T3) - 10) + '" y="' + (ty(0) - 24) + '" font-size="13.5" text-anchor="end" fill="#b45309">第一次速度为零</text>');
+    }
+  }
+
+  // 已播放部分的曲线（随播放生成）
+  const tA = isU1 ? T1A : 0;
+  if (tCur > tA + 1e-9){
+    const N = 240;
+    let d = '';
+    for (let i = 0; i <= N; i++){
+      const t = tA + (tCur - tA) * i / N;
+      d += (i === 0 ? 'M ' : 'L ') + f1(tx(t)) + ' ' + f1(ty(physV(t))) + ' ';
+    }
+    s.push('<path d="' + d + '" fill="none" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round"/>');
+  }
+  // 当前点
+  const cx = tx(tCur), cy = ty(physV(tCur));
+  s.push('<circle cx="' + f1(cx) + '" cy="' + f1(cy) + '" r="4.5" fill="#1d4ed8"/>');
+  // 第二单元：当前点切线
+  if (!isU1){
+    const a = physA(tCur);
+    const m = -a * (PH / vMax) / (PW / (tMax - tMin));
+    const hl = 46;
+    s.push('<line x1="' + f1(cx - hl) + '" y1="' + f1(cy - m * hl) + '" x2="' + f1(cx + hl) + '" y2="' + f1(cy + m * hl) +
+      '" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>');
+  }
+  graphSvg.innerHTML = s.join('');
+}
+
+function drawGraphU3(){
+  const x = state.u3.x;
+  const xMax = 1.25, fMax = 1.4;
+  const tx = xv => ML + xv / xMax * PW;
+  const ty = fv => MT + (fMax - fv) / fMax * PH;
+  const s = [];
+  s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + (ML + PW + 8) + '" y2="' + ty(0) + '" stroke="#374151" stroke-width="1.6"/>');
+  s.push('<polygon points="' + (ML + PW + 14) + ',' + ty(0) + ' ' + (ML + PW + 4) + ',' + (ty(0) - 4) + ' ' + (ML + PW + 4) + ',' + (ty(0) + 4) + '" fill="#374151"/>');
+  s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + ML + '" y2="' + (MT - 8) + '" stroke="#374151" stroke-width="1.6"/>');
+  s.push('<polygon points="' + ML + ',' + (MT - 14) + ' ' + (ML - 4) + ',' + (MT - 4) + ' ' + (ML + 4) + ',' + (MT - 4) + '" fill="#374151"/>');
+  s.push('<text x="' + (ML - 12) + '" y="' + (MT - 2) + '" font-size="16" font-style="italic" text-anchor="end" fill="#374151">F<tspan dy="3" font-size="11">s</tspan></text>');
+  s.push('<text x="' + (ML + PW + 16) + '" y="' + (ty(0) + 5) + '" font-size="16" font-style="italic" fill="#374151">x</text>');
+  s.push('<text x="' + (ML - 10) + '" y="' + (ty(0) + 20) + '" font-size="14" text-anchor="end" fill="#374151">O</text>');
+  // 参考线（弹簧弹力随压缩量的图线）
+  s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + f1(tx(1.25)) + '" y2="' + f1(ty(1.25)) + '" stroke="#d4d8de" stroke-width="2"/>');
+  // 负功面积随压缩同步形成
+  if (x > 0.001){
+    s.push('<polygon points="' + ML + ',' + ty(0) + ' ' + f1(tx(x)) + ',' + ty(0) + ' ' + f1(tx(x)) + ',' + f1(ty(x)) +
+      '" fill="rgba(214,54,38,0.14)" stroke="none"/>');
+    s.push('<line x1="' + ML + '" y1="' + ty(0) + '" x2="' + f1(tx(x)) + '" y2="' + f1(ty(x)) + '" stroke="#d63626" stroke-width="2.6"/>');
+    s.push('<circle cx="' + f1(tx(x)) + '" cy="' + f1(ty(x)) + '" r="4.5" fill="#d63626"/>');
+  }
+  // 受力平衡位置
+  if (x >= 0.999){
+    s.push('<line x1="' + tx(1) + '" y1="' + ty(0) + '" x2="' + tx(1) + '" y2="' + ty(1) + '" stroke="#8a919b" stroke-width="1.2" stroke-dasharray="5 4"/>');
+    s.push('<line x1="' + ML + '" y1="' + ty(1) + '" x2="' + tx(1) + '" y2="' + ty(1) + '" stroke="#8a919b" stroke-width="1.2" stroke-dasharray="5 4"/>');
+    s.push('<text x="' + tx(1) + '" y="' + (ty(0) + 22) + '" font-size="15" font-style="italic" text-anchor="middle" fill="#374151">x<tspan dy="3" font-size="11">e</tspan></text>');
+  }
+  graphSvg.innerHTML = s.join('');
+}
+
+/* ---------- 文案与揭示 ---------- */
+const EXPLAIN = {
+  u1: '从接触前一小段开始播放：观察滑块经过接触点时的运动，以及图线在接触点前后怎样连接。',
+  u2: '从刚接触弹簧开始播放，直到第一次速度为零：对照压缩量、弹簧弹力、沿斜面合力的变化，看图线上当前点的切线斜率怎样变化。',
+  u3: '速度最大时滑块处于受力平衡。拖动滑块改变压缩量，观察弹簧弹力的变化与图线下方的面积。'
+};
+const LEGEND = {
+  u1: '<span><span class="sw" style="background:#d63626"></span>弹簧弹力</span><span><span class="sw" style="background:#1a7f37"></span>沿斜面合力</span>',
+  u2: '<span><span class="sw" style="background:#d63626"></span>弹簧弹力</span><span><span class="sw" style="background:#1a7f37"></span>沿斜面合力</span>',
+  u3: '<span><span class="sw" style="background:#d63626"></span>弹簧弹力</span><span><span class="sw" style="background:#2563eb"></span>重力沿斜面的分力 ' + ML_MGSIN + '</span>'
+};
+const JUDGE_U1 = '接触瞬间没有冲击：滑块的位置和速度都连续，弹簧弹力从零连续增大，图线在接触点处光滑连接、不折不断。';
+const JUDGE_U2 = '压缩过程中，沿斜面合力先逐渐减为零——此时速度最大、图线切线水平；随后合力反向增大，速度减到零时弹簧仍处于压缩状态。';
+const JUDGE_U3 = '弹簧弹力方向与滑块位移方向相反，弹力做负功，其大小等于图中阴影三角形的面积。';
+
+function updateChrome(){
+  $('graphTitle').textContent = state.unit === 'u3' ? '弹力–压缩量图' : '速度–时间图';
+  $('graphExplain').textContent = EXPLAIN[state.unit];
+  $('modelLegend').innerHTML = LEGEND[state.unit];
+  // u3 受力平衡标注
+  $('graphCallout').innerHTML =
+    (state.unit === 'u3' && state.u3.x >= 0.999)
+      ? '受力平衡：' + ML_KEQ + '，所以 ' + ML_XE : '';
+  // 揭示行
+  let html = '';
+  if (state.unit === 'u1'){
+    if (state.u1.revJ) html += '<div>' + JUDGE_U1 + '</div>';
+    if (state.u1.revR) html += '<div>第（1）问：' + ML_T1 + '</div>';
+  } else if (state.unit === 'u2'){
+    if (state.u2.rev) html += '<div>' + JUDGE_U2 + '</div>';
+  } else {
+    if (state.u3.rev) html += '<div>第（2）问需要的弹力功：' + ML_W + '　' + JUDGE_U3 + '</div>';
+  }
+  $('revealRow').innerHTML = html;
+  // 按钮状态
+  $('u1Play').textContent = state.u1.playing ? '暂停' : '播放';
+  $('u2Play').textContent = state.u2.playing ? '暂停' : '播放';
+  $('u1RevR').disabled = !state.u1.revJ;
+  $('u1RevJ').textContent = state.u1.revJ ? '收起判断' : '揭示判断';
+  $('u1RevR').textContent = state.u1.revR ? '收起第（1）问结果' : '揭示第（1）问结果';
+  $('u2Rev').textContent = state.u2.rev ? '收起图像判断' : '揭示图像判断';
+  $('u3Rev').textContent = state.u3.rev ? '收起弹力做的功' : '揭示弹力做的功';
+  $('u2GoT2').disabled = state.u2.maxT < T2 - 1e-6;
+  $('u2GoT3').disabled = state.u2.maxT < T3 - 1e-6;
+}
+
+function renderAll(){
+  drawModel();
+  if (state.unit === 'u3') drawGraphU3(); else drawGraphVT();
+  updateChrome();
+}
+
+/* ---------- 播放控制 ---------- */
+let rafId = null, lastTs = 0;
+
+function playingUnit(){ return state.u1.playing || state.u2.playing; }
+
+function tick(ts){
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min(0.05, (ts - lastTs) / 1000);
+  lastTs = ts;
+  if (state.unit === 'u1' && state.u1.playing){
+    state.u1.t += dt * RATE;
+    if (state.u1.t >= T1B){ state.u1.t = T1B; state.u1.playing = false; }
+  } else if (state.unit === 'u2' && state.u2.playing){
+    state.u2.t += dt * RATE;
+    state.u2.maxT = Math.max(state.u2.maxT, state.u2.t);
+    if (state.u2.t >= T3){ state.u2.t = T3; state.u2.playing = false; }
+  }
+  renderAll();
+  if (playingUnit()) rafId = requestAnimationFrame(tick);
+  else { rafId = null; lastTs = 0; }
+}
+
+function startLoop(){ if (rafId === null){ lastTs = 0; rafId = requestAnimationFrame(tick); } }
+function pauseAll(){
+  state.u1.playing = false; state.u2.playing = false;
+  renderAll();
+}
+
+$('u1Play').addEventListener('click', () => {
+  if (state.u1.playing){ state.u1.playing = false; renderAll(); return; }
+  if (state.u1.t >= T1B - 1e-9) state.u1.t = T1A;
+  state.u1.playing = true; startLoop(); renderAll();
+});
+$('u1Replay').addEventListener('click', () => {
+  state.u1.t = T1A; state.u1.revJ = false; state.u1.revR = false;
+  state.u1.playing = true; startLoop(); renderAll();
+});
+$('u1RevJ').addEventListener('click', () => {
+  state.u1.revJ = !state.u1.revJ;
+  if (!state.u1.revJ) state.u1.revR = false;
+  renderAll();
+});
+$('u1RevR').addEventListener('click', () => {
+  if (!state.u1.revJ) return;
+  state.u1.revR = !state.u1.revR; renderAll();
+});
+$('u2Play').addEventListener('click', () => {
+  if (state.u2.playing){ state.u2.playing = false; renderAll(); return; }
+  if (state.u2.t >= T3 - 1e-9){ state.u2.t = 0; state.u2.maxT = 0; }
+  state.u2.playing = true; startLoop(); renderAll();
+});
+$('u2Replay').addEventListener('click', () => {
+  state.u2.t = 0; state.u2.maxT = 0; state.u2.rev = false;
+  state.u2.playing = true; startLoop(); renderAll();
+});
+$('u2GoT2').addEventListener('click', () => {
+  if (state.u2.maxT < T2 - 1e-6) return;
+  state.u2.playing = false; state.u2.t = T2; renderAll();
+});
+$('u2GoT3').addEventListener('click', () => {
+  if (state.u2.maxT < T3 - 1e-6) return;
+  state.u2.playing = false; state.u2.t = T3; renderAll();
+});
+$('u2Rev').addEventListener('click', () => { state.u2.rev = !state.u2.rev; renderAll(); });
+$('cmpSlider').addEventListener('input', e => {
+  let v = +e.target.value;
+  if (v >= 960){ v = 1000; e.target.value = 1000; }
+  state.u3.x = v / 1000;
+  renderAll();
+});
+$('u3Rev').addEventListener('click', () => { state.u3.rev = !state.u3.rev; renderAll(); });
+
+/* ---------- 单元切换 ---------- */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.unit === state.unit) return;
+    state.u1.playing = false; state.u2.playing = false;
+    state.unit = btn.dataset.unit;
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.unit === state.unit));
+    ['u1', 'u2', 'u3'].forEach(u => $('ctl-' + u).classList.toggle('hidden', u !== state.unit));
+    renderAll();
+  });
+});
+
+/* ---------- 完整原题弹窗 ---------- */
+const modal = $('problemModal');
+function openModal(){
+  state.modalWasPlaying = playingUnit();
+  state.u1.playing = false; state.u2.playing = false;
+  modal.classList.remove('hidden');
+  renderAll();
+}
+function closeModal(){
+  modal.classList.add('hidden');
+  if (state.modalWasPlaying){
+    if (state.unit === 'u1') state.u1.playing = true;
+    if (state.unit === 'u2') state.u2.playing = true;
+    startLoop();
+  }
+  state.modalWasPlaying = false;
+  renderAll();
+}
+$('btnProblem').addEventListener('click', openModal);
+$('btnCloseModal').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(); });
+
+/* ---------- 页面不可见时暂停 ---------- */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && playingUnit()) pauseAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>
