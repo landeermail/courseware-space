@@ -4,7 +4,7 @@
 
 ## 允许范围
 
-- `site/`：已经批准公开的静态课件、公开首页、老师稳定题库和评价页面；
+- `site/`：已经批准公开的静态课件、Pages 根地址兼容跳转、老师稳定题库和评价页面；
 - `scripts/`：Pages 白名单打包、静态校验及对应测试；
 - `.github/workflows/`：公开站点校验和 Pages 部署；
 - `README.md`、`LICENSE.md`：公开项目说明与版权边界。
@@ -26,4 +26,4 @@ python3 -m unittest discover -s scripts -p "test_*.py"
 python3 scripts/validate_site.py
 ```
 
-涉及页面时，再通过本地 HTTP 服务检查首页、指定课件、资源、控制台、桌面和 iPad 横屏。任何外部写入、发布或 Git 操作仍需用户明确授权。
+涉及页面时，再通过本地 HTTP 服务检查根地址跳转、指定课件、资源、控制台、桌面和 iPad 横屏。任何外部写入、发布或 Git 操作仍需用户明确授权。

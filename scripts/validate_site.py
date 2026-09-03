@@ -16,7 +16,7 @@ from typing import Iterable
 from urllib.parse import unquote, urlsplit
 
 
-COURSEWARE_DATA = re.compile(r"\bconst\s+coursewareData\s*=\s*")
+SHOWCASE_URL = "https://github.com/landeermail/courseware-space#readme"
 CORE_ASSETS = re.compile(
     r"\b(?:const|let|var)\s+CORE_ASSETS\s*=\s*(\[[\s\S]*?\])\s*;"
 )
@@ -56,11 +56,33 @@ class ReferenceParser(HTMLParser):
                 self.references.append((line, tag, name, value))
 
 
+class RootRedirectParser(HTMLParser):
+    """Collect redirect and visible fallback targets from the Pages root."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.refresh_values: list[str] = []
+        self.link_targets: list[str] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        values = {name.lower(): value for name, value in attrs}
+        if tag.lower() == "meta" and (values.get("http-equiv") or "").lower() == "refresh":
+            content = values.get("content")
+            if content is not None:
+                self.refresh_values.append(content)
+        if tag.lower() == "a":
+            href = values.get("href")
+            if href is not None:
+                self.link_targets.append(href)
+
+
 class SiteValidator:
     def __init__(self, root: Path) -> None:
         self.root = root
         self.errors: list[str] = []
-        self.homepage_entries = 0
+        self.root_redirects = 0
         self.html_references = 0
         self.manifest_references = 0
         self.service_worker_references = 0
@@ -87,80 +109,21 @@ class SiteValidator:
             self.error(homepage, "站点根目录缺少 index.html")
             return
 
-        text = homepage.read_text(encoding="utf-8")
-        assignment = COURSEWARE_DATA.search(text)
-        if assignment is None:
-            self.error(homepage, "找不到 const coursewareData = ...")
-            return
-
         try:
-            data, _ = json.JSONDecoder().raw_decode(text, assignment.end())
-        except json.JSONDecodeError as exc:
-            line = text.count("\n", 0, assignment.end() + exc.pos) + 1
-            self.error(homepage, f"coursewareData 不是有效 JSON：{exc.msg}", line)
+            parser = RootRedirectParser()
+            parser.feed(homepage.read_text(encoding="utf-8"))
+            parser.close()
+        except (OSError, UnicodeError) as exc:
+            self.error(homepage, f"无法读取根入口：{exc}")
             return
 
-        categories = data.get("categories") if isinstance(data, dict) else None
-        if not isinstance(categories, list):
-            self.error(homepage, "coursewareData.categories 必须是数组")
-            return
-
-        for category_index, category in enumerate(categories, start=1):
-            lessons = category.get("lessons") if isinstance(category, dict) else None
-            if not isinstance(lessons, list):
-                self.error(
-                    homepage,
-                    f"第 {category_index} 个分类的 lessons 必须是数组",
-                )
-                continue
-            for lesson_index, lesson in enumerate(lessons, start=1):
-                label = f"第 {category_index} 个分类的第 {lesson_index} 张卡片"
-                if not isinstance(lesson, dict):
-                    self.error(homepage, f"{label}必须是对象")
-                    continue
-                title = lesson.get("title")
-                if not isinstance(title, str) or not title.strip():
-                    self.error(homepage, f"{label}缺少字符串 title")
-                entries = lesson.get("entries")
-                if not isinstance(entries, list) or not entries:
-                    self.error(homepage, f"{label}的 entries 必须是非空数组")
-                    continue
-                for entry_index, entry in enumerate(entries, start=1):
-                    self.homepage_entries += 1
-                    entry_label = f"{label}的第 {entry_index} 个入口"
-                    if not isinstance(entry, dict):
-                        self.error(homepage, f"{entry_label}必须是对象")
-                        continue
-                    entry_title = entry.get("title")
-                    if not isinstance(entry_title, str) or not entry_title.strip():
-                        self.error(homepage, f"{entry_label}缺少字符串 title")
-                    path = entry.get("path")
-                    if not isinstance(path, str) or not path:
-                        self.error(homepage, f"{entry_label}缺少字符串 path")
-                        continue
-                    parsed = urlsplit(path)
-                    if parsed.scheme or parsed.netloc or path.startswith("/"):
-                        self.error(
-                            homepage,
-                            f"{entry_label}的 path 必须是相对路径：{path!r}",
-                        )
-                        continue
-                    if parsed.query or parsed.fragment:
-                        self.error(
-                            homepage,
-                            f"{entry_label}的 path 不能包含查询或锚点：{path!r}",
-                        )
-                    if not parsed.path.endswith("/"):
-                        self.error(
-                            homepage,
-                            f"{entry_label}的 path 必须以 / 结尾：{path!r}",
-                        )
-                    self.check_reference(
-                        homepage,
-                        path,
-                        context=f"首页课件路径 {path!r}",
-                        require_directory_index=True,
-                    )
+        expected_refresh = f"0; url={SHOWCASE_URL}"
+        if parser.refresh_values != [expected_refresh]:
+            self.error(homepage, "根入口必须立即跳转到公开仓库 README")
+        else:
+            self.root_redirects = 1
+        if SHOWCASE_URL not in parser.link_targets:
+            self.error(homepage, "根入口缺少指向公开仓库 README 的可点击备用链接")
 
     def validate_html(self, html_file: Path) -> None:
         parser = ReferenceParser()
@@ -333,7 +296,7 @@ class SiteValidator:
 
 def format_summary(validator: SiteValidator) -> str:
     return (
-        f"{validator.homepage_entries} 个首页课件路径，"
+        f"{validator.root_redirects} 个公开说明跳转，"
         f"{validator.html_references} 个 HTML 本地引用，"
         f"{validator.manifest_references} 个 Manifest 本地引用，"
         f"{validator.service_worker_references} 个 Service Worker 预缓存引用"
