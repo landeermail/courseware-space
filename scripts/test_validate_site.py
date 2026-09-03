@@ -9,6 +9,7 @@ import unittest
 
 
 VALIDATOR = Path(__file__).with_name("validate_site.py")
+SHOWCASE_URL = "https://github.com/landeermail/courseware-space#readme"
 
 
 class ValidatorCliTests(unittest.TestCase):
@@ -20,23 +21,10 @@ class ValidatorCliTests(unittest.TestCase):
             text=True,
         )
 
-    def create_site(self, root: Path, lesson_path: str = "lesson/") -> Path:
-        courseware_data = {
-            "categories": [
-                {
-                    "lessons": [
-                        {
-                            "title": "测试主题",
-                            "entries": [
-                                {"title": "测试入口", "path": lesson_path},
-                            ],
-                        }
-                    ]
-                }
-            ],
-        }
+    def create_site(self, root: Path) -> Path:
         (root / "index.html").write_text(
-            f"<script>const coursewareData = {json.dumps(courseware_data)};</script>",
+            f'<meta http-equiv="refresh" content="0; url={SHOWCASE_URL}">'
+            f'<a href="{SHOWCASE_URL}">查看产品介绍</a>',
             encoding="utf-8",
         )
         lesson = root / "lesson"
@@ -107,31 +95,34 @@ class ValidatorCliTests(unittest.TestCase):
             self.assertIn("missing-icon.svg", result.stderr)
             self.assertIn("missing.js", result.stderr)
 
-    def test_cli_rejects_homepage_path_without_trailing_slash(self) -> None:
+    def test_cli_rejects_wrong_root_redirect(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            self.create_site(root, lesson_path="lesson")
-
-            result = self.run_validator(root)
-
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("path 必须以 / 结尾", result.stderr)
-
-    def test_cli_rejects_card_without_entries(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary_directory:
-            root = Path(temporary_directory)
-            courseware_data = {
-                "categories": [{"lessons": [{"title": "空卡片"}]}],
-            }
+            self.create_site(root)
             (root / "index.html").write_text(
-                f"<script>const coursewareData = {json.dumps(courseware_data)};</script>",
+                '<meta http-equiv="refresh" content="0; url=https://example.com/">'
+                '<a href="https://example.com/">错误入口</a>',
                 encoding="utf-8",
             )
 
             result = self.run_validator(root)
 
             self.assertEqual(result.returncode, 1)
-            self.assertIn("entries 必须是非空数组", result.stderr)
+            self.assertIn("必须立即跳转到公开仓库 README", result.stderr)
+            self.assertIn("缺少指向公开仓库 README", result.stderr)
+
+    def test_cli_rejects_missing_fallback_link(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "index.html").write_text(
+                f'<meta http-equiv="refresh" content="0; url={SHOWCASE_URL}">',
+                encoding="utf-8",
+            )
+
+            result = self.run_validator(root)
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("缺少指向公开仓库 README", result.stderr)
 
 
 if __name__ == "__main__":
